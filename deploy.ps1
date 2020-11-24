@@ -1,4 +1,4 @@
-$appPoolName = "NopABC"
+$appPoolName = $env:IISAppPoolName
 
 dotnet clean NopCommerce.sln
 dotnet build NopCommerce.sln
