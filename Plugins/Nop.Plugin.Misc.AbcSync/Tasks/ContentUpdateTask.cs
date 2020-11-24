@@ -4,6 +4,7 @@ using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate;
 using Nop.Services.Caching;
+using Nop.Plugin.Misc.AbcCore;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -32,6 +33,15 @@ namespace Nop.Plugin.Misc.AbcSync
             EngineContext.Current.Resolve<ImportLocalPicturesTask>().Execute();
             EngineContext.Current.Resolve<UnmapEmptyCategoriesTask>().Execute();
             EngineContext.Current.Resolve<ClearCacheTask>().Execute();
+
+            if (!_importSettings.SkipSliExportTask)
+            {
+                EngineContext.Current.Resolve<ISliExportTask>().Execute();
+            }
+            else
+            {
+                _logger.Warning("SliExportTask skipped.");
+            }
 
             this.LogEnd();
         }

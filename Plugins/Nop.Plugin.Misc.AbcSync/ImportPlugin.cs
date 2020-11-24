@@ -88,6 +88,17 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public override void Update(string currentVersion, string targetVersion)
         {
+            UpdateLocales();
+        }
+
+        public override string GetConfigurationPageUrl()
+        {
+            return
+                $"{_webHelper.GetStoreLocation()}Admin/AbcSync/Configure";
+        }
+
+        private void UpdateLocales()
+        {
             _localizationService.AddPluginLocaleResource(
                 new Dictionary<string, string>
             {
@@ -108,6 +119,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 [ImportPluginLocales.SkipImportWarrantiesTask] = "ImportWarrantiesTask",
                 [ImportPluginLocales.SkipUnmapNonstockClearanceTask] = "UnmapNonstockClearanceTask",
                 [ImportPluginLocales.SkipUnmapEmptyCategoriesTask] = "UnmapEmptyCategoriesTask",
+                [ImportPluginLocales.SkipSliExportTask] = "SliExportTask",
 
                 [ImportPluginLocales.SkipImportDocumentsTask] = "ImportDocumentsTask",
                 [ImportPluginLocales.SkipImportIsamSpecsTask] = "ImportIsamSpecsTask",
@@ -116,12 +128,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 [ImportPluginLocales.SkipImportSotPicturesTask] = "ImportSotPicturesTask",
                 [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask"
             });
-        }
-
-        public override string GetConfigurationPageUrl()
-        {
-            return
-                $"{_webHelper.GetStoreLocation()}Admin/AbcSync/Configure";
         }
     }
 }

@@ -44,6 +44,7 @@ namespace Nop.Plugin.Misc.AbcSync
 		public bool SkipImportRelatedProductsTask { get; private set; }
 		public bool SkipImportWarrantiesTask { get; private set; }
 		public bool SkipUnmapNonstockClearanceTask { get; private set; }
+		public bool SkipSliExportTask { get; private set; }
 
 		public bool SkipImportDocumentsTask { get; private set; }
 		public bool SkipImportIsamSpecsTask { get; private set; }
@@ -94,7 +95,8 @@ namespace Nop.Plugin.Misc.AbcSync
 				SkipImportProductFlagsTask = model.SkipImportProductFlagsTask,
 				SkipImportSotPicturesTask = model.SkipImportSotPicturesTask,
 				SkipImportLocalPicturesTask = model.SkipImportLocalPicturesTask,
-				SkipUnmapEmptyCategoriesTask = model.SkipUnmapEmptyCategoriesTask
+				SkipUnmapEmptyCategoriesTask = model.SkipUnmapEmptyCategoriesTask,
+				SkipSliExportTask = model.SkipSliExportTask
 			};
 		}
 
@@ -135,6 +137,7 @@ namespace Nop.Plugin.Misc.AbcSync
 				SkipImportSotPicturesTask = SkipImportSotPicturesTask,
 				SkipImportLocalPicturesTask = SkipImportLocalPicturesTask,
 				SkipUnmapEmptyCategoriesTask = SkipUnmapEmptyCategoriesTask,
+				SkipSliExportTask = SkipSliExportTask
             };
         }
 
