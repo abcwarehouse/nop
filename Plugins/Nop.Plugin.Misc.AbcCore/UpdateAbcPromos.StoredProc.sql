@@ -204,8 +204,8 @@ BEGIN
 		'Rebates/Promos' as DisplayName,
 		STUFF(
 			(SELECT
-				'<br /><a href="javascript:win = window.open(''' + ap2.Name + '.pdf'', ''Promotion Image'', ''height=500,width=750,top=25,left=25,resizable=yes''); win.focus()">' +
-				ap2.Name + ' (Expires ' + convert(nvarchar(max), ap2.EndDate, 101) + ')</a>'
+				'<br /><a href="javascript:win = window.open(''/promotion_forms/' + ap2.Name + '.pdf'', ''Promotion Image'', ''height=500,width=750,top=25,left=25,resizable=yes''); win.focus()">' +
+				ap2.Description + ' (Expires ' + convert(nvarchar(max), ap2.EndDate, 101) + ')</a>'
 			FROM AbcPromo ap2
 			JOIN ProductAbcPromo pap2 on pap2.AbcPromoId = ap2.Id and ap2.StartDate <= GETDATE() AND GETDATE() < ap2.EndDate
 			WHERE pap2.ProductId = pap.ProductId
