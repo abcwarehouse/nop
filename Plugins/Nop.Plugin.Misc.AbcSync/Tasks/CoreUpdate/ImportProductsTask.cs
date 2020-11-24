@@ -431,8 +431,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                             manufacturer, store);
                     }
                 }
-
-                _genericAttributeService.SaveAttribute(product, "AbcItemNumber", stagingProduct.ISAMItemNo);
+                
                 UpdateAddToCartInfo(priceBucketCode, product, stagingProduct);
                 SetFullDescriptionIfEmpty(stagingProduct, product);
             }

@@ -5,9 +5,7 @@ using System.Linq;
 
 namespace Nop.Plugin.Misc.AbcCore.Domain
 {
-    /// <summary>
-    /// A mapping from products to their abc description
-    /// </summary>
+    // This entity is used in other queries external of Nop and cannot be removed.
     public partial class ProductAbcDescription : BaseEntity
     {
         /// <summary>

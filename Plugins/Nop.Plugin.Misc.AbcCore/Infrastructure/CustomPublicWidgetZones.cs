@@ -52,10 +52,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string CategoryDetailsBottomMin768px => CategoryDetailsBottom + Min768px;
         public static string CategoryDetailsBottomAbove1000px => CategoryDetailsBottom + Above1000px;
 
-        public static string ProductDetailsAfterPictures => "productdetails_after_pictures";
-        public static string ProductDetailsBeforeAddToCart => "productdetails_before_addtocart";
-        public static string ProductDetailsBeforeTabs => "productdetails_before_tabs";
-        public static string ProductDetailsAfterPrice => "productdetails_after_price";
+        
 
         public static string Cart => "cart";
 
@@ -82,9 +79,13 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 
         public static string ProductBoxAddinfoReviews => "productbox_addinfo_reviews";
 
+        public static string ProductDetailsAfterPictures => "productdetails_after_pictures";
+        public static string ProductDetailsBeforeAddToCart => "productdetails_before_addtocart";
+        public static string ProductDetailsBeforeTabs => "productdetails_before_tabs";
         public static string ProductDetailsReviews => "productdetails_reviews";
         public static string ProductDetailsReviewsTab => "productdetails_reviews_tab";
         public static string ProductDetailsReviewsTabContent => "productdetails_reviews_tab_content";
+        public const string ProductDetailsAfterPrice = "productdetails_after_price";
 
         public static string OrderSummaryAfterProductMiniDescription => "order_summary_after_product_mini_description";
 

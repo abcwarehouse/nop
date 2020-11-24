@@ -2,6 +2,7 @@
 using Nop.Services.Plugins;
 using System.Collections.Generic;
 using Nop.Web.Framework.Infrastructure;
+using Nop.Plugin.Misc.AbcCore.Infrastructure;
 
 namespace Nop.Plugin.Widgets.AbcPromoBanners
 {
@@ -19,7 +20,7 @@ namespace Nop.Plugin.Widgets.AbcPromoBanners
             return new List<string>
             {
                 PublicWidgetZones.ProductBoxAddinfoMiddle,
-                "productdetail_after_price"
+                CustomPublicWidgetZones.ProductDetailsAfterPrice
             };
         }
     }

@@ -1,16 +1,17 @@
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Plugin.Misc.AbcCore;
+using Nop.Plugin.Misc.AbcCore.Infrastructure;
+using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Widgets.AbcSynchronyPayments.Domain;
 using Nop.Plugin.Widgets.AbcSynchronyPayments.Models;
 using Nop.Plugin.Widgets.AbcSynchronyPayments.Services;
 using Nop.Services.Catalog;
-using Nop.Services.Common;
 using Nop.Services.Logging;
 using Nop.Web.Framework.Components;
 using Nop.Web.Models.Catalog;
+using Nop.Web.Framework.Infrastructure;
 
 namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
 {
@@ -18,21 +19,21 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
     public class AbcSynchronyPaymentsViewComponent : NopViewComponent
     {
         private readonly ILogger _logger;
-        private readonly IGenericAttributeService _genericAttributeService;
+        private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IProductAbcFinanceService _productAbcFinanceService;
         private readonly IProductService _productService;
         private readonly IStoreContext _storeContext;
 
         public AbcSynchronyPaymentsViewComponent(
             ILogger logger,
-            IGenericAttributeService genericAttributeService,
+            IProductAbcDescriptionService productAbcDescriptionService,
             IProductAbcFinanceService productAbcFinanceService,
             IProductService productService,
             IStoreContext storeContext
         )
         {
             _logger = logger;
-            _genericAttributeService = genericAttributeService;
+            _productAbcDescriptionService = productAbcDescriptionService;
             _productAbcFinanceService = productAbcFinanceService;
             _productService = productService;
             _storeContext = storeContext;
@@ -61,9 +62,8 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
                 return View(productListingCshtml, model);
             }
 
-            var abcItemNumber = _genericAttributeService.GetAttributesForEntity(productId, "Product")
-                                                        .Where(pga => pga.Key == "AbcItemNumber")
-                                                        .FirstOrDefault();
+            var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(productId);
+            var abcItemNumber = productAbcDescription?.AbcItemNumber;
             if (abcItemNumber == null)
             {
                 // No ABC Item number, skip processing
@@ -72,7 +72,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
 
             var productAbcFinance =
                 _productAbcFinanceService.GetProductAbcFinanceByAbcItemNumber(
-                    abcItemNumber.Value
+                    abcItemNumber
                 );
             if (productAbcFinance == null)
             {
@@ -115,9 +115,9 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
 
             switch (widgetZone)
             {
-                case "productbox_addinfo_middle":
+                case PublicWidgetZones.ProductBoxAddinfoMiddle:
                     return View(productListingCshtml, model);
-                case "productdetail_after_price":
+                case CustomPublicWidgetZones.ProductDetailsAfterPrice:
                     return View("~/Plugins/Widgets.AbcSynchronyPayments/Views/ProductDetail.cshtml", model);
             }
 
