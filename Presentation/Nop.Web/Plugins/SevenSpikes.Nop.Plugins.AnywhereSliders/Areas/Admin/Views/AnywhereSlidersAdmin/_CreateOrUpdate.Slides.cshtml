@@ -1,0 +1,242 @@
+﻿@model SliderModel
+@inject AdminAreaSettings adminAreaSettings
+
+@{
+    var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
+    var gridPageSizes = adminAreaSettings.GridPageSizes;
+
+    var pictureDimensionsString = T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.PictureDimensionsString").Text;
+}
+
+<div class="panel-group no-margin">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="slides-grid">
+            </div>
+        </div>
+        <div class="panel-footer">
+            <input type="submit" id="btnAddNewImg" name="btnAddNewImg" value="@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.AddNew")" onclick="javascript:OpenWindow('@(Url.Action("Create", "SlidesAdmin", new {sliderId = Model.Id}))',
+    1050,    850,    true); return false;" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function detailInit(e) {
+
+        if (e.data.Content == null) {
+
+            var data = {
+                ExtraData: null,
+                Data:[{
+                    Id: e.data.Id,
+                    PictureId: e.data.PictureId,
+                    PictureUrl: e.data.PictureUrl,
+                    PictureHeight: e.data.PictureHeight,
+                    PictureWidth: e.data.PictureWidth,
+                }],
+                Errors: null,
+                Total: 1
+            };
+
+            console.log(JSON.stringify(data));
+
+            var grid = $("<div/>").appendTo(e.detailCell).kendoGrid({
+                dataSource: {
+                    type: "json",
+                    data: JSON.stringify(data),
+                    schema: {
+                        data: "Data",
+                        total: "Total",
+                        errors: "Errors",
+                        model: {
+                            id: "Id",
+                            fields: {
+                                PictureId: { editable: false, type: "number" },
+                                PictureUrl: { editable: false, type: "string" },
+                                PictureHeight: { editable: false, type: "string" },
+                                PictureWidth: { editable: false, type: "string" }
+                            }
+                        }
+                    }
+                },
+                scrollable: false,
+                sortable: false,
+                pageable: false,
+                columns: [{
+                    field: "PictureUrl",
+                    title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.Picture")",
+                    template: "<img alt='#= Id #' src='#= PictureUrl #' />"
+                }, {
+                    field: "PictureDimensions",
+                    title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.PictureDimensions")",
+                    template: "@Html.Raw(string.Format(pictureDimensionsString, "PictureHeight", "PictureWidth"))"
+                }, {
+                    field: "PictureUrl",
+                    title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.MobilePicture")",
+                    template: "<img alt='#= Id #' src='#= MobilePictureUrl #' />"
+                },  {
+                    field: "MobilePictureDimensions",
+                    title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.MobilePictureDimensions")",
+                    template: "@Html.Raw(string.Format(pictureDimensionsString, "MobilePictureHeight", "MobilePictureWidth"))"
+                }]
+            });
+
+            grid.data("kendoGrid").dataSource.read();
+
+            console.log(grid);
+        } else {
+
+            var data = {
+                Data: [{
+                    Id: e.data.Id,
+                    Content: e.data.Content
+                }],
+                Total: 1
+            };
+
+            console.log(JSON.stringify(data));
+
+            $("<div/>").appendTo(e.detailCell).kendoGrid({
+                dataSource: {
+                    type: "json",
+                    data: JSON.stringify(data),
+                    schema: {
+                        data: "Data",
+                        total: "Total",
+                        errors: "Errors",
+                        model: {
+                            id: "Id",
+                            fields: {
+                                Content: { editable: false, type: "string" }
+                            }
+                        }
+                    }
+                },
+                scrollable: false,
+                sortable: false,
+                pageable: false,
+                columns: [{
+                    field: "Content",
+                    title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.Content")"
+                }]
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        $("#slides-grid").kendoGrid({
+            dataSource: {
+                type: "json",
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("List", "SlidesAdmin", new { sliderId = Model.Id }))",
+                        type: "POST",
+                        dataType: "json",
+                        data: addAntiForgeryToken
+                    },
+                    update: {
+                        url: "@Html.Raw(Url.Action("Update", "SlidesAdmin"))",
+                        type: "POST",
+                        dataType: "json",
+                        data: addAntiForgeryToken
+                    },
+                    destroy: {
+                        url: "@Html.Raw(Url.Action("Delete", "SlidesAdmin"))",
+                        type: "POST",
+                        dataType: "json",
+                        data: addAntiForgeryToken
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                            SystemName: { editable: false, type: "string" },
+                            Content: { editable: false, type: "string" },
+                            PictureId: { editable: false, type: "number" },
+                            PictureUrl: { editable: true, type: "string" },
+                            PictureHeight: { editable: false, type: "string" },
+                            PictureWidth: { editable: false, type: "string" },
+                            DisplayOrder: { editable: true, type: "number" },
+                            Visible: { editable: true, type: "boolean" }
+                        }
+                    }
+                },
+                requestEnd: function (e) {
+                    if (e.type == "update") {
+                        this.read();
+                    }
+                },
+                error: function (e) {
+                    display_kendoui_grid_error(e);
+                    // Cancel the changes
+                    this.cancelChanges();
+                },
+                pageSize: @(defaultGridPageSize)
+                },
+            pageable: {
+                refresh: true,
+                pageSizes: [@(gridPageSizes)]
+            },
+            editable: {
+                confirmation: true,
+                mode: "popup"
+            },
+            filterable: false,
+            sortable: true,
+            scrollable: false,
+            columns: [{
+                field: "SystemName",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.SystemName")"
+            }, {
+                field: "PictureUrl",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.Picture")",
+                template: "# if(PictureId > 0) {#<img alt='#= Id #' src='#= PictureUrl #' /> #} else {# n/a #} #"
+            }, {
+                field: "PictureDimensions",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.PictureDimensions")",
+                template: "# if(PictureId > 0) {#@Html.Raw(string.Format(pictureDimensionsString, "PictureHeight", "PictureWidth"))#} else {# n/a #} #"
+            }, {
+                field: "PictureUrl",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.MobilePicture")",
+                template: "# if(MobilePictureId > 0) {#<img alt='#= Id #' src='#= MobilePictureUrl #' /> #} else {# n/a #} #"
+            },  {
+                field: "MobilePictureDimensions",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.MobilePictureDimensions")",
+                    template: "# if(MobilePictureId > 0) {#@Html.Raw(string.Format(pictureDimensionsString, "MobilePictureHeight", "MobilePictureWidth")) #} else {# n/a #} #"
+            }, {
+                field: "DisplayOrder",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.DisplayOrder")",
+                format: "{0:0}"
+            }, {
+                field: "Visible",
+                title: "@T("SevenSpikes.Plugins.AnywhereSliders.Admin.Slide.Visible")",
+                template: '# if(Visible) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
+            }, {
+                command: [{
+                    name: "editImg",
+                    text: "@T("Admin.Common.Edit")",
+                    imageClass: "k-icon k-edit",
+                    click: function(e) {
+                        // Recommended way by Kendo to get the Id
+                        var tr = $(e.target).closest("tr");
+                        var data = this.dataItem(tr);
+                        OpenWindow('@Url.Action("Edit", "SlidesAdmin")/' + data.id, 800, 700, true);
+                    }
+                }],
+                width: 140
+            }, {
+                command: [{
+                    name: "destroy",
+                    text: "@T("Admin.Common.Delete")"
+                }],
+                width: 140
+            }]
+        });
+    });
+</script>

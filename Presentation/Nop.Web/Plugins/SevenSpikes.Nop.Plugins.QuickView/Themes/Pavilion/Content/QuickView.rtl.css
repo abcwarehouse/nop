@@ -1,0 +1,110 @@
+﻿ /*
+* Copyright 2014 Seven Spikes Ltd. All rights reserved. (http://www.nop-templates.com)
+* http://www.nop-templates.com/t/licensinginfo
+*/
+
+.quickView .k-loading-mask {
+	right: 0;
+	left: auto;
+}
+.quickView .k-loading-image {
+	right: 0;
+	left: auto;
+}
+.quickView .k-loading-image:before {
+	right: 50%;
+	left: auto;
+	margin: -25px -25px 0 0;
+}
+.quickView .k-loading-image:after {
+	right: 50%;
+	left: auto;
+	margin: 35px -25px 0 0;
+}
+
+.quickView .k-window-titlebar {
+	left: 0;
+	right: auto;
+}
+.quickView .k-window-titlebar .k-window-actions {
+	left: -10px;
+	right: auto;
+}
+
+.quickView .gallery {
+	float: right;
+	padding: 20px 30px 20px 15px;
+}
+.quickView .thumbnails a {
+	float: right;
+	margin: 0 2% 4% 0;
+}
+.quickView .thumbnails a:nth-child(3n+1) {
+	margin-right: 0;
+	margin-left: 0;
+}
+.quickView .links-panel a:after {
+	margin: 0 8px 0 0;
+	background-image: url('images/arrow-left.png');
+}
+.quickView .links-panel a:hover:after {
+	margin: 0 9px 0 0;
+}
+.quickView .overview {
+	float: left;
+	padding: 20px 15px 20px 30px;
+}
+.quickView .ui-accordion-header {
+	padding: 15px 20px 12px 30px;
+	text-align: right;
+}
+.quickView .ui-accordion-header span {
+	left: 8px;
+	right: auto;
+}
+.quickView .overview .left {
+	float: right;
+	text-align: right;
+}
+.quickView .overview .free-shipping,
+.quickView .overview .delivery-date {
+	padding: 0 25px 0 0;
+}
+.quickView .overview .free-shipping {
+	background-position: right -19px;
+}
+.quickView .overview .delivery-date {
+	background-position: right 0;
+}
+.quickView .overview .right {
+	float: left;
+	text-align: left;
+}
+.quickView .overview .attributes .color-squares li {
+	margin: 0 0 0 4px;
+}
+.quickView .item-box {
+	margin: 0 2.5% 10px 0;
+}
+.quickView .item-box:nth-child(5n+1) {
+	margin-right: 0;
+}
+.quickView .product-variant {
+	float: right;
+}
+.quickView .moreInfoHover {
+	right: 0;
+	left: auto;
+}
+.quickView .variant-info {
+	right: -100%;
+	left: auto;
+}
+.quickView .product-variant:hover .moreInfoHover {
+	right: 101%;
+	left: auto;
+}
+.quickView .product-variant:hover .variant-info {
+	right: 1px;
+	left: auto;
+}

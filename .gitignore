@@ -218,4 +218,19 @@ Presentation/Nop.Web/Themes/Pavilion/Content/css/theme.custom-7.css
 Presentation/Nop.Web/NopCommerceSliExport.xml
 
 ## Saved plugins
+!Presentation/Nop.Web/Plugins/EllaSoftware.CronTasks/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Core/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.CloudZoom/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.HtmlWidgets/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.JCarousel/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.NopQuickTabs/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.ProductRibbons/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.QuickView/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.RichBlog/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/
+!Presentation/Nop.Web/Plugins/SevenSpikes.Theme.Pavilion/
+!Presentation/Nop.Web/Plugins/Shipping.Fedex/
 !Presentation/Nop.Web/Plugins/Widgets.GAEnhanced/
