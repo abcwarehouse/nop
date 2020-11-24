@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "Azure Web Tests Integration",
+  "SystemName": "Misc.AzureWebTestsIntegration",
+  "Version": "1.00",
+  "SupportedVersions": [ "4.30" ],
+  "Author": "Dave Farinelli",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.AzureWebTestsIntegration.dll",
+  "Description": "Allows integration with Azure Web Tests"
+}

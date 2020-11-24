@@ -1,0 +1,37 @@
+﻿@model Nop.Plugin.Payments.Synchrony.Models.ErrorModel
+@using Nop.Web.Framework.UI;
+@using Nop.Core.Infrastructure;
+@using Nop.Core;
+@using Nop.Services.Configuration;
+@{
+	Layout = "";
+	var set = EngineContext.Current.Resolve<ISettingService>();
+	var con = EngineContext.Current.Resolve<IStoreContext>();
+	bool onepagecheckoutenabled = set.GetSettingByKey("ordersettings.onepagecheckoutenabled", true, con.CurrentStore.Id, true);
+}
+<!--
+<link href="~/Plugins/Payments.Synchrony/Contents/css/Style.css" rel="stylesheet" />
+-->
+<div class="retrypayment">
+	<div class="paymenterror">@Model.Message</div>
+	@*@T("Plugins.Payments.Synchrony.PleaseRetry")*@
+	<button type="button" id="retry" class="button-1">@T("Plugins.Payments.Synchrony.button.RetryPayment")</button>
+</div>
+<script type="text/javascript">
+    $("#retry").click(function () {
+		if ('@Model.isBack' == "True") {
+			if ('@onepagecheckoutenabled' == 'True') {
+				Checkout.back();
+			} else {
+				window.history.back();
+			}
+			return false;
+        } else {
+			if ('@onepagecheckoutenabled' == 'True') {
+				window.location.replace('onepagecheckout');
+			} else {
+				window.location.replace('/checkout/paymentmethod');
+			}
+        }
+    });
+</script>

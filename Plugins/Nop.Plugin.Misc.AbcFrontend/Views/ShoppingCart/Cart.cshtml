@@ -1,0 +1,55 @@
+@model Nop.Web.Models.ShoppingCart.ShoppingCartModel
+
+@using Nop.Plugin.Misc.AbcFrontend.Models
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Web.Models.Checkout
+
+@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.ShoppingCart").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-shopping-cart-page");
+}
+@if (!Model.OnePageCheckoutEnabled)
+{
+    @await Component.InvokeAsync("CheckoutProgress", new {step = CheckoutProgressStep.Cart })
+}
+<div class="page shopping-cart-page">
+    <div class="page-title">
+        <h1>@T("ShoppingCart")</h1>
+    </div>
+    <div class="page-body">
+        @Html.Partial("OrderSummary", Model)
+    </div>
+    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.Cart })
+</div>
+
+@* expands products on mobile *@
+<script>
+    $(document).ready(function() {
+        const isMobile = window.innerWidth <= 1000;
+        const hasCartItems = document.getElementsByClassName("cart-item-row");
+        if (!isMobile || !hasCartItems) {
+            return;
+        }
+
+        var i = 1;
+        function expandCartItems() {
+            setTimeout(function() {
+                for (button of document.getElementsByClassName("footable-toggle")) {
+                    button.click();
+                    i = 20;
+                }
+                i++;
+                // will attempt for 10 seconds
+                if (i < 10) {
+                    expandCartItems();
+                }
+            }, 1000)
+        }
+
+        expandCartItems();
+    });
+</script>

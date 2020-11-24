@@ -1,0 +1,64 @@
+<span id='{guid}'></span>
+    <script>
+        ga('ec:addProduct', {
+            'id': '{PRODUCTSKU}',
+            'name': '{PRODUCTNAME}',
+            'category': '{PRODUCTCATEGORY}',
+            'brand': '{MANUFACTURER}'
+        });
+
+        ga('ec:setAction', 'detail');
+
+        $(document).ready(function(){
+            var quickViewWindow = $('#{guid}').closest('.quickViewWindow');
+            if (quickViewWindow.length > 0){
+                var pageUrl = quickViewWindow.find('.link-to-product-page').attr('href');
+                ga('send', 'pageview', '/quick-view' + pageUrl);
+            }
+
+            var addtoCartButton = $('#{guid}').closest('.add-to-cart').find('.add-to-cart-button');
+            var originalClickFunction = addtoCartButton.attr('onclick');
+            addtoCartButton.removeAttr('onclick');
+
+			function fireOriginalClick(){
+				(new Function(originalClickFunction)())
+			}
+
+			function googleTimeoutFunction(callback, opt_timeout) {
+				var called = false;
+				function fn() {
+				  if (!called) {
+					called = true;
+					callback();
+				  }
+				}
+				setTimeout(fn, opt_timeout || 1000);
+				return fn;
+			  }
+			function dcSentToGoogleEventTrigger(callback){
+				$(document).trigger('dcSentToGoogleEvent');
+				callback();
+			}
+
+            addtoCartButton.click(function(){
+                var qty = $(this).closest('.add-to-cart').find('.qty-input').val();
+                ga('ec:addProduct', {
+                    'id': '{PRODUCTSKU}',
+                    'name': '{PRODUCTNAME}',
+                    'category': '{PRODUCTCATEGORY}',
+                    'brand': '{MANUFACTURER}',
+                    'quantity': qty
+                });
+                ga('ec:setAction', 'add');
+
+                // Send click with an event, then send user to product page.
+                ga('send', 'event', 'UX', 'click', 'add to basket', {
+                    hitCallback: googleTimeoutFunction(function() {
+						dcSentToGoogleEventTrigger(function(){fireOriginalClick();});
+					  })
+                });
+                
+            });
+        });
+
+    </script>

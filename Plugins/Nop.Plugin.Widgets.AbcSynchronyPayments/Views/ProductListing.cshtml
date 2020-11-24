@@ -1,0 +1,39 @@
+﻿@using Nop.Web.Framework.UI;
+@using Nop.Plugin.Widgets.AbcSynchronyPayments.Models;
+@using Nop.Core;
+
+@inject IStoreContext storeContext;
+
+@model SynchronyPaymentModel;
+@{
+    // remove from bundle
+    Html.AddCssFileParts("https://use.fontawesome.com/releases/v5.3.1/css/all.css", "", true);
+    Html.AddCssFileParts("~/Plugins/Widgets.AbcSynchronyPayments/styles/styles.css");
+
+    // add hawthorne stylesheet if required
+    if (storeContext.CurrentStore.Url.Contains("hawthorne"))
+    {
+        Html.AddCssFileParts("~/Plugins/Widgets.AbcSynchronyPayments/styles/styles.css");
+    }
+}
+
+<div class="synchrony-payment">
+    @* check if null here to ensure not displaying but allowing for the above call to be made *@
+    @if (Model != null)
+    {
+        @if (Model.IsMonthlyPaymentStyle)
+        {
+            <span><b>$@Model.MonthlyPayment</b>/mo for @Model.MonthCount months</span>
+        }
+        else
+        {
+            <span>Get <b>@Model.MonthCount Month</b> Special Financing</span>
+        }
+        <i class="fas fa-question-circle deferredPricingIcon-@Model.ProductId">
+        </i>
+    }
+</div>
+@if (Model != null)
+{
+    @Html.Partial("_Modal", Model)
+}

@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "ABC Warehouse Core",
+  "SystemName": "Misc.AbcCore",
+  "Version": "1.1.2",
+  "SupportedVersions": [ "4.30" ],
+  "Author": "Dave Farinelli",
+  "DisplayOrder": -1,
+  "FileName": "Nop.Plugin.Misc.AbcCore.dll",
+  "Description": "Provides core items for all ABC Warehouse Plugins"
+}

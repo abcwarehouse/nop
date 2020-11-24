@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Payment methods",
+  "FriendlyName": "ABC Warehouse Card",
+  "SystemName": "Payments.Synchrony",
+  "Version": "1.00",
+  "SupportedVersions": [ "4.30" ],
+  "Author": "Xcellence-IT",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Payments.Synchrony.dll",
+  "Description": "This plugin allows paying with Digital Buy."
+}

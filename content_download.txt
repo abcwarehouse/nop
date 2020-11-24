@@ -1,0 +1,24 @@
+# Connects to a source (usually Prod) server and downloads all
+# FTP folder content
+#
+# Make sure to set this in Task Scheduler, alongside setting the
+# appropriate env. variables.
+#
+# Use the following to run in Task Scheduler
+#   winscp.com /ini=nul /log="C:/Users/xby2/ABCWebsiteRedesign/winscp.log" /script=C:/Users/xby2/ABCWebsiteRedesign/content_download.txt
+
+# connect to source
+open ftp://%FTP_USER%:%FTP_PASS%@%FTP_IP%
+
+# synchronize appropriate directories
+# once we've moved to 4.3, we need to update remore to have wwwroot/
+synchronize local C:/NopAbc/wwwroot/energy_guides NopAbc/energy_guides/
+synchronize local C:/NopAbc/wwwroot/bundle_images NopAbc/bundle_images/
+synchronize local C:/NopAbc/wwwroot/images/uploaded NopAbc/Content/Images/uploaded/
+synchronize local C:/NopAbc/wwwroot/product_images NopAbc/product_images/
+synchronize local C:/NopAbc/wwwroot/product_specs NopAbc/product_specs/
+synchronize local C:/NopAbc/wwwroot/promo_banners NopAbc/promo_banners/
+synchronize local C:/NopAbc/wwwroot/promotion_forms NopAbc/promotion_forms/
+synchronize local C:/NopAbc/wwwroot/rebate_images NopAbc/rebate_images/
+
+exit

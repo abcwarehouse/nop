@@ -1,0 +1,76 @@
+﻿.synchrony-payments-modal-outer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10000;
+
+    /* dim outside of modal */
+    background-color: rgba(0,0,0,0.4);
+
+    /* initially hide */
+    display: none;
+}
+
+.synchrony-payments-modal-middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.synchrony-payments-modal-inner {
+    margin-left: auto;
+    margin-right: auto;
+    /* set width as desired */
+    width: 400px;
+    /* other customizations */
+    border: 1px solid;
+    background-color: #fefefe;
+    padding: 1rem;
+}
+
+.synchrony-payment {
+    font-size: 0.8rem;
+    height: 3rem;
+}
+
+.synchrony-payment-detail {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    height: auto !important;
+}
+
+.synchrony-payment-detail a {
+    text-decoration: underline;
+    color: #1451b8;
+}
+
+table.min-payment-table {
+    border-collapse: separate;
+    border-spacing: 7px;
+    font-size: 0.75rem;
+}
+
+tr.min-payment-table-labels td {
+    background-color: #336799;
+    color: white;
+    padding: 0.5rem;
+    width: 33.3%
+}
+
+tr.min-payment-table-data td {
+    color: #336799;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.0rem;
+}
+
+@media (min-width: 576px) {
+    .synchrony-payments-modal-inner {
+        width: 500px;
+    }
+
+    .synchrony-payment {
+        height: 2rem;
+    }
+}

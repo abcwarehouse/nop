@@ -1,0 +1,34 @@
+﻿@model IList<ProductOverviewModel>
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.NewProducts").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-recently-added-products-page");
+}
+<div class="page recently-added-products-page">
+    <div class="page-title">
+        <a href="@Url.RouteUrl("NewProductsRSS")" class="link-rss" title="@T("Products.NewProducts.RSS.Hint")">@T("Products.NewProducts.RSS")</a>
+        <h1>@T("Products.NewProducts")</h1>
+    </div>
+    <div class="page-body">
+        @if (Model.Count > 0)
+        {
+            <div class="product-grid">
+                <div class="item-grid">
+                    @{
+                        var i = 1;
+                    }
+                    @foreach (var product in Model)
+                    {
+                        <div class="item-box">
+                            @await Html.PartialAsync("_ProductBox", product)
+                            @await Component.InvokeAsync("Widget", new { widgetZone = "GAEnhanced_Impression", additionalData = (string.Format("{0}|{1}|{2}", product.Id, i++, "New Products")) })
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

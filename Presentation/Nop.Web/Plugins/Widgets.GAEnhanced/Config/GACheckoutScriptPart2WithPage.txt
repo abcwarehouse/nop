@@ -1,0 +1,2 @@
+ga('send', 'pageview', '{PAGE}');
+</script>

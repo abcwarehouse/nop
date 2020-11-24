@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widgets",
+  "FriendlyName": "AbcWarehouse Contact Us",
+  "SystemName": "Widgets.AbcContactUs",
+  "Version": "1.00",
+  "SupportedVersions": [ "4.30" ],
+  "Author": "X By 2",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widgets.AbcContactUs.dll",
+  "Description": "This widget displays contact us topic widget "
+}

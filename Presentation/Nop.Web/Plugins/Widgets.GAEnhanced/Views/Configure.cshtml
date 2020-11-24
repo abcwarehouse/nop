@@ -1,0 +1,232 @@
+﻿
+@inject Nop.Core.IWebHelper webHelper
+@{
+    Layout = "_ConfigurePlugin";
+}
+@model DC.Nop.Plugin.Widgets.GAEnhanced.Models.ConfigurationModel
+@await Component.InvokeAsync("StoreScopeConfiguration")
+
+@*@Html.Action("StoreScopeConfiguration", "Setting", new { area = "Admin" })*@
+
+@*@using (Html.BeginForm())
+{*@
+    <form asp-controller="WidgetsGAEnhanced" asp-action="Configure" method="post">
+        @Html.AntiForgeryToken()
+    <div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+
+            <p>
+                Google Analytics is a free website stats tool from Google. It keeps track of statistics
+                about the visitors and ecommerce conversion on your website.
+            </p>
+            <p>
+                Follow the next steps to enable Google Analytics integration:
+            </p>
+            <ul>
+                <li>
+                    <a href="http://www.google.com/analytics/" target="_blank">
+                        Create a Google Analytics
+                        account
+                    </a> and follow the wizard to add your website
+                </li>
+                <li>Copy the Tracking ID into the 'ID' box below</li>
+                <li>Click the 'Save' button below and Google Analytics will be integrated into your store</li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="IsEnabled_OverrideForStore" asp-input="IsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="IsEnabled" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="IsEnabled" />
+                    @Html.ValidationMessageFor(model => model.IsEnabled)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-label asp-for="CurrentLicence" />
+                </div>
+                <div class="col-md-9">
+                    @Model.CurrentLicence
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="LicenceKey_OverrideForStore" asp-input="LicenceKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="LicenceKey" />
+                </div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(model => model.LicenceKey, new { style = "font-family: monospace; width:600px" })
+                    @Html.ValidationMessageFor(model => model.LicenceKey)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="GoogleId_OverrideForStore" asp-input="GoogleId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="GoogleId" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="GoogleId" />
+                    @*@Html.NopEditorFor(model => model.GoogleId)*@
+                    @Html.ValidationMessageFor(model => model.GoogleId)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="TrackingScript_OverrideForStore" asp-input="TrackingScript" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="TrackingScript" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="TrackingScript" />
+                    @Html.ValidationMessageFor(model => model.TrackingScript)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="IsUserIdTrackingEnabled_OverrideForStore" asp-input="IsUserIdTrackingEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="IsUserIdTrackingEnabled" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="IsUserIdTrackingEnabled" />
+                    @*@Html.NopEditorFor(model => model.IsUserIdTrackingEnabled)*@
+                    @Html.ValidationMessageFor(model => model.IsUserIdTrackingEnabled)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="EcommerceScript_OverrideForStore" asp-input="EcommerceScript" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="EcommerceScript" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="EcommerceScript" />
+                    @Html.ValidationMessageFor(model => model.EcommerceScript)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="EcommerceDetailScript_OverrideForStore" asp-input="EcommerceDetailScript" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="EcommerceDetailScript" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="EcommerceDetailScript" />
+                    @Html.ValidationMessageFor(model => model.EcommerceDetailScript)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="IncludingTax_OverrideForStore" asp-input="IncludingTax" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="IncludingTax" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="IncludingTax" />
+                    @Html.ValidationMessageFor(model => model.IncludingTax)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="GATotalValueType_OverrideForStore" asp-input="GATotalValueType" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="GATotalValueType" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="GATotalValueType" asp-items="@Model.GATotalValueTypeOptions" />
+                    @*@Html.NopDropDownListFor(model => model.GATotalValueType, Model.GATotalValueTypeOptions)*@
+                    @Html.ValidationMessageFor(model => model.GATotalValueType)
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p>This section allows you to configure the Google Analytics Checkout step number assignments. This is used in the checkout behavior report.</p>
+            <p></p>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="BillingAddressStepNumber_OverrideForStore" asp-input="BillingAddressStepNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="BillingAddressStepNumber" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="BillingAddressStepNumber" asp-items="@Model.GACheckoutStepValues" />
+                    @*@Html.NopDropDownListFor(model => model.BillingAddressStepNumber, Model.GACheckoutStepValues)*@
+                    @Html.ValidationMessageFor(model => model.BillingAddressStepNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="ShippingAddressStepNumber_OverrideForStore" asp-input="ShippingAddressStepNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="ShippingAddressStepNumber" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="ShippingAddressStepNumber" asp-items="@Model.GACheckoutStepValues" />
+                    @*@Html.NopDropDownListFor(model => model.ShippingAddressStepNumber, Model.GACheckoutStepValues)*@
+                    @Html.ValidationMessageFor(model => model.ShippingAddressStepNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="ShippingMethodStepNumber_OverrideForStore" asp-input="ShippingMethodStepNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="ShippingMethodStepNumber" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="ShippingMethodStepNumber" asp-items="@Model.GACheckoutStepValues" />
+                    @*@Html.NopDropDownListFor(model => model.ShippingMethodStepNumber, Model.GACheckoutStepValues)*@
+                    @Html.ValidationMessageFor(model => model.ShippingMethodStepNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="PaymentMethodStepNumber_OverrideForStore" asp-input="PaymentMethodStepNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="PaymentMethodStepNumber" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="PaymentMethodStepNumber" asp-items="@Model.GACheckoutStepValues" />
+                    @*@Html.NopDropDownListFor(model => model.PaymentMethodStepNumber, Model.GACheckoutStepValues)*@
+                    @Html.ValidationMessageFor(model => model.PaymentMethodStepNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="PaymentInfoStepNumber_OverrideForStore" asp-input="PaymentInfoStepNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="PaymentInfoStepNumber" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="PaymentInfoStepNumber" asp-items="@Model.GACheckoutStepValues" />
+                    @*@Html.NopDropDownListFor(model => model.PaymentInfoStepNumber, Model.GACheckoutStepValues)*@
+                    @Html.ValidationMessageFor(model => model.PaymentInfoStepNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <nop-override-store-checkbox asp-for="ConfirmOrderStepNumber_OverrideForStore" asp-input="ConfirmOrderStepNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <nop-label asp-for="ConfirmOrderStepNumber" />
+                </div>
+                <div class="col-md-9">
+                    <nop-select asp-for="ConfirmOrderStepNumber" asp-items="@Model.GACheckoutStepValues" />
+                    @*@Html.NopDropDownListFor(model => model.ConfirmOrderStepNumber, Model.GACheckoutStepValues)*@
+                    @Html.ValidationMessageFor(model => model.ConfirmOrderStepNumber)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-md-3">
+                    &nbsp;
+                </div>
+                <div class="col-md-9">
+                    <input type="submit" name="save" class="btn btn-primary" value="@T("Admin.Common.Save")" />
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </form>
+ 
