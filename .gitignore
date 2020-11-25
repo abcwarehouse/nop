@@ -219,6 +219,7 @@ Presentation/Nop.Web/NopCommerceSliExport.xml
 
 ## Saved plugins
 !Presentation/Nop.Web/Plugins/EllaSoftware.CronTasks/
+!Presentation/Nop.Web/Plugins/Payments.Manual/
 !Presentation/Nop.Web/Plugins/SevenSpikes.Core/
 !Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/
 !Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/
