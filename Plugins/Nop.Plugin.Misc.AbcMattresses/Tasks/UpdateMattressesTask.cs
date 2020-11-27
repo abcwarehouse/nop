@@ -7,6 +7,7 @@ using System.Linq;
 using Nop.Core.Domain.Catalog;
 using Nop.Services.Seo;
 using Nop.Core.Domain.Seo;
+using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 {
@@ -39,9 +40,13 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             // Since I don't know what the backend table will look like yet,
             // I'm just scaffolding a lot of stuff
 
-            var product = CreateProduct();
-            AddProductCategories(product);
-            AddProductAttributes(product);
+            var product = _productService.GetProductBySku("mattress-product");
+            if (product == null)
+            {
+                product = CreateProduct();
+            }
+            MergeProductCategories(product);
+            MergeProductAttributes(product);
         }
 
         private Product CreateProduct()
@@ -56,7 +61,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                 Published = true,
                 CreatedOnUtc = DateTime.UtcNow,
                 VisibleIndividually = true,
-                ProductType = ProductType.SimpleProduct
+                ProductType = ProductType.SimpleProduct,
+                OrderMinimumQuantity = 1,
+                OrderMaximumQuantity = 10000
             };
             _productService.InsertProduct(newProduct);
 
@@ -70,10 +77,15 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             };
             _urlRecordService.InsertUrlRecord(urlRecord);
 
+            // get image from an existing product
+            
+            newProduct.SetMiniDescription("Adapt Medium Hybrid Mattress");
+            newProduct.SetCustomAddToCartText("Build Package");
+
             return newProduct;
         }
 
-        private void AddProductAttributes(Product product)
+        private void MergeProductAttributes(Product product)
         {
             var productAttributes = _productAttributeService.GetAllProductAttributes()
                                                             .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName ||
@@ -82,26 +94,70 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
             foreach (var productAttribute in productAttributes)
             {
-                var productAttributeMapping = new ProductAttributeMapping()
-                {
-                    ProductId = product.Id,
-                    ProductAttributeId = productAttribute.Id,
-                    IsRequired = true,
-                    AttributeControlType = AttributeControlType.DropdownList,
-                    DisplayOrder = GetDisplayOrder(productAttribute.Name)
-                };
-                _productAttributeService.InsertProductAttributeMapping(productAttributeMapping);
+                // attribute mapping
+                var productAttributeMapping = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                                              .Where(pam => pam.ProductAttributeId == productAttribute.Id)
+                                                                              .FirstOrDefault();
 
+                if (productAttributeMapping == null)
+                {
+                    productAttributeMapping = new ProductAttributeMapping()
+                    {
+                        ProductId = product.Id,
+                        ProductAttributeId = productAttribute.Id,
+                        IsRequired = true,
+                        AttributeControlType = AttributeControlType.DropdownList,
+                        DisplayOrder = GetDisplayOrder(productAttribute.Name)
+                    };
+                    _productAttributeService.InsertProductAttributeMapping(productAttributeMapping);
+                }
+                    
+                // values
                 var predefinedValues = _productAttributeService.GetPredefinedProductAttributeValues(productAttribute.Id);
                 foreach (var predefinedValue in predefinedValues)
                 {
-                    var pav = new ProductAttributeValue()
+                    var existingPav = _productAttributeService.GetProductAttributeValues(productAttributeMapping.Id)
+                                                               .Where(pav =>
+                                                                    pav.ProductAttributeMappingId == productAttributeMapping.Id &&
+                                                                    pav.Name.Equals(predefinedValue.Name)
+                                                               )
+                                                               .FirstOrDefault();
+                    if (existingPav == null)
                     {
-                        ProductAttributeMappingId = productAttributeMapping.Id,
-                        Name = predefinedValue.Name
-                    };
-                    _productAttributeService.InsertProductAttributeValue(pav);
+                        var pav = new ProductAttributeValue()
+                        {
+                            ProductAttributeMappingId = productAttributeMapping.Id,
+                            Name = predefinedValue.Name,
+                            PriceAdjustment = GetPriceAdjustment(predefinedValue.Name),
+                            IsPreSelected = predefinedValue.Name == "Queen" ||
+                                            predefinedValue.Name == "No"
+                        };
+                        _productAttributeService.InsertProductAttributeValue(pav);
+                    }
                 }
+            }
+        }
+
+        private decimal GetPriceAdjustment(string name)
+        {
+            switch (name)
+            {
+                case "Twin":
+                    return 100.0M;
+                case "Twin XL":
+                    return 200.0M;
+                case "Full":
+                    return 300.0M;
+                case "Queen":
+                    return 400.0M;
+                case "King":
+                    return 500.0M;
+                case "California King":
+                    return 600.0M;
+                case "Yes":
+                    return 150.0M;
+                default:
+                    return 0.0M;
             }
         }
 
@@ -120,7 +176,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             return -1;
         }
 
-        private void AddProductCategories(Product product)
+        private void MergeProductCategories(Product product)
         {
             // determine this based on the mattresses
             var categories = _categoryService.GetAllCategories()
@@ -136,12 +192,16 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
             foreach (var category in categories)
             {
-                var productCategory = new ProductCategory()
+                var existingProductCategory = _categoryService.GetProductCategoriesByProductId(product.Id).Where(pc => pc.CategoryId == category.Id).FirstOrDefault();
+                if (existingProductCategory == null)
                 {
-                    ProductId = product.Id,
-                    CategoryId = category.Id
-                };
-                _categoryService.InsertProductCategory(productCategory);
+                    var productCategory = new ProductCategory()
+                    {
+                        ProductId = product.Id,
+                        CategoryId = category.Id
+                    };
+                    _categoryService.InsertProductCategory(productCategory);
+                }
             }
         }
 

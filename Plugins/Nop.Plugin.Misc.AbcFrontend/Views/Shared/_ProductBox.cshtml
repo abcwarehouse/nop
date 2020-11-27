@@ -65,6 +65,13 @@
 
     var addtowishlistlink = Url.RouteUrl("CustomAddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = (int)ShoppingCartType.Wishlist, quantity = quantity });
     var addtocomparelink = Url.RouteUrl("AddProductToCompare", new { productId = Model.Id });
+
+    // Determine whether to display MiniDescription
+    var product = productService.GetProductById(Model.Id);
+    var miniDescription = product.GetMiniDescription();
+
+    // Custom add to cart text
+    var customText = product.GetCustomAddToCartText();
 }
 <style>
 	.picture.picture {
@@ -185,13 +192,16 @@
 </script>
 <div class="product-item" data-productid="@Model.Id">
     @{
-        Product product = productService.GetProductById(Model.Id);
         bool usesCartPricing = product.IsAddToCart() || product.IsAddToCartWithUserInfo();
         var miniDesc = "";
 
         bool usesPairPricing = false;
 
-        if (frontEndService.ProductIsAbc(Model.Id))
+        if (!string.IsNullOrWhiteSpace(miniDescription))
+        {
+            miniDesc = miniDescription;
+        }
+        else if (frontEndService.ProductIsAbc(Model.Id))
         {
             var pad = frontEndService.GetProductAbcDescriptionByProductId(Model.Id);
             if (pad != null)
@@ -361,9 +371,18 @@
             var buttonRef = Model.ProductPrice.DisableBuyButton ? "href = " + Url.RouteUrl("Product", new { SeName = Model.SeName }) : "";
         }
         <div class="buttons-lower" @buttonRef>
-            @if (!Model.ProductPrice.DisableBuyButton)
+            @* custom: add custom product box text *@
+            @if (!string.IsNullOrWhiteSpace(customText))
+            {
+                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })">
+                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@(customText)</span></button>
+                </form>
+            }
+            @* end custom *@
+            else if (!Model.ProductPrice.DisableBuyButton)
             {
                 var addToCartText = T("ShoppingCart.AddToCart").Text;
+
                 if (Model.ProductPrice.IsRental)
                 {
                     addToCartText = T("ShoppingCart.Rent").Text;

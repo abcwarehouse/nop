@@ -216,6 +216,7 @@ Presentation/Nop.Web/wwwroot/css/Slick/anywhereSlidersCustomCss-3-1.css
 Presentation/Nop.Web/Themes/Pavilion/Content/css/theme.custom-3.css
 Presentation/Nop.Web/Themes/Pavilion/Content/css/theme.custom-7.css
 Presentation/Nop.Web/NopCommerceSliExport.xml
+Presentation/Nop.Web/wwwroot/ContentAdmin/*
 
 ## Saved plugins
 !Presentation/Nop.Web/Plugins/EllaSoftware.CronTasks/
@@ -235,3 +236,5 @@ Presentation/Nop.Web/NopCommerceSliExport.xml
 !Presentation/Nop.Web/Plugins/SevenSpikes.Theme.Pavilion/
 !Presentation/Nop.Web/Plugins/Shipping.Fedex/
 !Presentation/Nop.Web/Plugins/Widgets.GAEnhanced/
+
+

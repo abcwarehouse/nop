@@ -284,7 +284,13 @@
 
                             var miniDesc = "";
                             var pad = productAbcDescriptionRepository.Table.Where(p => p.Product_Id == item.ProductId).FirstOrDefault();
-                            if (pad != null)
+                            var product = productService.GetProductById(item.ProductId);
+                            var productMiniDescription = product.GetMiniDescription();
+                            if (!string.IsNullOrWhiteSpace(productMiniDescription))
+                            {
+                                miniDesc = productMiniDescription;
+                            }
+                            else if (pad != null)
                             {
                                 miniDesc = pad.AbcDescription;
                             }
@@ -306,9 +312,9 @@
                             {
                                 stockMessage = "Ships in 2-3 Weeks";
 
-                                attributeInfo = isHawthorne ?
-                                    "Home Delivery: This item will be delivered to you by Hawthorne" :
-                                    "Home Delivery: This item will be delivered to you by ABC";
+                                attributeInfo += isHawthorne ?
+                                    "<br />Home Delivery: This item will be delivered to you by Hawthorne" :
+                                    "<br />Home Delivery: This item will be delivered to you by ABC";
                             }
 
                             counter++;
@@ -367,7 +373,6 @@
                                         
                                         if (!isOnlineOnly)
                                         {
-                                            var product = productService.GetProductById(item.ProductId);
                                             if (product.IsPickup())
                                             {
                                                 bool isPickup = item.AttributeInfo.Contains("Pickup");
