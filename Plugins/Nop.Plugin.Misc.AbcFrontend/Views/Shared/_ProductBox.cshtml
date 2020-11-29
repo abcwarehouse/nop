@@ -72,6 +72,9 @@
 
     // Custom add to cart text
     var customText = product.GetCustomAddToCartText();
+
+    // Calculate listing price based on category
+    var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
 }
 <style>
 	.picture.picture {
@@ -310,9 +313,6 @@
                     else
                     {
                         <span class="price you-save">&nbsp</span>
-                    }
-                    @{
-                        var priceStr = Model.ProductPrice.Price != null ? Model.ProductPrice.Price.Replace(".00", "") : Model.ProductPrice.Price;
                     }
                     @if (savedPrice.HasValue && savedPrice.Value > 0)
                     {

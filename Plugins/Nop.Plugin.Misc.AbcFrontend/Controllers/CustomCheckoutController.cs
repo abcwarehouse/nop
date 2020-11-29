@@ -245,11 +245,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             status_code = "";
             response_message = "";
 
-            if (_coreSettings.AreExternalCallsSkipped)
-            {
-                status_code = "00";
-                return;
-            }
+            // if (_coreSettings.AreExternalCallsSkipped)
+            // {
+            //     status_code = "00";
+            //     return;
+            // }
 
 			try
 			{				

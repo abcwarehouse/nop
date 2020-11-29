@@ -394,6 +394,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             if (!string.IsNullOrEmpty(order.CardNumber))
             {
                 cardNumber = _encryptionService.DecryptText(order.CardNumber, encryptionKey);
+                // strip out all non-numeric
+                cardNumber = new string(cardNumber.Where(c => char.IsDigit(c)).ToArray());
             }
 
             if (!string.IsNullOrEmpty(order.CardExpirationMonth) && !string.IsNullOrEmpty(order.CardExpirationYear))
