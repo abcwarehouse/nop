@@ -1,14 +1,3 @@
-using Nop.Core.Domain;
-using Nop.Services.Configuration;
-using Nop.Services.Plugins;
-using Nop.Services.Common;
-using Nop.Services.Tasks;
-using Nop.Plugin.Misc.AbcMattresses.Tasks;
-using Nop.Core.Domain.Tasks;
-using Nop.Services.Catalog;
-using Nop.Core.Domain.Catalog;
-using System.Linq;
-
 namespace Nop.Plugin.Misc.AbcMattresses
 {
     public static class AbcMattressesConsts
@@ -16,5 +5,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
         public const string MattressSizeName = "Mattress Size";
         public const string BaseName = "Base";
         public const string FreeGiftName = "Free Gift";
+
+        public const string Twin = "Twin";
+        public const string TwinXL = "Twin XL";
+        public const string Full = "Full";
+        public const string Queen = "Queen";
+        public const string King = "King";
+        public const string CaliforniaKing = "California King";
     }
 }

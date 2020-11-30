@@ -2,6 +2,7 @@ using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Autofac;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Infrastructure
 {
@@ -16,9 +17,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Infrastructure
             NopConfig config
         )
         {
-            // builder.RegisterType<AbcMattressPriceListingService>()
-            //        .As<IAbcMattressPriceListingService>()
-            //        .InstancePerLifetimeScope();
+            builder.RegisterType<AbcMattressListingPriceService>()
+                   .As<IAbcMattressListingPriceService>()
+                   .InstancePerLifetimeScope();
         }
 
         public int Order

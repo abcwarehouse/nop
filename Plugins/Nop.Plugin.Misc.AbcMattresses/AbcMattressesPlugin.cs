@@ -87,12 +87,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
                 new AbcMattressProductAttributeModel(
                     new ProductAttribute() { Name = AbcMattressesConsts.MattressSizeName },
                     new List<PredefinedProductAttributeValue>() {
-                        new PredefinedProductAttributeValue() { Name = "Twin" },
-                        new PredefinedProductAttributeValue() { Name = "Twin XL" },
-                        new PredefinedProductAttributeValue() { Name = "Full" },
-                        new PredefinedProductAttributeValue() { Name = "Queen" },
-                        new PredefinedProductAttributeValue() { Name = "King" },
-                        new PredefinedProductAttributeValue() { Name = "California King" },
+                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.Twin },
+                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.TwinXL },
+                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.Full },
+                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.Queen },
+                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.King },
+                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.CaliforniaKing },
                     }
                 ),
                 new AbcMattressProductAttributeModel(

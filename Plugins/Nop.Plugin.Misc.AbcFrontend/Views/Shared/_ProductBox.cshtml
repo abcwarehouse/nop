@@ -13,6 +13,7 @@
 @using Nop.Web.Extensions
 @using Nop.Web.Framework.Infrastructure
 @using Nop.Plugin.Misc.AbcCore.Infrastructure;
+@using Nop.Plugin.Misc.AbcMattresses.Services;
 
 @inject CatalogSettings catalogSettings
 @inject IWorkContext workContext
@@ -20,6 +21,7 @@
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
 @inject IProductService productService
+@inject IAbcMattressListingPriceService abcMattressListingPriceService
 
 @{
     var itemNumber = "";
@@ -74,7 +76,12 @@
     var customText = product.GetCustomAddToCartText();
 
     // Calculate listing price based on category
-    var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
+    var url = Context.Request.Path;
+    var listingPrice = abcMattressListingPriceService.GetListingPriceForMattressProduct(
+        Model.Id,
+        url
+    );
+    var priceStr = $"${listingPrice?.ToString("#.##").Replace(".00", "")}" ?? Model.ProductPrice.Price?.Replace(".00", "");
 }
 <style>
 	.picture.picture {
