@@ -18,7 +18,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
 
         public bool IsActive()
         {
-            return StartDate <= DateTime.Now && DateTime.Now <= EndDate;
+            return StartDate <= DateTime.Now && DateTime.Now <= EndDate.AddDays(1);
         }
 
         public bool IsUpcoming()
@@ -28,7 +28,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
 
         public bool IsExpired()
         {
-            return DateTime.Now > EndDate;
+            return DateTime.Now > EndDate.AddDays(1);
         }
 
         public string GetPdfPath()
