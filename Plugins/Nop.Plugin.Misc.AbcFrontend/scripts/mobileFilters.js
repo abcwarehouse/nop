@@ -1,5 +1,5 @@
-﻿var homePage = document.documentElement;
-var bodyPage = document.getElementsByTagName("body")[0];
+﻿var filterHomePage = document.documentElement;
+var filterBodyPage = document.getElementsByTagName("body")[0];
 
 function toggleMobileFilters() {
     const isMobileFiltersOpen = $(".nopAjaxFilters7Spikes.open").length === 1;
@@ -12,8 +12,8 @@ function toggleMobileFilters() {
 }
 
 function openMobileFilters() {
-    homePage.classList.add("scrollYRemove");
-    bodyPage.classList.add("scrollYRemove");
+    filterHomePage.classList.add("scrollYRemove");
+    filterBodyPage.classList.add("scrollYRemove");
     $(".nopAjaxFilters7Spikes").addClass("open");
 
     var overlayCanvas = document.getElementsByClassName("overlayOffCanvas")[0];
@@ -28,8 +28,8 @@ function openMobileFilters() {
 }
 
 function closeMobileFilters() {
-    homePage.classList.remove("scrollYRemove");
-    bodyPage.classList.remove("scrollYRemove");
+    filterHomePage.classList.remove("scrollYRemove");
+    filterBodyPage.classList.remove("scrollYRemove");
     $(".nopAjaxFilters7Spikes").removeClass("open");
 
     var overlayCanvas = document.getElementsByClassName("overlayOffCanvas")[0];

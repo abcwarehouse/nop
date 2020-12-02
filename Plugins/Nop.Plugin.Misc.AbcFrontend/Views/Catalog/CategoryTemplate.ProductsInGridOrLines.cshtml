@@ -44,7 +44,7 @@
     var category = Model.MetaTitle;
     bool isFloorcareAccessories = Model.Name == "Floorcare Accessories";
 
-    Html.AddScriptParts("~/Plugins/Misc.AbcFrontend/scripts/mobileFilters.js");
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/mobileFilters.js");
 
     /* Adding styles specific to categories */
     if (Model.Name == "Stearns & Foster")
