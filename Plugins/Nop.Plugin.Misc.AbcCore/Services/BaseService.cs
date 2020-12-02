@@ -195,7 +195,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                     Console.WriteLine("Executing the query '" + dbCommand.CommandText + "' failed.");
                     Console.WriteLine("The OdbcCommand returned the following message");
                     Console.WriteLine(ex.Message);
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -229,7 +229,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                     Console.WriteLine("The OdbcCommand returned the following message");
                     Console.WriteLine(ex.Message);
                     comm.Dispose();
-                    throw ex;
+                    throw;
                 }
                 comm.Dispose();
 
@@ -252,7 +252,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 Console.WriteLine("connection to the DSN '" + _connectionString + "' failed.");
                 Console.WriteLine("The OdbcConnection returned the following message");
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
 

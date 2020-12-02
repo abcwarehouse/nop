@@ -125,9 +125,9 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
                     response = _baseShippingComputation.GetShippingOptions(getShippingOptionRequest);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw ex;
+                    throw;
                 }
                 finally
                 {

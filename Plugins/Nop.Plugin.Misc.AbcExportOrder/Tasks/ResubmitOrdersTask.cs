@@ -51,7 +51,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tasks
                 catch (Exception e)
                 {
                     _logger.Error($"Failure when resubmitting order #{order.Id}", e);
-                    throw e;
+                    throw;
                 }
             }
         }

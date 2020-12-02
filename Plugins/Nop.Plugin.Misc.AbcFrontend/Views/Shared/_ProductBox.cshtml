@@ -81,7 +81,9 @@
         Model.Id,
         url
     );
-    var priceStr = $"${listingPrice?.ToString("#.##").Replace(".00", "")}" ?? Model.ProductPrice.Price?.Replace(".00", "");
+    var priceStr = listingPrice != null ?
+                    $"${listingPrice?.ToString("#.##").Replace(".00", "")}" :
+                    Model.ProductPrice.Price?.Replace(".00", "");
 }
 <style>
 	.picture.picture {

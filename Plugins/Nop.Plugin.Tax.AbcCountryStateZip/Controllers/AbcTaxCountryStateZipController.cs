@@ -190,22 +190,13 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
         [HttpPost]
         public ActionResult EnableState(string Id, bool status)
         {
-            try
-            {
-                var taxRate = _taxRateService.GetTaxRateById(Convert.ToInt32(Id));
-                if (taxRate != null)
-                { 
-                    taxRate.EnableTaxState = status;
-                    _taxRateService.UpdateTaxRate(taxRate);
-                } 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var taxRate = _taxRateService.GetTaxRateById(Convert.ToInt32(Id));
+            if (taxRate != null)
+            { 
+                taxRate.EnableTaxState = status;
+                _taxRateService.UpdateTaxRate(taxRate);
+            } 
             return Json(new { Result = true });
-
         }
-
     }
 }

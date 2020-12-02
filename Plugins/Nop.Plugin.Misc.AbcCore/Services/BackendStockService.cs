@@ -78,47 +78,41 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             {
                 OdbcCommand dbCommand = dbConnection.CreateCommand();
 
-                try
-                {
-                    dbConnection.Open();
-                    dbCommand.CommandText =
-                        "SELECT DISTINCT" +
-                            " St." + _backendStockBranch +
-                            ", St." + _backendStockQuantity +
-                        " FROM " + _backendStockTable + " St" +
-                        " LEFT JOIN " + _backendInvTable + " Inv ON St." + _backendStockItemNum + " = Inv." + _backendInvItemNum +
+                dbConnection.Open();
+                dbCommand.CommandText =
+                    "SELECT DISTINCT" +
+                        " St." + _backendStockBranch +
+                        ", St." + _backendStockQuantity +
+                    " FROM " + _backendStockTable + " St" +
+                    " LEFT JOIN " + _backendInvTable + " Inv ON St." + _backendStockItemNum + " = Inv." + _backendInvItemNum +
                         " WHERE" +
-                            " Inv." + _backendInvModel + " = '" + upc + "';";
-                    using (OdbcDataReader reader = dbCommand.ExecuteReader())
+                        " Inv." + _backendInvModel + " = '" + upc + "';";
+                using (OdbcDataReader reader = dbCommand.ExecuteReader())
+                {
+                    // read in the information
+                    while(reader.Read())
                     {
-                        // read in the information
-                        while(reader.Read())
+                        string backendBranchId = reader.GetString(0);
+                        var shopIdEnumerable = _shopAbcRepository.Table
+                            .Where(s => s.AbcId == backendBranchId)
+                            .Select(s => s.ShopId);
+                        if (shopIdEnumerable.Any() || backendBranchId.Trim().ToLower() == "abc")
                         {
-                            string backendBranchId = reader.GetString(0);
-                            var shopIdEnumerable = _shopAbcRepository.Table
-                                .Where(s => s.AbcId == backendBranchId)
-                                .Select(s => s.ShopId);
-                            if (shopIdEnumerable.Any() || backendBranchId.Trim().ToLower() == "abc")
-                            {
-                                int shopId = shopIdEnumerable.First();
-                                int backendStockQuantity = reader.GetInt32(1);
-                                branchQuantityDict.Add(shopId, backendStockQuantity);
-                            }
-                            else if (backendBranchId.Trim().ToLower() == "abc")
-                            {
-                                int backendStockQuantity = reader.GetInt32(1);
-                                branchQuantityDict.Add(WAREHOUSE_INT, backendStockQuantity);
-                            }
+                            int shopId = shopIdEnumerable.First();
+                            int backendStockQuantity = reader.GetInt32(1);
+                            branchQuantityDict.Add(shopId, backendStockQuantity);
+                        }
+                        else if (backendBranchId.Trim().ToLower() == "abc")
+                        {
+                            int backendStockQuantity = reader.GetInt32(1);
+                            branchQuantityDict.Add(WAREHOUSE_INT, backendStockQuantity);
                         }
                     }
-
-                    dbCommand.Dispose();
-                    dbConnection.Close();
-                    // return a list of stock + corresponding shop item
-                } catch (Exception e)
-                {
-                    throw e;
                 }
+
+                dbCommand.Dispose();
+                dbConnection.Close();
+                // return a list of stock + corresponding shop item
             }
             return branchQuantityDict;
         }
