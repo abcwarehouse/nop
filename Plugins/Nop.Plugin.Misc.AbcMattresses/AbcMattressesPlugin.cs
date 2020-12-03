@@ -1,5 +1,3 @@
-using Nop.Core.Domain;
-using Nop.Services.Configuration;
 using Nop.Services.Plugins;
 using Nop.Services.Common;
 using Nop.Services.Tasks;
@@ -8,8 +6,6 @@ using Nop.Core.Domain.Tasks;
 using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Linq;
-using Nop.Plugin.Misc.AbcMattresses.Models;
-using System.Collections.Generic;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -82,48 +78,16 @@ namespace Nop.Plugin.Misc.AbcMattresses
 
         private void AddProductAttributes()
         {
-            AbcMattressProductAttributeModel[] productAttributeModels =
+            ProductAttribute[] productAttributes =
             {
-                new AbcMattressProductAttributeModel(
-                    new ProductAttribute() { Name = AbcMattressesConsts.MattressSizeName },
-                    new List<PredefinedProductAttributeValue>() {
-                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.Twin },
-                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.TwinXL },
-                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.Full },
-                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.Queen },
-                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.King },
-                        new PredefinedProductAttributeValue() { Name = AbcMattressesConsts.CaliforniaKing },
-                    }
-                ),
-                new AbcMattressProductAttributeModel(
-                    new ProductAttribute() { Name = AbcMattressesConsts.BaseName },
-                    new List<PredefinedProductAttributeValue>() {
-                        new PredefinedProductAttributeValue() { Name = "Yes" },
-                        new PredefinedProductAttributeValue() { Name = "No" }
-                    }
-                ),
-                new AbcMattressProductAttributeModel(
-                    new ProductAttribute() { Name = AbcMattressesConsts.FreeGiftName },
-                    new List<PredefinedProductAttributeValue>() {
-                        new PredefinedProductAttributeValue() { Name = "2 Pillows" },
-                        new PredefinedProductAttributeValue() { Name = "None" }
-                    }
-                ),
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressSizeName },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseName },
+                new ProductAttribute() { Name = AbcMattressesConsts.FreeGiftName }
             };
 
-            foreach (var productAttributeModel in productAttributeModels)
+            foreach (var productAttribute in productAttributes)
             {
-                _productAttributeService.InsertProductAttribute(productAttributeModel.ProductAttribute);
-
-                foreach (var predefinedProductAttributeValue in productAttributeModel.PredefinedProductAttributeValues)
-                {
-                    predefinedProductAttributeValue.ProductAttributeId =
-                        productAttributeModel.ProductAttribute.Id;
-                        
-                    _productAttributeService.InsertPredefinedProductAttributeValue(
-                        predefinedProductAttributeValue
-                    );
-                }
+                _productAttributeService.InsertProductAttribute(productAttribute);
             }
         }
     }
