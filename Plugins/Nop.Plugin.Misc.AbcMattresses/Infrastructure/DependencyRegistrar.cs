@@ -3,6 +3,8 @@ using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Autofac;
 using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcMattresses.Factories;
+using Nop.Web.Factories;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Infrastructure
 {
@@ -19,6 +21,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Infrastructure
         {
             builder.RegisterType<AbcMattressListingPriceService>()
                    .As<IAbcMattressListingPriceService>()
+                   .InstancePerLifetimeScope();
+            builder.RegisterType<CustomProductModelFactory>()
+                   .As<IProductModelFactory>()
                    .InstancePerLifetimeScope();
         }
 
