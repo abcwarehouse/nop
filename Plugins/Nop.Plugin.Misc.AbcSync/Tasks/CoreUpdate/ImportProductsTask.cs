@@ -543,7 +543,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             }
             else if (product.IsAddToCartWithUserInfo())
             {
-                product.IsAddToCartWithUserInfo();
+                product.DisableAddToCartWithUserInfo();
             }
         }
 

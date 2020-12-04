@@ -13,6 +13,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Domain
         // these two can also be merged
         public string Foundation { get; set; }
         public string AdjustableBase { get; set; }
+        
         public int PackageItemNo { get; set; }
         public decimal PackagePrice { get; set; }
         public int MattressItemNo { get; set; }
