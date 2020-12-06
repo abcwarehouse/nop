@@ -6,6 +6,10 @@ using Nop.Core.Domain.Tasks;
 using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Linq;
+using Nop.Data;
+using System.IO;
+using Nop.Core.Infrastructure;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -18,13 +22,17 @@ namespace Nop.Plugin.Misc.AbcMattresses
         private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
 
+        private readonly INopDataProvider _nopDataProvider;
+
         public AbcMattressesPlugin(
             IProductAttributeService productAttributeService,
-            IScheduleTaskService scheduleTaskService
+            IScheduleTaskService scheduleTaskService,
+            INopDataProvider nopDataProvider
         )
         {
             _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
+            _nopDataProvider = nopDataProvider;
         }
 
         public override void Install()
@@ -34,6 +42,9 @@ namespace Nop.Plugin.Misc.AbcMattresses
 
             RemoveProductAttributes();
             AddProductAttributes();
+
+            var env = EngineContext.Current.Resolve<IWebHostEnvironment>();
+            _nopDataProvider.ExecuteNonQuery(File.ReadAllText($"{env.ContentRootPath}/Plugins/Misc.AbcMattresses/SeedData.sql"));
 
             base.Install();
         }
