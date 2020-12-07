@@ -16,7 +16,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Data
         public override void MapEntity(CreateTableExpressionBuilder table)
         {
             table
-            .WithColumn(nameof(AbcMattressModel.Model)).AsString().Unique()
+            .WithColumn(nameof(AbcMattressModel.Name)).AsString().Unique()
             .WithColumn(nameof(AbcMattressModel.ManufacturerId))
                 .AsInt32()
                 .Nullable()

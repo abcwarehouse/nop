@@ -16,6 +16,7 @@ namespace Nop.Plugin.Misc.AbcMattress.Mapping
         public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string>
         {
             { (typeof(AbcMattressModel), "Description"), "Model_Desc" },
+            { (typeof(AbcMattressModel), "Name"), "Model" },
         };
     }
 }

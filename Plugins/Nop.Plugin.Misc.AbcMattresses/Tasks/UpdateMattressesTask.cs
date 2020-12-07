@@ -43,46 +43,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             var product = _productService.GetProductBySku("mattress-product");
             if (product == null)
             {
-                product = CreateProduct();
+                //product = CreateProduct();
             }
             MergeProductCategories(product);
             MergeProductAttributes(product);
-        }
-
-        private Product CreateProduct()
-        {
-            var newProduct = new Product()
-            {
-                Name = "TEMPUR PEDIC ADAPT",
-                Sku = "mattress-product",
-                ShortDescription = GetShortDescription(),
-                FullDescription = GetFullDescription(),
-                AllowCustomerReviews = false,
-                Published = true,
-                CreatedOnUtc = DateTime.UtcNow,
-                VisibleIndividually = true,
-                ProductType = ProductType.SimpleProduct,
-                OrderMinimumQuantity = 1,
-                OrderMaximumQuantity = 10000
-            };
-            _productService.InsertProduct(newProduct);
-
-            var urlRecord = new UrlRecord()
-            {
-                EntityId = newProduct.Id,
-                EntityName = "Product",
-                Slug = "mattress-product",
-                IsActive = true,
-                LanguageId = 0
-            };
-            _urlRecordService.InsertUrlRecord(urlRecord);
-
-            // get image from an existing product
-            
-            newProduct.SetMiniDescription("Adapt Medium Hybrid Mattress");
-            newProduct.SetCustomAddToCartText("Build Package");
-
-            return newProduct;
         }
 
         private void MergeProductAttributes(Product product)
