@@ -43,9 +43,6 @@ namespace Nop.Plugin.Misc.AbcMattresses
             RemoveProductAttributes();
             AddProductAttributes();
 
-            var env = EngineContext.Current.Resolve<IWebHostEnvironment>();
-            _nopDataProvider.ExecuteNonQuery(File.ReadAllText($"{env.ContentRootPath}/Plugins/Misc.AbcMattresses/SeedData.sql"));
-
             base.Install();
         }
 

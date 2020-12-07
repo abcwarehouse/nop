@@ -16,11 +16,12 @@ namespace Nop.Plugin.Misc.AbcCore.Data
 
         public override void Up()
         {
-            _migrationManager.BuildTable<AbcMattress>(Create);
+            _migrationManager.BuildTable<AbcMattressModel>(Create);
             _migrationManager.BuildTable<AbcMattressEntry>(Create);
             _migrationManager.BuildTable<AbcMattressGift>(Create);
             _migrationManager.BuildTable<AbcMattressBase>(Create);
             _migrationManager.BuildTable<AbcMattressPackage>(Create);
+            _migrationManager.BuildTable<AbcMattressModelGiftMapping>(Create);
         }
     }
 }

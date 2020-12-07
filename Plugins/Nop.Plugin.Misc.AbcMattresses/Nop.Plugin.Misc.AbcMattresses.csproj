@@ -13,7 +13,6 @@
 	<ItemGroup>
 		<None Remove="plugin.json" />
 		<None Remove="logo.png" />
-		<None Remove="SeedData.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -21,9 +20,6 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="logo.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="SeedData.sql">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

@@ -1,6 +1,8 @@
 using FluentMigrator.Builders.Create.Table;
 using Nop.Data.Mapping.Builders;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
+using Nop.Data.Extensions;
+using System.Data;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Data
 {
@@ -13,11 +15,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Data
         public override void MapEntity(CreateTableExpressionBuilder table)
         {
             table
-            .WithColumn(nameof(AbcMattressEntry.Model)).AsString()
+            .WithColumn(nameof(AbcMattressEntry.AbcMattressModelId)).AsInt32().ForeignKey<AbcMattressModel>(onDelete: Rule.Cascade)
             .WithColumn(nameof(AbcMattressEntry.Size)).AsString()
-            .WithColumn(nameof(AbcMattressEntry.MattressItemNo)).AsInt32()
-            .WithColumn(nameof(AbcMattressEntry.MattressPrice)).AsDecimal()
-            .WithColumn(nameof(AbcMattressEntry.MattressType)).AsString();
+            .WithColumn(nameof(AbcMattressEntry.ItemNo)).AsInt32().Unique()
+            .WithColumn(nameof(AbcMattressEntry.Price)).AsDecimal()
+            .WithColumn(nameof(AbcMattressEntry.Type)).AsString();
         }
     }
 }

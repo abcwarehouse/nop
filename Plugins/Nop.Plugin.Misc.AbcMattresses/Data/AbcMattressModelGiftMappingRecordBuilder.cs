@@ -2,10 +2,11 @@ using FluentMigrator.Builders.Create.Table;
 using Nop.Data.Mapping.Builders;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
 using Nop.Data.Extensions;
+using System.Data;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Data
 {
-    public class AbcMattressGiftRecordBuilder : NopEntityBuilder<AbcMattressGift>
+    public class AbcMattressModelGiftMappingRecordBuilder : NopEntityBuilder<AbcMattressBase>
     {
         /// <summary>
         /// Apply entity configuration
@@ -14,9 +15,12 @@ namespace Nop.Plugin.Misc.AbcMattresses.Data
         public override void MapEntity(CreateTableExpressionBuilder table)
         {
             table
-            .WithColumn(nameof(AbcMattressGift.ItemNo)).AsInt32().Unique()
-            .WithColumn(nameof(AbcMattressGift.Description)).AsString()
-            .WithColumn(nameof(AbcMattressGift.Amount)).AsDecimal();
+            .WithColumn(nameof(AbcMattressModelGiftMapping.AbcMattressModelId))
+                .AsInt32()
+                .ForeignKey<AbcMattressModel>(onDelete: Rule.Cascade)
+            .WithColumn(nameof(AbcMattressModelGiftMapping.AbcMattressGiftId))
+                .AsInt32()
+                .ForeignKey<AbcMattressGift>(onDelete: Rule.Cascade);
         }
     }
 }

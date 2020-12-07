@@ -13,10 +13,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Data
         public override void MapEntity(CreateTableExpressionBuilder table)
         {
             table
-            .WithColumn(nameof(AbcMattressBase.ItemNo)).AsInt32().PrimaryKey()
+            .WithColumn(nameof(AbcMattressBase.ItemNo)).AsInt32().Unique()
             .WithColumn(nameof(AbcMattressBase.Name)).AsString()            
             .WithColumn(nameof(AbcMattressBase.Price)).AsDecimal()
-            .WithColumn(nameof(AbcMattressBase.IsAdjustable)).AsDecimal();
+            .WithColumn(nameof(AbcMattressBase.IsAdjustable)).AsBoolean();
         }
     }
 }
