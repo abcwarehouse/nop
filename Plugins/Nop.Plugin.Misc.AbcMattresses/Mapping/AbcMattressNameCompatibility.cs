@@ -17,6 +17,7 @@ namespace Nop.Plugin.Misc.AbcMattress.Mapping
         {
             { (typeof(AbcMattressModel), "Description"), "Model_Desc" },
             { (typeof(AbcMattressModel), "Name"), "Model" },
+            { (typeof(AbcMattressGift), nameof(AbcMattressGift.Quantity)), "Qty" }
         };
     }
 }

@@ -4,9 +4,8 @@ using Nop.Plugin.Misc.AbcMattresses.Domain;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
-    public interface IAbcMattressService
+    public interface IAbcMattressProductService
     {
-        IList<AbcMattressModel> GetAllAbcMattressModels();
-        void UpdateAbcMattressModel(AbcMattressModel model);
+        Product UpsertAbcMattressProduct(AbcMattressModel model);
     }
 }

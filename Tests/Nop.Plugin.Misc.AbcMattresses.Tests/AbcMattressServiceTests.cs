@@ -20,22 +20,35 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
         private Mock<IRepository<AbcMattressModel>> _abcMattressModelRepository;
 
-        private Mock<IProductService> _productService;
-        private Mock<IUrlRecordService> _urlRecordService;
+        private AbcMattressModel _abcMattressModelNoProduct = new AbcMattressModel()
+        {
+            Name = "Alverson",
+            Description = "Alverson is good good",
+            ManufacturerId = 1,
+            Comfort = "Firm"
+        };
+        private AbcMattressModel _abcMattressModelWithProduct = new AbcMattressModel()
+        {
+            Name = "Carrollton",
+            Description = "Carrollton is good good",
+            ManufacturerId = 2,
+            Comfort = "Firm",
+            ProductId = 1
+        };
 
         [SetUp]
         public void Setup()
         {
             _abcMattressModelRepository = new Mock<IRepository<AbcMattressModel>>();
-            _abcMattressModelRepository.Setup(p => p.Table).Returns(GetMockAbcMattressModels);
-
-            _productService = new Mock<IProductService>();
-            _urlRecordService = new Mock<IUrlRecordService>();
+            _abcMattressModelRepository.Setup(p => p.Table).Returns(
+                new List<AbcMattressModel>
+                {
+                    _abcMattressModelNoProduct,
+                    _abcMattressModelWithProduct,
+                }.AsQueryable());
 
             _abcMattressService = new AbcMattressService(
-                _abcMattressModelRepository.Object,
-                _productService.Object,
-                _urlRecordService.Object
+                _abcMattressModelRepository.Object
             );
         }
 
@@ -48,52 +61,13 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         }
 
         [Test]
-        public void Creates_AbcMattressModel_Product()
+        public void Updates()
         {
-            var abcMattressModel = new AbcMattressModel()
-            {
-                Name = "Alverson",
-                Description = "Alverson is good good",
-                ManufacturerId = 1,
-                Comfort = "Firm"
-            };
-            var product = _abcMattressService.CreateAbcMattressProduct(abcMattressModel);
+            var newModel = _abcMattressModelNoProduct;
+            newModel.ProductId = 1;
+            _abcMattressService.UpdateAbcMattressModel(_abcMattressModelNoProduct);
 
-            product.Name.Should().Be(abcMattressModel.Description);
-            product.Sku.Should().Be(abcMattressModel.Name);
-            product.AllowCustomerReviews.Should().BeFalse();
-            product.VisibleIndividually.Should().BeTrue();
-            product.CreatedOnUtc.Should().BeCloseTo(DateTime.UtcNow);
-            product.ProductType.Should().Be(ProductType.SimpleProduct);
-            product.OrderMinimumQuantity.Should().Be(1);
-            product.OrderMaximumQuantity.Should().Be(10000);
-            product.Published.Should().BeTrue();
-
-            _productService.Verify(x => x.InsertProduct(product), Times.Once);
-            _urlRecordService.Verify(x => x.InsertUrlRecord(It.IsAny<UrlRecord>()), Times.Once);
-        }
-
-        private IQueryable<AbcMattressModel> GetMockAbcMattressModels()
-        {
-            return new List<AbcMattressModel>
-            {
-                new AbcMattressModel()
-                {
-                    Name = "Alverson",
-                    Description = "Alverson is good",
-                    ManufacturerId = 1,
-                    Comfort = "Firm",
-                    ProductId = null
-                },
-                new AbcMattressModel()
-                {
-                    Name = "Carrollton",
-                    Description = "Carrollton is bad",
-                    ManufacturerId = 1,
-                    Comfort = "Firm",
-                    ProductId = 1
-                },
-            }.AsQueryable();
+            _abcMattressModelRepository.Verify(x => x.Update(newModel), Times.Once);
         }
     }
 }
