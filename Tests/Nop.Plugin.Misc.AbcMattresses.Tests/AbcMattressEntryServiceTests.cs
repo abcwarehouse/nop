@@ -25,16 +25,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             AbcMattressModelId = 1,
             Size = "Twin",
             ItemNo = 12345,
-            Price = 247.00M,
-            Type = "Inner Spring"
+            Price = 247.00M
         };
         private AbcMattressEntry _abcMattressEntry2 = new AbcMattressEntry()
         {
             AbcMattressModelId = 2,
             Size = "Twin",
             ItemNo = 12345,
-            Price = 247.00M,
-            Type = "Inner Spring"
+            Price = 247.00M
         };
 
         [SetUp]
