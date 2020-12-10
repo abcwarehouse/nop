@@ -18,8 +18,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Data
             .WithColumn(nameof(AbcMattressEntry.AbcMattressModelId)).AsInt32().ForeignKey<AbcMattressModel>(onDelete: Rule.Cascade)
             .WithColumn(nameof(AbcMattressEntry.Size)).AsString()
             .WithColumn(nameof(AbcMattressEntry.ItemNo)).AsInt32().Unique()
-            .WithColumn(nameof(AbcMattressEntry.Price)).AsDecimal()
-            .WithColumn(nameof(AbcMattressEntry.Type)).AsString();
+            .WithColumn(nameof(AbcMattressEntry.Price)).AsDecimal();
         }
     }
 }

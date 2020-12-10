@@ -9,7 +9,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Domain
         public string Size { get; set; }
         public int ItemNo { get; set; }
         public decimal Price { get; set; }
-        public string Type { get; set; }
 
         public ProductAttributeValue ToProductAttributeValue(int productAttributeMappingId)
         {

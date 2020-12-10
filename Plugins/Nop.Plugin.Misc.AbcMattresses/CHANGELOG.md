@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Added TypeCategoryId and BrandCategoryId to AbcMattressModel
+
 ## 0.1.1
 
 * Added Quantity column to AbcMattressGift
