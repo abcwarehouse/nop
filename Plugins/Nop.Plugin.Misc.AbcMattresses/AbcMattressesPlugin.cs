@@ -35,23 +35,6 @@ namespace Nop.Plugin.Misc.AbcMattresses
             _nopDataProvider = nopDataProvider;
         }
 
-        public override void Update(string currentVersion, string targetVersion)
-        {
-            // Remove unneeded DB columns
-            _nopDataProvider.ExecuteNonQuery(@"
-                IF EXISTS (SELECT 1
-                            FROM   INFORMATION_SCHEMA.COLUMNS
-                            WHERE  TABLE_NAME = 'AbcMattressEntry'
-                                    AND COLUMN_NAME = 'Type')
-                    BEGIN
-                        ALTER TABLE AbcMattressEntry
-                        DROP COLUMN Type
-                    END
-                GO
-            ");
-
-            base.Update(currentVersion, targetVersion);
-        }
         public override void Install()
         {
             RemoveTasks();
