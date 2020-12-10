@@ -22,6 +22,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressPackageRepository = abcMattressPackageRepository;
         }
 
+        public IList<AbcMattressPackage> GetAbcMattressPackagesByEntryIds(IEnumerable<int> entryIds)
+        {
+            return _abcMattressPackageRepository.Table.Where(amp => entryIds.Contains(amp.AbcMattressEntryId)).ToList();
+        }
+
         public IList<AbcMattressPackage> GetAllAbcMattressPackages()
         {
             return _abcMattressPackageRepository.Table.ToList();

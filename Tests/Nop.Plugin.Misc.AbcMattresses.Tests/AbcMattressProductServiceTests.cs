@@ -83,7 +83,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
             _abcMattressProductService = new AbcMattressProductService(
                 _abcMattressService.Object,
+                new Mock<IAbcMattressBaseService>().Object,
                 _abcMattressEntryService.Object,
+                new Mock<IAbcMattressGiftService>().Object,
                 _categoryService.Object,
                 new Mock<IManufacturerService>().Object,
                 _productService.Object,
