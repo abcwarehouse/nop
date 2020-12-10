@@ -85,7 +85,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 _abcMattressService.Object,
                 _abcMattressEntryService.Object,
                 _categoryService.Object,
+                new Mock<IManufacturerService>().Object,
                 _productService.Object,
+                new Mock<IProductAttributeService>().Object,
                 _urlRecordService.Object
             );
         }

@@ -7,5 +7,6 @@ namespace Nop.Plugin.Misc.AbcCore.Services
     public interface IProductAbcDescriptionService
     {
         ProductAbcDescription GetProductAbcDescriptionByProductId(int productId);
+        ProductAbcDescription GetProductAbcDescriptionByAbcItemNumber(string abcitemNumber);
     }
 }

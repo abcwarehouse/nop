@@ -31,6 +31,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Infrastructure
             builder.RegisterType<AbcMattressEntryService>()
                    .As<IAbcMattressEntryService>()
                    .InstancePerLifetimeScope();
+            builder.RegisterType<AbcMattressPackageService>()
+                   .As<IAbcMattressPackageService>()
+                   .InstancePerLifetimeScope();
             builder.RegisterType<CustomProductModelFactory>()
                    .As<IProductModelFactory>()
                    .InstancePerLifetimeScope();

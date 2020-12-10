@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using Nop.Core.Domain.Catalog;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Domain;
-using Nop.Services.Catalog;
 
 namespace Nop.Plugin.Misc.AbcCore.Services
 {
@@ -23,6 +19,13 @@ namespace Nop.Plugin.Misc.AbcCore.Services
         {
             return _productAbcDescriptionRepository.Table
                                                    .Where(pad => pad.Product_Id == productId)
+                                                   .FirstOrDefault();
+        }
+
+        public ProductAbcDescription GetProductAbcDescriptionByAbcItemNumber(string abcitemNumber)
+        {
+            return _productAbcDescriptionRepository.Table
+                                                   .Where(pad => pad.AbcItemNumber == abcitemNumber)
                                                    .FirstOrDefault();
         }
     }

@@ -28,5 +28,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 .Where(ame => ame.AbcMattressModelId == modelId)
                 .ToList();
         }
+
+        public IList<AbcMattressEntry> GetAllAbcMattressEntries()
+        {
+            return _abcMattressEntryRepository.Table.ToList();
+        }
     }
 }

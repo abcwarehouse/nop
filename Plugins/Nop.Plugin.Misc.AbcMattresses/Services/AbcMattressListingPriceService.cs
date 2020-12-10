@@ -1,5 +1,6 @@
 using Nop.Services.Catalog;
 using System.Linq;
+using System;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
@@ -43,7 +44,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 .FirstOrDefault();
             }
 
-            return value?.PriceAdjustment;
+            return value == null ? (decimal?)null :
+                                    Math.Round(value.PriceAdjustment, 2);
         }
 
         // default to queen if nothing matches

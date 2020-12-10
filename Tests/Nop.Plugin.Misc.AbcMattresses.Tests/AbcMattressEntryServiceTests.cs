@@ -63,5 +63,13 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
             abcMattressModels.Should().HaveCount(count);
         }
+
+        [Test]
+        public void Gets_All()
+        {
+            var abcMattressModels = _abcMattressEntryService.GetAllAbcMattressEntries();
+
+            abcMattressModels.Should().HaveCount(2);
+        }
     }
 }
