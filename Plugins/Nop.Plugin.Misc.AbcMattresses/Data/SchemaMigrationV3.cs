@@ -9,7 +9,7 @@ using Nop.Core.Domain.Catalog;
 
 namespace Nop.Plugin.Misc.AbcCore.Data
 {
-    [NopMigration("2020/12/08 08:49:55:1687541", "Misc.AbcMattresses - moved TypeCategoryId, added BrandCategoryId")]
+    [NopMigration("2020/12/10 14:51:55:1687541", "Misc.AbcMattresses - moved TypeCategoryId, added BrandCategoryId")]
     public class SchemaMigrationV3 : AutoReversingMigration
     {
         protected IMigrationManager _migrationManager;
