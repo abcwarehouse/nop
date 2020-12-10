@@ -59,7 +59,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                                         {
                                             AbcMattressModelId = 1,
                                             Size = "Twin",
-                                            ItemNo = 12345,
+                                            ItemNo = "12345",
                                             Price = 247.00M
                                         }
                                     });
