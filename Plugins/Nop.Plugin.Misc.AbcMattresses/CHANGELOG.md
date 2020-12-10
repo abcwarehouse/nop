@@ -1,3 +1,7 @@
+## 0.1.3
+
+* Changes all ItemNos to string
+
 ## 0.1.2
 
 * Added TypeCategoryId and BrandCategoryId to AbcMattressModel

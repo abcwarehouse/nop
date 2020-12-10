@@ -14,7 +14,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Data
         public override void MapEntity(CreateTableExpressionBuilder table)
         {
             table
-            .WithColumn(nameof(AbcMattressGift.ItemNo)).AsInt32().Unique()
+            .WithColumn(nameof(AbcMattressGift.ItemNo)).AsInt32()
             .WithColumn(nameof(AbcMattressGift.Description)).AsString()
             .WithColumn(nameof(AbcMattressGift.Amount)).AsDecimal();
         }
