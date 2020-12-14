@@ -21,6 +21,8 @@
         }
     }
 }
+
+
 @*--------------------------END CUSTOM CODE----------------------------*@
 
 @if (Model.Count > 0)
@@ -31,7 +33,10 @@
             {
                 var controlId = $"{NopCatalogDefaults.ProductAttributePrefix}{attribute.Id}";
                 var textPrompt = !string.IsNullOrEmpty(attribute.TextPrompt) ? attribute.TextPrompt : attribute.Name;
-                <dt id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")">
+                // custom: hide base items
+                var isHidden = attribute.TextPrompt == "Base" ? "display:none" : "";
+                
+                <dt id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" style="@($"{isHidden}")">
                     <label class="text-prompt">
                         @textPrompt
                     </label>
@@ -46,7 +51,7 @@
                         </div>
                     }
                 </dt>
-                <dd id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")">
+                <dd id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" style="@($"{isHidden}")">
                     @switch (attribute.AttributeControlType)
                     {
                         case AttributeControlType.DropdownList:

@@ -7,9 +7,6 @@ using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Linq;
 using Nop.Data;
-using System.IO;
-using Nop.Core.Infrastructure;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -78,8 +75,9 @@ namespace Nop.Plugin.Misc.AbcMattresses
         {
             var productAttributes = _productAttributeService.GetAllProductAttributes()
                                                             .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName ||
-                                                                         pa.Name == AbcMattressesConsts.BaseName ||
-                                                                         pa.Name == AbcMattressesConsts.FreeGiftName).ToList();
+                                                                         AbcMattressesConsts.IsBase(pa.Name) ||
+                                                                         pa.Name == AbcMattressesConsts.FreeGiftName)
+                                                            .ToList();
 
             _productAttributeService.DeleteProductAttributes(productAttributes);
         }
@@ -89,7 +87,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
             ProductAttribute[] productAttributes =
             {
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressSizeName },
-                new ProductAttribute() { Name = AbcMattressesConsts.BaseName },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameTwin },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameTwinXL },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameFull },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameQueen },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameCaliforniaKing },
                 new ProductAttribute() { Name = AbcMattressesConsts.FreeGiftName }
             };
 

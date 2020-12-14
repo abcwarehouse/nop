@@ -7,5 +7,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
     public interface IAbcMattressBaseService
     {
         IList<AbcMattressBase> GetAbcMattressBasesByModelId(int modelId);
+        IList<AbcMattressBase> GetAbcMattressBasesByEntryId(int entryId);
     }
 }
