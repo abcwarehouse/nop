@@ -1,3 +1,7 @@
+## 0.1.4
+
+* Added Base quantity to packages.
+
 ## 0.1.3
 
 * Changes all ItemNos to string
