@@ -89,6 +89,7 @@
     <None Remove="Images\search-button.png" />
     <None Remove="scripts\mobileMenu.js" />
     <None Remove="scripts\mobileFilters.js" />
+    <None Remove="scripts\changeMattressSize.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -315,6 +316,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="scripts\mobileFilters.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scripts\changeMattressSize.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
