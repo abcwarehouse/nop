@@ -42,7 +42,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
             foreach (var model in models)
             {
-                _abcMattressProductService.UpsertAbcMattressProduct(model);
+                var product = _abcMattressProductService.UpsertAbcMattressProduct(model);
+                _abcMattressProductService.SetManufacturer(model, product);
+                _abcMattressProductService.SetCategories(model, product);
+                _abcMattressProductService.SetProductAttributes(model, product);
             }
 
             ClearOldMattressProducts();

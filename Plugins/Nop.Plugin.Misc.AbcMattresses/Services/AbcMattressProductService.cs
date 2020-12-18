@@ -48,18 +48,42 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         public Product UpsertAbcMattressProduct(AbcMattressModel abcMattressModel)
         {
-            Product product = (abcMattressModel.ProductId == null) ?
-                CreateAbcMattressProduct(abcMattressModel) :
-                _productService.GetProductById(abcMattressModel.ProductId.Value);
+            var hasExistingProduct = abcMattressModel.ProductId != null;
+            Product product = (hasExistingProduct) ?
+                _productService.GetProductById(abcMattressModel.ProductId.Value) :
+                new Product();
 
-            SetManufacturer(abcMattressModel, product);
-            SetCategories(abcMattressModel, product);
-            SetProductAttributes(abcMattressModel, product);
+            product.Name = GetProductName(abcMattressModel);
+            product.Sku = abcMattressModel.Name;
+            product.AllowCustomerReviews = false;
+            product.Published = true;
+            product.CreatedOnUtc = DateTime.UtcNow;
+            product.VisibleIndividually = true;
+            product.ProductType = ProductType.SimpleProduct;
+            product.OrderMinimumQuantity = 1;
+            product.OrderMaximumQuantity = 10000;
+
+            if (hasExistingProduct)
+            {
+                _productService.UpdateProduct(product);
+            }
+            else
+            {
+                _productService.InsertProduct(product);
+            }
+
+            _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(product, string.Empty, product.Name, false), 0);
+
+            if (!hasExistingProduct)
+            {
+                abcMattressModel.ProductId = product.Id;
+                _abcMattressService.UpdateAbcMattressModel(abcMattressModel);
+            }
 
             return product;
         }
 
-        private void SetProductAttributes(AbcMattressModel model, Product product)
+        public void SetProductAttributes(AbcMattressModel model, Product product)
         {
             var nonBaseProductAttributes = _productAttributeService.GetAllProductAttributes()
                                                             .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName ||
@@ -84,6 +108,67 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 MergeBases(model, pa, product);
             }
+        }
+
+        public void SetManufacturer(AbcMattressModel abcMattressModel, Product product)
+        {
+            var existingProductManufacturers = _manufacturerService.GetProductManufacturersByProductId(product.Id);
+            var newProductManufacturer = new ProductManufacturer()
+            {
+                ProductId = product.Id,
+                ManufacturerId = abcMattressModel.ManufacturerId.Value
+            };
+        
+            var toBeDeleted = existingProductManufacturers
+                .Where(e => e.ProductId != newProductManufacturer.ProductId &&
+                            e.ManufacturerId != newProductManufacturer.ProductId);
+            toBeDeleted.ToList().ForEach(e => _manufacturerService.DeleteProductManufacturer(e));
+
+            if (!existingProductManufacturers.Any() ||
+                 toBeDeleted.Any())
+            {
+                _manufacturerService.InsertProductManufacturer(newProductManufacturer);
+            }
+        }
+
+        public void SetCategories(AbcMattressModel model, Product product)
+        {
+            var existingProductCategories = _categoryService.GetProductCategoriesByProductId(product.Id);
+            var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
+            var newProductCategories = entries.Select(e => AbcMattressEntryToProductCategory(e)).ToList();
+            
+            // comfort
+            var comfortCategory = _categoryService.GetAllCategories()
+                                             .Where(c => c.Name.ToLower().Equals(ConvertComfortToCategoryName(model.Comfort)))
+                                             .FirstOrDefault();
+            if (comfortCategory != null)
+            {
+                newProductCategories.Add(new ProductCategory()
+                {
+                    ProductId = product.Id,
+                    CategoryId = comfortCategory.Id
+                });
+            }
+            
+        
+            var toBeDeleted = existingProductCategories
+                .Where(e => !newProductCategories.Any(n => n.ProductId == e.ProductId &&
+                                                           n.CategoryId == e.CategoryId));
+            var toBeInserted = newProductCategories
+                .Where(n => !existingProductCategories.Any(e => n.ProductId == e.ProductId &&
+                                                           n.CategoryId == e.CategoryId));
+
+            toBeInserted.ToList().ForEach(n => _categoryService.InsertProductCategory(n));
+            toBeDeleted.ToList().ForEach(e => _categoryService.DeleteProductCategory(e));
+        }
+
+        private string GetProductName(AbcMattressModel model)
+        {
+            var modelName = model.Description ?? model.Name;
+
+            var brand = _manufacturerService.GetManufacturerById(model.ManufacturerId.Value);
+
+            return $"{brand.Name} {modelName}";
         }
 
         private void MergeGifts(AbcMattressModel model, ProductAttribute pa, Product product)
@@ -225,58 +310,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
         }
 
-        private void SetManufacturer(AbcMattressModel abcMattressModel, Product product)
-        {
-            var existingProductManufacturers = _manufacturerService.GetProductManufacturersByProductId(product.Id);
-            var newProductManufacturer = new ProductManufacturer()
-            {
-                ProductId = product.Id,
-                ManufacturerId = abcMattressModel.ManufacturerId.Value
-            };
-        
-            var toBeDeleted = existingProductManufacturers
-                .Where(e => e.ProductId != newProductManufacturer.ProductId &&
-                            e.ManufacturerId != newProductManufacturer.ProductId);
-            toBeDeleted.ToList().ForEach(e => _manufacturerService.DeleteProductManufacturer(e));
-
-            if (!existingProductManufacturers.Any() ||
-                 toBeDeleted.Any())
-            {
-                _manufacturerService.InsertProductManufacturer(newProductManufacturer);
-            }
-        }
-
-        private void SetCategories(AbcMattressModel model, Product product)
-        {
-            var existingProductCategories = _categoryService.GetProductCategoriesByProductId(product.Id);
-            var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
-            var newProductCategories = entries.Select(e => AbcMattressEntryToProductCategory(e)).ToList();
-            
-            // comfort
-            var comfortCategory = _categoryService.GetAllCategories()
-                                             .Where(c => c.Name.ToLower().Equals(ConvertComfortToCategoryName(model.Comfort)))
-                                             .FirstOrDefault();
-            if (comfortCategory != null)
-            {
-                newProductCategories.Add(new ProductCategory()
-                {
-                    ProductId = product.Id,
-                    CategoryId = comfortCategory.Id
-                });
-            }
-            
-        
-            var toBeDeleted = existingProductCategories
-                .Where(e => !newProductCategories.Any(n => n.ProductId == e.ProductId &&
-                                                           n.CategoryId == e.CategoryId));
-            var toBeInserted = newProductCategories
-                .Where(n => !existingProductCategories.Any(e => n.ProductId == e.ProductId &&
-                                                           n.CategoryId == e.CategoryId));
-
-            toBeInserted.ToList().ForEach(n => _categoryService.InsertProductCategory(n));
-            toBeDeleted.ToList().ForEach(e => _categoryService.DeleteProductCategory(e));
-        }
-
         private string ConvertComfortToCategoryName(string comfort)
         {
             return comfort.Replace("-", "").ToLower();
@@ -313,39 +346,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             }
 
             return loweredSize;
-        }
-
-        private Product CreateAbcMattressProduct(AbcMattressModel abcMattressModel)
-        {
-            var newProduct = new Product()
-            {
-                Name = abcMattressModel.Description ?? abcMattressModel.Name,
-                Sku = abcMattressModel.Name,
-                AllowCustomerReviews = false,
-                Published = true,
-                CreatedOnUtc = DateTime.UtcNow,
-                VisibleIndividually = true,
-                ProductType = ProductType.SimpleProduct,
-                OrderMinimumQuantity = 1,
-                OrderMaximumQuantity = 10000,
-                FullDescription = "<div></div>"
-            };
-            _productService.InsertProduct(newProduct);
-
-            var urlRecord = new UrlRecord()
-            {
-                EntityId = newProduct.Id,
-                EntityName = "Product",
-                Slug = newProduct.Sku,
-                IsActive = true,
-                LanguageId = 0
-            };
-            _urlRecordService.InsertUrlRecord(urlRecord);
-
-            abcMattressModel.ProductId = newProduct.Id;
-            _abcMattressService.UpdateAbcMattressModel(abcMattressModel);
-
-            return newProduct;
         }
     }
 }
