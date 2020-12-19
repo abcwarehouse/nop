@@ -1,11 +1,11 @@
 using Nop.Core.Domain.Orders;
-using System;
 using Nop.Plugin.Misc.AbcExportOrder.Models;
 using System.Collections.Generic;
 using Nop.Services.Common;
 using Nop.Services.Orders;
 using System.Linq;
 using Nop.Services.Directory;
+using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -33,6 +33,11 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _settings = settings;
         }
 
+        public IList<YahooHeaderRow> GetYahooHeaderRows(Order order)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public IList<YahooShipToRow> GetYahooShipToRows(
             Order order
         )
@@ -42,8 +47,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var orderItems = _orderService.GetOrderItems(order.Id);
             if (!orderItems.Any()) { return result; }
             
-            var pickupItems = orderItems.Where(oi => oi.AttributeDescription != null &&
-                                                     oi.AttributeDescription.Contains("Pickup: "));
+            var pickupItems = orderItems.Where(oi => oi.IsPickup());
             var shippingItems = orderItems.Except(pickupItems);
 
             if (pickupItems.Any())

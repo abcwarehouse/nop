@@ -7,5 +7,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     public interface IYahooService
     {
         IList<YahooShipToRow> GetYahooShipToRows(Order order);
+        IList<YahooHeaderRow> GetYahooHeaderRows(Order order);
     }
 }

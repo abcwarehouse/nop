@@ -24,6 +24,12 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
                     .FirstOrDefault();
         }
 
+        public static bool IsPickup(this OrderItem oi)
+        {
+            return oi.AttributeDescription != null &&
+                   oi.AttributeDescription.Contains("Pickup: ");
+        }
+
         private static bool IsWarranty(ProductAttribute productAttribute)
         {
             return productAttribute.Name == "Warranty";
