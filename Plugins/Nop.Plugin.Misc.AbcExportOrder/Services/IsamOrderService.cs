@@ -66,6 +66,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IRepository<Product> _productRepository;
         private readonly ICustomShopService _customShopService;
         private readonly IIsamGiftCardService _isamGiftCardService;
+        private readonly IYahooService _yahooService;
 
         public IsamOrderService(
             ISettingService settingService, 
@@ -93,7 +94,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IProductAttributeService productAttributeService,
             IRepository<Product> productRepository,
             ICustomShopService customShopService,
-            IIsamGiftCardService isamGiftCardService
+            IIsamGiftCardService isamGiftCardService,
+            IYahooService yahooService
         )
         {
             _settingService = settingService;
@@ -122,6 +124,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _productRepository = productRepository;
             _customShopService = customShopService;
             _isamGiftCardService = isamGiftCardService;
+            _yahooService = yahooService;
 
             InitializeAllColParams();
         }
@@ -243,6 +246,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         /// <param name="order"></param>
         public void InsertOrder(Order order)
         {
+            // add the newly created YahooShipTo rows
+            var shipToRows = _yahooService.GetYahooShipToRows(order);
+            foreach (var row in shipToRows)
+            {
+                InsertUsingService(
+                    SHIPTO_TABLE_NAME,
+                    _shiptoCols,
+                    _shiptoParams,
+                    row.ToStringValues()
+                );
+            }
             
             List<OrderItem> orderItemList = _orderService.GetOrderItems(order.Id).ToList();
             List<OrderItem> pickupOrderItems = new List<OrderItem>();
@@ -339,10 +353,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
                 ++itemLine;
             }
-
-            // setup for shipto
-            values = GetYahooShiptoRowValues(order, orderTypeFlag);
-            InsertUsingService(SHIPTO_TABLE_NAME, _shiptoCols, _shiptoParams, values);
 
             // execute all inserts in a batch
             _baseIsamService.ExecuteBatch();
@@ -642,31 +652,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             if (shopAbc == null) return "";
 
             return shopAbc.AbcId.ToString();
-        }
-
-        private List<string> GetYahooShiptoRowValues(Order order, char orderTypeFlag)
-        {
-            List<string> values = new List<string>();
-            values.Add(GenerateAbcOrderId(order.Id, orderTypeFlag));
-            var shippingAddress = _addressService.GetAddressById(order.ShippingAddressId.Value);
-            if (orderTypeFlag == PICKUP_IN_STORE_FLAG || shippingAddress == null)
-            {
-                // 3 missing values => id, shipping, comments
-                for (int i = 0; i < _shiptoParams.Count - 3; ++i)
-                {
-                    values.Add("");
-                }
-            }
-            else
-            {
-                values.AddRange(GetAddressValues(shippingAddress));
-            }
-            // SHIPPING
-            values.Add("");
-            // COMMENTS
-            values.Add("");
-
-            return values;
         }
 
         // Takes an address, returns the string values (as required by ODBC)

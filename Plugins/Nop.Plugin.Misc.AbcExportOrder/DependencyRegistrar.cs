@@ -17,6 +17,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder
             builder.RegisterType<CustomShoppingCartService>().As<IShoppingCartService>().InstancePerLifetimeScope();
             builder.RegisterType<IsamOrderService>().As<IIsamOrderService>().InstancePerLifetimeScope();
             builder.RegisterType<CustomOrderService>().As<ICustomOrderService>().InstancePerLifetimeScope();
+            builder.RegisterType<YahooService>().As<IYahooService>().InstancePerLifetimeScope();
         }
     }
 }
