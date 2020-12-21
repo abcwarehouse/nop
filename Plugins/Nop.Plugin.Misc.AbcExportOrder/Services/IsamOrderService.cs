@@ -328,35 +328,35 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             int itemLine = 1;
             foreach (OrderItem item in orderItemList)
             {
-                var warranty = item.GetWarranty();
-                if (warranty != null)
-                {
-                    // adjust price for item
-                    item.UnitPriceExclTax -= warranty.PriceAdjustment;
-                }
+                // var warranty = item.GetWarranty();
+                // if (warranty != null)
+                // {
+                //     // adjust price for item
+                //     item.UnitPriceExclTax -= warranty.PriceAdjustment;
+                // }
 
-                var values = GetYahooDetailRowValues(order, item, itemLine, orderTypeFlag);
-                InsertUsingService(DETAIL_TABLE_NAME, _detailCols, _detailParams, values);
+                // var values = GetYahooDetailRowValues(order, item, itemLine, orderTypeFlag);
+                // InsertUsingService(DETAIL_TABLE_NAME, _detailCols, _detailParams, values);
 
-                if (warranty != null)
-                {
-                    ++itemLine;
-                    var warrantyValues = GetYahooDetailRowValuesForWarranty(
-                        order,
-                        item,
-                        itemLine,
-                        orderTypeFlag,
-                        warranty
-                    );
-                    InsertUsingService(
-                        DETAIL_TABLE_NAME,
-                        _detailCols,
-                        _detailParams,
-                        warrantyValues
-                    );
-                }
+                // if (warranty != null)
+                // {
+                //     ++itemLine;
+                //     var warrantyValues = GetYahooDetailRowValuesForWarranty(
+                //         order,
+                //         item,
+                //         itemLine,
+                //         orderTypeFlag,
+                //         warranty
+                //     );
+                //     InsertUsingService(
+                //         DETAIL_TABLE_NAME,
+                //         _detailCols,
+                //         _detailParams,
+                //         warrantyValues
+                //     );
+                // }
 
-                ++itemLine;
+                // ++itemLine;
             }
 
             // execute all inserts in a batch

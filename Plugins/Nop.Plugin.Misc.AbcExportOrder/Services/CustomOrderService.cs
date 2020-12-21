@@ -4,6 +4,7 @@ using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Data;
+using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 using Nop.Services.Catalog;
 using Nop.Services.Events;
 using Nop.Services.Orders;
@@ -18,6 +19,9 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     {
         private readonly IRepository<Order> _orderRepository;
 
+        private readonly IProductAttributeParser _productAttributeParser;
+        private readonly IProductAttributeService _productAttributeService;
+
         public CustomOrderService(
             CachingSettings cachingSettings,
             IEventPublisher eventPublisher,
@@ -31,19 +35,34 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository,
             IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
-            IShipmentService shipmentService
+            IShipmentService shipmentService,
+            IProductAttributeService productAttributeService
         ) : base(cachingSettings, eventPublisher, productService, addressRepository,
                  customerRepository, orderRepository, orderItemRepository, orderNoteRepository,
                  productRepository, productWarehouseInventoryRepository, recurringPaymentRepository,
                  recurringPaymentHistoryRepository, shipmentService)
         {
             _orderRepository = orderRepository;
+            _productAttributeService = productAttributeService;
+        }
+
+        public ProductAttributeValue GetOrderItemWarranty(OrderItem orderItem)
+        {
+            if (!orderItem.HasWarranty()) { return null; }
+
+            // for now
+            return null;
         }
 
         public IList<Order> GetUnsubmittedOrders()
         {
             var lastMonth = DateTime.Today.AddMonths(-1);
             return _orderRepository.Table.Where(o => o.CreatedOnUtc > lastMonth && o.CardNumber != null).ToList();
+        }
+
+        private static bool IsWarranty(ProductAttribute productAttribute)
+        {
+            return productAttribute.Name == "Warranty";
         }
     }
 }

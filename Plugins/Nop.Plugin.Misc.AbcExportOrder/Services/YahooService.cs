@@ -9,53 +9,112 @@ using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 using Nop.Core.Domain.Security;
 using Nop.Services.Security;
 using Nop.Services.Catalog;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Services.Stores;
+using Nop.Services.Seo;
+using System.Xml.Linq;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
     public class YahooService : IYahooService
     {
         private readonly IAddressService _addressService;
+        private readonly IAttributeUtilities _attributeUtilities;
         private readonly ICountryService _countryService;
+        private readonly ICustomOrderService _customOrderService;
+        private readonly ICustomShopService _customShopService;
         private readonly IEncryptionService _encryptionService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IGiftCardService _giftCardService;
-        private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
+        private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IStateProvinceService _stateProvinceService;
+        private readonly IStoreService _storeService;
+        private readonly IUrlRecordService _urlRecordService;
 
         private readonly ExportOrderSettings _settings;
         private readonly SecuritySettings _securitySettings;
 
+
         public YahooService(
             IAddressService addressService,
+            IAttributeUtilities attributeUtilities,
             ICountryService countryService,
+            ICustomOrderService customOrderService,
+            ICustomShopService customShopService,
             IEncryptionService encryptionService,
             IGenericAttributeService genericAttributeService,
             IGiftCardService giftCardService,
-            IOrderService orderService,
             IPriceCalculationService priceCalculationService,
+            IProductService productService,
+            IProductAbcDescriptionService productAbcDescriptionService,
             IStateProvinceService stateProvinceService,
+            IStoreService storeService,
+            IUrlRecordService urlRecordService,
             ExportOrderSettings settings,
             SecuritySettings securitySettings
         )
         {
             _addressService = addressService;
+            _attributeUtilities = attributeUtilities;
             _countryService = countryService;
+            _customOrderService = customOrderService;
+            _customShopService = customShopService;
             _encryptionService = encryptionService;
             _genericAttributeService = genericAttributeService;
             _giftCardService = giftCardService;
-            _orderService = orderService;
+            _productService = productService;
+            _productAbcDescriptionService = productAbcDescriptionService;
             _priceCalculationService = priceCalculationService;
             _stateProvinceService = stateProvinceService;
+            _storeService = storeService;
+            _urlRecordService = urlRecordService;
             _settings = settings;
             _securitySettings = securitySettings;
+        }
+
+        public IList<YahooDetailRow> GetYahooDetailRows(Order order)
+        {
+            var result = new List<YahooDetailRow>();
+            var lineNumber = 1;
+            var orderItems = _customOrderService.GetOrderItems(order.Id);
+
+            foreach (var orderItem in orderItems)
+            {
+                var product = _productService.GetProductById(orderItem.ProductId);
+                var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(
+                    orderItem.ProductId
+                );
+                var storeUrl = _storeService.GetStoreById(order.Id)?.Url;
+
+                var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
+                if (warranty != null)
+                {
+                    // adjust price for item
+                    orderItem.UnitPriceExclTax -= warranty.PriceAdjustment;
+                }
+
+                result.Add(new YahooDetailRow(
+                    _settings.OrderIdPrefix,
+                    orderItem,
+                    lineNumber,
+                    product.Sku,
+                    productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku,
+                    product.Name,
+                    $"{storeUrl}{_urlRecordService.GetSeName(product)}",
+                    GetPickupStore(orderItem)
+                ));
+            }
+
+            return result;
         }
 
         public IList<YahooHeaderRow> GetYahooHeaderRows(Order order)
         {
             var result = new List<YahooHeaderRow>();
 
-            var orderItems = _orderService.GetOrderItems(order.Id);
+            var orderItems = _customOrderService.GetOrderItems(order.Id);
             if (!orderItems.Any()) { return result; }
 
             var splitItems = orderItems.SplitByPickupAndShipping();
@@ -152,6 +211,37 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             return result;
         }
 
+        public IList<YahooShipToRow> GetYahooShipToRows(
+            Order order
+        )
+        {
+            var result = new List<YahooShipToRow>();
+
+            var orderItems = _customOrderService.GetOrderItems(order.Id);
+            if (!orderItems.Any()) { return result; }
+            
+            var splitItems = orderItems.SplitByPickupAndShipping();
+
+            if (splitItems.pickupItems.Any())
+            {
+                result.Add(new YahooShipToRow(
+                    _settings.OrderIdPrefix, order.Id
+                ));
+            }
+
+            if (splitItems.shippingItems.Any())
+            {
+                var address = _addressService.GetAddressById(order.ShippingAddressId.Value);
+                var stateAbbv = _stateProvinceService.GetStateProvinceByAddress(address).Abbreviation;
+                var country = _countryService.GetCountryByAddress(address).Name;
+                result.Add(new YahooShipToRowShipping(
+                    _settings.OrderIdPrefix, order.Id, address, stateAbbv, country
+                ));
+            }
+            
+            return result;
+        }
+
         private void CalculateGiftCard(Order order, decimal backendOrderTotal, out string giftCardCode, out decimal giftCardUsed)
         {
             giftCardCode = "";
@@ -184,35 +274,30 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             }
         }
 
-        public IList<YahooShipToRow> GetYahooShipToRows(
-            Order order
-        )
+        private string GetPickupStore(OrderItem orderItem)
         {
-            var result = new List<YahooShipToRow>();
+            var pickupInStoreAttributeMapping = _attributeUtilities.GetPickupAttributeMapping(orderItem.AttributesXml);
+            if (pickupInStoreAttributeMapping == null) return "";
 
-            var orderItems = _orderService.GetOrderItems(order.Id);
-            if (!orderItems.Any()) { return result; }
-            
-            var splitItems = orderItems.SplitByPickupAndShipping();
+            var xmlDoc = XDocument.Parse(orderItem.AttributesXml);
 
-            if (splitItems.pickupItems.Any())
-            {
-                result.Add(new YahooShipToRow(
-                    _settings.OrderIdPrefix, order.Id
-                ));
-            }
+            var pickupInStoreAttribute = xmlDoc.Descendants()
+                                               .Where(d => d.Name == "ProductAttribute" &&
+                                                           d.FirstAttribute != null &&
+                                                           d.FirstAttribute.Value == pickupInStoreAttributeMapping.Id.ToString())
+                                               .FirstOrDefault();
+            if (pickupInStoreAttribute == null) return "";
 
-            if (splitItems.shippingItems.Any())
-            {
-                var address = _addressService.GetAddressById(order.ShippingAddressId.Value);
-                var stateAbbv = _stateProvinceService.GetStateProvinceByAddress(address).Abbreviation;
-                var country = _countryService.GetCountryByAddress(address).Name;
-                result.Add(new YahooShipToRowShipping(
-                    _settings.OrderIdPrefix, order.Id, address, stateAbbv, country
-                ));
-            }
-            
-            return result;
+            var storeName = pickupInStoreAttribute.Value;
+            storeName = storeName.Remove(storeName.IndexOf("\n"));
+
+            var shop = _customShopService.GetShopByName(storeName);
+            if (shop == null) return "";
+
+            var shopAbc = _customShopService.GetShopAbcByShopId(shop.Id);
+            if (shopAbc == null) return "";
+
+            return shopAbc.AbcId.ToString();
         }
     }
 }

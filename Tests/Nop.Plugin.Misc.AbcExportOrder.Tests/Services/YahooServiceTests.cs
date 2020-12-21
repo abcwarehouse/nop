@@ -15,6 +15,10 @@ using Nop.Core.Domain.Security;
 using Nop.Services.Security;
 using Nop.Services.Catalog;
 using System;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Services.Seo;
+using Nop.Services.Stores;
+using Nop.Core.Domain.Catalog;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -38,9 +42,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             ShippingAddressId = 1
         };
 
-        private OrderItem _orderItemShipping = new OrderItem();
+        private OrderItem _orderItemShipping = new OrderItem()
+        {
+            OrderId = 1000
+        };
         private OrderItem _orderItemPickup = new OrderItem()
         {
+            OrderId = 1001,
             AttributeDescription = "Pickup: "
         };
 
@@ -49,16 +57,39 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             _yahooService = new YahooService(
                 MockAddressService().Object,
+                new Mock<IAttributeUtilities>().Object,
                 MockCountryService().Object,
+                MockCustomOrderService().Object,
+                new Mock<ICustomShopService>().Object,
                 new Mock<IEncryptionService>().Object,
                 new Mock<IGenericAttributeService>().Object,
                 MockGiftCardService().Object,
-                MockOrderService().Object,
                 MockPriceCalculationService().Object,
+                MockProductService().Object,
+                new Mock<IProductAbcDescriptionService>().Object,
                 MockStateProvinceService().Object,
+                new Mock<IStoreService>().Object,
+                MockUrlRecordService().Object,
                 new Mock<ExportOrderSettings>().Object,
                 new Mock<SecuritySettings>().Object
             );
+        }
+
+        [Test]
+        public void Returns_Empty_YahooDetailRows_If_No_OrderItems()
+        {
+            var detailRows = _yahooService.GetYahooDetailRows(new Order());
+
+            detailRows.Should().HaveCount(0);
+            
+        }
+
+        [Test]
+        public void Creates_YahooDetailRows_StandardItem()
+        {
+            var detailRows = _yahooService.GetYahooDetailRows(_orderShippingOnly);
+
+            detailRows.Should().HaveCount(1);
         }
 
         [Test]
@@ -128,6 +159,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             yahooHeaderRows.Should().HaveCount(2);
         }
 
+        private Mock<IProductService> MockProductService()
+        {
+            var mockService = new Mock<IProductService>();
+            mockService.Setup(s => s.GetProductById(It.IsAny<int>()))
+                         .Returns(new Product()
+                         {
+                             Name = "Test Product"
+                         });
+            return mockService;
+        }
+
         private Mock<IPriceCalculationService> MockPriceCalculationService()
         {
             var mockPriceCalculationService = new Mock<IPriceCalculationService>();
@@ -144,9 +186,9 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             return mockGiftCardService;
         }
 
-        private Mock<IOrderService> MockOrderService()
+        private Mock<ICustomOrderService> MockCustomOrderService()
         {
-            var mockOrderService = new Mock<IOrderService>();
+            var mockOrderService = new Mock<ICustomOrderService>();
             mockOrderService.Setup(s => s.GetOrderItems(0, null, null, 0))
                          .Returns(new List<OrderItem>());
             mockOrderService.Setup(s => s.GetOrderItems(_orderShippingOnly.Id, null, null, 0))
@@ -189,6 +231,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             var mockService = new Mock<IStateProvinceService>();
             mockService.Setup(s => s.GetStateProvinceByAddress(It.IsAny<Address>()))
                          .Returns(new StateProvince());
+            return mockService;
+        }
+
+        private Mock<IUrlRecordService> MockUrlRecordService()
+        {
+            var mockService = new Mock<IUrlRecordService>();
+            mockService.Setup(s => s.GetSeName(It.IsAny<Product>(), null, true, true))
+                         .Returns("test-se-name");
             return mockService;
         }
     }
