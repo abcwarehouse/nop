@@ -57,7 +57,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
             var orderItems = _orderService.GetOrderItems(order.Id);
             if (!orderItems.Any()) { return result; }
-            
+
             var splitItems = orderItems.SplitByPickupAndShipping();
             var address = _addressService.GetAddressById(order.BillingAddressId);
             var stateAbbv = _stateProvinceService.GetStateProvinceByAddress(address).Abbreviation;
@@ -67,37 +67,20 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var cardMonth = _encryptionService.DecryptText(order.CardExpirationMonth, _securitySettings.EncryptionKey);
             var cardYear = _encryptionService.DecryptText(order.CardExpirationYear, _securitySettings.EncryptionKey);
             var cardCvv2 = _encryptionService.DecryptText(order.CardCvv2, _securitySettings.EncryptionKey);
-
-            decimal backendOrderTax = 0;
-            decimal backendOrderTotal = 0;
-            foreach (OrderItem item in orderItems)
-            {
-                backendOrderTax += item.PriceInclTax - item.PriceExclTax;
-                backendOrderTotal += item.PriceInclTax;
-            }
-
-            string giftCardCode = "";
-            decimal giftCardUsed = 0;
-            var gcUsage = _giftCardService.GetGiftCardUsageHistory(order).FirstOrDefault();
-            if (gcUsage != null)
-            {
-                giftCardCode = _giftCardService.GetGiftCardById(gcUsage.GiftCardId).GiftCardCouponCode.Substring(3);
-                if (gcUsage.UsedValue >= backendOrderTotal)
-                {
-                    giftCardUsed = backendOrderTotal;
-                }
-                else
-                {
-                    giftCardUsed = gcUsage.UsedValue;
-                }
-                giftCardUsed = _priceCalculationService.RoundPrice(giftCardUsed);
-                gcUsage.UsedValue -= giftCardUsed;
-            }
+            
 
             var ccRefNo = _genericAttributeService.GetAttribute<string>(order, "CardRefNo");
 
-            if (splitItems.pickupItems.Any())
+            var pickupItems = splitItems.pickupItems;
+            if (pickupItems.Any())
             {
+                decimal backendOrderTax, backendOrderTotal;
+                CalculateValues(pickupItems, out backendOrderTax, out backendOrderTotal);
+
+                string giftCardCode;
+                decimal giftCardUsed;
+                CalculateGiftCard(order, backendOrderTotal, out giftCardCode, out giftCardUsed);
+                
                 result.Add(new YahooHeaderRow(
                     _settings.OrderIdPrefix,
                     order,
@@ -117,14 +100,15 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 ));
             }
 
-            if (splitItems.shippingItems.Any())
+            var shippingItems = splitItems.shippingItems;
+            if (shippingItems.Any())
             {
                 decimal homeDeliveryCost = 0;
                 decimal shippingCost = 0;
                 decimal homeDeliveryCostPerItem = 14.75M;
 
                 homeDeliveryCost = 0;
-                foreach (OrderItem item in orderItems)
+                foreach (OrderItem item in shippingItems)
                 {
                     if (item.IsHomeDelivery())
                     {
@@ -133,9 +117,16 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 }
                 shippingCost = order.OrderShippingExclTax - homeDeliveryCost;
 
+                decimal backendOrderTax, backendOrderTotal;
+                CalculateValues(shippingItems, out backendOrderTax, out backendOrderTotal);
+
                 decimal shippingTax = order.OrderShippingInclTax - order.OrderShippingExclTax;
                 backendOrderTax += shippingTax;
                 backendOrderTotal += order.OrderShippingInclTax;
+
+                string giftCardCode;
+                decimal giftCardUsed;
+                CalculateGiftCard(order, backendOrderTotal, out giftCardCode, out giftCardUsed);
 
                 result.Add(new YahooHeaderRowShipping(
                     _settings.OrderIdPrefix,
@@ -157,8 +148,40 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     ccRefNo
                 ));
             }
-            
+
             return result;
+        }
+
+        private void CalculateGiftCard(Order order, decimal backendOrderTotal, out string giftCardCode, out decimal giftCardUsed)
+        {
+            giftCardCode = "";
+            giftCardUsed = 0;
+            var gcUsage = _giftCardService.GetGiftCardUsageHistory(order).FirstOrDefault();
+            if (gcUsage != null)
+            {
+                giftCardCode = _giftCardService.GetGiftCardById(gcUsage.GiftCardId).GiftCardCouponCode.Substring(3);
+                if (gcUsage.UsedValue >= backendOrderTotal)
+                {
+                    giftCardUsed = backendOrderTotal;
+                }
+                else
+                {
+                    giftCardUsed = gcUsage.UsedValue;
+                }
+                giftCardUsed = _priceCalculationService.RoundPrice(giftCardUsed);
+                gcUsage.UsedValue -= giftCardUsed;
+            }
+        }
+
+        private static void CalculateValues(IList<OrderItem> orderItems, out decimal backendOrderTax, out decimal backendOrderTotal)
+        {
+            backendOrderTax = 0;
+            backendOrderTotal = 0;
+            foreach (OrderItem item in orderItems)
+            {
+                backendOrderTax += item.PriceInclTax - item.PriceExclTax;
+                backendOrderTotal += item.PriceInclTax;
+            }
         }
 
         public IList<YahooShipToRow> GetYahooShipToRows(
