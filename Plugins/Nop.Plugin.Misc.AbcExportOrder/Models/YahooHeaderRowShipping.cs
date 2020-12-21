@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Orders;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Models
 {
@@ -7,7 +8,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
     {
         public YahooHeaderRowShipping(
             string prefix,
-            int orderId,
+            Order order,
             Address billingAddress,
             string stateAbbreviaton,
             string country,
@@ -15,11 +16,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             string decryptedCardNumber,
             string decryptedExpirationMonth,
             string decryptedExpirationYear,
-            string decryptedCvv2
+            string decryptedCvv2,
+            decimal taxCharge,
+            decimal shippingCharge,
+            decimal homeDeliveryCharge,
+            decimal total,
+            string giftCard,
+            decimal giftCardAmountUsed,
+            string cardRefNo
         ) : base(
-            's',
             prefix,
-            orderId,
+            order,
             billingAddress,
             stateAbbreviaton,
             country,
@@ -27,10 +34,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             decryptedCardNumber,
             decryptedExpirationMonth,
             decryptedExpirationYear,
-            decryptedCvv2
+            decryptedCvv2,
+            taxCharge,
+            total,
+            giftCard,
+            giftCardAmountUsed,
+            cardRefNo
         )
         {
-            
+            Id = $"{prefix}{order.Id}+s";
+            ShippingCharge = shippingCharge;
+            HomeDeliveryCharge = homeDeliveryCharge;
         }
     }
 }

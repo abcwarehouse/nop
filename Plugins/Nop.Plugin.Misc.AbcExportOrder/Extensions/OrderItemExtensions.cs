@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Orders;
@@ -28,6 +29,26 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
         {
             return oi.AttributeDescription != null &&
                    oi.AttributeDescription.Contains("Pickup: ");
+        }
+
+        public static bool IsHomeDelivery(this OrderItem oi)
+        {
+            return oi.AttributeDescription != null &&
+                   oi.AttributeDescription.Contains("Home Delivery: ");
+        }
+
+        public static bool HasWarranty(this OrderItem oi)
+        {
+            return oi.AttributeDescription != null &&
+                   oi.AttributeDescription.Contains("Warranty: ");
+        }
+
+        public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)
+        {
+            var pickupItems = ois.Where(oi => oi.IsPickup());
+            var shippingItems = ois.Except(pickupItems);
+
+            return (pickupItems.ToList(), shippingItems.ToList());
         }
 
         private static bool IsWarranty(ProductAttribute productAttribute)

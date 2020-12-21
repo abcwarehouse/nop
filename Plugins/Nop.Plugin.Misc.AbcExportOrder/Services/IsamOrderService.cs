@@ -246,7 +246,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         /// <param name="order"></param>
         public void InsertOrder(Order order)
         {
-            // add the newly created YahooShipTo rows
             var shipToRows = _yahooService.GetYahooShipToRows(order);
             foreach (var row in shipToRows)
             {
@@ -254,6 +253,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     SHIPTO_TABLE_NAME,
                     _shiptoCols,
                     _shiptoParams,
+                    row.ToStringValues()
+                );
+            }
+
+            var headerRows = _yahooService.GetYahooHeaderRows(order);
+            foreach (var row in headerRows)
+            {
+                InsertUsingService(
+                    HEADER_TABLE_NAME,
+                    _headerCols,
+                    _headerParams,
                     row.ToStringValues()
                 );
             }
@@ -314,11 +324,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         {
             if (!orderItemList.Any()) return;
 
-            GiftCardUsageHistory gcUsage = _giftCardService.GetGiftCardUsageHistory(order).FirstOrDefault();
-            // setup for order
-            List<string> values = GetYahooHeaderRowValues(order, orderItemList, orderTypeFlag, gcUsage);
-            InsertUsingService(HEADER_TABLE_NAME, _headerCols, _headerParams, values);
-
             // setup for order item
             int itemLine = 1;
             foreach (OrderItem item in orderItemList)
@@ -330,7 +335,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     item.UnitPriceExclTax -= warranty.PriceAdjustment;
                 }
 
-                values = GetYahooDetailRowValues(order, item, itemLine, orderTypeFlag);
+                var values = GetYahooDetailRowValues(order, item, itemLine, orderTypeFlag);
                 InsertUsingService(DETAIL_TABLE_NAME, _detailCols, _detailParams, values);
 
                 if (warranty != null)
@@ -388,152 +393,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         }
 
         #region Nop Order -> Yahoo table
-
-        private List<string> GetYahooHeaderRowValues(Order order, List<OrderItem> orderItems, char orderTypeFlag, GiftCardUsageHistory gcUsage)
-        {
-            // prepare all values
-
-            // -------------credit card values--------------
-            string encryptionKey = _settingService.GetSettingByKey<string>("securitysettings.encryptionkey");
-
-            string cardNumber = " ";
-            string cardExpiry = " ";
-            string cardCvv2 = " ";
-            string cardType = " ";
-
-            if (!string.IsNullOrEmpty(order.CardNumber))
-            {
-                cardNumber = _encryptionService.DecryptText(order.CardNumber, encryptionKey);
-                // strip out all non-numeric
-                cardNumber = new string(cardNumber.Where(c => char.IsDigit(c)).ToArray());
-            }
-
-            if (!string.IsNullOrEmpty(order.CardExpirationMonth) && !string.IsNullOrEmpty(order.CardExpirationYear))
-            {
-                string cardMonth = _encryptionService.DecryptText(order.CardExpirationMonth, encryptionKey);
-                string cardYear = _encryptionService.DecryptText(order.CardExpirationYear, encryptionKey);
-                cardExpiry = cardYear.Equals("") ? "" : (cardMonth + "/" + cardYear);
-            }
-
-            if (!string.IsNullOrEmpty(order.CardCvv2))
-            {
-                cardCvv2 = _encryptionService.DecryptText(order.CardCvv2, encryptionKey);
-            }
-
-            if (!string.IsNullOrEmpty(order.CardName))
-            {
-                cardType = _encryptionService.DecryptText(order.CardName, encryptionKey);
-            }
-
-            string[] creditCardInfo =
-            {
-                cardType, cardNumber, cardExpiry
-            };
-
-            // --------shipping-------------
-
-            decimal homeDeliveryCost = 0;
-            decimal shippingCost = 0;
-
-            // if order is shipping, add shipping costs
-            if (orderTypeFlag == SHIP_FLAG)
-            {
-                // split up shipping cost between home delivery & shipping item
-                decimal homeDeliveryCostPerItem = 14.75M;
-
-                homeDeliveryCost = 0;
-                foreach (OrderItem item in orderItems)
-                {
-                    if (IsHomeDeliveryItem(item))
-                    {
-                        homeDeliveryCost += homeDeliveryCostPerItem * item.Quantity;
-                    }
-                }
-
-                shippingCost = order.OrderShippingExclTax - homeDeliveryCost;
-            }
-            shippingCost = _priceCalculationService.RoundPrice(shippingCost);
-            homeDeliveryCost = _priceCalculationService.RoundPrice(homeDeliveryCost);
-
-            // ---------pricing-----------------
-            decimal backendOrderTax = 0;
-            decimal backendOrderTotal = 0;
-            foreach(OrderItem item in orderItems)
-            {
-                backendOrderTax += item.PriceInclTax - item.PriceExclTax;
-                backendOrderTotal += item.PriceInclTax;
-            }
-
-            if (orderTypeFlag == SHIP_FLAG)
-            {
-                decimal shippingTax = order.OrderShippingInclTax - order.OrderShippingExclTax;
-                backendOrderTax += shippingTax;
-                backendOrderTotal += order.OrderShippingInclTax;
-            }
-            backendOrderTax = _priceCalculationService.RoundPrice(backendOrderTax);
-            backendOrderTotal = _priceCalculationService.RoundPrice(backendOrderTotal);
-
-            // ---------gift card-------------
-
-            string giftCardCode = "";
-            decimal giftCardUsed = 0;
-            if (gcUsage != null)
-            {
-                giftCardCode = _giftCardService.GetGiftCardById(gcUsage.GiftCardId).GiftCardCouponCode.Substring(3);
-                if (gcUsage.UsedValue >= backendOrderTotal)
-                {
-                    giftCardUsed = backendOrderTotal;
-                }
-                else
-                {
-                    giftCardUsed = gcUsage.UsedValue;
-                }
-                giftCardUsed = _priceCalculationService.RoundPrice(giftCardUsed);
-                gcUsage.UsedValue -= giftCardUsed;
-            }
-
-            List<string> values = new List<string>();
-            values.Add(GenerateAbcOrderId(order.Id, orderTypeFlag));
-
-            values.Add(order.CreatedOnUtc.ToString());
-            values.AddRange(GetAddressValues(_addressService.GetAddressById(order.BillingAddressId)));
-
-            values.AddRange(creditCardInfo);
-
-            // tax
-            values.Add(backendOrderTax.ToString());
-
-            // shipping (fedex)
-            values.Add(shippingCost.ToString());
-
-            // order total
-            values.Add(backendOrderTotal.ToString());
-
-            // credit card csv/cvv2
-            values.Add(cardCvv2);
-
-            // ip address - strip everything after ','
-            string customerIp = order.CustomerIp;
-            int index = customerIp.IndexOf(",");
-            if (index > 0)
-                customerIp = customerIp.Substring(0, index-1);
-            values.Add(customerIp);
-
-            // GIFT_CARD, GIFT_AMT_USED, 
-            values.Add(giftCardCode);
-            values.Add(giftCardUsed.ToString());
-
-            // AUTH
-            values.Add(order.AuthorizationTransactionCode);
-
-            // HOME_DELIVERY (home delivery shipping cost)
-            values.Add(homeDeliveryCost.ToString());
-
-			// CC_REFNO
-		    values.Add(order.GetCardRefNo());
-
-            return values;
-        }
 
         private List<string> GetYahooDetailRowValuesForWarranty(
             Order order,
@@ -688,11 +547,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private bool IsPickupItem(OrderItem orderItem)
         {
             return _attributeUtilities.GetPickupAttributeMapping(orderItem.AttributesXml) != null;
-        }
-
-        private bool IsHomeDeliveryItem(OrderItem orderItem)
-        {
-            return _attributeUtilities.GetHomeDeliveryAttributeMapping(orderItem.AttributesXml) != null;
         }
 
         #endregion

@@ -2,7 +2,7 @@ using Nop.Core.Domain.Common;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Models
 {
-    public class YahooShipToRowShipping: YahooShipToRow
+    public class YahooShipToRowShipping : YahooShipToRow
     {
         public YahooShipToRowShipping(
             string prefix,
@@ -10,8 +10,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Address address,
             string stateAbbreviation,
             string country
-
-        )
+        ) : base(prefix, orderId)
         {
             Id = $"{prefix}{orderId}+s";
             FullName = $"{address.FirstName} {address.LastName}";

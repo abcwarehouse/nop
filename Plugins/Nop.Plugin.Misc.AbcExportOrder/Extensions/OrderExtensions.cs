@@ -18,18 +18,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
                    order.CardName == null;
         }
 
-        public static string GetCardRefNo(this Order order)
-        {
-            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            return genericAttributeService.GetAttribute<string>(order, CardRefNoKey);
-        }
-
-        public static void SetCardRefNo(this Order order, string value)
-        {
-            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            genericAttributeService.SaveAttribute(order, CardRefNoKey, value);
-        }
-
         public static void SubmitToISAM(this Order order)
         {
             var isamOrderService = EngineContext.Current.Resolve<IIsamOrderService>();

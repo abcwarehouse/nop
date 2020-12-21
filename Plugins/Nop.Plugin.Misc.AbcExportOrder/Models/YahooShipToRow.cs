@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Models
 {
-    public abstract class YahooShipToRow
+    public class YahooShipToRow
     {
         public string Id { get; protected set; }
         public string FullName { get; protected set; }
@@ -16,6 +16,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
         public string Country { get; protected set; }
         public string Phone { get; protected set; }
         public string Email { get; protected set; }
+
+        public YahooShipToRow(
+            string prefix,
+            int orderId
+        )
+        {
+            Id = $"{prefix}{orderId}+p";
+        }
 
         // converts to string values
         public List<string> ToStringValues()

@@ -11,6 +11,10 @@ using Nop.Services.Directory;
 using Nop.Plugin.Misc.AbcExportOrder.Models;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Directory;
+using Nop.Core.Domain.Security;
+using Nop.Services.Security;
+using Nop.Services.Catalog;
+using System;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -46,9 +50,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             _yahooService = new YahooService(
                 MockAddressService().Object,
                 MockCountryService().Object,
+                new Mock<IEncryptionService>().Object,
+                new Mock<IGenericAttributeService>().Object,
+                MockGiftCardService().Object,
                 MockOrderService().Object,
+                MockPriceCalculationService().Object,
                 MockStateProvinceService().Object,
-                new Mock<ExportOrderSettings>().Object
+                new Mock<ExportOrderSettings>().Object,
+                new Mock<SecuritySettings>().Object
             );
         }
 
@@ -80,7 +89,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             yahooShipToRows.Should().HaveCount(1);
             
             var row = yahooShipToRows.FirstOrDefault();
-            row.Should().BeOfType<YahooShipToRowPickup>();
+            row.Should().BeOfType<YahooShipToRow>();
         }
 
         [Test]
@@ -89,6 +98,50 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             var yahooShipToRows = _yahooService.GetYahooShipToRows(_orderBothShippingPickup);
 
             yahooShipToRows.Should().HaveCount(2);
+        }
+
+        [Test]
+        public void Creates_YahooHeaderRows_Pickup()
+        {
+            var yahooHeaderRows = _yahooService.GetYahooHeaderRows(_orderPickupOnly);
+
+            yahooHeaderRows.Should().HaveCount(1);
+            var row = yahooHeaderRows.FirstOrDefault();
+            row.Should().BeOfType<YahooHeaderRow>();
+        }
+
+        [Test]
+        public void Creates_YahooHeaderRows_Shipping()
+        {
+            var yahooHeaderRows = _yahooService.GetYahooHeaderRows(_orderShippingOnly);
+
+            yahooHeaderRows.Should().HaveCount(1);
+            var row = yahooHeaderRows.FirstOrDefault();
+            row.Should().BeOfType<YahooHeaderRowShipping>();
+        }
+
+        [Test]
+        public void Creates_YahooHeaderRows_Both()
+        {
+            var yahooHeaderRows = _yahooService.GetYahooHeaderRows(_orderBothShippingPickup);
+
+            yahooHeaderRows.Should().HaveCount(2);
+        }
+
+        private Mock<IPriceCalculationService> MockPriceCalculationService()
+        {
+            var mockPriceCalculationService = new Mock<IPriceCalculationService>();
+            mockPriceCalculationService.Setup(s => s.RoundPrice(It.IsAny<decimal>(), null))
+                         .Returns(0.0M);
+            return mockPriceCalculationService;
+        }
+
+        private Mock<IGiftCardService> MockGiftCardService()
+        {
+            var mockGiftCardService = new Mock<IGiftCardService>();
+            mockGiftCardService.Setup(s => s.GetGiftCardUsageHistory(It.IsAny<Order>()))
+                         .Returns(new List<GiftCardUsageHistory>());
+            return mockGiftCardService;
         }
 
         private Mock<IOrderService> MockOrderService()

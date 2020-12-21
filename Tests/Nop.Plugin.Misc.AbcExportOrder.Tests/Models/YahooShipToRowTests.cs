@@ -8,7 +8,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
     public class YahooShipToRowTests
     {
         private YahooShipToRowShipping _yahooShipToRowShipping;
-        private YahooShipToRowPickup _yahooShipToRowPickup;
+        private YahooShipToRow _yahooShipToRowPickup;
 
         private readonly Address _address = new Address()
         {
@@ -28,7 +28,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 _prefix, _orderId, _address, _stateAbbreviation, _country
             );
 
-            _yahooShipToRowPickup = new YahooShipToRowPickup(
+            _yahooShipToRowPickup = new YahooShipToRow(
                 _prefix, _orderId
             );
         }

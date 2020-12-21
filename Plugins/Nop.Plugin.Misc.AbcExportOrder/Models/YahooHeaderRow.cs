@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Orders;
+using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Models
 {
-    public abstract class YahooHeaderRow
+    public class YahooHeaderRow
     {
         public string Id { get; protected set; }
         public string Datestamp { get; protected set; }
@@ -24,17 +28,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
         public string CardCvv2 { get; protected set; }
         public decimal TaxCharge { get; protected set; }
         public decimal ShippingCharge { get; protected set; }
+        public decimal HomeDeliveryCharge { get; protected set; }
         public decimal Total { get; protected set; }
+        public string Ip { get; protected set; }
         public string GiftCard { get; protected set; }
         public decimal GiftCardAmountUsed { get; protected set; }
         public string AuthCode { get; protected set; }
-        public string HomeDeliveryCost { get; protected set; }
         public string CcRefNo { get; protected set; }
 
         public YahooHeaderRow(
-            char orderTypeFlag,
             string prefix,
-            int orderId,
+            Order order,
             Address billingAddress,
             string stateAbbreviation,
             string country,
@@ -42,10 +46,15 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             string decryptedCardNumber,
             string decryptedExpirationMonth,
             string decryptedExpirationYear,
-            string decryptedCvv2
+            string decryptedCvv2,
+            decimal taxCharge,
+            decimal total,
+            string giftCard,
+            decimal giftCardAmountUsed,
+            string cardRefNo
         )
         {
-            Id = $"{prefix}{orderId}+{orderTypeFlag}";
+            Id = $"{prefix}{order.Id}+p";
             FullName = $"{billingAddress.FirstName} {billingAddress.LastName}";
             FirstName = billingAddress.FirstName;
             LastName = billingAddress.LastName;
@@ -58,9 +67,58 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Phone = billingAddress.PhoneNumber;
             Email = billingAddress.Email;
             CardName = decryptedCardName;
-            CardNumber = decryptedCardNumber;
+            CardNumber = decryptedCardNumber != null ?
+                new string(decryptedCardNumber.Where(c => char.IsDigit(c)).ToArray()) :
+                null;
             CardExpiry = $"{decryptedExpirationMonth}/{decryptedExpirationYear}";
             CardCvv2 = decryptedCvv2;
+            TaxCharge = taxCharge;
+            Total = total;
+            GiftCard = giftCard;
+            GiftCardAmountUsed = giftCardAmountUsed;
+            
+            AuthCode = order.AuthorizationTransactionCode;
+            CcRefNo = cardRefNo;
+            Datestamp = order.CreatedOnUtc.ToString();
+            Ip = order.CustomerIp;
+            if (!string.IsNullOrWhiteSpace(Ip) && Ip.IndexOf(",") > 0)
+            {
+                var index = Ip.IndexOf(",");
+                Ip = Ip.Substring(0, index-1);
+            }
+        }
+
+        public List<string> ToStringValues()
+        {
+            return new List<string>()
+            {
+                Id,
+                Datestamp,
+                FullName,
+                FirstName,
+                LastName,
+                Address1,
+                Address2,
+                City,
+                State,
+                Zip,
+                Country,
+                Phone,
+                Email,
+                CardName,
+                CardNumber,
+                CardExpiry,
+                TaxCharge.ToString(),
+                ShippingCharge.ToString(),
+                Total.ToString(),
+                CardCvv2,
+                Ip,
+                GiftCard,
+                GiftCardAmountUsed.ToString(),
+                AuthCode,
+                HomeDeliveryCharge.ToString(),
+                CcRefNo
+            };
         }
     }
 }
