@@ -38,6 +38,20 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             PickupBranchId = pickupBranchId;
         }
 
+        public YahooDetailRow(
+            string prefix,
+            OrderItem orderItem,
+            int itemLine,
+            string itemId,
+            string itemCode,
+            decimal unitPrice,
+            string description,
+            string url,
+            string pickupBranchId
+        ) : this(prefix, orderItem, itemLine, itemId, itemCode, description, url, pickupBranchId)
+        {
+            UnitPrice = unitPrice;
+        }
         public List<string> ToStringValues()
         {
             return new List<string>()

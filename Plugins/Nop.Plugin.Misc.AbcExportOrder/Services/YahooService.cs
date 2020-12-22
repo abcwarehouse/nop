@@ -123,6 +123,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         lineNumber,
                         standardItemCode,
                         _warrantyService.GetWarrantySkuByName(warranty.Name),
+                        warranty.PriceAdjustment,
                         warranty.Name,
                         "", // no url for warranty line items
                         GetPickupStore(orderItem)
