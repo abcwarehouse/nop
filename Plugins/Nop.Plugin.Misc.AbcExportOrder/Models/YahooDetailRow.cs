@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 
@@ -35,6 +36,24 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Description = description;
             Url = url;
             PickupBranchId = pickupBranchId;
+        }
+
+        public List<string> ToStringValues()
+        {
+            return new List<string>()
+            {
+                Id,
+                LineNumber.ToString(),
+                "", // PKG_CNTR, unused
+                ItemId,
+                Code,
+                Quantity.ToString(),
+                UnitPrice.ToString(),
+                Description,
+                Url,
+                PickupBranchId,
+                "" // PICKUP_DROP, unused
+            };
         }
     }
 }

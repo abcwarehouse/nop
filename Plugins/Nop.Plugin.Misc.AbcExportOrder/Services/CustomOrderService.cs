@@ -36,6 +36,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
             IShipmentService shipmentService,
+            IProductAttributeParser productAttributeParser,
             IProductAttributeService productAttributeService
         ) : base(cachingSettings, eventPublisher, productService, addressRepository,
                  customerRepository, orderRepository, orderItemRepository, orderNoteRepository,
@@ -43,6 +44,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                  recurringPaymentHistoryRepository, shipmentService)
         {
             _orderRepository = orderRepository;
+            _productAttributeParser = productAttributeParser;
             _productAttributeService = productAttributeService;
         }
 
@@ -50,8 +52,16 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         {
             if (!orderItem.HasWarranty()) { return null; }
 
-            // for now
-            return null;
+            return _productAttributeParser.ParseProductAttributeValues(
+                       orderItem.AttributesXml
+                   )
+                   .Where(val => IsWarranty(
+                       _productAttributeService.GetProductAttributeById(
+                           _productAttributeService.GetProductAttributeMappingById(
+                               val.ProductAttributeMappingId
+                           ).ProductAttributeId
+                       )))
+                   .FirstOrDefault();
         }
 
         public IList<Order> GetUnsubmittedOrders()

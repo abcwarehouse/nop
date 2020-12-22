@@ -1,5 +1,4 @@
-﻿using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Orders;
+﻿using Nop.Core.Domain.Orders;
 using Nop.Services.Configuration;
 using Nop.Services.Orders;
 using Nop.Services.Security;
@@ -10,7 +9,6 @@ using System.Linq;
 using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using Nop.Core;
-using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 using Nop.Services.Logging;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Data;
@@ -18,7 +16,6 @@ using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Services.Common;
 using Nop.Services.Directory;
 using Nop.Services.Seo;
-using System.Xml.Linq;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -27,8 +24,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly string HEADER_TABLE_NAME = "YAHOO_HEADER";
         private readonly string DETAIL_TABLE_NAME = "YAHOO_DETAIL";
         private readonly string SHIPTO_TABLE_NAME = "YAHOO_SHIPTO";
-        private readonly char PICKUP_IN_STORE_FLAG = 'p';
-        private readonly char SHIP_FLAG = 's';
 
         private List<string> _headerCols = new List<string>();
         private List<string> _detailCols = new List<string>();
@@ -267,22 +262,19 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     row.ToStringValues()
                 );
             }
-            
-            List<OrderItem> orderItemList = _orderService.GetOrderItems(order.Id).ToList();
-            List<OrderItem> pickupOrderItems = new List<OrderItem>();
-            List<OrderItem> shippingOrderItems = new List<OrderItem>();
 
-            foreach (OrderItem item in orderItemList)
+            var detailRows = _yahooService.GetYahooDetailRows(order);
+            foreach (var row in detailRows)
             {
-                if (IsPickupItem(item))
-                {
-                    pickupOrderItems.Add(item);
-                }
-                else
-                {
-                    shippingOrderItems.Add(item);
-                }
+                InsertUsingService(
+                    DETAIL_TABLE_NAME,
+                    _detailCols,
+                    _detailParams,
+                    row.ToStringValues()
+                );
             }
+
+            _baseIsamService.ExecuteBatch();
 
             // store amount used before insert order
             // insert order changes the amount in the object memory to properly calculate gift card amounts
@@ -293,9 +285,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             {
                 giftCardAmtUsed = giftCardUsageHistory.OrderByDescending(gcu => gcu.CreatedOnUtc).FirstOrDefault().UsedValue;
             }
-
-            InsertOrderOfType(order, shippingOrderItems, SHIP_FLAG);
-            InsertOrderOfType(order, pickupOrderItems, PICKUP_IN_STORE_FLAG);
 
             // if there is a gift card, update gift card amt in isam
             if (giftCardUsageHistory.Any())
@@ -310,59 +299,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
                 _giftCardUsageHistoryRepository.Delete(orderGcUsage);
                 _giftCardService.UpdateGiftCard(orderGiftCard);
-                
             }
         }
-
-        /// <summary>CARRIER_
-        /// Inserts a specific type of order into ISAM (home delivery/pickup/shipped)
-        /// </summary>
-        /// <param name="order"></param>
-        /// <param name="orderItemList"></param>
-        /// <param name="orderTypeFlag">which kind of order to place (home delivery/pickup/shipped)</param>
-        private void InsertOrderOfType(Order order, List<OrderItem> orderItemList, char orderTypeFlag)
-        {
-            if (!orderItemList.Any()) return;
-
-            // setup for order item
-            int itemLine = 1;
-            foreach (OrderItem item in orderItemList)
-            {
-                // var warranty = item.GetWarranty();
-                // if (warranty != null)
-                // {
-                //     // adjust price for item
-                //     item.UnitPriceExclTax -= warranty.PriceAdjustment;
-                // }
-
-                // var values = GetYahooDetailRowValues(order, item, itemLine, orderTypeFlag);
-                // InsertUsingService(DETAIL_TABLE_NAME, _detailCols, _detailParams, values);
-
-                // if (warranty != null)
-                // {
-                //     ++itemLine;
-                //     var warrantyValues = GetYahooDetailRowValuesForWarranty(
-                //         order,
-                //         item,
-                //         itemLine,
-                //         orderTypeFlag,
-                //         warranty
-                //     );
-                //     InsertUsingService(
-                //         DETAIL_TABLE_NAME,
-                //         _detailCols,
-                //         _detailParams,
-                //         warrantyValues
-                //     );
-                // }
-
-                // ++itemLine;
-            }
-
-            // execute all inserts in a batch
-            _baseIsamService.ExecuteBatch();
-        }
-
         private void InsertUsingService(string tableName, List<string> cols, List<OdbcParameter> colParams, List<string> values)
         {
             if (colParams.Count != values.Count)
@@ -390,172 +328,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             }
 
             _baseIsamService.Insert(_settings.TablePrefix + tableName, insertCols, insertParams, true);
-        }
-
-        #region Nop Order -> Yahoo table
-
-        private List<string> GetYahooDetailRowValuesForWarranty(
-            Order order,
-            OrderItem orderItem,
-            int orderItemLine,
-            char orderTypeFlag,
-            ProductAttributeValue warranty
-        )
-        {
-            var values = GetYahooDetailRowValues(
-                order,
-                orderItem,
-                orderItemLine,
-                orderTypeFlag
-            );
-
-            // now edit those values based on what the warranty format should be
-            // based on the index
-            // consider putting this whole thing into an object
-            var product = _productService.GetProductById(orderItem.ProductId);
-            string abcItemNumber = _productAbcDescriptionRepository.Table
-                    .Where(pad => pad.Product_Id == orderItem.ProductId)
-                    .Select(pad => pad.AbcItemNumber).FirstOrDefault();
-
-
-            const int itemIdIndex = 3;
-            const int itemCodeIndex = 4;
-            const int itemUnitPriceIndex = 6;
-            const int itemDescriptionIndex = 7;
-            const int itemUrlIndex = 8;
-            const int pickupBranchIndex = 9;
-
-            values[itemIdIndex] = abcItemNumber;
-            values[itemCodeIndex] = GetWarrantySku(warranty);
-            values[itemUnitPriceIndex] = 
-                decimal.Round(
-                    warranty.PriceAdjustment,
-                    2,
-                    MidpointRounding.AwayFromZero
-                ).ToString("N");
-            values[itemDescriptionIndex] = warranty.Name;
-            values[itemUrlIndex] = "";
-            values[pickupBranchIndex] = GetPickupStore(orderItem);
-
-            return values;
-        }
-
-        private List<string> GetYahooDetailRowValues(
-            Order order,
-            OrderItem orderItem,
-            int orderItemLine,
-            char orderTypeFlag
-        )
-        {
-            List<string> values = new List<string>();
-            values.Add(GenerateAbcOrderId(order.Id, orderTypeFlag));
-
-            // PKG_CNTR = 2 spaces (unused; it's for USA Appliances)
-            string itemUrl = String.Empty;
-
-            string itemId = String.Empty;
-            string itemCode = String.Empty;
-
-            var product = _productService.GetProductById(orderItem.ProductId);
-            itemUrl = _storeContext.CurrentStore.Url + _urlRecordService.GetSeName(product);
-
-            // item id = model number
-            itemId = product.Sku;
-
-            // item code = isam id
-            itemCode = _productAbcDescriptionRepository.Table
-                .Where(pad => pad.Product_Id == orderItem.ProductId)
-                .Select(pad => pad.AbcItemNumber).FirstOrDefault();
-            if (String.IsNullOrEmpty(itemCode))
-            {
-                // if no isam id then fill with model number
-                itemCode = product.Sku;
-            }
-
-            string abcShop = GetPickupStore(orderItem);
-
-            string[] additionalValues =
-            {
-                // ID                ITEM_LINE, ITEM_ID,    ITEM_CODE,             ITEM_QUANTITY
-                orderItemLine.ToString(), "  ", itemId, itemCode, orderItem.Quantity.ToString(),
-                orderItem.UnitPriceExclTax.ToString(), product.Name,
-                // ITEM_URL, PICKUP_BRANCH, PICKUP_DROP
-                itemUrl, abcShop, ""
-            };
-            values.AddRange(additionalValues);
-
-            return values;
-        }
-
-        private string GetPickupStore(OrderItem orderItem)
-        {
-            var pickupInStoreAttributeMapping = _attributeUtilities.GetPickupAttributeMapping(orderItem.AttributesXml);
-            if (pickupInStoreAttributeMapping == null) return "";
-
-            var xmlDoc = XDocument.Parse(orderItem.AttributesXml);
-
-            var pickupInStoreAttribute = xmlDoc.Descendants()
-                                               .Where(d => d.Name == "ProductAttribute" &&
-                                                           d.FirstAttribute != null &&
-                                                           d.FirstAttribute.Value == pickupInStoreAttributeMapping.Id.ToString())
-                                               .FirstOrDefault();
-            if (pickupInStoreAttribute == null) return "";
-
-            var storeName = pickupInStoreAttribute.Value;
-            storeName = storeName.Remove(storeName.IndexOf("\n"));
-
-            var shop = _customShopService.GetShopByName(storeName);
-            if (shop == null) return "";
-
-            var shopAbc = _customShopService.GetShopAbcByShopId(shop.Id);
-            if (shopAbc == null) return "";
-
-            return shopAbc.AbcId.ToString();
-        }
-
-        // Takes an address, returns the string values (as required by ODBC)
-        private string[] GetAddressValues(Address address)
-        {
-            string[] values =
-            {
-                address.FirstName + " " + address.LastName, address.FirstName, address.LastName,
-                address.Address1, address.Address2, address.City, _stateProvinceService.GetStateProvinceById(address.StateProvinceId.Value).Abbreviation,
-                address.ZipPostalCode, _countryService.GetCountryById(address.CountryId.Value).ThreeLetterIsoCode, address.PhoneNumber, address.Email,
-            };
-            return values;
-        }
-        
-        private string GenerateAbcOrderId(int orderId, char orderTypeFlag)
-        {
-            return _settings.OrderIdPrefix + orderId + "+" + orderTypeFlag;
-        }
-
-        #endregion
-
-        #region Check Item Type Utilities
-
-        private bool IsPickupAttribute(ProductAttribute productAttribute)
-        {
-            return productAttribute.Name == "Pickup";
-        }
-
-        private bool IsHomeDeliveryAttribute(ProductAttribute productAttribute)
-        {
-            return productAttribute.Name == "Home Delivery";
-        }
-
-        private bool IsPickupItem(OrderItem orderItem)
-        {
-            return _attributeUtilities.GetPickupAttributeMapping(orderItem.AttributesXml) != null;
-        }
-
-        #endregion
-
-        private string GetWarrantySku(ProductAttributeValue warranty)
-        {
-            return _warrantySkuRepository.Table
-                .Where(ws => ws.Name == warranty.Name)
-                .Select(ws => ws.Sku).FirstOrDefault();
         }
     }
 }

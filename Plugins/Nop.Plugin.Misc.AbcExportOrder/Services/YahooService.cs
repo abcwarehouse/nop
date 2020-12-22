@@ -13,6 +13,7 @@ using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Stores;
 using Nop.Services.Seo;
 using System.Xml.Linq;
+using Nop.Plugin.Misc.AbcFrontend.Services;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -32,6 +33,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreService _storeService;
         private readonly IUrlRecordService _urlRecordService;
+        private readonly IWarrantyService _warrantyService;
 
         private readonly ExportOrderSettings _settings;
         private readonly SecuritySettings _securitySettings;
@@ -52,6 +54,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IStateProvinceService stateProvinceService,
             IStoreService storeService,
             IUrlRecordService urlRecordService,
+            IWarrantyService warrantyService,
             ExportOrderSettings settings,
             SecuritySettings securitySettings
         )
@@ -70,6 +73,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _stateProvinceService = stateProvinceService;
             _storeService = storeService;
             _urlRecordService = urlRecordService;
+            _warrantyService = warrantyService;
             _settings = settings;
             _securitySettings = securitySettings;
         }
@@ -87,6 +91,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem.ProductId
                 );
                 var storeUrl = _storeService.GetStoreById(order.Id)?.Url;
+                var standardItemCode = productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku;
 
                 var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
                 if (warranty != null)
@@ -100,11 +105,27 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem,
                     lineNumber,
                     product.Sku,
-                    productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku,
+                    standardItemCode,
                     product.Name,
                     $"{storeUrl}{_urlRecordService.GetSeName(product)}",
                     GetPickupStore(orderItem)
                 ));
+                lineNumber++;
+
+                if (warranty != null)
+                {
+                    result.Add(new YahooDetailRow(
+                        _settings.OrderIdPrefix,
+                        orderItem,
+                        lineNumber,
+                        standardItemCode,
+                        _warrantyService.GetWarrantySkuByName(warranty.Name),
+                        warranty.Name,
+                        "", // no url for warranty line items
+                        GetPickupStore(orderItem)
+                    ));
+                    lineNumber++;
+                }
             }
 
             return result;

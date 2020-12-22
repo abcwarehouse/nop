@@ -11,6 +11,7 @@ using Nop.Services.Events;
 using Nop.Data;
 using Nop.Services.Shipping;
 using Nop.Core.Domain.Customers;
+using System.Collections.Generic;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -35,8 +36,33 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 new Mock<IRepository<RecurringPayment>>().Object,
                 new Mock<IRepository<RecurringPaymentHistory>>().Object,
                 new Mock<IShipmentService>().Object,
-                new Mock<IProductAttributeService>().Object
+                MockProductAttributeParser().Object,
+                MockProductAttributeService().Object
             );
+        }
+
+        private Mock<IProductAttributeParser> MockProductAttributeParser()
+        {
+            var mock = new Mock<IProductAttributeParser>();
+            mock.Setup(p => p.ParseProductAttributeValues(It.IsAny<string>(), 0))
+                .Returns(new List<ProductAttributeValue>()
+                {
+                    new ProductAttributeValue() { Name = "Warranty" }
+                }
+            );
+
+            return mock;
+        }
+
+        private Mock<IProductAttributeService> MockProductAttributeService()
+        {
+            var mock = new Mock<IProductAttributeService>();
+            mock.Setup(s => s.GetProductAttributeById(It.IsAny<int>()))
+                .Returns(new ProductAttribute() { Name = "Warranty" });
+            mock.Setup(s => s.GetProductAttributeMappingById(It.IsAny<int>()))
+                .Returns(new ProductAttributeMapping());
+
+            return mock;
         }
 
         [Test]
@@ -45,6 +71,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             var warranty = _customOrderService.GetOrderItemWarranty(new OrderItem());
 
             warranty.Should().BeNull();
+        }
+
+        [Test]
+        public void Returns_OrderItem_Warranty()
+        {
+            var warranty = _customOrderService.GetOrderItemWarranty(new OrderItem()
+            {
+                AttributeDescription = "Warranty: "
+            });
+
+            warranty.Should().NotBeNull();
         }
     }
 }

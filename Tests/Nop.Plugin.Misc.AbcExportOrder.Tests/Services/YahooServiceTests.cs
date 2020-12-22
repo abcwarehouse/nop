@@ -19,6 +19,7 @@ using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Seo;
 using Nop.Services.Stores;
 using Nop.Core.Domain.Catalog;
+using Nop.Plugin.Misc.AbcFrontend.Services;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -70,6 +71,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 MockStateProvinceService().Object,
                 new Mock<IStoreService>().Object,
                 MockUrlRecordService().Object,
+                new Mock<IWarrantyService>().Object,
                 new Mock<ExportOrderSettings>().Object,
                 new Mock<SecuritySettings>().Object
             );

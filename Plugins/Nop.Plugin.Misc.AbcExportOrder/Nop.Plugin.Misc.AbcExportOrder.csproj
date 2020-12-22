@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcFrontend\Nop.Plugin.Misc.AbcFrontend.csproj" />
   </ItemGroup>
 
   <ItemGroup>
