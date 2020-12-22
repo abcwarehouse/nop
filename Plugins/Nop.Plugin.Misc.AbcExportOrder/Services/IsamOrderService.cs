@@ -301,6 +301,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 _giftCardService.UpdateGiftCard(orderGiftCard);
             }
         }
+        
         private void InsertUsingService(string tableName, List<string> cols, List<OdbcParameter> colParams, List<string> values)
         {
             if (colParams.Count != values.Count)

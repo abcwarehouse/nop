@@ -239,3 +239,4 @@ Presentation/Nop.Web/wwwroot/ContentAdmin/*
 
 
 Tests/Nop.Plugin.Misc.AbcMattresses.Tests/coverage.json
+Tests/Nop.Plugin.Misc.AbcExportOrder.Tests/coverage.json

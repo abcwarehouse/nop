@@ -81,16 +81,19 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         public IList<YahooDetailRow> GetYahooDetailRows(Order order)
         {
             var result = new List<YahooDetailRow>();
-            var lineNumber = 1;
+            var pickupLineNumber = 0;
+            var shippingLineNumber = 0;
             var orderItems = _customOrderService.GetOrderItems(order.Id);
 
             foreach (var orderItem in orderItems)
             {
+                int lineNumber = GetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem);
+
                 var product = _productService.GetProductById(orderItem.ProductId);
                 var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(
                     orderItem.ProductId
                 );
-                var storeUrl = _storeService.GetStoreById(order.Id)?.Url;
+                var storeUrl = _storeService.GetStoreById(order.StoreId)?.Url;
                 var standardItemCode = productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku;
 
                 var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
@@ -110,10 +113,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     $"{storeUrl}{_urlRecordService.GetSeName(product)}",
                     GetPickupStore(orderItem)
                 ));
-                lineNumber++;
 
                 if (warranty != null)
                 {
+                    lineNumber++;
                     result.Add(new YahooDetailRow(
                         _settings.OrderIdPrefix,
                         orderItem,
@@ -124,11 +127,50 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         "", // no url for warranty line items
                         GetPickupStore(orderItem)
                     ));
-                    lineNumber++;
                 }
+
+                SetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem, lineNumber);
             }
 
             return result;
+        }
+
+        private static void SetLineNumber(
+            ref int pickupLineNumber,
+            ref int shippingLineNumber,
+            OrderItem orderItem,
+            int lineNumber
+        )
+        {
+            if (orderItem.IsPickup())
+            {
+                pickupLineNumber = lineNumber;
+            }
+            else
+            {
+                shippingLineNumber = lineNumber;
+            }
+        }
+
+        private static int GetLineNumber(
+            ref int pickupLineNumber,
+            ref int shippingLineNumber,
+            OrderItem orderItem
+        )
+        {
+            var lineNumber = 0;
+            if (orderItem.IsPickup())
+            {
+                pickupLineNumber++;
+                lineNumber = pickupLineNumber;
+            }
+            else
+            {
+                shippingLineNumber++;
+                lineNumber = shippingLineNumber;
+            }
+
+            return lineNumber;
         }
 
         public IList<YahooHeaderRow> GetYahooHeaderRows(Order order)
