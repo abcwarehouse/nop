@@ -1,4 +1,5 @@
-﻿using Nop.Core.Domain.Orders;
+﻿using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Orders;
 using Nop.Services.Orders;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     public interface ICustomOrderService : IOrderService
     {
         IList<Order> GetUnsubmittedOrders();
+
+        ProductAttributeValue GetOrderItemWarranty(OrderItem orderItem);
     }
 }
