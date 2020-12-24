@@ -20,6 +20,7 @@ using Nop.Services.Seo;
 using Nop.Services.Stores;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcFrontend.Services;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -57,6 +58,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         public void Setup()
         {
             _yahooService = new YahooService(
+                new Mock<IAbcMattressEntryService>().Object,
+                new Mock<IAbcMattressModelService>().Object,
                 MockAddressService().Object,
                 new Mock<IAttributeUtilities>().Object,
                 MockCountryService().Object,

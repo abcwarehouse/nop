@@ -45,6 +45,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcFrontend\Nop.Plugin.Misc.AbcFrontend.csproj" />
+    <!-- this needs to go into AbcCore -->
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcMattresses\Nop.Plugin.Misc.AbcMattresses.csproj" />
   </ItemGroup>
 
   <ItemGroup>

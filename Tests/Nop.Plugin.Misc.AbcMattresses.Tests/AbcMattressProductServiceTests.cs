@@ -1,15 +1,14 @@
 using NUnit.Framework;
-using FluentAssertions;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using Moq;
 using System.Collections.Generic;
-using Nop.Data;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
-using System.Linq;
 using Nop.Core.Domain.Catalog;
-using System;
 using Nop.Services.Catalog;
 using Nop.Services.Seo;
+using Nop.Services.Common;
+using FluentAssertions;
+using System;
 using Nop.Core.Domain.Seo;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
@@ -20,9 +19,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
         private Mock<IProductService> _productService;
         private Mock<IUrlRecordService> _urlRecordService;
-        private Mock<IAbcMattressService> _abcMattressService;
+        private Mock<IAbcMattressModelService> _abcMattressService;
         private Mock<IAbcMattressEntryService> _abcMattressEntryService;
-        private Mock<ICategoryService> _categoryService; 
+        private Mock<ICategoryService> _categoryService;
+        private Mock<IGenericAttributeService> _genericAttributeService;
+        private Mock<IManufacturerService> _manufacturerService;
 
         private AbcMattressModel _abcMattressModelNoProduct = new AbcMattressModel()
         {
@@ -43,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         [SetUp]
         public void Setup()
         {
-            _abcMattressService = new Mock<IAbcMattressService>();
+            _abcMattressService = new Mock<IAbcMattressModelService>();
 
             _productService = new Mock<IProductService>();
             _productService.Setup(x => x.GetProductById(It.IsAny<int>()))
@@ -80,47 +81,64 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                                         }
                                     });
 
+            _genericAttributeService = new Mock<IGenericAttributeService>();
+            _manufacturerService = MockManufacturerService();
+
             _abcMattressProductService = new AbcMattressProductService(
                 _abcMattressService.Object,
                 new Mock<IAbcMattressBaseService>().Object,
                 _abcMattressEntryService.Object,
                 new Mock<IAbcMattressGiftService>().Object,
                 _categoryService.Object,
-                new Mock<IManufacturerService>().Object,
+                _genericAttributeService.Object,
+                _manufacturerService.Object,
                 _productService.Object,
                 new Mock<IProductAttributeService>().Object,
                 _urlRecordService.Object
             );
         }
 
-        // [Test]
-        // public void Creates_AbcMattressModel_Product()
-        // {
-        //     var product = _abcMattressProductService.UpsertAbcMattressProduct(_abcMattressModelNoProduct);
+        [Test]
+        public void Creates_AbcMattressModel_Product()
+        {
+            var product = _abcMattressProductService.UpsertAbcMattressProduct(_abcMattressModelNoProduct);
 
-        //     product.Name.Should().Be(_abcMattressModelNoProduct.Description);
-        //     product.Sku.Should().Be(_abcMattressModelNoProduct.Name);
-        //     product.AllowCustomerReviews.Should().BeFalse();
-        //     product.VisibleIndividually.Should().BeTrue();
-        //     product.CreatedOnUtc.Should().BeCloseTo(DateTime.UtcNow);
-        //     product.ProductType.Should().Be(ProductType.SimpleProduct);
-        //     product.OrderMinimumQuantity.Should().Be(1);
-        //     product.OrderMaximumQuantity.Should().Be(10000);
-        //     product.Published.Should().BeTrue();
+            product.Name.Should().Be($"Serta {_abcMattressModelNoProduct.Description}");
+            product.Sku.Should().Be(_abcMattressModelNoProduct.Name);
+            product.AllowCustomerReviews.Should().BeFalse();
+            product.VisibleIndividually.Should().BeTrue();
+            product.CreatedOnUtc.Should().BeCloseTo(DateTime.UtcNow);
+            product.ProductType.Should().Be(ProductType.SimpleProduct);
+            product.OrderMinimumQuantity.Should().Be(1);
+            product.OrderMaximumQuantity.Should().Be(10000);
+            product.Published.Should().BeTrue();
+            product.IsShipEnabled.Should().BeTrue();
 
-        //     _abcMattressModelNoProduct.ProductId.Should().NotBeNull();
+            _abcMattressModelNoProduct.ProductId.Should().NotBeNull();
 
-        //     _productService.Verify(x => x.InsertProduct(product), Times.Once);
-        //     _urlRecordService.Verify(x => x.InsertUrlRecord(It.IsAny<UrlRecord>()), Times.Once);
-        // }
+            _productService.Verify(x => x.InsertProduct(product), Times.Once);
+            _urlRecordService.Verify(x => x.SaveSlug<Product>(product, It.IsAny<string>(), 0), Times.Once);
+        }
 
-        // [Test]
-        // public void Updates_AbcMattressModel_Product()
-        // {
-        //     var product = _abcMattressProductService.UpsertAbcMattressProduct(_abcMattressModelWithProduct);
+        [Test]
+        public void Updates_AbcMattressModel_Product()
+        {
+            var product = _abcMattressProductService.UpsertAbcMattressProduct(_abcMattressModelWithProduct);
 
-        //     _productService.Verify(x => x.InsertProduct(product), Times.Never);
-        //     _urlRecordService.Verify(x => x.InsertUrlRecord(It.IsAny<UrlRecord>()), Times.Never);
-        // }
+            _productService.Verify(x => x.InsertProduct(product), Times.Never);
+            _urlRecordService.Verify(x => x.InsertUrlRecord(It.IsAny<UrlRecord>()), Times.Never);
+        }
+
+        private Mock<IManufacturerService> MockManufacturerService()
+        {
+            var service = new Mock<IManufacturerService>();
+            service.Setup(s => s.GetManufacturerById(It.IsAny<int>()))
+                   .Returns(new Manufacturer()
+                   {
+                       Name = "Serta"
+                   });
+
+            return service;
+        }
     }
 }

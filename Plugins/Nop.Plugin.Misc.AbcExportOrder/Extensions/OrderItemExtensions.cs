@@ -27,6 +27,20 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
                    oi.AttributeDescription.Contains("Warranty: ");
         }
 
+        public static string GetMattressSize(this OrderItem oi)
+        {
+            if (oi.AttributeDescription == null || !oi.AttributeDescription.Contains("Mattress Size:"))
+            {
+                return null;
+            }
+            var mattressSizeIndex = oi.AttributeDescription.IndexOf("Mattress Size:");
+            var mattressSizeString = oi.AttributeDescription.Substring(mattressSizeIndex);
+            mattressSizeString = mattressSizeString.Substring(14, mattressSizeString.IndexOf("<br />") - 14);
+            mattressSizeString = mattressSizeString.Substring(0, mattressSizeString.IndexOf("["));
+
+            return mattressSizeString.Trim();
+        }
+
         public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)
         {
             var pickupItems = ois.Where(oi => oi.IsPickup());

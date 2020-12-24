@@ -14,11 +14,16 @@ using Nop.Services.Stores;
 using Nop.Services.Seo;
 using System.Xml.Linq;
 using Nop.Plugin.Misc.AbcFrontend.Services;
+using Nop.Core.Domain.Catalog;
+using Nop.Plugin.Misc.AbcCore.Domain;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
     public class YahooService : IYahooService
     {
+        private readonly IAbcMattressEntryService _abcMattressEntryService;
+        private readonly IAbcMattressModelService _abcMattressModelService;
         private readonly IAddressService _addressService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly ICountryService _countryService;
@@ -40,6 +45,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
 
         public YahooService(
+            IAbcMattressEntryService abcMattressEntryService,
+            IAbcMattressModelService abcMattressModelService,
             IAddressService addressService,
             IAttributeUtilities attributeUtilities,
             ICountryService countryService,
@@ -59,6 +66,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             SecuritySettings securitySettings
         )
         {
+            _abcMattressEntryService = abcMattressEntryService;
+            _abcMattressModelService = abcMattressModelService;
             _addressService = addressService;
             _attributeUtilities = attributeUtilities;
             _countryService = countryService;
@@ -94,7 +103,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem.ProductId
                 );
                 var storeUrl = _storeService.GetStoreById(order.StoreId)?.Url;
-                var standardItemCode = productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku;
+                string standardItemCode = GetCode(orderItem, product, productAbcDescription);
 
                 var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
                 if (warranty != null)
@@ -134,6 +143,21 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             }
 
             return result;
+        }
+
+        private string GetCode(OrderItem orderItem, Product product, ProductAbcDescription productAbcDescription)
+        {
+            var mattressSize = orderItem.GetMattressSize();
+            if (mattressSize != null)
+            {
+                var model = _abcMattressModelService.GetAbcMattressModelByProductId(product.Id);
+                var entry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id)
+                                                    .Where(e => e.Size == mattressSize)
+                                                    .FirstOrDefault();
+                return entry.ItemNo;
+            }
+
+            return productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku;
         }
 
         private static void SetLineNumber(

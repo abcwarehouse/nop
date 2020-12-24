@@ -6,17 +6,12 @@ using System.Collections.Generic;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
 using System.Linq;
-using Nop.Core.Domain.Catalog;
-using System;
-using Nop.Services.Catalog;
-using Nop.Services.Seo;
-using Nop.Core.Domain.Seo;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
-    public class AbcMattressServiceTests
+    public class AbcMattressModelServiceTests
     {
-        private IAbcMattressService _abcMattressService;
+        private IAbcMattressModelService _abcMattressService;
 
         private Mock<IRepository<AbcMattressModel>> _abcMattressModelRepository;
 
@@ -47,7 +42,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                     _abcMattressModelWithProduct,
                 }.AsQueryable());
 
-            _abcMattressService = new AbcMattressService(
+            _abcMattressService = new AbcMattressModelService(
                 _abcMattressModelRepository.Object
             );
         }
@@ -58,6 +53,16 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             var abcMattressModels = _abcMattressService.GetAllAbcMattressModels();
 
             abcMattressModels.Should().HaveCount(2);
+        }
+
+        [Test]
+        public void Get_Model_By_Product_Id()
+        {
+            var abcMattressModel = _abcMattressService.GetAbcMattressModelByProductId(
+                _abcMattressModelWithProduct.ProductId.Value
+            );
+
+            abcMattressModel.Should().BeEquivalentTo(_abcMattressModelWithProduct);
         }
 
         [Test]

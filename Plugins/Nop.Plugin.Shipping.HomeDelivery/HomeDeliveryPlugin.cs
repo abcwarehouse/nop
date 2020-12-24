@@ -15,6 +15,7 @@ using Nop.Services.Plugins;
 using LinqToDB.Data;
 using LinqToDB;
 using Nop.Plugin.Misc.AbcCore.Domain;
+using Nop.Services.Common;
 
 namespace Nop.Plugin.Shipping.HomeDelivery
 {
@@ -88,12 +89,12 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                 {
                     pickupInStoreList.Add(item);
                 }
-
-                else if (_productHomeDeliveryRepo.Table.Any(phd => phd.Product_Id == item.ShoppingCartItem.ProductId))
+                // also checking product attribute (why not only check the product attribute?)
+                else if (_productHomeDeliveryRepo.Table.Any(phd => phd.Product_Id == item.ShoppingCartItem.ProductId) ||
+                         pam.Select(p => p).Where(p => _productAttributeService.GetProductAttributeById(p.ProductAttributeId).Name == "Home Delivery").Any())
                 {
                     homeDeliveryList.Add(item);
                 }
-
             }
 
             foreach (var item in pickupInStoreList)

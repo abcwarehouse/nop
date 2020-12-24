@@ -3,6 +3,7 @@ using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
+using Nop.Services.Common;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 {
@@ -10,7 +11,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
     {
         private readonly ILogger _logger;
 
-        private readonly IAbcMattressService _abcMattressService;
+        private readonly IAbcMattressModelService _abcMattressModelService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
         private readonly IAbcMattressPackageService _abcMattressPackageService;
         private readonly IAbcMattressProductService _abcMattressProductService;
@@ -19,7 +20,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
         public UpdateMattressesTask(
             ILogger logger,
-            IAbcMattressService abcMattressService,
+            IAbcMattressModelService abcMattressModelService,
             IAbcMattressEntryService abcMattressEntryService,
             IAbcMattressPackageService abcMattressPackageService,
             IAbcMattressProductService abcMattressProductService,
@@ -28,7 +29,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
         )
         {
             _logger = logger;
-            _abcMattressService = abcMattressService;
+            _abcMattressModelService = abcMattressModelService;
             _abcMattressEntryService = abcMattressEntryService;
             _abcMattressPackageService = abcMattressPackageService;
             _abcMattressProductService = abcMattressProductService;
@@ -38,7 +39,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
         public void Execute()
         {
-            var models = _abcMattressService.GetAllAbcMattressModels();
+            var models = _abcMattressModelService.GetAllAbcMattressModels();
 
             foreach (var model in models)
             {

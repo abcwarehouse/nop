@@ -4,6 +4,7 @@ using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
 using Nop.Services.Catalog;
+using Nop.Services.Common;
 using Nop.Services.Seo;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,24 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
     public class AbcMattressProductService : IAbcMattressProductService
     {
-        private readonly IAbcMattressService _abcMattressService;
+        private readonly IAbcMattressModelService _abcMattressService;
         private readonly IAbcMattressBaseService _abcMattressBaseService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
         private readonly IAbcMattressGiftService _abcMattressGiftService;
         private readonly ICategoryService _categoryService;
+        private readonly IGenericAttributeService _genericAttributeService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IUrlRecordService _urlRecordService;
 
         public AbcMattressProductService(
-            IAbcMattressService abcMattressService,
+            IAbcMattressModelService abcMattressService,
             IAbcMattressBaseService abcMattressBaseService,
             IAbcMattressEntryService abcMattressEntryService,
             IAbcMattressGiftService abcMattressGiftService,
             ICategoryService categoryService,
+            IGenericAttributeService genericAttributeService,
             IManufacturerService manufacturerService,
             IProductService productService,
             IProductAttributeService productAttributeService,
@@ -40,6 +43,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressEntryService = abcMattressEntryService;
             _abcMattressGiftService = abcMattressGiftService;
             _categoryService = categoryService;
+            _genericAttributeService = genericAttributeService;
             _manufacturerService = manufacturerService;
             _productService = productService;
             _productAttributeService = productAttributeService;
@@ -62,6 +66,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             product.ProductType = ProductType.SimpleProduct;
             product.OrderMinimumQuantity = 1;
             product.OrderMaximumQuantity = 10000;
+            product.IsShipEnabled = true;
 
             if (hasExistingProduct)
             {
@@ -86,13 +91,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         public void SetProductAttributes(AbcMattressModel model, Product product)
         {
             var nonBaseProductAttributes = _productAttributeService.GetAllProductAttributes()
-                                                            .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName ||
+                                                            .Where(pa => pa.Name == "Home Delivery" ||
+                                                                         pa.Name == AbcMattressesConsts.MattressSizeName ||
                                                                          pa.Name == AbcMattressesConsts.FreeGiftName);
 
             foreach (var pa in nonBaseProductAttributes)
             {
                 switch (pa.Name)
-                {
+                {   
+                    case "Home Delivery":
+                        MergeHomeDelivery(model, pa, product);
+                        break;
                     case AbcMattressesConsts.MattressSizeName:
                         MergeSizes(model, pa, product);
                         break;
@@ -107,6 +116,25 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             foreach (var pa in baseProductAttributes)
             {
                 MergeBases(model, pa, product);
+            }
+        }
+
+        private void MergeHomeDelivery(AbcMattressModel model, ProductAttribute pa, Product product)
+        {
+            var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                          .Where(pam => pam.ProductAttributeId == pa.Id)
+                                                          .FirstOrDefault();
+            if (pam == null)
+            {
+                pam = new ProductAttributeMapping()
+                {
+                    ProductId = product.Id,
+                    ProductAttributeId = pa.Id,
+                    IsRequired = false,
+                    AttributeControlType = AttributeControlType.MultilineTextbox,
+                    DisplayOrder = 0
+                };
+                _productAttributeService.InsertProductAttributeMapping(pam);
             }
         }
 
