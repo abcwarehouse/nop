@@ -22,8 +22,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
     public class YahooService : IYahooService
     {
+        private readonly IAbcMattressBaseService _abcMattressBaseService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
         private readonly IAbcMattressModelService _abcMattressModelService;
+        private readonly IAbcMattressPackageService _abcMattressPackageService;
         private readonly IAddressService _addressService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly ICountryService _countryService;
@@ -45,8 +47,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
 
         public YahooService(
+            IAbcMattressBaseService abcMattressBaseService,
             IAbcMattressEntryService abcMattressEntryService,
             IAbcMattressModelService abcMattressModelService,
+            IAbcMattressPackageService abcMattressPackageService,
             IAddressService addressService,
             IAttributeUtilities attributeUtilities,
             ICountryService countryService,
@@ -66,8 +70,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             SecuritySettings securitySettings
         )
         {
+            _abcMattressBaseService = abcMattressBaseService;
             _abcMattressEntryService = abcMattressEntryService;
             _abcMattressModelService = abcMattressModelService;
+            _abcMattressPackageService = abcMattressPackageService;
             _addressService = addressService;
             _attributeUtilities = attributeUtilities;
             _countryService = countryService;
@@ -154,6 +160,21 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 var entry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id)
                                                     .Where(e => e.Size == mattressSize)
                                                     .FirstOrDefault();
+
+                var baseName = orderItem.GetBase();
+                if (baseName != null)
+                {
+                    var abcMattressBase = _abcMattressBaseService.GetAbcMattressBasesByEntryId(entry.Id)
+                                                                 .Where(b => b.Name == baseName)
+                                                                 .FirstOrDefault();
+                    var package = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(new int[]{ entry.Id })
+                                                            .Where(p => p.AbcMattressBaseId == abcMattressBase.Id)
+                                                            .FirstOrDefault();
+
+                    return package.ItemNo;
+                }
+
+                
                 return entry.ItemNo;
             }
 

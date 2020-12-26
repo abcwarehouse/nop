@@ -58,8 +58,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         public void Setup()
         {
             _yahooService = new YahooService(
+                new Mock<IAbcMattressBaseService>().Object,
                 new Mock<IAbcMattressEntryService>().Object,
                 new Mock<IAbcMattressModelService>().Object,
+                new Mock<IAbcMattressPackageService>().Object,
                 MockAddressService().Object,
                 new Mock<IAttributeUtilities>().Object,
                 MockCountryService().Object,

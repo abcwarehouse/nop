@@ -41,6 +41,21 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
             return mattressSizeString.Trim();
         }
 
+        public static string GetBase(this OrderItem oi)
+        {
+            if (oi.AttributeDescription == null || !oi.AttributeDescription.Contains("Base ("))
+            {
+                return null;
+            }
+            var baseIndex = oi.AttributeDescription.IndexOf("Base (");
+            var baseString = oi.AttributeDescription.Substring(baseIndex);
+            baseString = baseString.Substring(6, baseString.IndexOf("<br />") - 6);
+            baseString = baseString.Substring(0, baseString.IndexOf("["));
+            baseString = baseString.Substring(baseString.IndexOf(":") + 1);
+
+            return baseString.Trim();
+        }
+
         public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)
         {
             var pickupItems = ois.Where(oi => oi.IsPickup());
