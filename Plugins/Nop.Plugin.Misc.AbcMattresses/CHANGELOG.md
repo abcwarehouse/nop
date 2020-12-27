@@ -1,3 +1,7 @@
+## 0.1.6
+
+* Created AbcMattressFrame schemas.
+
 ## 0.1.5
 
 * Moved Type from Model to Entry.
