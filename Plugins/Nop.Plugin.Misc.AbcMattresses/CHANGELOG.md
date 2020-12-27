@@ -1,3 +1,7 @@
+## 0.1.5
+
+* Moved Type from Model to Entry.
+
 ## 0.1.4
 
 * Added Base quantity to packages.

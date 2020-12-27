@@ -21,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcCore.Data
 
         public override void Up()
         {
-            Alter.Table(nameof(AbcMattressModel)).AddColumn(nameof(AbcMattressModel.TypeCategoryId))
+            Alter.Table(nameof(AbcMattressModel)).AddColumn("TypeCategoryId")
                                                  .AsInt32()
                                                  .Nullable();
             Alter.Table(nameof(AbcMattressModel)).AddColumn(nameof(AbcMattressModel.BrandCategoryId))
@@ -30,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcCore.Data
 
             Create.ForeignKey("FK_AbcMattressModel_Category_Type")
                   .FromTable(nameof(AbcMattressModel))
-                  .ForeignColumn(nameof(AbcMattressModel.TypeCategoryId))
+                  .ForeignColumn("TypeCategoryId")
                   .ToTable(nameof(Category))
                   .PrimaryColumn(nameof(Category.Id));
             Create.ForeignKey("FK_AbcMattressModel_Category_Brand")
