@@ -1,3 +1,7 @@
+## 0.1.7
+
+* Removed AbcMattressBase Price.
+
 ## 0.1.6
 
 * Created AbcMattressFrame schemas.

@@ -74,7 +74,7 @@ namespace Nop.Plugin.Misc.AbcCore.Data
                 .WithColumn(nameof(AbcMattressBase.Id)).AsInt32().NotNullable().PrimaryKey().Identity()
                 .WithColumn(nameof(AbcMattressBase.ItemNo)).AsString()
                 .WithColumn(nameof(AbcMattressBase.Name)).AsString()            
-                .WithColumn(nameof(AbcMattressBase.Price)).AsDecimal()
+                .WithColumn("Price").AsDecimal()
                 .WithColumn(nameof(AbcMattressBase.IsAdjustable)).AsBoolean();
         }
 

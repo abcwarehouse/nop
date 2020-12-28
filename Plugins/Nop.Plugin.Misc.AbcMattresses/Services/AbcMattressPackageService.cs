@@ -1,10 +1,5 @@
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Seo;
 using Nop.Data;
-using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
-using Nop.Services.Catalog;
-using Nop.Services.Seo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +15,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         )
         {
             _abcMattressPackageRepository = abcMattressPackageRepository;
+        }
+
+        public AbcMattressPackage GetAbcMattressPackageByEntryIdAndBaseId(int entryId, int baseId)
+        {
+            return _abcMattressPackageRepository.Table
+                                         .Where(p => p.AbcMattressBaseId == baseId &&
+                                                     p.AbcMattressEntryId == entryId)
+                                         .FirstOrDefault();
         }
 
         public IList<AbcMattressPackage> GetAbcMattressPackagesByEntryIds(IEnumerable<int> entryIds)

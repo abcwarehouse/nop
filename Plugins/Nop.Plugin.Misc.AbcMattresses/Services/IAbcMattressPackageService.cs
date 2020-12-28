@@ -8,5 +8,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
     {
         IList<AbcMattressPackage> GetAllAbcMattressPackages();
         IList<AbcMattressPackage> GetAbcMattressPackagesByEntryIds(IEnumerable<int> entryIds);
+        AbcMattressPackage GetAbcMattressPackageByEntryIdAndBaseId(int entryId, int baseId);
     }
 }

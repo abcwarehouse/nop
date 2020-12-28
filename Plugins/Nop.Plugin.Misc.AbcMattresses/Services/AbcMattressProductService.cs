@@ -18,6 +18,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IAbcMattressBaseService _abcMattressBaseService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
         private readonly IAbcMattressGiftService _abcMattressGiftService;
+        private readonly IAbcMattressPackageService _abcMattressPackageService;
         private readonly ICategoryService _categoryService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IManufacturerService _manufacturerService;
@@ -30,6 +31,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IAbcMattressBaseService abcMattressBaseService,
             IAbcMattressEntryService abcMattressEntryService,
             IAbcMattressGiftService abcMattressGiftService,
+            IAbcMattressPackageService abcMattressPackageService,
             ICategoryService categoryService,
             IGenericAttributeService genericAttributeService,
             IManufacturerService manufacturerService,
@@ -42,6 +44,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressBaseService = abcMattressBaseService;
             _abcMattressEntryService = abcMattressEntryService;
             _abcMattressGiftService = abcMattressGiftService;
+            _abcMattressPackageService = abcMattressPackageService;
             _categoryService = categoryService;
             _genericAttributeService = genericAttributeService;
             _manufacturerService = manufacturerService;
@@ -290,7 +293,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                                                         .Where(pav =>
                                                             pav.ProductAttributeMappingId == pam.Id
                                                         );
-            var newBases = bases.Select(g => g.ToProductAttributeValue(pam.Id)).ToList();
+            var newBases = bases.Select(nb => nb.ToProductAttributeValue(
+                pam.Id,
+                _abcMattressPackageService.GetAbcMattressPackageByEntryIdAndBaseId(abcMattressEntry.Id, nb.Id).Price,
+                abcMattressEntry.Price
+            )).ToList();
 
             var toBeDeleted = existingBases
                 .Where(e => !newBases.Any(n => n.Name == e.Name));
