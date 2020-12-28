@@ -26,6 +26,13 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressModelGiftMappingService = abcMattressModelGiftMappingService;
         }
 
+        public AbcMattressGift GetAbcMattressGiftByDescription(string description)
+        {
+            return _abcMattressGiftRepository.Table
+                                             .Where(amb => amb.Description == description)
+                                             .FirstOrDefault();
+        }
+
         public IList<AbcMattressGift> GetAbcMattressGiftsByModelId(int modelId)
         {
             var mappings = _abcMattressModelGiftMappingService.GetAbcMattressModelGiftMappingsByModelId(modelId);

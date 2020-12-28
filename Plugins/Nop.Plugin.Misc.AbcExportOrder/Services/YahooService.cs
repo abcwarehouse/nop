@@ -24,6 +24,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     {
         private readonly IAbcMattressBaseService _abcMattressBaseService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
+        private readonly IAbcMattressGiftService _abcMattressGiftService;
         private readonly IAbcMattressModelService _abcMattressModelService;
         private readonly IAbcMattressPackageService _abcMattressPackageService;
         private readonly IAddressService _addressService;
@@ -49,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         public YahooService(
             IAbcMattressBaseService abcMattressBaseService,
             IAbcMattressEntryService abcMattressEntryService,
+            IAbcMattressGiftService abcMattressGiftService,
             IAbcMattressModelService abcMattressModelService,
             IAbcMattressPackageService abcMattressPackageService,
             IAddressService addressService,
@@ -72,6 +74,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         {
             _abcMattressBaseService = abcMattressBaseService;
             _abcMattressEntryService = abcMattressEntryService;
+            _abcMattressGiftService = abcMattressGiftService;
             _abcMattressModelService = abcMattressModelService;
             _abcMattressPackageService = abcMattressPackageService;
             _addressService = addressService;
@@ -141,6 +144,24 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         warranty.PriceAdjustment,
                         warranty.Name,
                         "", // no url for warranty line items
+                        GetPickupStore(orderItem)
+                    ));
+                }
+
+                var freeGift = orderItem.GetFreeGift();
+                if (freeGift != null)
+                {
+                    lineNumber++;
+                    var amg = _abcMattressGiftService.GetAbcMattressGiftByDescription(freeGift);
+                    result.Add(new YahooDetailRow(
+                        _settings.OrderIdPrefix,
+                        orderItem,
+                        lineNumber,
+                        "", // no item ID associated
+                        amg.ItemNo,
+                        0.00M, // free item
+                        freeGift,
+                        "", // no url for free gifts
                         GetPickupStore(orderItem)
                     ));
                 }

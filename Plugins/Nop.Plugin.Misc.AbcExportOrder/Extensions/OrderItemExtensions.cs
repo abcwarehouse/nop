@@ -56,6 +56,19 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
             return baseString.Trim();
         }
 
+        public static string GetFreeGift(this OrderItem oi)
+        {
+            if (oi.AttributeDescription == null || !oi.AttributeDescription.Contains("Free Gift:"))
+            {
+                return null;
+            }
+            var freeGiftIndex = oi.AttributeDescription.IndexOf("Free Gift:");
+            var freeGiftString = oi.AttributeDescription.Substring(freeGiftIndex);
+            freeGiftString = freeGiftString.Substring(10, freeGiftString.IndexOf("<br />") - 10);
+
+            return freeGiftString.Replace("&quot;", "\"").Trim();
+        }
+
         public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)
         {
             var pickupItems = ois.Where(oi => oi.IsPickup());

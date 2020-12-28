@@ -19,6 +19,15 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             AttributeDescription = "Base (Twin): Ease 3.0 [+$297.00]<br />"
         };
 
+        private OrderItem _orderItemWithFreeGift = new OrderItem()
+        {
+            AttributeDescription = "Free Gift: FREE-55\"-4K-SMART-TV<br />"
+        };
+        private OrderItem _orderItemWithFreeGift2 = new OrderItem()
+        {
+            AttributeDescription = "Free Gift: FREE-55&quot;-4K-SMART-TV<br />"
+        };
+
 
         [Test]
         public void Returns_Mattress_Size()
@@ -32,6 +41,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             _orderItem.GetBase().Should().BeNull();
             _orderItemWithBase.GetBase().Should().Be("Ease 3.0");
+        }
+
+        [Test]
+        public void Returns_Free_Gift()
+        {
+            _orderItem.GetBase().Should().BeNull();
+            _orderItemWithFreeGift.GetFreeGift().Should().Be("FREE-55\"-4K-SMART-TV");
+            _orderItemWithFreeGift2.GetFreeGift().Should().Be("FREE-55\"-4K-SMART-TV");
         }
     }
 }

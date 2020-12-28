@@ -7,5 +7,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
     public interface IAbcMattressGiftService
     {
         IList<AbcMattressGift> GetAbcMattressGiftsByModelId(int modelId);
+
+        AbcMattressGift GetAbcMattressGiftByDescription(string description);
     }
 }
