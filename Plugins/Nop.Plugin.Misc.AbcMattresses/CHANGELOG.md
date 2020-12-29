@@ -1,3 +1,7 @@
+## 0.1.8
+
+* Created AbcMattressProtector 
+
 ## 0.1.7
 
 * Removed AbcMattressBase Price.

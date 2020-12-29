@@ -10,7 +10,7 @@ using Nop.Core.Domain.Catalog;
 namespace Nop.Plugin.Misc.AbcCore.Data
 {
     [NopMigration("2020/12/10 14:51:55:1687541", "Misc.AbcMattresses - moved TypeCategoryId, added BrandCategoryId")]
-    public class SchemaMigrationV3 : AutoReversingMigration
+    public class SchemaMigrationV3 : Migration
     {
         protected IMigrationManager _migrationManager;
 
@@ -38,6 +38,17 @@ namespace Nop.Plugin.Misc.AbcCore.Data
                   .ForeignColumn(nameof(AbcMattressModel.BrandCategoryId))
                   .ToTable(nameof(Category))
                   .PrimaryColumn(nameof(Category.Id));
+        }
+
+        public override void Down()
+        {
+            Delete.ForeignKey("FK_AbcMattressModel_Category_Type")
+                  .OnTable(nameof(AbcMattressModel));
+            Delete.ForeignKey("FK_AbcMattressModel_Category_Brand")
+                  .OnTable(nameof(AbcMattressModel));
+
+            Delete.Column("TypeCategoryId").FromTable(nameof(AbcMattressModel));
+            Delete.Column(nameof(AbcMattressModel.BrandCategoryId)).FromTable(nameof(AbcMattressModel));
         }
     }
 }

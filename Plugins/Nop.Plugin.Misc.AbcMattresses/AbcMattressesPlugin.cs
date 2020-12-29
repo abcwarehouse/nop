@@ -7,6 +7,7 @@ using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Linq;
 using Nop.Data;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -16,17 +17,22 @@ namespace Nop.Plugin.Misc.AbcMattresses
             $"{typeof(UpdateMattressesTask).Namespace}.{typeof(UpdateMattressesTask).Name}, " +
             $"{typeof(UpdateMattressesTask).Assembly.GetName().Name}";
 
+        private readonly IAbcMattressModelService _abcMattressModelService;
+        private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
-
         private readonly INopDataProvider _nopDataProvider;
 
         public AbcMattressesPlugin(
+            IAbcMattressModelService abcMattressModelService,
+            IProductService productService,
             IProductAttributeService productAttributeService,
             IScheduleTaskService scheduleTaskService,
             INopDataProvider nopDataProvider
         )
         {
+            _abcMattressModelService = abcMattressModelService;
+            _productService = productService;
             _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
             _nopDataProvider = nopDataProvider;
@@ -47,6 +53,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
         {
             RemoveTasks();
             RemoveProductAttributes();
+
+            var productsToDelete = _abcMattressModelService.GetAllAbcMattressModels()
+                                                           .Where(m => m.ProductId != null)
+                                                           .Select(m => _productService.GetProductById(m.ProductId.Value))
+                                                           .Where(p => !p.Deleted);
+            _productService.DeleteProducts(productsToDelete.ToList());
 
             base.Uninstall();
         }
@@ -76,6 +88,7 @@ namespace Nop.Plugin.Misc.AbcMattresses
             var productAttributes = _productAttributeService.GetAllProductAttributes()
                                                             .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName ||
                                                                          AbcMattressesConsts.IsBase(pa.Name) ||
+                                                                         AbcMattressesConsts.IsMattressProtector(pa.Name) ||
                                                                          pa.Name == AbcMattressesConsts.FreeGiftName)
                                                             .ToList();
 
@@ -93,6 +106,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameQueen },
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameKing },
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameCaliforniaKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorTwin },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorTwinXL },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorFull },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorQueen },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorCaliforniaKing },
                 new ProductAttribute() { Name = AbcMattressesConsts.FreeGiftName }
             };
 
