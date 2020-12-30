@@ -14,9 +14,9 @@ using Nop.Services.Stores;
 using Nop.Services.Seo;
 using System.Xml.Linq;
 using Nop.Plugin.Misc.AbcFrontend.Services;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Domain;
-using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -27,6 +27,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IAbcMattressGiftService _abcMattressGiftService;
         private readonly IAbcMattressModelService _abcMattressModelService;
         private readonly IAbcMattressPackageService _abcMattressPackageService;
+        private readonly IAbcMattressProtectorService _abcMattressProtectorService;
         private readonly IAddressService _addressService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly ICountryService _countryService;
@@ -53,6 +54,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IAbcMattressGiftService abcMattressGiftService,
             IAbcMattressModelService abcMattressModelService,
             IAbcMattressPackageService abcMattressPackageService,
+            IAbcMattressProtectorService abcMattressProtectorService,
             IAddressService addressService,
             IAttributeUtilities attributeUtilities,
             ICountryService countryService,
@@ -77,6 +79,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _abcMattressGiftService = abcMattressGiftService;
             _abcMattressModelService = abcMattressModelService;
             _abcMattressPackageService = abcMattressPackageService;
+            _abcMattressProtectorService = abcMattressProtectorService;
             _addressService = addressService;
             _attributeUtilities = attributeUtilities;
             _countryService = countryService;
@@ -112,7 +115,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem.ProductId
                 );
                 var storeUrl = _storeService.GetStoreById(order.StoreId)?.Url;
-                string standardItemCode = GetCode(orderItem, product, productAbcDescription);
+                (string code, decimal price) standardItemCodeAndPrice = GetCodeAndPrice(orderItem, product, productAbcDescription);
 
                 var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
                 if (warranty != null)
@@ -126,7 +129,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem,
                     lineNumber,
                     product.Sku,
-                    standardItemCode,
+                    standardItemCodeAndPrice.code,
+                    standardItemCodeAndPrice.price,
                     product.Name,
                     $"{storeUrl}{_urlRecordService.GetSeName(product)}",
                     GetPickupStore(orderItem)
@@ -139,7 +143,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         _settings.OrderIdPrefix,
                         orderItem,
                         lineNumber,
-                        standardItemCode,
+                        standardItemCodeAndPrice.code,
                         _warrantyService.GetWarrantySkuByName(warranty.Name),
                         warranty.PriceAdjustment,
                         warranty.Name,
@@ -166,13 +170,38 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     ));
                 }
 
+                var mattressProtector = orderItem.GetMattressProtector();
+                if (mattressProtector != null)
+                {
+                    lineNumber++;
+                    var size = orderItem.GetMattressSize();
+                    var amp = _abcMattressProtectorService.GetAbcMattressProtectorsBySize(size)
+                                                          .Where(p => p.Name == mattressProtector)
+                                                          .FirstOrDefault();
+                    result.Add(new YahooDetailRow(
+                        _settings.OrderIdPrefix,
+                        orderItem,
+                        lineNumber,
+                        "", // no item ID associated
+                        amp.ItemNo,
+                        amp.Price,
+                        mattressProtector,
+                        "", // no url
+                        GetPickupStore(orderItem)
+                    ));
+                }
+
                 SetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem, lineNumber);
             }
 
             return result;
         }
 
-        private string GetCode(OrderItem orderItem, Product product, ProductAbcDescription productAbcDescription)
+        private (string, decimal) GetCodeAndPrice(
+            OrderItem orderItem,
+            Product product,
+            ProductAbcDescription productAbcDescription
+        )
         {
             var mattressSize = orderItem.GetMattressSize();
             if (mattressSize != null)
@@ -192,14 +221,15 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                                                             .Where(p => p.AbcMattressBaseId == abcMattressBase.Id)
                                                             .FirstOrDefault();
 
-                    return package.ItemNo;
+                    return (package.ItemNo, package.Price);
                 }
 
                 
-                return entry.ItemNo;
+                return (entry.ItemNo, entry.Price);
             }
 
-            return productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku;
+            return (productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku,
+                    orderItem.UnitPriceExclTax);
         }
 
         private static void SetLineNumber(

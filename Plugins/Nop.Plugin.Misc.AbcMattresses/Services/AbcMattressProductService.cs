@@ -19,6 +19,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IAbcMattressEntryService _abcMattressEntryService;
         private readonly IAbcMattressGiftService _abcMattressGiftService;
         private readonly IAbcMattressPackageService _abcMattressPackageService;
+        private readonly IAbcMattressProtectorService _abcMattressProtectorService;
         private readonly ICategoryService _categoryService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IManufacturerService _manufacturerService;
@@ -32,6 +33,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IAbcMattressEntryService abcMattressEntryService,
             IAbcMattressGiftService abcMattressGiftService,
             IAbcMattressPackageService abcMattressPackageService,
+            IAbcMattressProtectorService abcMattressProtectorService,
             ICategoryService categoryService,
             IGenericAttributeService genericAttributeService,
             IManufacturerService manufacturerService,
@@ -45,6 +47,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressEntryService = abcMattressEntryService;
             _abcMattressGiftService = abcMattressGiftService;
             _abcMattressPackageService = abcMattressPackageService;
+            _abcMattressProtectorService = abcMattressProtectorService;
             _categoryService = categoryService;
             _genericAttributeService = genericAttributeService;
             _manufacturerService = manufacturerService;
@@ -120,6 +123,75 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 MergeBases(model, pa, product);
             }
+
+            var mattressProtectorAttributes = _productAttributeService.GetAllProductAttributes()
+                                                            .Where(pa => AbcMattressesConsts.IsMattressProtector(pa.Name));
+            foreach (var pa in mattressProtectorAttributes)
+            {
+                MergeMattressProtectors(model, pa, product);
+            }
+        }
+
+        private void MergeMattressProtectors(AbcMattressModel model, ProductAttribute pa, Product product)
+        {
+            var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                          .Where(pam => pam.ProductAttributeId == pa.Id)
+                                                          .FirstOrDefault();
+            var abcMattressEntry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id)
+                                                           .Where(ame => pa.Name == $"Mattress Protector ({ame.Size})")
+                                                           .FirstOrDefault();
+            if (abcMattressEntry == null) { return; }
+
+            var protectors = _abcMattressProtectorService.GetAbcMattressProtectorsBySize(abcMattressEntry.Size);
+
+            if (pam == null && protectors.Any())
+            {
+                var sizePa = _productAttributeService.GetAllProductAttributes()
+                                                            .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
+                                                            .FirstOrDefault();
+                var sizePam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                          .Where(pam => pam.ProductAttributeId == sizePa.Id)
+                                                          .FirstOrDefault();
+                var sizePav = _productAttributeService.GetProductAttributeValues(sizePam.Id)
+                                                        .Where(pav =>
+                                                            pav.ProductAttributeMappingId == sizePam.Id &&
+                                                            pav.Name == abcMattressEntry.Size
+                                                        )
+                                                        .FirstOrDefault();
+                pam = new ProductAttributeMapping()
+                {
+                    ProductId = product.Id,
+                    ProductAttributeId = pa.Id,
+                    IsRequired = false,
+                    AttributeControlType = AttributeControlType.DropdownList,
+                    DisplayOrder = 20,
+                    TextPrompt = "Mattress Protector",
+                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
+                };
+                _productAttributeService.InsertProductAttributeMapping(pam);
+            }
+            else if (pam != null && !protectors.Any())
+            {
+                _productAttributeService.DeleteProductAttributeMapping(pam);
+            }
+
+            if (!protectors.Any()) { return; }
+
+            var existingMattressProtectors = _productAttributeService.GetProductAttributeValues(pam.Id)
+                                                        .Where(pav =>
+                                                            pav.ProductAttributeMappingId == pam.Id
+                                                        );
+            var newMattressProtectors = protectors.Select(np => np.ToProductAttributeValue(
+                pam.Id
+            )).ToList();
+
+            var toBeDeleted = existingMattressProtectors
+                .Where(e => !newMattressProtectors.Any(n => n.Name == e.Name));
+            var toBeInserted = newMattressProtectors
+                .Where(n => !existingMattressProtectors.Any(e => n.Name == e.Name));
+
+            toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
+            toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
         }
 
         private void MergeHomeDelivery(AbcMattressModel model, ProductAttribute pa, Product product)

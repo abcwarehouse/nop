@@ -63,6 +63,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 new Mock<IAbcMattressGiftService>().Object,
                 new Mock<IAbcMattressModelService>().Object,
                 new Mock<IAbcMattressPackageService>().Object,
+                new Mock<IAbcMattressProtectorService>().Object,
                 MockAddressService().Object,
                 new Mock<IAttributeUtilities>().Object,
                 MockCountryService().Object,

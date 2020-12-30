@@ -90,6 +90,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 _abcMattressEntryService.Object,
                 new Mock<IAbcMattressGiftService>().Object,
                 new Mock<IAbcMattressPackageService>().Object,
+                new Mock<IAbcMattressProtectorService>().Object,
                 _categoryService.Object,
                 _genericAttributeService.Object,
                 _manufacturerService.Object,

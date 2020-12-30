@@ -33,8 +33,11 @@
             {
                 var controlId = $"{NopCatalogDefaults.ProductAttributePrefix}{attribute.Id}";
                 var textPrompt = !string.IsNullOrEmpty(attribute.TextPrompt) ? attribute.TextPrompt : attribute.Name;
-                // custom: hide base items
-                var isHidden = attribute.TextPrompt == "Base" ? "display:none" : "";
+                // custom: configure hidden items
+                var isHidden = attribute.TextPrompt == "Base" ||
+                               attribute.TextPrompt == "Mattress Protector" ?
+                    "display:none" :
+                    "";
                 
                 <dt id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" style="@($"{isHidden}")">
                     <label class="text-prompt">

@@ -69,6 +69,21 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
             return freeGiftString.Replace("&quot;", "\"").Trim();
         }
 
+        public static string GetMattressProtector(this OrderItem oi)
+        {
+            if (oi.AttributeDescription == null || !oi.AttributeDescription.Contains("Mattress Protector ("))
+            {
+                return null;
+            }
+            var protectorIndex = oi.AttributeDescription.IndexOf("Mattress Protector (");
+            var protectorString = oi.AttributeDescription.Substring(protectorIndex);
+            protectorString = protectorString.Substring(20, protectorString.IndexOf("<br />") - 20);
+            protectorString = protectorString.Substring(0, protectorString.IndexOf("["));
+            protectorString = protectorString.Substring(protectorString.IndexOf(":") + 1);
+
+            return protectorString.Replace("&quot;", "\"").Trim();
+        }
+
         public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)
         {
             var pickupItems = ois.Where(oi => oi.IsPickup());

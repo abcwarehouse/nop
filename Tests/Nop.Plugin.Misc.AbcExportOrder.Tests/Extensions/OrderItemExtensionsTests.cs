@@ -27,6 +27,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             AttributeDescription = "Free Gift: FREE-55&quot;-4K-SMART-TV<br />"
         };
+        private OrderItem _orderItemWithMattressProtector = new OrderItem()
+        {
+            AttributeDescription = "Mattress Protector (Twin): Good [+$80.00]<br />"
+        };
 
 
         [Test]
@@ -49,6 +53,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             _orderItem.GetBase().Should().BeNull();
             _orderItemWithFreeGift.GetFreeGift().Should().Be("FREE-55\"-4K-SMART-TV");
             _orderItemWithFreeGift2.GetFreeGift().Should().Be("FREE-55\"-4K-SMART-TV");
+        }
+
+        [Test]
+        public void Returns_Mattress_Protector()
+        {
+            _orderItem.GetMattressProtector().Should().BeNull();
+            _orderItemWithMattressProtector.GetMattressProtector().Should().Be("Good");
         }
     }
 }

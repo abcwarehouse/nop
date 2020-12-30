@@ -15,13 +15,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
         public string Description { get; protected set; }
         public string Url { get; protected set; }
         public string PickupBranchId { get; protected set; }
-
         public YahooDetailRow(
             string prefix,
             OrderItem orderItem,
             int itemLine,
             string itemId,
             string itemCode,
+            decimal unitPrice,
             string description,
             string url,
             string pickupBranchId
@@ -36,20 +36,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Description = description;
             Url = url;
             PickupBranchId = pickupBranchId;
-        }
-
-        public YahooDetailRow(
-            string prefix,
-            OrderItem orderItem,
-            int itemLine,
-            string itemId,
-            string itemCode,
-            decimal unitPrice,
-            string description,
-            string url,
-            string pickupBranchId
-        ) : this(prefix, orderItem, itemLine, itemId, itemCode, description, url, pickupBranchId)
-        {
             UnitPrice = unitPrice;
         }
         public List<string> ToStringValues()

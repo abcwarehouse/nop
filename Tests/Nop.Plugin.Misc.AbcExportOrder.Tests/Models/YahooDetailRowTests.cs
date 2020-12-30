@@ -39,6 +39,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 1,
                 _itemId,
                 _itemCode,
+                0.00M,
                 _itemDescription,
                 _url,
                 "A16"
@@ -50,6 +51,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 1,
                 _itemId,
                 "12344",
+                0.00M,
                 _itemDescription,
                 _url,
                 "A16"
@@ -66,7 +68,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             _yahooDetailRow.ItemId.Should().Be(_itemId);
             _yahooDetailRow.LineNumber.Should().Be(1);
             _yahooDetailRow.Quantity.Should().Be(_orderItem.Quantity);
-            _yahooDetailRow.UnitPrice.Should().Be(_orderItem.UnitPriceExclTax);
+            _yahooDetailRow.UnitPrice.Should().Be(0.00M);
             _yahooDetailRow.Url.Should().Be(_url);
 
             _yahooDetailRowPickup.Id.Should().Be($"{_prefix}{_orderItem.OrderId}+p");
