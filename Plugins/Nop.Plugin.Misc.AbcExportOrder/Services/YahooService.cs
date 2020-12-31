@@ -17,6 +17,7 @@ using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Domain;
+using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -36,6 +37,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IEncryptionService _encryptionService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IGiftCardService _giftCardService;
+        private readonly IHomeDeliveryCostService _homeDeliveryCostService;
         private readonly IProductService _productService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IPriceCalculationService _priceCalculationService;
@@ -63,6 +65,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IEncryptionService encryptionService,
             IGenericAttributeService genericAttributeService,
             IGiftCardService giftCardService,
+            IHomeDeliveryCostService homeDeliveryCostService,
             IPriceCalculationService priceCalculationService,
             IProductService productService,
             IProductAbcDescriptionService productAbcDescriptionService,
@@ -88,6 +91,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _encryptionService = encryptionService;
             _genericAttributeService = genericAttributeService;
             _giftCardService = giftCardService;
+            _homeDeliveryCostService = homeDeliveryCostService;
             _productService = productService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _priceCalculationService = priceCalculationService;
@@ -324,13 +328,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             {
                 decimal homeDeliveryCost = 0;
                 decimal shippingCost = 0;
-                decimal homeDeliveryCostPerItem = 14.75M;
 
                 homeDeliveryCost = 0;
                 foreach (OrderItem item in shippingItems)
                 {
                     if (item.IsHomeDelivery())
                     {
+                        decimal homeDeliveryCostPerItem = _homeDeliveryCostService.GetHomeDeliveryCost(item);
                         homeDeliveryCost += homeDeliveryCostPerItem * item.Quantity;
                     }
                 }

@@ -16,11 +16,12 @@ using LinqToDB.Data;
 using LinqToDB;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Services.Common;
+using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 
 namespace Nop.Plugin.Shipping.HomeDelivery
 {
     /// <summary>
-    /// UPS computation method
+    /// ABC Home Delivery computation method
     /// </summary>
     public class HomeDeliveryPlugin : BasePlugin, IShippingRateComputationMethod
     {
@@ -28,12 +29,14 @@ namespace Nop.Plugin.Shipping.HomeDelivery
         private readonly IRepository<ProductHomeDelivery> _productHomeDeliveryRepo;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly INopDataProvider _nopContext;
+        private readonly IHomeDeliveryCostService _homeDeliveryCostService;
         private readonly IProductAttributeService _productAttributeService;
 
         public HomeDeliveryPlugin(
             IRepository<ProductHomeDelivery> productHomeDeliveryRepo,
             IProductAttributeParser productAttributeParser,
             INopDataProvider nopContext,
+            IHomeDeliveryCostService homeDeliveryCostService,
             IProductAttributeService productAttributeService
         )
         {
@@ -41,6 +44,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             _productHomeDeliveryRepo = productHomeDeliveryRepo;
             _productAttributeParser = productAttributeParser;
             _nopContext = nopContext;
+            _homeDeliveryCostService = homeDeliveryCostService;
             _productAttributeService = productAttributeService;
         }
 
@@ -109,10 +113,11 @@ namespace Nop.Plugin.Shipping.HomeDelivery
 
             var additionalHomeDeliveryCharge = decimal.Zero;
 
-            var homeDeliveryCost = 14.75M;
+            
             //calculate cost of home delivery items
             foreach (var item in homeDeliveryList)
             {
+                var homeDeliveryCost = _homeDeliveryCostService.GetHomeDeliveryCost(item);
                 var quantity = item.OverriddenQuantity.HasValue ? item.OverriddenQuantity.Value : item.ShoppingCartItem.Quantity;
                 additionalHomeDeliveryCharge += homeDeliveryCost * quantity;
             }

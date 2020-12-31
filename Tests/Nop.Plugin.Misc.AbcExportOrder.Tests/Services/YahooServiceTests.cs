@@ -21,6 +21,7 @@ using Nop.Services.Stores;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -72,6 +73,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 new Mock<IEncryptionService>().Object,
                 new Mock<IGenericAttributeService>().Object,
                 MockGiftCardService().Object,
+                new Mock<IHomeDeliveryCostService>().Object,
                 MockPriceCalculationService().Object,
                 MockProductService().Object,
                 new Mock<IProductAbcDescriptionService>().Object,

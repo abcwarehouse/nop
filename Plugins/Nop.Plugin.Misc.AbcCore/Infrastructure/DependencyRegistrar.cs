@@ -2,6 +2,7 @@
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
+using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
@@ -34,6 +35,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             builder.RegisterType<CustomerShopService>().As<ICustomerShopService>().InstancePerLifetimeScope();
             builder.RegisterType<CustomShopService>().As<ICustomShopService>();
             builder.RegisterType<ProductAbcDescriptionService>().As<IProductAbcDescriptionService>();
+            builder.RegisterType<HomeDeliveryCostService>()
+                   .As<IHomeDeliveryCostService>();
         }
     }
 }
