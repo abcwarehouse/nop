@@ -28,7 +28,8 @@ namespace Nop.Plugin.Widgets.AbcPromos
             ILocalizationService localizationService,
             IScheduleTaskService scheduleTaskService,
             ISettingService settingService
-        ) {
+        )
+        {
             _webHelper = webHelper;
             _localizationService = localizationService;
             _scheduleTaskService = scheduleTaskService;

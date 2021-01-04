@@ -113,7 +113,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
 
             var additionalHomeDeliveryCharge = decimal.Zero;
 
-            
+
             //calculate cost of home delivery items
             foreach (var item in homeDeliveryList)
             {
@@ -154,7 +154,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             {
                 var zip = getShippingOptionRequest.ShippingAddress.ZipPostalCode;
                 CheckZipcode(zip, response);
-                response.ShippingOptions.Add(new ShippingOption { Name = "Home Delivery", Rate = additionalHomeDeliveryCharge});
+                response.ShippingOptions.Add(new ShippingOption { Name = "Home Delivery", Rate = additionalHomeDeliveryCharge });
             }//else the cart contains only pickup in store
             else
             {
@@ -173,11 +173,11 @@ namespace Nop.Plugin.Shipping.HomeDelivery
 
             var firstFive = zip.Substring(0, 5);
             int zipNum;
-            if (int.TryParse(firstFive,out zipNum))
+            if (int.TryParse(firstFive, out zipNum))
             {
                 var returnCode = new DataParameter { Name = "ReturnCode", DataType = DataType.Int32, Direction = ParameterDirection.Output };
-                var parameters =  new DataParameter[] { returnCode, new DataParameter { Name = "zip", DataType = DataType.Int32, Value = zipNum } };
-                _nopContext.ExecuteNonQuery("EXEC @ReturnCode = ZipIsHomeDelivery @zip", dataParameters: parameters );
+                var parameters = new DataParameter[] { returnCode, new DataParameter { Name = "zip", DataType = DataType.Int32, Value = zipNum } };
+                _nopContext.ExecuteNonQuery("EXEC @ReturnCode = ZipIsHomeDelivery @zip", dataParameters: parameters);
 
                 if (returnCode.Value.Equals(1))
                     return true;

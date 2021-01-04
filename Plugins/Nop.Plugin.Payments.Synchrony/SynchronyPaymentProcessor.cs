@@ -250,7 +250,7 @@ namespace Nop.Plugin.Payments.Synchrony
             var syfPaymentInfo = JsonSerializer.Deserialize<AuthenticationTokenResponse>(syfPaymentInfoJson);
             if (syfPaymentInfo?.StatusMessage != "Auth Approved" &&
                 syfPaymentInfo?.StatusMessage != "Account Authentication Success")
-			{
+            {
                 throw new Exception("Failure when getting Synchrony Payment Info.");
             }
 
@@ -260,7 +260,7 @@ namespace Nop.Plugin.Payments.Synchrony
                 syfPaymentInfo.PromoCode != null && syfPaymentInfo.PromoCode.Length > 3 ?
                 syfPaymentInfo.PromoCode.Substring(syfPaymentInfo.PromoCode.Length - 4, 3) :
                 syfPaymentInfo.PromoCode;
-                
+
             var authCode = syfPaymentInfo.AuthCode;
             if (authCode != null)
             {

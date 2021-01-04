@@ -10,24 +10,24 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 namespace Nop.Plugin.Misc.AbcSync
 {
     public class FillStagingProductsTask : IScheduleTask
-	{
+    {
         private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;
         private readonly CoreSettings _coreSettings;
 
-		public FillStagingProductsTask(
+        public FillStagingProductsTask(
             ILogger logger,
             ImportSettings importSettings,
             CoreSettings coreSettings
         )
-		{
+        {
             _logger = logger;
             _importSettings = importSettings;
             _coreSettings = coreSettings;
-		}
+        }
 
-		public void Execute()
-		{
+        public void Execute()
+        {
             if (_importSettings.SkipFillStagingProductsTask)
             {
                 this.Skipped();
@@ -37,7 +37,7 @@ namespace Nop.Plugin.Misc.AbcSync
             this.LogStart();
             ImportProducts();
             this.LogEnd();
-		}
+        }
 
         private void ImportProducts()
         {

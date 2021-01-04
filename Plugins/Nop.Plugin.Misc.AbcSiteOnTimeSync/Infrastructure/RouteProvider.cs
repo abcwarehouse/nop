@@ -17,8 +17,9 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Infrastructure
         {
             endpointRouteBuilder.MapControllerRoute(
                 "SiteOnTimeSyncVerifySettings",
-				"Admin/AbcSiteOnTimeSync/VerifySettings",
-				new {
+                "Admin/AbcSiteOnTimeSync/VerifySettings",
+                new
+                {
                     controller = "AbcSiteOnTimeSync",
                     action = "VerifySettingsAsync"
                 }

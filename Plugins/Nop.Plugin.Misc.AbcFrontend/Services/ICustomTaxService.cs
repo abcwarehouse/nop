@@ -5,6 +5,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
     public interface ICustomTaxService : ITaxService
     {
-        bool IsCustomerInTaxableState(int taxCategoryId, Customer customer); 
+        bool IsCustomerInTaxableState(int taxCategoryId, Customer customer);
     }
 }

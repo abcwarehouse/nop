@@ -8,7 +8,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
     public class OrderItemExtensionsTests
     {
-        private OrderItem _orderItem = new OrderItem();   
+        private OrderItem _orderItem = new OrderItem();
         private OrderItem _orderItemWithMattressSize = new OrderItem()
         {
             AttributeDescription = "Mattress Size: Twin [+$297.00]<br />"

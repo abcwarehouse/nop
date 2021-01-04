@@ -163,7 +163,8 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
 
             // picking only non-pickup items
             OrderItem shippedOrderItem = null;
-            foreach (OrderItem o in orderItems) {
+            foreach (OrderItem o in orderItems)
+            {
                 if (_attributeUtilities.GetPickupAttributeMapping(o.AttributesXml) == null)
                 {
                     shippedOrderItem = o;
@@ -177,10 +178,11 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
 
             if (shipment == null)
             {
-                shipment = new Shipment { 
-                    OrderId = order.Id, 
-                    TrackingNumber = trackingNo, 
-                    ShippedDateUtc = DateTime.UtcNow, 
+                shipment = new Shipment
+                {
+                    OrderId = order.Id,
+                    TrackingNumber = trackingNo,
+                    ShippedDateUtc = DateTime.UtcNow,
                     CreatedOnUtc = DateTime.UtcNow
                 };
                 _shipmentService.InsertShipment(shipment);
@@ -195,7 +197,8 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
             else
             {
                 _shipmentService.InsertShipmentItem(
-                    new ShipmentItem {
+                    new ShipmentItem
+                    {
                         ShipmentId = shipment.Id,
                         OrderItemId = shippedOrderItem.Id,
                         Quantity = shippedOrderItem.Quantity

@@ -104,7 +104,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             foreach (var pa in nonBaseProductAttributes)
             {
                 switch (pa.Name)
-                {   
+                {
                     case "Home Delivery":
                         MergeHomeDelivery(model, pa, product);
                         break;
@@ -221,7 +221,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 ProductId = product.Id,
                 ManufacturerId = abcMattressModel.ManufacturerId.Value
             };
-        
+
             var toBeDeleted = existingProductManufacturers
                 .Where(e => e.ProductId != newProductManufacturer.ProductId &&
                             e.ManufacturerId != newProductManufacturer.ProductId);
@@ -239,7 +239,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             var existingProductCategories = _categoryService.GetProductCategoriesByProductId(product.Id);
             var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
             var newProductCategories = entries.Select(e => AbcMattressEntryToProductCategory(e)).ToList();
-            
+
             // comfort
             var comfortCategory = _categoryService.GetAllCategories()
                                              .Where(c => c.Name.ToLower().Equals(ConvertComfortToCategoryName(model.Comfort)))
@@ -252,8 +252,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     CategoryId = comfortCategory.Id
                 });
             }
-            
-        
+
+
             var toBeDeleted = existingProductCategories
                 .Where(e => !newProductCategories.Any(n => n.ProductId == e.ProductId &&
                                                            n.CategoryId == e.CategoryId));

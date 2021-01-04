@@ -39,7 +39,8 @@ namespace Nop.Plugin.Misc.AbcSync
         {
             this.LogStart();
 
-            try {
+            try
+            {
                 DisableUptimeCheck();
                 var cacheManager = EngineContext.Current.Resolve<IStaticCacheManager>();
                 _logger.Information(this.GetType().Name + " Closing Store");
@@ -65,7 +66,8 @@ namespace Nop.Plugin.Misc.AbcSync
 
                 VerifyStoresAreOpen();
             }
-            catch {
+            catch
+            {
                 _logger.Error("Error when running CoreUpdate, store is likely closed.");
                 throw;
             }
@@ -73,7 +75,7 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 EnableUptimeCheck();
             }
-            
+
             this.LogEnd();
         }
 
@@ -86,7 +88,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             using (var client = new HttpClient())
             {
-                foreach(var store in stores)
+                foreach (var store in stores)
                 {
                     var attemptCount = 0;
                     while (attemptCount < MaxAttempts)
@@ -96,7 +98,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
                         if (response.IsSuccessStatusCode)
                         {
-                            var responseContent = response.Content; 
+                            var responseContent = response.Content;
                             string responseString =
                                 responseContent.ReadAsStringAsync().Result;
 

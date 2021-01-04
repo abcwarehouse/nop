@@ -13,7 +13,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
         public virtual int ShoppingCartItem_Id { get; set; }
 
         public virtual int HiddenAttribute_Id { get; set; }
-        
+
         public virtual decimal PriceAdjustment { get; set; }
 
         public virtual HiddenAttribute HiddenAttribute { get; set; }

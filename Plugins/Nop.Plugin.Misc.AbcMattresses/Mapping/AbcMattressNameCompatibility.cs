@@ -11,7 +11,7 @@ namespace Nop.Plugin.Misc.AbcMattress.Mapping
     /// </summary>
     public partial class AbcMattressNameCompatibility : INameCompatibility
     {
-        public Dictionary<Type, string> TableNames => new Dictionary<Type, string> {};
+        public Dictionary<Type, string> TableNames => new Dictionary<Type, string> { };
 
         public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string>
         {

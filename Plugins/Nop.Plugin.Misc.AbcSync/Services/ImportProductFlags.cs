@@ -13,19 +13,19 @@ using System.Linq;
 namespace Nop.Plugin.Misc.AbcSync
 {
     public class ImportProductFlags : BaseAbcWarehouseService, IImportProductFlags
-	{
+    {
         private readonly string PRICE_BUCKET_CODE_FOLDER_PATH = "/Plugins/Misc.AbcFrontend/Images/";
 
-		private readonly IImportUtilities _importUtilities;
+        private readonly IImportUtilities _importUtilities;
         private readonly IRepository<ProductFlag> _productFlagRepository;
         private readonly IRepository<Product> _productRepository;
         private readonly IStoreService _storeService;
         private readonly INopDataProvider _nopDbContext;
-		private readonly ImportSettings _settings;
+        private readonly ImportSettings _settings;
         private readonly IIsamProductService _isamProductService;
 
-		public ImportProductFlags(
-			IImportUtilities importUtilities,
+        public ImportProductFlags(
+            IImportUtilities importUtilities,
             IRepository<ProductFlag> productFlagRepository,
             IRepository<Product> productRepository,
             INopDataProvider nopDbContext,
@@ -33,23 +33,23 @@ namespace Nop.Plugin.Misc.AbcSync
             ImportSettings importSettings,
             IIsamProductService isamProductService
         )
-		{
-			_importUtilities = importUtilities;
+        {
+            _importUtilities = importUtilities;
             _productFlagRepository = productFlagRepository;
             _productRepository = productRepository;
             _nopDbContext = nopDbContext;
-			_settings = importSettings;
+            _settings = importSettings;
             _storeService = storeService;
             _isamProductService = isamProductService;
 
-			return;
-		}
+            return;
+        }
 
-		/// <summary>
-		///		Begin the import process for the product flags.
-		/// </summary>
-		public void Import()
-		{
+        /// <summary>
+        ///		Begin the import process for the product flags.
+        /// </summary>
+        public void Import()
+        {
             _nopDbContext.ExecuteNonQuery($"DELETE FROM ProductFlag;");
 
             var productFlagManager = new EntityManager<ProductFlag>(_productFlagRepository);
@@ -61,11 +61,11 @@ namespace Nop.Plugin.Misc.AbcSync
 
             // produce a dictionary of stockflag -> text
 
-			var productList = _isamProductService.GetIsamProducts()
+            var productList = _isamProductService.GetIsamProducts()
                 .Where(sp => sp.InstockFlag > 0 || sp.PriceBucketCode > 0 || sp.IsNew).Select(sp => sp);
-			foreach (var product in productList)
-			{
-				var nopProduct = _importUtilities.GetExistingProductBySku(product.Sku);
+            foreach (var product in productList)
+            {
+                var nopProduct = _importUtilities.GetExistingProductBySku(product.Sku);
                 if (nopProduct == null)
                 {
                     continue;
@@ -115,9 +115,9 @@ namespace Nop.Plugin.Misc.AbcSync
                     _productRepository.Update(nopProduct);
                 }
                 productFlagManager.Insert(newProductFlag);
-			}
+            }
             productFlagManager.Flush();
-		}
+        }
 
         private Dictionary<PriceBucketCode, string> InitializePriceBucketToImageUrlDictionary()
         {
@@ -162,5 +162,5 @@ namespace Nop.Plugin.Misc.AbcSync
             stockFlagMessages.Add(InstockFlag.SeeStoreForDetails, "See Store for Details");
             return stockFlagMessages;
         }
-	}
+    }
 }

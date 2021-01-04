@@ -17,7 +17,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Services.Staging
         {
             _importSettings = importSettings;
         }
-        
+
         public bool FindProductDataProduct(string sku, string brand)
         {
             using (var connection = _importSettings.GetStagingDbConnection())
@@ -27,11 +27,11 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Services.Staging
                     //"SELECT * FROM ProductDataProducts WHERE SKU='" + sku + "' AND Brand='" + brand + "' "
                     "SELECT * FROM ProductDataProducts WHERE SKU='" + sku + "' "
                 );
-                
+
                 if (pdpEnum.Count() > 0)
-				{
+                {
                     foreach (var pdp in pdpEnum.ToList())
-                    {                        
+                    {
                         connection.Query(string.Format("DELETE FROM [dbo].[ProductDataProductDimensions] WHERE ProductDataProduct_id = {0}", pdp.id));
                         connection.Query(string.Format("DELETE FROM [dbo].[ProductDataProductDownloads] WHERE ProductDataProduct_id = {0}", pdp.id));
                         connection.Query(string.Format("DELETE FROM [dbo].[ProductDataProductFeatures] WHERE ProductDataProduct_id = {0}", pdp.id));
@@ -41,9 +41,9 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Services.Staging
                         connection.Query(string.Format("DELETE FROM [dbo].[ProductDataProductRelatedItems] WHERE ProductDataProduct_id = {0}", pdp.id));
                         connection.Query(string.Format("DELETE FROM [dbo].[ProductDataProducts] WHERE id = {0}", pdp.id));
                     }
-                    
+
                     result = true;
-                }                    
+                }
 
                 return result;
             }

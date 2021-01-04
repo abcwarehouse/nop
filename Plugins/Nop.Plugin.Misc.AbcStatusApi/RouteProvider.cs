@@ -15,10 +15,10 @@ namespace Nop.Plugin.Misc.AbcStatusApi
         }
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
-            
+
             endpointRouteBuilder.MapControllerRoute("StatusPostRoute",
-							"api/status",
-							new { controller = "StatusApi", action = "SetStatus" });
+                            "api/status",
+                            new { controller = "StatusApi", action = "SetStatus" });
         }
     }
 }

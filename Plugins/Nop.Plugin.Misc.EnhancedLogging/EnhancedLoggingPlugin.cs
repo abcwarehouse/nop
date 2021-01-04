@@ -14,7 +14,8 @@ namespace Nop.Plugin.Misc.EnhancedLogging
 {
     public class EnhancedLoggingPlugin : BasePlugin, IMiscPlugin
     {
-        public static class LocaleKey {
+        public static class LocaleKey
+        {
             public const string Base = "Plugins.Misc.EnhancedLogging";
             public const string DaysToKeepLogs = Base + ".Fields.DaysToKeepLogs";
         }
@@ -35,7 +36,7 @@ namespace Nop.Plugin.Misc.EnhancedLogging
             IScheduleTaskService scheduleTaskService,
             ISettingService settingService,
             IWebHelper webHelper,
-            ILocalizationService localizationService 
+            ILocalizationService localizationService
         )
         {
             _scheduleTaskService = scheduleTaskService;
@@ -99,7 +100,7 @@ namespace Nop.Plugin.Misc.EnhancedLogging
             {
                 _scheduleTaskService.DeleteTask(enhancedClearLogTask);
             }
-            
+
         }
 
         private void AddOrUpdatePluginLocaleResources()

@@ -52,7 +52,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string CategoryDetailsBottomMin768px => CategoryDetailsBottom + Min768px;
         public static string CategoryDetailsBottomAbove1000px => CategoryDetailsBottom + Above1000px;
 
-        
+
 
         public static string Cart => "cart";
 

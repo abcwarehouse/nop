@@ -119,7 +119,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
 
         [JsonProperty(PropertyName = "freight_taxable")]
         public bool FreightTaxable { get; set; }
-        
+
         #endregion
 
         #region US/Canada attributes

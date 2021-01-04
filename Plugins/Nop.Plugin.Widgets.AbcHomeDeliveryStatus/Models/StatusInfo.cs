@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Models
 {
-    [XmlRoot(ElementName ="homeDeliveryStatus")]
+    [XmlRoot(ElementName = "homeDeliveryStatus")]
     public class StatusInfo
     {
         public string ErrorMessage { get; set; }
@@ -26,7 +26,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Models
         // truckLoaded
         [XmlElement("truckLoaded")]
         public string TruckLoaded { get; set; }
-        
+
         // deliveryTime
         [XmlElement("deliveryTime")]
         public string DeliveryTime { get; set; }

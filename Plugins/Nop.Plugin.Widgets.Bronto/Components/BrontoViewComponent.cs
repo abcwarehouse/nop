@@ -37,7 +37,8 @@ namespace Nop.Plugin.Widgets.Bronto.Components
             IShoppingCartService shoppingCartService,
             IOrderService orderService,
             ILogger logger
-        ) {
+        )
+        {
             _settings = settings;
             _workContext = workContext;
             _storeContext = storeContext;
@@ -78,7 +79,8 @@ namespace Nop.Plugin.Widgets.Bronto.Components
             };
 
             // Populate values based on order status
-            switch (phase) {
+            switch (phase)
+            {
                 case BrontoPhases.OrderComplete:
                     PopulateModelForOrderComplete(model);
                     break;

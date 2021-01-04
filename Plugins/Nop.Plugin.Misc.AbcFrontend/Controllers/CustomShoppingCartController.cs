@@ -625,7 +625,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
             //product and gift card attributes
             var attributes = _productAttributeParser.ParseProductAttributes(product, form, addToCartWarnings);
-            
+
             // --------------------------------
             // ABC: add Home Delivery attribute
             // --------------------------------
@@ -750,7 +750,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 if (pictureId > 0)
                 {
-                    var productAttributePictureCacheKey = _cacheKeyService.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductAttributePictureModelKey, 
+                    var productAttributePictureCacheKey = _cacheKeyService.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductAttributePictureModelKey,
                         pictureId, _webHelper.IsCurrentConnectionSecured(), _storeContext.CurrentStore);
                     var pictureModel = _staticCacheManager.Get(productAttributePictureCacheKey, () =>
                     {
@@ -1046,7 +1046,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     (cartItem.NewQuantity > cartItem.Item.Quantity && cartItem.Product != null && _shoppingCartService
                          .GetProductsRequiringProduct(cart, cartItem.Product).Any()))
                 .ToList();
-            
+
             //try to update cart items with new quantities and get warnings
             var warnings = orderedCart.Select(cartItem => new
             {
@@ -1114,7 +1114,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 return View(model);
             }
 
-            var anonymousPermissed = _orderSettings.AnonymousCheckoutAllowed 
+            var anonymousPermissed = _orderSettings.AnonymousCheckoutAllowed
                                      && _customerSettings.UserRegistrationType == UserRegistrationType.Disabled;
 
             if (anonymousPermissed || !_customerService.IsGuest(_workContext.CurrentCustomer))

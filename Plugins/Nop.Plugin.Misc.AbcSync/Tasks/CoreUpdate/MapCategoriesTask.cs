@@ -40,10 +40,10 @@ namespace Nop.Plugin.Misc.AbcSync
         public void Execute()
         {
             if (_importSettings.SkipMapCategoriesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 

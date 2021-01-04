@@ -14,85 +14,85 @@ using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Controllers
 {
-	[Area(AreaNames.Admin)]
-	public class AbcSiteOnTimeSyncController : BasePluginController
-	{
-		private readonly AbcSiteOnTimeSyncSettings _importSettings;
-		private readonly ISettingService _settingService;
-		private readonly ILocalizationService _localizationService;
-		private readonly INotificationService _notificationService;
+    [Area(AreaNames.Admin)]
+    public class AbcSiteOnTimeSyncController : BasePluginController
+    {
+        private readonly AbcSiteOnTimeSyncSettings _importSettings;
+        private readonly ISettingService _settingService;
+        private readonly ILocalizationService _localizationService;
+        private readonly INotificationService _notificationService;
 
-		public AbcSiteOnTimeSyncController(AbcSiteOnTimeSyncSettings importSettings,
-			ISettingService settingService,
-			ILocalizationService localizationService,
-			INotificationService notificationService
-		)
-		{
-			_importSettings = importSettings;
-			_settingService = settingService;
-			_localizationService = localizationService;
-			_notificationService = notificationService;
-		}
+        public AbcSiteOnTimeSyncController(AbcSiteOnTimeSyncSettings importSettings,
+            ISettingService settingService,
+            ILocalizationService localizationService,
+            INotificationService notificationService
+        )
+        {
+            _importSettings = importSettings;
+            _settingService = settingService;
+            _localizationService = localizationService;
+            _notificationService = notificationService;
+        }
 
-		[AuthorizeAdmin]
-		[AutoValidateAntiforgeryToken]
-		public ActionResult Configure()
-		{
-			return View("~/Plugins/Misc.AbcSiteOnTimeSync/Views/Configure.cshtml", _importSettings.ToModel());
-		}
+        [AuthorizeAdmin]
+        [AutoValidateAntiforgeryToken]
+        public ActionResult Configure()
+        {
+            return View("~/Plugins/Misc.AbcSiteOnTimeSync/Views/Configure.cshtml", _importSettings.ToModel());
+        }
 
-		[HttpPost]
-		[AuthorizeAdmin]
-		[AutoValidateAntiforgeryToken]
-		public ActionResult Configure(ConfiguationModel model)
-		{
-			if (!ModelState.IsValid)
-			{
-				return Configure();
-			}
+        [HttpPost]
+        [AuthorizeAdmin]
+        [AutoValidateAntiforgeryToken]
+        public ActionResult Configure(ConfiguationModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Configure();
+            }
 
-			_settingService.SaveSetting(_importSettings.FromModel(model));
+            _settingService.SaveSetting(_importSettings.FromModel(model));
 
-			_notificationService.SuccessNotification(
-				_localizationService.GetResource("Admin.Plugins.Saved"));
+            _notificationService.SuccessNotification(
+                _localizationService.GetResource("Admin.Plugins.Saved"));
 
-			return Configure();
-		}
+            return Configure();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> VerifySettingsAsync(
-			[FromBody]VerifySettingsModel model
-		)
-		{
-			var url = model.CmicApiBrandUrl;
-			Uri.TryCreate(model.CmicApiBrandUrl, UriKind.Absolute, out var validUrl);
-			if (validUrl == null)
-			{
-				return BadRequest("Invalid URL provided.");
-			}
+        [HttpPost]
+        public async Task<IActionResult> VerifySettingsAsync(
+            [FromBody] VerifySettingsModel model
+        )
+        {
+            var url = model.CmicApiBrandUrl;
+            Uri.TryCreate(model.CmicApiBrandUrl, UriKind.Absolute, out var validUrl);
+            if (validUrl == null)
+            {
+                return BadRequest("Invalid URL provided.");
+            }
 
-			using (HttpClient client = new HttpClient())
-			{
-				client.DefaultRequestHeaders.Authorization = 
-					new AuthenticationHeaderValue(
-						"Basic", Convert.ToBase64String(
-							System.Text.ASCIIEncoding.ASCII.GetBytes(
-							$"{model.CmicApiUsername}:{model.CmicApiPassword}")));
-				
-				using (HttpResponseMessage res = await client.GetAsync(url))
-				{
-					switch (res.StatusCode)
-					{
-						case HttpStatusCode.Unauthorized:
-							return Unauthorized("Check credentials.");
-						case HttpStatusCode.OK:
-							return Ok();
-						// if we get an unexpected response code
-						default:
-							return StatusCode(500);
-					}
-				}
-			}
-		}
-	}
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue(
+                        "Basic", Convert.ToBase64String(
+                            System.Text.ASCIIEncoding.ASCII.GetBytes(
+                            $"{model.CmicApiUsername}:{model.CmicApiPassword}")));
+
+                using (HttpResponseMessage res = await client.GetAsync(url))
+                {
+                    switch (res.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            return Unauthorized("Check credentials.");
+                        case HttpStatusCode.OK:
+                            return Ok();
+                        // if we get an unexpected response code
+                        default:
+                            return StatusCode(500);
+                    }
+                }
+            }
+        }
+    }
 }

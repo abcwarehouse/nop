@@ -16,14 +16,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutShippingMethod",
-							"checkout/shippingmethod",
-							new { controller = "CustomCheckout", action = "ShippingMethod" });
+                            "checkout/shippingmethod",
+                            new { controller = "CustomCheckout", action = "ShippingMethod" });
 
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutPaymentMethod",
-							"checkout/paymentmethod",
-							new { controller = "CustomCheckout", action = "PaymentMethod" });
+                            "checkout/paymentmethod",
+                            new { controller = "CustomCheckout", action = "PaymentMethod" });
 
-			endpointRouteBuilder.MapControllerRoute("CustomCheckoutPaymentInfo",
+            endpointRouteBuilder.MapControllerRoute("CustomCheckoutPaymentInfo",
                             "checkout/paymentinfo",
                             new { controller = "CustomCheckout", action = "PaymentInfo" });
 

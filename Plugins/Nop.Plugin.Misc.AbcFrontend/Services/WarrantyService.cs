@@ -18,17 +18,17 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         private readonly IRepository<WarrantySku> _warrantySkuRepository;
 
         public readonly IAttributeUtilities _attributeUtilities;
-        public readonly ICustomTaxService _taxService;        
+        public readonly ICustomTaxService _taxService;
         private readonly ITaxCategoryService _taxCategoryService;
         public readonly IProductAttributeParser _productAttributeParser;
         public readonly IImportUtilities _importUtilities;
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
 
-        public WarrantyService (
+        public WarrantyService(
             IRepository<WarrantySku> warrantySkuRepository,
             IAttributeUtilities attributeUtilities,
-            ICustomTaxService taxService,            
+            ICustomTaxService taxService,
             ITaxCategoryService taxCategoryService,
             IProductAttributeParser productAttributeParser,
             IImportUtilities importUtilities,
@@ -38,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         {
             _warrantySkuRepository = warrantySkuRepository;
             _attributeUtilities = attributeUtilities;
-            _taxService = taxService;            
+            _taxService = taxService;
             _taxCategoryService = taxCategoryService;
             _productAttributeParser = productAttributeParser;
             _importUtilities = importUtilities;
@@ -54,15 +54,15 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             decimal sciUnitPriceInclTax;
             decimal warrantyUnitPriceExclTax;
             decimal warrantyUnitPriceInclTax;
-            CalculateWarrantyTax(sci, customer, sciSubTotalExclTax, sciSubTotalExclTax / sci.Quantity, 
+            CalculateWarrantyTax(sci, customer, sciSubTotalExclTax, sciSubTotalExclTax / sci.Quantity,
                 out taxRate, out sciSubTotalInclTax,
                 out sciUnitPriceInclTax, out warrantyUnitPriceExclTax, out warrantyUnitPriceInclTax);
         }
 
-        public void CalculateWarrantyTax(ShoppingCartItem sci, Customer customer, 
-            decimal sciSubTotalExclTax, decimal sciUnitPriceExclTax, 
-            out decimal taxRate, 
-            out decimal sciSubTotalInclTax, out decimal sciUnitPriceInclTax, 
+        public void CalculateWarrantyTax(ShoppingCartItem sci, Customer customer,
+            decimal sciSubTotalExclTax, decimal sciUnitPriceExclTax,
+            out decimal taxRate,
+            out decimal sciSubTotalInclTax, out decimal sciUnitPriceInclTax,
             out decimal warrantyUnitPriceExclTax, out decimal warrantyUnitPriceInclTax)
         {
             taxRate = decimal.Zero;
@@ -89,7 +89,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 bool isCustomerInTaxableState = false;
                 var taxCategory = _taxCategoryService.GetAllTaxCategories().FirstOrDefault(x => x.Name == "Warranties");
                 isCustomerInTaxableState = _taxService.IsCustomerInTaxableState(taxCategory?.Id ?? 0, customer);
-                
+
                 if (warrProduct == null)
                 {
                     // taxed warranty price
@@ -100,7 +100,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     warrantyUnitPriceInclTax = _taxService.GetProductPrice(warrProduct, warrantyUnitPriceExclTax, isCustomerInTaxableState, customer, out taxRate);
                 }
 
-                decimal productUnitPriceInclTax 
+                decimal productUnitPriceInclTax
                     = _taxService.GetProductPrice(product, sciUnitPriceExclTax - warrantyUnitPriceExclTax, true, customer, out taxRate);
 
                 sciUnitPriceInclTax = productUnitPriceInclTax + warrantyUnitPriceInclTax;

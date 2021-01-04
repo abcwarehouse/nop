@@ -7,7 +7,7 @@ namespace Nop.Plugin.Payments.AbcCard.Models
     public class PaymentInfoModel : BaseNopModel
     {
         public string DescriptionText { get; set; }
-        
+
         [NopResourceDisplayName("Payment.CardNumber")]
         [Required]
         [CreditCard]

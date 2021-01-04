@@ -49,7 +49,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             {
                 _logger.Warning("Widgets.AbcPromos: External calls skipped, will not update from backend.");
             }
-            else {
+            else
+            {
                 _nopDataProvider.ExecuteStoredProcedure("UpdateAbcPromos", 300);
             }
 
@@ -91,7 +92,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             {
                 var name = promo.Name.Replace("_", "-") + "-" + promo.Description;
 
-                if (promo.ManufacturerId != null) {
+                if (promo.ManufacturerId != null)
+                {
                     var manufacturer =
                         _manufacturerService.GetManufacturerById(promo.ManufacturerId.Value);
                     var manufacturerName = manufacturer.Name;

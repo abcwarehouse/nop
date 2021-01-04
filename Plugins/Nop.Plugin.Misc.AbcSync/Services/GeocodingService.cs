@@ -37,7 +37,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
             var stateProvince = _stateProvinceService.GetStateProvinceById(address.Id);
             string requestAddress =
                 $"{address.Address1}, {address.City}, {stateProvince.Abbreviation}, {address.ZipPostalCode}";
-            string requestUri = 
+            string requestUri =
                 string.Format(
                     "https://maps.googleapis.com/maps/api/geocode/xml?key={1}&address={0}&sensor=false",
                     Uri.EscapeDataString(requestAddress), ApiKey);

@@ -113,7 +113,7 @@ namespace Nop.Plugin.Payments.Synchrony.Components
                     _httpContextAccessor.HttpContext.Response.Redirect("/checkout/paymentmethod");
                     return Content("");
                 }
-                
+
                 string token = authResponse.clientToken;
                 _httpContext.HttpContext.Session.Set("token", token);
                 string postBackId = authResponse.postbackid;

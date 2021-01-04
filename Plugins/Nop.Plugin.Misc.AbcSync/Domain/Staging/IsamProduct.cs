@@ -4,7 +4,7 @@ using System;
 namespace Nop.Plugin.Misc.AbcSync.Domain.Staging
 {
     public class IsamProduct
-	{	
+    {
         public int Id { get; set; }
         public string ItemNumber { get; set; }
         public string Name { get; set; }

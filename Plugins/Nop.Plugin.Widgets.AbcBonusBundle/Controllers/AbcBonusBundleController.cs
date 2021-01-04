@@ -29,7 +29,7 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
 
-        
+
 
         public AbcBonusBundleController(ILogger logger,
             IProductAbcBundleService productAbcBundleService,
@@ -48,7 +48,7 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Controllers
             _localizationService = localizationService;
             _notificationService = notificationService;
 
-            
+
         }
 
         public IActionResult Configure()

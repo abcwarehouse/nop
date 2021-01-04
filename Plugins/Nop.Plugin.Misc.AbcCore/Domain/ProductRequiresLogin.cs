@@ -14,7 +14,8 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
 
         public static Func<ProductRequiresLogin> GetByProductIdFunc(IRepository<ProductRequiresLogin> repo, int productId)
         {
-            return () => {
+            return () =>
+            {
                 return repo.Table.Where(pd => pd.Product_Id == productId).FirstOrDefault();
             };
         }

@@ -6,7 +6,7 @@ namespace Nop.Plugin.Misc.AbcSync.Extensions
         {
             var start =
                 connectionString.Substring(connectionString.IndexOf(";Initial Catalog=") + 17);
-            
+
             return start.Substring(0, start.IndexOf(";"));
         }
     }

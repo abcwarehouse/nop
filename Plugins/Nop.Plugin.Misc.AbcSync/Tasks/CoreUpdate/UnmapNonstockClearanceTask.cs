@@ -26,10 +26,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         public void Execute()
         {
             if (_settings.SkipUnmapNonstockClearanceTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 

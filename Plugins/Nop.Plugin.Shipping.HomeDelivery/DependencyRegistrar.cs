@@ -10,15 +10,15 @@ namespace Nop.Plugin.Shipping.HomeDelivery
     /// Dependency registrar
     /// </summary>
     public class DependencyRegistrar : IDependencyRegistrar
-	{
-		/// <summary>
-		/// Register services and interfaces
-		/// </summary>
-		/// <param name="builder">Container builder</param>
-		/// <param name="typeFinder">Type finder</param>
-		/// <param name="config">Config</param>
-		public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
-		{
+    {
+        /// <summary>
+        /// Register services and interfaces
+        /// </summary>
+        /// <param name="builder">Container builder</param>
+        /// <param name="typeFinder">Type finder</param>
+        /// <param name="config">Config</param>
+        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
+        {
             builder.RegisterType<FedexComputationMethod>()
                 .As<FedexComputationMethod>().InstancePerLifetimeScope();
         }
@@ -27,8 +27,8 @@ namespace Nop.Plugin.Shipping.HomeDelivery
         /// Order of this dependency registrar implementation
         /// </summary>
         public int Order
-		{
-			get { return 1; }
-		}
-	}
+        {
+            get { return 1; }
+        }
+    }
 }

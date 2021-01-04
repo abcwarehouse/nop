@@ -51,10 +51,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         public void Execute()
         {
             if (_importSettings.SkipImportProductCategoryMappingsTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 

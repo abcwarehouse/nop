@@ -30,7 +30,7 @@ namespace Nop.Plugin.Payments.AbcCard
 
         public AbcCardPaymentProcessor(
             AbcCardPaymentSettings AbcCardPaymentSettings,
-            ISettingService settingService, 
+            ISettingService settingService,
             IOrderTotalCalculationService orderTotalCalculationService,
             IShoppingCartService shoppingCartService,
             IPaymentService paymentService,
@@ -46,9 +46,9 @@ namespace Nop.Plugin.Payments.AbcCard
             _localizationService = localizationService;
             _webHelper = webHelper;
         }
-        
+
         #region Methods
-        
+
         /// <summary>
         /// Process a payment
         /// </summary>
@@ -203,10 +203,10 @@ namespace Nop.Plugin.Payments.AbcCard
                 ["Plugins.Payment.AbcCard.ShippableProductRequired"] = "Shippable product required",
                 ["Plugins.Payment.AbcCard.ShippableProductRequired.Hint"] = "An option indicating whether shippable products are required in order to display this payment method during checkout.",
             });
-            
+
             base.Install();
         }
-        
+
         public override void Uninstall()
         {
             //settings
@@ -214,7 +214,7 @@ namespace Nop.Plugin.Payments.AbcCard
 
             //locales
             _localizationService.DeletePluginLocaleResources("Plugins.Payment.AbcCard");
-            
+
             base.Uninstall();
         }
 

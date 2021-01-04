@@ -76,7 +76,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Total = total;
             GiftCard = giftCard;
             GiftCardAmountUsed = giftCardAmountUsed;
-            
+
             AuthCode = order.AuthorizationTransactionCode;
             CcRefNo = cardRefNo;
             Datestamp = order.CreatedOnUtc.ToString();
@@ -84,7 +84,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             if (!string.IsNullOrWhiteSpace(Ip) && Ip.IndexOf(",") > 0)
             {
                 var index = Ip.IndexOf(",");
-                Ip = Ip.Substring(0, index-1);
+                Ip = Ip.Substring(0, index - 1);
             }
         }
 

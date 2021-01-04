@@ -26,7 +26,8 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             ILogger logger,
             FrontEndService frontEndService,
             IProductService productService
-        ) {
+        )
+        {
             _logger = logger;
             _frontEndService = frontEndService;
             _productService = productService;
@@ -104,7 +105,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 ProductGtin = productDetailsModel.Gtin,
                 ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
             };
-            
+
             return View(
                 "~/Plugins/Widgets.PowerReviews/Views/Detail.cshtml",
                 model

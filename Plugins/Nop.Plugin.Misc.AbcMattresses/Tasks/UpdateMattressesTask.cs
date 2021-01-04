@@ -61,7 +61,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                     _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumber(
                         entry.ItemNo.ToString()
                     );
-                if (pad == null) { continue ;}
+                if (pad == null) { continue; }
 
                 var product = _productService.GetProductById(pad.Product_Id);
                 product.Published = false;
@@ -75,7 +75,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                     _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumber(
                         package.ItemNo.ToString()
                     );
-                if (pad == null) { continue ;}
+                if (pad == null) { continue; }
 
                 var product = _productService.GetProductById(pad.Product_Id);
                 product.Published = false;

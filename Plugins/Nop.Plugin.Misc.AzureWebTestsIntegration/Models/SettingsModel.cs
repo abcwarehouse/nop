@@ -15,7 +15,8 @@ namespace Nop.Plugin.Misc.AzureWebTestsIntegration.Models
         [NopResourceDisplayName("Tenant ID")]
         public string TenantId { get; set; }
 
-        public bool IsValid {
+        public bool IsValid
+        {
             get
             {
                 return !string.IsNullOrWhiteSpace(ClientId) &&

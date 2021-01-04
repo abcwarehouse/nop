@@ -24,7 +24,7 @@ namespace Nop.Plugin.Misc.AbcCore
                 var presetParts = preset.Split(',');
                 return presetParts[1].Trim();
             });
-            
+
         }
 
         public static string GetPavilionAccentColor()

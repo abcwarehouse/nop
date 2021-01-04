@@ -39,7 +39,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _pictureService = pictureService;
 
             var env = EngineContext.Current.Resolve<IWebHostEnvironment>();
-            _excelPath = Path.Combine(env.WebRootPath,"ImageReport.xlsx");
+            _excelPath = Path.Combine(env.WebRootPath, "ImageReport.xlsx");
         }
 
         public void Execute()
@@ -50,7 +50,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     p => !p.Deleted &&
                           p.Published).ToList();
             var publishedProductsWithNoPictures = new List<Product>();
-            
+
             foreach (var product in publishedProducts)
             {
                 if (!_pictureService.GetPicturesByProductId(product.Id, 1).Any())
@@ -61,11 +61,13 @@ namespace Nop.Plugin.Misc.AbcSync
 
             var prodsInfo = from prod in publishedProductsWithNoPictures
                             from pAbc in _productAbcRepository.Table.Where(pA => pA.Product_Id == prod.Id).ToList()
-                            select new {
+                            select new
+                            {
                                 prod.Id,
                                 prod.Name,
                                 prod.Sku,
-                                ItemNo = pAbc == null ? "" : pAbc.AbcItemNumber };
+                                ItemNo = pAbc == null ? "" : pAbc.AbcItemNumber
+                            };
             ExcelPackage ex = GetPackage();
 
             var prodSheet = ex.Workbook.Worksheets[0];

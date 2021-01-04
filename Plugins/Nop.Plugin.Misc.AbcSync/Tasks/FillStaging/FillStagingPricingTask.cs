@@ -11,7 +11,7 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 namespace Nop.Plugin.Misc.AbcSync
 {
     class FillStagingPricingTask : IScheduleTask
-	{
+    {
         private const string _backendDateFormat = "yyMMdd";
 
         private readonly ILogger _logger;
@@ -30,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcSync
         }
 
         public void Execute()
-		{
+        {
             if (_importSettings.SkipFillStagingPricingTask)
             {
                 this.Skipped();
@@ -38,13 +38,13 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-			using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
-			{
-				using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
-				{
-					Import(stagingConn, backendConn, _logger);
-				}
-			}
+            using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
+            {
+                using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
+                {
+                    Import(stagingConn, backendConn, _logger);
+                }
+            }
             this.LogEnd();
         }
 

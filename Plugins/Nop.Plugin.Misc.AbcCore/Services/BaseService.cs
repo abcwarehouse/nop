@@ -14,7 +14,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
     {
         private string _connectionString = "DSN=abc-erp";
         private List<OdbcCommand> _batchCommands = new List<OdbcCommand>();
-        
+
         private readonly CoreSettings _settings;
         private readonly ILogger _logger;
 
@@ -50,7 +50,8 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             if (batch)
             {
                 _batchCommands.Add(dbCommand);
-            } else
+            }
+            else
             {
                 ExecuteSingleNonQuery(dbCommand);
             }
@@ -93,7 +94,8 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             if (batch)
             {
                 _batchCommands.Add(dbCommand);
-            } else
+            }
+            else
             {
                 ExecuteSingleNonQuery(dbCommand);
             }
@@ -115,7 +117,8 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             if (batch)
             {
                 _batchCommands.Add(dbCommand);
-            } else
+            }
+            else
             {
                 ExecuteSingleNonQuery(dbCommand);
             }
@@ -149,7 +152,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 {
                     OpenConnection(dbConnection);
                 }
-                
+
                 try
                 {
                     foreach (OdbcCommand dbCommand in _batchCommands)

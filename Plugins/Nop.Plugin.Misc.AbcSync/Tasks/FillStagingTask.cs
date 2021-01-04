@@ -29,7 +29,7 @@ namespace Nop.Plugin.Misc.AbcSync
             EngineContext.Current.Resolve<FillStagingProductCategoryMappingsTask>().Execute();
             EngineContext.Current.Resolve<FillStagingScandownEndDatesTask>().Execute();
             EngineContext.Current.Resolve<FillStagingWarrantiesTask>().Execute();
-            
+
             this.LogEnd();
         }
     }

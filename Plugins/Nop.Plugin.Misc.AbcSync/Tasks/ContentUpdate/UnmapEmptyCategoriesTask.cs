@@ -25,7 +25,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             IStoreMappingService storeMappingService,
             ILogger logger,
             ImportSettings settings
-        ) {
+        )
+        {
             _categoryService = categoryService;
             _storeService = storeService;
             _storeMappingService = storeMappingService;
@@ -36,10 +37,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         public void Execute()
         {
             if (_settings.SkipUnmapEmptyCategoriesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 

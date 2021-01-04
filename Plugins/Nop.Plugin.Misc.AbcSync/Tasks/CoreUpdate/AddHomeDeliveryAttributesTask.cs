@@ -18,9 +18,9 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportSettings _importSettings;
 
         public AddHomeDeliveryAttributesTask(
-            INopDataProvider nopDbContext, 
-            IImportUtilities importUtilities, 
-            IRepository<ProductAttributeValue> productAttributeValueRepository, 
+            INopDataProvider nopDbContext,
+            IImportUtilities importUtilities,
+            IRepository<ProductAttributeValue> productAttributeValueRepository,
             IRepository<ProductAttributeMapping> productAttributeMappingRepository,
             ImportSettings importSettings
             )
@@ -35,10 +35,10 @@ namespace Nop.Plugin.Misc.AbcSync
         public void Execute()
         {
             if (_importSettings.SkipAddHomeDeliveryAttributesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
             var homeDeliveryAttribute = _importUtilities.GetHomeDeliveryAttribute();

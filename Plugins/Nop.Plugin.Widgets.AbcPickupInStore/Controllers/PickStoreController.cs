@@ -22,7 +22,7 @@ using SevenSpikes.Nop.Plugins.StoreLocator.Domain.Shops;
 
 namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
 {
-    public class PickStoreController: BasePluginController
+    public class PickStoreController : BasePluginController
     {
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
@@ -44,7 +44,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
         public PickStoreController(
             IWorkContext workContext,
             IStoreContext storeContext,
-            IShopService shopService, 
+            IShopService shopService,
             IProductService productService,
             ICustomerShopService customerShopService,
             IProductAttributeParser productAttributeParser,
@@ -130,7 +130,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
                             _productService.GetProductById(cartItem.ProductId),
                             cartItem.AttributesXml);
                     }
-                    _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer, cartItem.Id, 
+                    _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer, cartItem.Id,
                         cartItem.AttributesXml, cartItem.CustomerEnteredPrice, null, null, cartItem.Quantity, false);
 
                 }
@@ -180,7 +180,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
             PickStoreModel model = new PickStoreModel();
 
             // get the store that the customer selected previously if selected at all
-            CustomerShopMapping currentCustomerShopMapping 
+            CustomerShopMapping currentCustomerShopMapping
                 = _customerShopService.GetCurrentCustomerShopMapping(_workContext.CurrentCustomer.Id);
 
             var shoppingCartItems = _shoppingCartService.GetShoppingCart(_workContext.CurrentCustomer);

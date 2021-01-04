@@ -18,14 +18,14 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Services.Staging
         }
 
         public void InsertProductDataProductpmaps(List<ProductDataProductpmap> pmaps, int pdpId)
-		{
+        {
             using (var connection = _importSettings.GetStagingDbConnection())
             {
-                foreach(var p in pmaps)
-				{
+                foreach (var p in pmaps)
+                {
                     p.ProductDataProduct_id = pdpId;
                     connection.Insert(p);
-				}
+                }
             }
         }
     }

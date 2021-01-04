@@ -32,7 +32,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private List<OdbcParameter> _headerParams = new List<OdbcParameter>();
         private List<OdbcParameter> _detailParams = new List<OdbcParameter>();
         private List<OdbcParameter> _shiptoParams = new List<OdbcParameter>();
-        private HashSet<string> _canBeNullSet = new HashSet<string>{ "PICKUP_BRANCH", "PICKUP_DROP", "GIFT_CARD", "AUTH" };
+        private HashSet<string> _canBeNullSet = new HashSet<string> { "PICKUP_BRANCH", "PICKUP_DROP", "GIFT_CARD", "AUTH" };
 
 
         private ISettingService _settingService;
@@ -64,8 +64,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IYahooService _yahooService;
 
         public IsamOrderService(
-            ISettingService settingService, 
-            IEncryptionService encryptionService, 
+            ISettingService settingService,
+            IEncryptionService encryptionService,
             IBaseService baseIsamService,
             IProductAttributeParser productAttributeParser,
             IAttributeUtilities attributeUtilities,
@@ -179,10 +179,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _headerParams.Add(new OdbcParameter("@AUTH", OdbcType.VarChar));
             _headerCols.Add("HOME_DELIVERY");
             _headerParams.Add(new OdbcParameter("@HOME_DELIVERY", OdbcType.VarChar));
-			_headerCols.Add("CC_REFNO");
-			_headerParams.Add(new OdbcParameter("@CC_REFNO", OdbcType.VarChar));
+            _headerCols.Add("CC_REFNO");
+            _headerParams.Add(new OdbcParameter("@CC_REFNO", OdbcType.VarChar));
 
-			_detailCols.Add("ID");
+            _detailCols.Add("ID");
             _detailParams.Add(new OdbcParameter("@ID", OdbcType.VarChar));
             _detailCols.Add("ITEM_LINE");
             _detailParams.Add(new OdbcParameter("@ITEM_LINE", OdbcType.Int));
@@ -301,7 +301,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 _giftCardService.UpdateGiftCard(orderGiftCard);
             }
         }
-        
+
         private void InsertUsingService(string tableName, List<string> cols, List<OdbcParameter> colParams, List<string> values)
         {
             if (colParams.Count != values.Count)

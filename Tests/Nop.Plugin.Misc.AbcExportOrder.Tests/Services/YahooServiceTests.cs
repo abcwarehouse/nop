@@ -108,7 +108,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             var yahooShipToRows = _yahooService.GetYahooShipToRows(new Order());
 
             yahooShipToRows.Should().HaveCount(0);
-            
+
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             var yahooShipToRows = _yahooService.GetYahooShipToRows(_orderShippingOnly);
 
             yahooShipToRows.Should().HaveCount(1);
-            
+
             var row = yahooShipToRows.FirstOrDefault();
             row.Should().BeOfType<YahooShipToRowShipping>();
         }
@@ -128,7 +128,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             var yahooShipToRows = _yahooService.GetYahooShipToRows(_orderPickupOnly);
 
             yahooShipToRows.Should().HaveCount(1);
-            
+
             var row = yahooShipToRows.FirstOrDefault();
             row.Should().BeOfType<YahooShipToRow>();
         }

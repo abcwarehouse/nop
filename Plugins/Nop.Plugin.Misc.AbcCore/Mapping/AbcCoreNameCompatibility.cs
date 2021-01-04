@@ -17,6 +17,6 @@ namespace Nop.Plugin.Misc.AbcCore.Mapping
             { typeof(AbcPromoProductMapping), "ProductAbcPromo" }
         };
 
-        public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string> {};
+        public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string> { };
     }
 }

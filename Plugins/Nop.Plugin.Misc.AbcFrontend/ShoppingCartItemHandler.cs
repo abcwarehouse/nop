@@ -48,7 +48,8 @@ namespace Nop.Plugin.Misc.AbcFrontend
             var sci = eventMessage.Entity;
             //if a cart price exists for the shopping cart item product we will add the difference as a hidden entity
             var prodCartPrice = _productCartPriceRepository.Table.Where(pcp => pcp.Product_Id == sci.ProductId).FirstOrDefault();
-            if(prodCartPrice != null){
+            if (prodCartPrice != null)
+            {
                 var product = _productService.GetProductById(sci.ProductId);
                 var priceAdjustment = prodCartPrice.CartPrice - product.Price;
 
@@ -60,8 +61,12 @@ namespace Nop.Plugin.Misc.AbcFrontend
                     priceAdjustment = prodCartPrice.CartPrice - specialPrice;
                 }
 
-                _hiddenAttributeValueRepository.Insert(new HiddenAttributeValue { ShoppingCartItem_Id = sci.Id, HiddenAttribute_Id = addToCartForPriceAttrId,
-                    PriceAdjustment = priceAdjustment });
+                _hiddenAttributeValueRepository.Insert(new HiddenAttributeValue
+                {
+                    ShoppingCartItem_Id = sci.Id,
+                    HiddenAttribute_Id = addToCartForPriceAttrId,
+                    PriceAdjustment = priceAdjustment
+                });
             }
         }
     }

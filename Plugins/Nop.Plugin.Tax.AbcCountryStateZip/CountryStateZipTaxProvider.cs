@@ -207,11 +207,14 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
                 // we don't use standard way _cacheManager.Get() due the need write errors to CalculateTaxResult
                 if (_staticCacheManager.IsSet(taxJarCacheKey))
                 {
-                    return new TaxRateResult { TaxRate = _staticCacheManager.Get<decimal>(
+                    return new TaxRateResult
+                    {
+                        TaxRate = _staticCacheManager.Get<decimal>(
                         taxJarCacheKey,
-                        () => CalculateTaxJarRate(calculateTaxRequest).TaxRate) };
+                        () => CalculateTaxJarRate(calculateTaxRequest).TaxRate)
+                    };
                 }
-                    
+
 
                 var taxJarManager = new TaxJarManager { Api = _settings.TaxJarAPIToken };
                 var taxJarResult = taxJarManager.GetTaxRate(
@@ -258,7 +261,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
                 if (taxRate.CountryId == countryId && taxRate.TaxCategoryId == taxCategoryId)
                     existingRates.Add(taxRate);
             }
-            
+
 
             //filter by state/province
             var matchedByStateProvince = new List<TaxRateForCaching>();

@@ -5,8 +5,8 @@ using System;
 
 namespace Nop.Plugin.Widgets.AbcContactUs
 {
-	public class ContactUsWidgetSettings : ISettings
-	{
+    public class ContactUsWidgetSettings : ISettings
+    {
         public string ContactUsEmail { get; private set; }
 
         public string AdditionalEmails { get; private set; }

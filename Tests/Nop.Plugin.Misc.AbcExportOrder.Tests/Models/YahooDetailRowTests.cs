@@ -7,7 +7,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
     public class YahooDetailRowTests
     {
-        
+
         private YahooDetailRow _yahooDetailRow;
         private YahooDetailRow _yahooDetailRowPickup;
 

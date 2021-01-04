@@ -96,7 +96,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             TaxSettings taxSettings,
             // custom
             IWarrantyService warrantyService
-        )   : base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter,
+        ) : base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter,
                    countryService, currencyService, customerActivityService, customerService,
                    customNumberFormatter, discountService, encryptionService,
                    eventPublisher, genericAttributeService, giftCardService,
@@ -151,16 +151,16 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     _taxService.GetProductPrice(product, scSubTotal, true, details.Customer, out _);
                 var scSubTotalExclTax =
                     _taxService.GetProductPrice(product, scSubTotal, false, details.Customer, out _);
-                
+
 
                 decimal warrantyUnitPriceExclTax;
                 decimal warrantyUnitPriceInclTax;
 
                 // custom - getting warranty tax
                 decimal taxRate;
-                _warrantyService.CalculateWarrantyTax(sc, details.Customer, scSubTotalExclTax, scUnitPriceExclTax, 
+                _warrantyService.CalculateWarrantyTax(sc, details.Customer, scSubTotalExclTax, scUnitPriceExclTax,
                     out taxRate,
-                    out scSubTotalInclTax, out scUnitPriceInclTax, 
+                    out scSubTotalInclTax, out scUnitPriceInclTax,
                     out warrantyUnitPriceExclTax, out warrantyUnitPriceInclTax);
 
                 var discountAmountInclTax =
@@ -200,7 +200,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     RentalStartDateUtc = sc.RentalStartDateUtc,
                     RentalEndDateUtc = sc.RentalEndDateUtc
                 };
-                
+
                 _orderService.InsertOrderItem(orderItem);
 
                 //gift cards

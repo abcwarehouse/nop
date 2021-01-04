@@ -69,7 +69,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     _urlRecordService.SaveSlug(product, desiredSlug, 0);
                 }
             }
-                
+
 
             this.LogEnd();
         }

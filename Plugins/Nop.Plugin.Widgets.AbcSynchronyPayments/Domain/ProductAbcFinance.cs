@@ -22,9 +22,12 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Domain
             string abcItemNumber
         )
         {
-            return () => { return repo.Table.Where(
-                p => p.AbcItemNumber.Trim() == abcItemNumber
-            ).FirstOrDefault(); };
+            return () =>
+            {
+                return repo.Table.Where(
+     p => p.AbcItemNumber.Trim() == abcItemNumber
+ ).FirstOrDefault();
+            };
         }
     }
 }

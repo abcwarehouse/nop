@@ -55,7 +55,7 @@ namespace Nop.Plugin.Payments.Synchrony
         public ConfigurationModel ToModel(int storeScope)
         {
             var model = new ConfigurationModel();
-            
+
             model.MerchantId = MerchantId;
             model.MerchantPassword = MerchantPassword;
             model.Integration = Integration;

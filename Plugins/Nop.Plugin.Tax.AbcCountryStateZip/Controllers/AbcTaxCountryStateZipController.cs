@@ -39,7 +39,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
         private readonly AbcCountyStateZipSettings _settings;
 
         public AbcTaxCountryStateZipController(ITaxCategoryService taxCategoryService,
-            ICountryService countryService, 
+            ICountryService countryService,
             IStateProvinceService stateProvinceService,
             ITaxRateService taxRateService,
             IPermissionService permissionService,
@@ -186,16 +186,16 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
             _taxRateService.InsertTaxRate(taxRate);
 
             return Json(new { Result = true });
-        } 
+        }
         [HttpPost]
         public ActionResult EnableState(string Id, bool status)
         {
             var taxRate = _taxRateService.GetTaxRateById(Convert.ToInt32(Id));
             if (taxRate != null)
-            { 
+            {
                 taxRate.EnableTaxState = status;
                 _taxRateService.UpdateTaxRate(taxRate);
-            } 
+            }
             return Json(new { Result = true });
         }
     }

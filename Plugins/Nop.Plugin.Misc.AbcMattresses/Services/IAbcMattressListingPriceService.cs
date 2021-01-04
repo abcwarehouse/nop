@@ -7,6 +7,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         decimal? GetListingPriceForMattressProduct(
             int productId,
             string categorySlug
-        ); 
+        );
     }
 }

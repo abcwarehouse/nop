@@ -25,10 +25,10 @@ namespace Nop.Plugin.Misc.AbcSync
         public void Execute()
         {
             if (_importSettings.SkipImportSotPicturesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
             _importPictureService.ImportSiteOnTimePictures();

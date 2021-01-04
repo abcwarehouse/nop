@@ -39,7 +39,7 @@ namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Controllers
             var model = new FreshAddressNewsletterIntegrationModel();
             model.CompanyId = companyId;
             model.ContractId = contractId;
-            
+
             return View(
                 "~/Plugins/Misc.FreshAddressNewsletterIntegration/Views/Configure.cshtml",
                 model);

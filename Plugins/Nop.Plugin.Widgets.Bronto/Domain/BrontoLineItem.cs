@@ -56,7 +56,7 @@ namespace Nop.Plugin.Widgets.Bronto.Domain
             var unitPrice = product.OldPrice != 0.0M ?
                                 product.OldPrice :
                                 product.Price;
-                                
+
             // so this really should just read from ShortDescription
             // but with ABC we need to consider the ABC description
             var frontEndService = EngineContext.Current.Resolve<FrontEndService>();

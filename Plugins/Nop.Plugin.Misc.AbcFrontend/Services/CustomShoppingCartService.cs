@@ -76,7 +76,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             // custom
             IAttributeUtilities attributeUtilities,
             IRepository<HiddenAttributeValue> hiddenAttributeValueRepository
-        ) 
+        )
             : base(catalogSettings, aclService, actionContextAccessor, cacheKeyService,
                 checkoutAttributeParser, checkoutAttributeService, currencyService,
                 customerService, dateRangeService, dateTimeHelper, eventPublisher,
@@ -121,7 +121,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         /// <param name="appliedDiscounts">Applied discounts</param>
         /// <returns>Shopping cart unit price (one item)</returns>
         public override decimal GetUnitPrice(Product product,
-            Customer customer, 
+            Customer customer,
             ShoppingCartType shoppingCartType,
             int quantity,
             string attributesXml,
@@ -169,7 +169,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     {
                         if (warrantyPam != null && attributeValue.ProductAttributeMappingId == warrantyPam.Id)
                         {
-                            warrantyPrice = 
+                            warrantyPrice =
                                 _priceCalculationService.GetProductAttributeValuePriceAdjustment(
                                     product, attributeValue, customer, product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
                                 );
@@ -222,7 +222,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     finalPrice += warrantyPrice;
                 }
             }
-            
+
             //rounding
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
                 finalPrice = _priceCalculationService.RoundPrice(finalPrice);

@@ -5,7 +5,7 @@ using Nop.Plugin.Misc.AbcSync.Domain.Staging;
 namespace Nop.Plugin.Misc.AbcSync.Data
 {
     public class StagingDb
-	{	
+    {
         private readonly ImportSettings _importSettings;
 
         public StagingDb(
@@ -23,11 +23,12 @@ namespace Nop.Plugin.Misc.AbcSync.Data
             }
         }
 
-        public IEnumerable<StagingProduct> GetProducts() {
+        public IEnumerable<StagingProduct> GetProducts()
+        {
             using (var connection = _importSettings.GetStagingDbConnection())
             {
                 return connection.Query<StagingProduct>("[GetProducts]");
             }
         }
-	}
+    }
 }

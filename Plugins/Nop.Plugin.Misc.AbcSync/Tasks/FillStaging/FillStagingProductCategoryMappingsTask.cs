@@ -10,8 +10,8 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 namespace Nop.Plugin.Misc.AbcSync
 {
     class FillStagingProductCategoryMappingsTask : IScheduleTask
-	{
-		private readonly ILogger _logger;
+    {
+        private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;
         private readonly CoreSettings _coreSettings;
 
@@ -27,7 +27,7 @@ namespace Nop.Plugin.Misc.AbcSync
         }
 
         public void Execute()
-		{
+        {
             if (_importSettings.SkipFillStagingProductCategoryMappingsTask)
             {
                 this.Skipped();

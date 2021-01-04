@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Models
 {
-	public class ConfiguationModel
-	{
+    public class ConfiguationModel
+    {
         [NopResourceDisplayName(AbcSiteOnTimeSyncPlugin.LocaleKey.CmicApiBrandUrl)]
         public string CmicApiBrandUrl { get; set; }
 

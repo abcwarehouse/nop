@@ -11,11 +11,11 @@ using Nop.Plugin.Misc.AbcCore.Services;
 namespace Nop.Plugin.Misc.AbcSync
 {
     class ImportIsamSpecs : BaseAbcWarehouseService, IImportIsamSpecs
-	{
-		private readonly IProductService _productService;
-		private readonly ILogger _logger;
-		private readonly ISpecificationAttributeService _specificationAttributeService;
-		private readonly IImportUtilities _importUtilities;
+    {
+        private readonly IProductService _productService;
+        private readonly ILogger _logger;
+        private readonly ISpecificationAttributeService _specificationAttributeService;
+        private readonly IImportUtilities _importUtilities;
         private readonly IRepository<SpecificationAttribute> _specificationAttributeRepository;
         private readonly IRepository<SpecificationAttributeOption> _specificationAttributeOptionRepository;
         private readonly IRepository<ProductSpecificationAttribute> _productSpecificationAttributeRepository;
@@ -25,13 +25,13 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly IIsamProductService _isamProductService;
 
         private readonly Dictionary<string, int> _attrDict = new Dictionary<string, int>();
-        private readonly Dictionary<Tuple<int, string>, int> _attrOptionDict = new Dictionary<Tuple<int,string>, int>();
+        private readonly Dictionary<Tuple<int, string>, int> _attrOptionDict = new Dictionary<Tuple<int, string>, int>();
 
         public ImportIsamSpecs(
-			IProductService productService,
-			ILogger logger,
-			ISpecificationAttributeService specificationAttributeService,
-			IImportUtilities importUtilities,
+            IProductService productService,
+            ILogger logger,
+            ISpecificationAttributeService specificationAttributeService,
+            IImportUtilities importUtilities,
             IRepository<SpecificationAttribute> specificationAttributeRepository,
             IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository,
             IRepository<ProductSpecificationAttribute> productSpecificationAttributeRepository,
@@ -40,11 +40,11 @@ namespace Nop.Plugin.Misc.AbcSync
             IProductDataProductService productDataProductService,
             IIsamProductService isamProductService
         )
-		{
-			_productService = productService;
-			_logger = logger;
-			_specificationAttributeService = specificationAttributeService;
-			_importUtilities = importUtilities;
+        {
+            _productService = productService;
+            _logger = logger;
+            _specificationAttributeService = specificationAttributeService;
+            _importUtilities = importUtilities;
             _specificationAttributeRepository = specificationAttributeRepository;
             _specificationAttributeOptionRepository = specificationAttributeOptionRepository;
             _productSpecificationAttributeRepository = productSpecificationAttributeRepository;
@@ -52,7 +52,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _nopDbContext = nopDbContext;
             _productDataProductService = productDataProductService;
             _isamProductService = isamProductService;
-		}
+        }
 
         /// <summary>
         /// Import site on time filters as filterable specification attributes
@@ -70,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <returns></returns>
         private int GetSpecAttrId(string name)
         {
-            int id; 
+            int id;
             if (!_attrDict.TryGetValue(name, out id))
             {
                 try

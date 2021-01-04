@@ -136,7 +136,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Components
                 }
             }
         }
-    
+
         private PickStoreModel InitializePickStoreModel()
         {
             // initialize model for the view
@@ -144,7 +144,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Components
 
             // get the store that the customer selected previously if selected
             // at all
-            CustomerShopMapping currentCustomerShopMapping 
+            CustomerShopMapping currentCustomerShopMapping
                 = _customerShopService.GetCurrentCustomerShopMapping(
                     _workContext.CurrentCustomer.Id
                 );

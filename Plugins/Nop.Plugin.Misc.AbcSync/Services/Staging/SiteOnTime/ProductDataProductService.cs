@@ -80,17 +80,17 @@ namespace Nop.Plugin.Misc.AbcSync.Services.Staging
         {
             using (var connection = _importSettings.GetStagingDbConnection())
             {
-                connection.Query( @"
+                connection.Query(@"
                 INSERT INTO ProductDataProductpmaps (Price, Discount, Startdate, Enddate, ProductDataProduct_id)
                 VALUES (@Price, @Discount, @StartDate, @EndDate, @ProductDataProductId);",
                 new
-                    { 
-                        Price = pdpPmap.price,
-                        Discount = pdpPmap.discount,
-                        StartDate = pdpPmap.startDate,
-                        EndDate = pdpPmap.endDate,
-                        ProductDataProductId = pdpPmap.ProductDataProduct_id
-                    }
+                {
+                    Price = pdpPmap.price,
+                    Discount = pdpPmap.discount,
+                    StartDate = pdpPmap.startDate,
+                    EndDate = pdpPmap.endDate,
+                    ProductDataProductId = pdpPmap.ProductDataProduct_id
+                }
                 );
             }
         }

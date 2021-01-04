@@ -54,7 +54,8 @@ namespace Nop.Plugin.Misc.AbcSync
                 EngineContext.Current.Resolve<ContentUpdateTask>().Execute();
                 EngineContext.Current.Resolve<ClearCacheTask>().Execute();
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 var ccEmails = _importSettings.CatalogUpdateFailureCCEmails?.Split(',');
                 if (ccEmails.Any())
                 {

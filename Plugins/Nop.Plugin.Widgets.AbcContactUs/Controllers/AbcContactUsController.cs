@@ -45,7 +45,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
         private readonly ISettingService _settingService;
 
         public AbcContactUsController(
-            IWorkContext workContext, 
+            IWorkContext workContext,
             IRepository<Shop> shopRepository,
             IRepository<ShopAbc> shopAbcRepository,
             EmailAccountSettings emailAccountSettings,
@@ -120,7 +120,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
                 var response = _captchaHttpClient.ValidateCaptchaAsync(gCaptchaResponseValue).Result;
                 if (!response.IsValid)
                 {
-                    return BadRequest(); 
+                    return BadRequest();
                 }
             }
 
@@ -149,16 +149,16 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
                 Customer Phone Number: {2} <br/>
                 Store Location: {3} <br/>
                 Comments: {4}", model.Name ?? "", model.Email ?? "", model.PhoneNumber ?? "", model.SelectedStore ?? "", model.Comments ?? "");
-            
+
             if (_settings.IsEmailSubmissionSkipped)
             {
                 _logger.Warning($"AbcContactUs: Email submission skipped - body: {body}");
             }
             else
             {
-                _emailSender.SendEmail(account, subject, body, account.Email, account.DisplayName, toAddress, "", replyToAddress:model.Email, cc: ccEmails);
+                _emailSender.SendEmail(account, subject, body, account.Email, account.DisplayName, toAddress, "", replyToAddress: model.Email, cc: ccEmails);
             }
-            
+
             return Content("");
         }
     }

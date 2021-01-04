@@ -24,7 +24,8 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Domain
 
         public static Func<List<ProductAbcBundle>> GetBySkuFunc(IRepository<ProductAbcBundle> repo, string sku)
         {
-            return () => {
+            return () =>
+            {
                 var list = repo.Table.Where(p => p.Sku.Trim() == sku).ToList();
                 return list;
             };

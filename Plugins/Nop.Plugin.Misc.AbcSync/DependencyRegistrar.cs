@@ -14,19 +14,19 @@ namespace Nop.Plugin.Misc.AbcSync
     /// Dependency registrar
     /// </summary>
     public class DependencyRegistrar : IDependencyRegistrar
-	{
-		/// <summary>
-		/// Register services and interfaces
-		/// </summary>
-		/// <param name="builder">Container builder</param>
-		/// <param name="typeFinder">Type finder</param>
-		/// <param name="config">Config</param>
-		public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
-		{
+    {
+        /// <summary>
+        /// Register services and interfaces
+        /// </summary>
+        /// <param name="builder">Container builder</param>
+        /// <param name="typeFinder">Type finder</param>
+        /// <param name="config">Config</param>
+        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
+        {
             builder.RegisterType<ArchiveService>()
                 .As<ArchiveService>().InstancePerLifetimeScope();
             builder.RegisterType<ImportService>()
-				.As<IImportService>().InstancePerLifetimeScope();
+                .As<IImportService>().InstancePerLifetimeScope();
             builder.RegisterType<ImportService>()
                 .As<ImportService>().InstancePerLifetimeScope();
             builder.RegisterType<ImportMarkdowns>()
@@ -34,11 +34,11 @@ namespace Nop.Plugin.Misc.AbcSync
             builder.RegisterType<ImportRelatedProducts>()
                 .As<IImportRelatedProducts>().InstancePerLifetimeScope();
             builder.RegisterType<ImportIsamSpecs>()
-				.As<IImportIsamSpecs>().InstancePerLifetimeScope();
+                .As<IImportIsamSpecs>().InstancePerLifetimeScope();
             builder.RegisterType<ImportIsamSpecs>()
                 .As<ImportIsamSpecs>().InstancePerLifetimeScope();
-			builder.RegisterType<ImportProductFlags>()
-				.As<IImportProductFlags>().InstancePerLifetimeScope();
+            builder.RegisterType<ImportProductFlags>()
+                .As<IImportProductFlags>().InstancePerLifetimeScope();
             builder.RegisterType<ShopService>()
                 .As<IShopService>().InstancePerLifetimeScope();
             builder.RegisterType<DocumentImportService>()
@@ -64,12 +64,12 @@ namespace Nop.Plugin.Misc.AbcSync
             builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource(x => x.Name.Contains("Task")));
         }
 
-		/// <summary>
-		/// Order of this dependency registrar implementation
-		/// </summary>
-		public int Order
-		{
-			get { return 1; }
-		}
-	}
+        /// <summary>
+        /// Order of this dependency registrar implementation
+        /// </summary>
+        public int Order
+        {
+            get { return 1; }
+        }
+    }
 }

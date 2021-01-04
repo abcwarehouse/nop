@@ -25,20 +25,20 @@ namespace Nop.Plugin.Misc.SearchPageRedirect.Controllers
             CatalogSettings catalogSettings,
             IAclService aclService,
             ICatalogModelFactory catalogModelFactory,
-            ICategoryService categoryService, 
+            ICategoryService categoryService,
             ICustomerActivityService customerActivityService,
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
             IManufacturerService manufacturerService,
-            IPermissionService permissionService, 
+            IPermissionService permissionService,
             IProductModelFactory productModelFactory,
-            IProductService productService, 
+            IProductService productService,
             IProductTagService productTagService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IVendorService vendorService,
             IWebHelper webHelper,
-            IWorkContext workContext, 
+            IWorkContext workContext,
             MediaSettings mediaSettings,
             VendorSettings vendorSettings,
             ILogger logger,
@@ -48,7 +48,7 @@ namespace Nop.Plugin.Misc.SearchPageRedirect.Controllers
             manufacturerService, permissionService, productModelFactory, productService,
             productTagService, storeContext, storeMappingService, vendorService, webHelper,
             workContext, mediaSettings, vendorSettings)
-        {             
+        {
             _logger = logger;
             _settingService = settingService;
         }

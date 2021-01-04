@@ -150,7 +150,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             //load settings for a chosen store scope
             var storeScope = _storeContext.ActiveStoreScopeConfiguration;
             var paySynchronyPaymentSettings = _settingService.LoadSetting<SynchronyPaymentSettings>(storeScope);
-            
+
             return View(
                 "~/Plugins/Payments.Synchrony/Views/Configure.cshtml",
                 paySynchronyPaymentSettings.ToModel(storeScope)
@@ -334,9 +334,9 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 goto_section = "Third_Modal_Method"
             });
         }
-		
+
         // uses custom view
-		public IActionResult Confirm()
+        public IActionResult Confirm()
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -358,10 +358,10 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             {
                 return Challenge();
             }
-                
+
             //model
             var model = PrepareConfirmOrderModel(cart);
-            
+
             return View("~/Plugins/Payments.Synchrony/Views/Confirm.cshtml", model);
         }
 
@@ -528,7 +528,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                     {
                         return Json(new { status = true });
                     }
-					else
+                    else
                     {
                         var errorModel = new ErrorModel()
                         {
@@ -593,7 +593,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
         {
             var authResponseJson = TempData["SecondModalpopup"].ToString();
             TempData.Keep("SecondModalpopup");
-            var authTokenResponse = 
+            var authTokenResponse =
                 JsonSerializer.Deserialize<AuthenticationTokenResponse>(authResponseJson);
 
             if (authTokenResponse == null || authTokenResponse.StatusMessage != "Account Authentication Success")

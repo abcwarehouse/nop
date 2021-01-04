@@ -4,9 +4,9 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-	class ImportIsamSpecsTask : IScheduleTask
-	{
-		private readonly IImportIsamSpecs _import;
+    class ImportIsamSpecsTask : IScheduleTask
+    {
+        private readonly IImportIsamSpecs _import;
         private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;
 
@@ -15,19 +15,19 @@ namespace Nop.Plugin.Misc.AbcSync
             ILogger logger,
             ImportSettings importSettings
         )
-		{
-			_import = import;
+        {
+            _import = import;
             _logger = logger;
             _importSettings = importSettings;
-		}
+        }
 
-		public void Execute()
-		{
+        public void Execute()
+        {
             if (_importSettings.SkipImportIsamSpecsTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
             //_logger.Information($"Begin Task: ImportColor");
@@ -37,6 +37,6 @@ namespace Nop.Plugin.Misc.AbcSync
             _import.ImportSiteOnTimeSpecs();
             _logger.Information($"End Task: ImportSOTSpecs");
             this.LogEnd();
-		}
-	}
+        }
+    }
 }

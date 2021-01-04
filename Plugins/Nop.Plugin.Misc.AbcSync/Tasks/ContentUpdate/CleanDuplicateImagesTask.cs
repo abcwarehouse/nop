@@ -21,10 +21,10 @@ namespace Nop.Plugin.Misc.AbcSync
         public void Execute()
         {
             if (_importSettings.SkipCleanDuplicateImagesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 

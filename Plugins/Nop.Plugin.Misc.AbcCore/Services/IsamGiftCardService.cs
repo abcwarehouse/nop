@@ -46,9 +46,9 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             _colToParam[CID_NUMBER].Value = cid;
             _colToParam[KEY_ACCT_NUMBER].Value = keyNum;
 
-            
 
-            IList<OdbcParameter> argParams = new List<OdbcParameter> { _colToParam[KEY_ACCT_NUMBER] , _colToParam[CID_NUMBER] };
+
+            IList<OdbcParameter> argParams = new List<OdbcParameter> { _colToParam[KEY_ACCT_NUMBER], _colToParam[CID_NUMBER] };
             string arg = " WHERE " + KEY_ACCT_NUMBER + " = ? AND " + CID_NUMBER + " = ?;";
             // use base service to get the thing
             DataSet dataSet = _baseIsamService.Get(_tableName, _columns, arg, argParams);
@@ -62,7 +62,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             }
 
             List<object> row = rows[0].ItemArray.ToList();
-            string cardCode = (string) row[0]; 
+            string cardCode = (string)row[0];
             decimal cardTotal = decimal.Parse(row[3].ToString());
             decimal cardUsed = decimal.Parse(row[4].ToString());
             GiftCard giftCard = new GiftCard
@@ -84,7 +84,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             _colToParam[KEY_ACCT_NUMBER].Value = keyNum;
             _colToParam[ACCT_NUMBER].Value = keyNum;
             _colToParam[GIFT_AMT_USED].Value = amtUsed;
-            List<OdbcParameter> parameters = new List<OdbcParameter>{ _colToParam[GIFT_AMT_USED] };
+            List<OdbcParameter> parameters = new List<OdbcParameter> { _colToParam[GIFT_AMT_USED] };
             List<string> columns = new List<string> { GIFT_AMT_USED };
 
             string arg = " WHERE " + KEY_ACCT_NUMBER + " = ?;";

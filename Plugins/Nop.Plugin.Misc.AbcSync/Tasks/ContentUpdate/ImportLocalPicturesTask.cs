@@ -64,10 +64,10 @@ namespace Nop.Plugin.Misc.AbcSync
         public void Execute()
         {
             if (_importSettings.SkipImportLocalPicturesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
             if (!_pictureService.StoreInDb)

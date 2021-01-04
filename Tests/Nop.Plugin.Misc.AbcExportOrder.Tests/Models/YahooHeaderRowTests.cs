@@ -104,7 +104,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             _yahooHeaderRowShipping.ShippingCharge.Should().Be(_shippingCharge);
             _yahooHeaderRowShipping.HomeDeliveryCharge.Should().Be(_homeDeliveryCharge);
             _yahooHeaderRowShipping.Total.Should().Be(_total);
-            
+
             _yahooHeaderRowShipping.Ip.Should().Be(_order.CustomerIp);
             _yahooHeaderRowShipping.GiftCard.Should().Be(_giftCard);
             _yahooHeaderRowShipping.GiftCardAmountUsed.Should().Be(_giftCardAmtUsed);

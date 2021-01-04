@@ -32,7 +32,7 @@ namespace Nop.Plugin.Widgets.AbcContactUs.Components
         private readonly ICustomerService _customerService;
 
         public AbcContactUsViewComponent(
-            IWorkContext workContext, 
+            IWorkContext workContext,
             IRepository<Shop> shopRepository,
             IRepository<ShopAbc> shopAbcRepository,
             EmailAccountSettings emailAccountSettings,
@@ -67,7 +67,7 @@ namespace Nop.Plugin.Widgets.AbcContactUs.Components
             }
 
             var model = new ContactUsModel();
-            
+
             var customerAddress = _customerService.GetAddressesByCustomerId(
                 _workContext.CurrentCustomer.Id
             ).FirstOrDefault();

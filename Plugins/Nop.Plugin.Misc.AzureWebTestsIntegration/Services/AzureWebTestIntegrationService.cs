@@ -80,7 +80,7 @@ namespace Nop.Plugin.Misc.AzureWebTestsIntegration.Services
                 var response = client.GetAsync($"https://management.azure.com/subscriptions/{subscriptionId}/providers/Microsoft.Insights/webtests?api-version=2015-05-01").GetAwaiter().GetResult();
 
                 string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                
+
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseBody);

@@ -6,29 +6,29 @@ namespace Nop.Plugin.Misc.AbcSync
 {
     class ImportWarrantiesTask : IScheduleTask
     {
-		private readonly INopDataProvider _nopDbContext;
-		private readonly ImportSettings _importSettings;
+        private readonly INopDataProvider _nopDbContext;
+        private readonly ImportSettings _importSettings;
 
-		public ImportWarrantiesTask(
-			INopDataProvider nopDbContext,
-			ImportSettings importSettings)
+        public ImportWarrantiesTask(
+            INopDataProvider nopDbContext,
+            ImportSettings importSettings)
         {
-			_nopDbContext = nopDbContext;
-			_importSettings = importSettings;
+            _nopDbContext = nopDbContext;
+            _importSettings = importSettings;
         }
 
         public void Execute()
         {
-			if (_importSettings.SkipImportWarrantiesTask)
-			{
-				this.Skipped();
-				return;
-			}
+            if (_importSettings.SkipImportWarrantiesTask)
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 
-			var stagingDbName = _importSettings.GetStagingDbConnection().Database;
-			var command = $@"
+            var stagingDbName = _importSettings.GetStagingDbConnection().Database;
+            var command = $@"
 				MERGE ProductAttribute AS T
 				USING (SELECT DISTINCT [Description] FROM {stagingDbName}.dbo.WarrantyGroup) AS S
 				ON (T.[Description] = S.[Description]) 
@@ -83,9 +83,9 @@ namespace Nop.Plugin.Misc.AbcSync
 				--OUTPUT $action, inserted.*, deleted.*;
 			";
 
-			_nopDbContext.ExecuteNonQuery(command);
+            _nopDbContext.ExecuteNonQuery(command);
 
-			this.LogEnd();
-		}
+            this.LogEnd();
+        }
     }
 }

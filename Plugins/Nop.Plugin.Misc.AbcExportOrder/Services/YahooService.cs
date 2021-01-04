@@ -221,14 +221,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     var abcMattressBase = _abcMattressBaseService.GetAbcMattressBasesByEntryId(entry.Id)
                                                                  .Where(b => b.Name == baseName)
                                                                  .FirstOrDefault();
-                    var package = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(new int[]{ entry.Id })
+                    var package = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(new int[] { entry.Id })
                                                             .Where(p => p.AbcMattressBaseId == abcMattressBase.Id)
                                                             .FirstOrDefault();
 
                     return (package.ItemNo, package.Price);
                 }
 
-                
+
                 return (entry.ItemNo, entry.Price);
             }
 
@@ -290,7 +290,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var cardMonth = _encryptionService.DecryptText(order.CardExpirationMonth, _securitySettings.EncryptionKey);
             var cardYear = _encryptionService.DecryptText(order.CardExpirationYear, _securitySettings.EncryptionKey);
             var cardCvv2 = _encryptionService.DecryptText(order.CardCvv2, _securitySettings.EncryptionKey);
-            
+
 
             var ccRefNo = _genericAttributeService.GetAttribute<string>(order, "CardRefNo");
 
@@ -303,7 +303,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 string giftCardCode;
                 decimal giftCardUsed;
                 CalculateGiftCard(order, backendOrderTotal, out giftCardCode, out giftCardUsed);
-                
+
                 result.Add(new YahooHeaderRow(
                     _settings.OrderIdPrefix,
                     order,
@@ -383,7 +383,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
             var orderItems = _customOrderService.GetOrderItems(order.Id);
             if (!orderItems.Any()) { return result; }
-            
+
             var splitItems = orderItems.SplitByPickupAndShipping();
 
             if (splitItems.pickupItems.Any())
@@ -402,7 +402,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     _settings.OrderIdPrefix, order.Id, address, stateAbbv, country
                 ));
             }
-            
+
             return result;
         }
 

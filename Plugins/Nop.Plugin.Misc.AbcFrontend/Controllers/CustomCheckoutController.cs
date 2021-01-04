@@ -228,7 +228,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                                 HttpContext.Session.SetString("TransDescription", description.InnerText + " " + linkText);
                             }
-                            
+
                         }
                     }
                 }
@@ -240,8 +240,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             return "";
         }
 
-		private void SendPaymentRequest(ProcessPaymentRequest paymentInfo, out string status_code, out string response_message)
-		{
+        private void SendPaymentRequest(ProcessPaymentRequest paymentInfo, out string status_code, out string response_message)
+        {
             status_code = "";
             response_message = "";
 
@@ -251,97 +251,97 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //     return;
             // }
 
-			try
-			{				
-				var cart = _shoppingCartService.GetShoppingCart(
+            try
+            {
+                var cart = _shoppingCartService.GetShoppingCart(
                     _workContext.CurrentCustomer,
                     storeId: _storeContext.CurrentStore.Id);
-                
-				string domainName = _storeContext.CurrentStore.Url;
 
-				if (cart.Any())
-				{
+                string domainName = _storeContext.CurrentStore.Url;
+
+                if (cart.Any())
+                {
                     var customer = _customerService.GetCustomerById(cart.FirstOrDefault().CustomerId);
                     var billingAddress = _customerService.GetCustomerBillingAddress(customer);
-					string xml = "";					
-					xml = $"<Request>{Environment.NewLine}";
-					xml += $"<Card_Check>{Environment.NewLine}";
-					xml += $"<Card_Number>{paymentInfo.CreditCardNumber}</Card_Number>{Environment.NewLine}";
-					xml += $"<Exp_Month>{paymentInfo.CreditCardExpireMonth}</Exp_Month>{Environment.NewLine}";
-					xml += $"<Exp_Year>{paymentInfo.CreditCardExpireYear}</Exp_Year>{Environment.NewLine}";
-					xml += $"<Cvv2>{paymentInfo.CreditCardCvv2}</Cvv2>{Environment.NewLine}";
-					xml += $"<Bill_First_Name>{billingAddress.FirstName}</Bill_First_Name>{Environment.NewLine}";
-					xml += $"<Bill_Last_Name>{billingAddress.LastName}</Bill_Last_Name>{Environment.NewLine}";
-					xml += $"<Bill_Address>{billingAddress.Address1}</Bill_Address>{Environment.NewLine}";
-					xml += $"<Bill_Zip>{billingAddress.ZipPostalCode}</Bill_Zip>{Environment.NewLine}";
-					xml += $"<Company>{domainName}</Company>{Environment.NewLine}";
-					xml += $"<email>{billingAddress.Email}</email>{Environment.NewLine}";
-					xml += $"</Card_Check>{Environment.NewLine}";
-					xml += $"</Request>";
+                    string xml = "";
+                    xml = $"<Request>{Environment.NewLine}";
+                    xml += $"<Card_Check>{Environment.NewLine}";
+                    xml += $"<Card_Number>{paymentInfo.CreditCardNumber}</Card_Number>{Environment.NewLine}";
+                    xml += $"<Exp_Month>{paymentInfo.CreditCardExpireMonth}</Exp_Month>{Environment.NewLine}";
+                    xml += $"<Exp_Year>{paymentInfo.CreditCardExpireYear}</Exp_Year>{Environment.NewLine}";
+                    xml += $"<Cvv2>{paymentInfo.CreditCardCvv2}</Cvv2>{Environment.NewLine}";
+                    xml += $"<Bill_First_Name>{billingAddress.FirstName}</Bill_First_Name>{Environment.NewLine}";
+                    xml += $"<Bill_Last_Name>{billingAddress.LastName}</Bill_Last_Name>{Environment.NewLine}";
+                    xml += $"<Bill_Address>{billingAddress.Address1}</Bill_Address>{Environment.NewLine}";
+                    xml += $"<Bill_Zip>{billingAddress.ZipPostalCode}</Bill_Zip>{Environment.NewLine}";
+                    xml += $"<Company>{domainName}</Company>{Environment.NewLine}";
+                    xml += $"<email>{billingAddress.Email}</email>{Environment.NewLine}";
+                    xml += $"</Card_Check>{Environment.NewLine}";
+                    xml += $"</Request>";
 
-					var webRequest = WebRequest.CreateHttp(AbcConstants.StatusAPIUrl);
-					webRequest.Method = "POST";
-					webRequest.ContentType = "application/xml";
+                    var webRequest = WebRequest.CreateHttp(AbcConstants.StatusAPIUrl);
+                    webRequest.Method = "POST";
+                    webRequest.ContentType = "application/xml";
 
-					byte[] byteArray = Encoding.UTF8.GetBytes(xml);
-					webRequest.ContentLength = byteArray.Length;
-					using (System.IO.Stream requestStream = webRequest.GetRequestStream())
-					{
-						requestStream.Write(byteArray, 0, byteArray.Length);
-					}
+                    byte[] byteArray = Encoding.UTF8.GetBytes(xml);
+                    webRequest.ContentLength = byteArray.Length;
+                    using (System.IO.Stream requestStream = webRequest.GetRequestStream())
+                    {
+                        requestStream.Write(byteArray, 0, byteArray.Length);
+                    }
 
-					HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
-					System.IO.Stream r_stream = response.GetResponseStream();
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    System.IO.Stream r_stream = response.GetResponseStream();
 
-					using (System.IO.StreamReader reader = new System.IO.StreamReader(r_stream))
-					{
-						string strResponse = reader.ReadToEnd();
+                    using (System.IO.StreamReader reader = new System.IO.StreamReader(r_stream))
+                    {
+                        string strResponse = reader.ReadToEnd();
 
-						if (!string.IsNullOrEmpty(strResponse))
-						{
-							XmlDocument xmlDoc = new XmlDocument();
-							xmlDoc.LoadXml(strResponse);
-							
-							string xpath = "Response/Card_Check/Resp_Code";
-							var response_code = xmlDoc.SelectSingleNode(xpath);
-							if (response_code != null)
-							{
-								status_code = response_code.InnerText;
+                        if (!string.IsNullOrEmpty(strResponse))
+                        {
+                            XmlDocument xmlDoc = new XmlDocument();
+                            xmlDoc.LoadXml(strResponse);
 
-								xpath = "Response/Card_Check/Resp_Mesg";
-								var response_messagenode = xmlDoc.SelectSingleNode(xpath);
-								string responseMessageTet = string.Empty;
-								if (response_messagenode != null)
-								{
-									response_message = response_messagenode.InnerText;
-								}
+                            string xpath = "Response/Card_Check/Resp_Code";
+                            var response_code = xmlDoc.SelectSingleNode(xpath);
+                            if (response_code != null)
+                            {
+                                status_code = response_code.InnerText;
 
-								xpath = "Response/Card_Check/Ref_No";
-								var ref_nonode = xmlDoc.SelectSingleNode(xpath);								
-								if (ref_nonode != null)
-								{
+                                xpath = "Response/Card_Check/Resp_Mesg";
+                                var response_messagenode = xmlDoc.SelectSingleNode(xpath);
+                                string responseMessageTet = string.Empty;
+                                if (response_messagenode != null)
+                                {
+                                    response_message = response_messagenode.InnerText;
+                                }
+
+                                xpath = "Response/Card_Check/Ref_No";
+                                var ref_nonode = xmlDoc.SelectSingleNode(xpath);
+                                if (ref_nonode != null)
+                                {
                                     HttpContext.Session.Set("Ref_No", ref_nonode.InnerText);
-								}
+                                }
 
-								xpath = "Response/Card_Check/Auth_No";
-								var auth_nonode = xmlDoc.SelectSingleNode(xpath);
-								if (auth_nonode != null)
-								{
+                                xpath = "Response/Card_Check/Auth_No";
+                                var auth_nonode = xmlDoc.SelectSingleNode(xpath);
+                                if (auth_nonode != null)
+                                {
                                     HttpContext.Session.Set("Auth_No", auth_nonode.InnerText);
-								}
-							}
-						}
-					}
-				}
-			}
-			catch (Exception e)
-			{
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
                 _logger.Error("Error occurred when making external payment request. Setting status code to 00 and Ref_No Auth_No to null.", e);
-				status_code = "00";
+                status_code = "00";
                 HttpContext.Session.Set("Ref_No", "");
                 HttpContext.Session.Set("Auth_No", "");
-			}
-		}
+            }
+        }
 
         private void ValidateGiftCardAmounts()
         {
@@ -386,7 +386,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 new Dictionary<ShoppingCartItem, List<ProductAttributeValue>>();
             foreach (var sci in cart)
             {
-                
+
                 var mappings =
                     _productAttributeService.GetProductAttributeMappingsByProductId(
                         sci.ProductId
@@ -543,7 +543,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 _workContext.CurrentCustomer,
                 ShoppingCartType.ShoppingCart,
                 _storeContext.CurrentStore.Id);
-            
+
             SaveWarranty(cart, form);
 
             return RedirectToRoute("CheckoutPaymentMethod");
@@ -686,7 +686,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 processPaymentRequest.PaymentMethodSystemName = _genericAttributeService.GetAttribute<string>(_workContext.CurrentCustomer,
                     NopCustomerDefaults.SelectedPaymentMethodAttribute, _storeContext.CurrentStore.Id);
                 HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
-                
+
                 // Set ABC custom values
                 var refNo = HttpContext.Session.GetString("Ref_No");
                 if (refNo != null)
@@ -700,7 +700,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     processPaymentRequest.CustomValues.Add("AuthCode", authNo);
                     HttpContext.Session.Remove("Auth_No");
                 }
-                
+
                 var placeOrderResult = _orderProcessingService.PlaceOrder(processPaymentRequest);
                 if (placeOrderResult.Success)
                 {
@@ -778,7 +778,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             // custom code is here
             string status_code = string.Empty;
             string response_message = string.Empty;
-			var isAjaxCall = Convert.ToBoolean(form["is_ajax_call"]);
+            var isAjaxCall = Convert.ToBoolean(form["is_ajax_call"]);
 
             if (ModelState.IsValid)
             {
@@ -790,24 +790,24 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
 
                 // If calling this route via AJAX (for Synchrony plugin), 
-				// return 200 so the plugin can handle redirecting to /confirm
-				if (isAjaxCall)
-				{
-					return new OkResult();
-				}
+                // return 200 so the plugin can handle redirecting to /confirm
+                if (isAjaxCall)
+                {
+                    return new OkResult();
+                }
                 SendPaymentRequest(paymentInfo, out status_code, out response_message);
 
                 if (status_code == "00")
                 {
                     //session save
-                    HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);			
-					return RedirectToRoute("CheckoutConfirm");
-				}
+                    HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
+                    return RedirectToRoute("CheckoutConfirm");
+                }
                 else
                 {
                     response_message = WebUtility.HtmlDecode(response_message);
-					ModelState.AddModelError("", response_message);
-                } 
+                    ModelState.AddModelError("", response_message);
+                }
             }
 
             //If we got this far, something failed, redisplay form
@@ -852,5 +852,5 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, NopCustomerDefaults.SelectedShippingOptionAttribute, pickUpInStoreShippingOption, _storeContext.CurrentStore.Id);
             _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, NopCustomerDefaults.SelectedPickupPointAttribute, pickupPoint, _storeContext.CurrentStore.Id);
         }
-	}
+    }
 }

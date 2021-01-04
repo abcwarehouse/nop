@@ -7,6 +7,6 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Models
 {
     public class TaxRateListModel : BasePagedListModel<TaxRateModel>
     {
-        
+
     }
 }

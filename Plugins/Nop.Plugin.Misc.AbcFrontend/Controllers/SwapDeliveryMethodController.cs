@@ -72,7 +72,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 // kick back to product page
                 var product = _productService.GetProductById(item.ProductId);
                 var seName = _urlRecordService.GetSeName<Product>(product);
-                string url =  Url.RouteUrl("Product", new { SeName = seName });
+                string url = Url.RouteUrl("Product", new { SeName = seName });
                 url += "?updatecartitemid=" + item.Id;
                 return Json(new FailResponse
                 {
@@ -144,7 +144,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             }
             else
             {
-                _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer, sameCartItem.Id, 
+                _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer, sameCartItem.Id,
                     sameCartItem.AttributesXml, sameCartItem.CustomerEnteredPrice, null, null, item.Quantity + sameCartItem.Quantity, true);
                 _shoppingCartService.DeleteShoppingCartItem(item);
             }

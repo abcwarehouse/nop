@@ -40,7 +40,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Services
         public TaxRateService(IEventPublisher eventPublisher,
             IStaticCacheManager staticCacheManager,
             IRepository<TaxRate> taxRateRepository,
-            ICacheKeyService cacheKeyService    
+            ICacheKeyService cacheKeyService
         )
         {
             _eventPublisher = eventPublisher;
@@ -101,7 +101,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Services
             if (taxRateId == 0)
                 return null;
 
-           return _taxRateRepository.GetById(taxRateId);
+            return _taxRateRepository.GetById(taxRateId);
         }
 
         /// <summary>

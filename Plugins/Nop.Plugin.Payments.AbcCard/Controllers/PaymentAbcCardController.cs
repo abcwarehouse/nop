@@ -33,7 +33,7 @@ namespace Nop.Plugin.Payments.AbcCard.Controllers
             IStoreContext storeContext,
             ILocalizationService localizationService,
             ILanguageService languageService,
-            INotificationService notificationService    
+            INotificationService notificationService
         )
         {
             _workContext = workContext;

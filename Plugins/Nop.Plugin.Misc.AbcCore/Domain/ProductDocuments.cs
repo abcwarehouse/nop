@@ -21,7 +21,8 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
 
         public static Func<string> GetByProductIdFunc(IRepository<ProductDocuments> repo, int prodId)
         {
-            return () => {
+            return () =>
+            {
                 var curDate = DateTime.UtcNow;
                 return repo.Table.Where(pd => pd.ProductId == prodId).Select(pd => pd.Documents).FirstOrDefault();
             };

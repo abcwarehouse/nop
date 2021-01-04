@@ -26,26 +26,26 @@ using Nop.Plugin.Misc.AbcCore.Services;
 namespace Nop.Plugin.Misc.AbcSync
 {
     public class ImportService : BaseAbcWarehouseService, IImportService
-	{
+    {
         private readonly ILogger _logger;
-		private readonly ImportSettings _importSettings;
-		private readonly IRepository<Product> _productRepository;
-		private readonly IProductService _productService;
-		private readonly IImportUtilities _importUtilities;
-		private readonly ICategoryService _categoryService;
-		private readonly IRepository<ProductCategory> _productCategoryRepository;
+        private readonly ImportSettings _importSettings;
+        private readonly IRepository<Product> _productRepository;
+        private readonly IProductService _productService;
+        private readonly IImportUtilities _importUtilities;
+        private readonly ICategoryService _categoryService;
+        private readonly IRepository<ProductCategory> _productCategoryRepository;
         private readonly IRepository<ProductCartPrice> _productCartPriceRepository;
-		private readonly IUrlRecordService _urlRecordService;
-		private readonly IManufacturerService _manufacturerService;
-		private readonly IRepository<Manufacturer> _manufacturerRepository;
-		private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
+        private readonly IUrlRecordService _urlRecordService;
+        private readonly IManufacturerService _manufacturerService;
+        private readonly IRepository<Manufacturer> _manufacturerRepository;
+        private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
         private readonly IProductAttributeService _productAttributeService;
-		private readonly INopDataProvider _nopDbContext;
-        private readonly IShopService _shopService;        
+        private readonly INopDataProvider _nopDbContext;
+        private readonly IShopService _shopService;
         private readonly IRepository<ShopAbc> _shopAbcRepository;
         private readonly IRepository<ProductAttributeMapping> _productAttributeMappingRepository;
-		private readonly IStoreService _storeService;
-		private readonly IStoreMappingService _storeMappingService;
+        private readonly IStoreService _storeService;
+        private readonly IStoreMappingService _storeMappingService;
         private readonly IRepository<StoreMapping> _storeMappingRepository;
         private readonly IAclService _aclService;
         private readonly IRepository<TaxCategory> _taxCategoryRepository;
@@ -56,26 +56,26 @@ namespace Nop.Plugin.Misc.AbcSync
 
         private Dictionary<string, Manufacturer> _nameToManufacturer = new Dictionary<string, Manufacturer>();
 
-		public ImportService(
+        public ImportService(
             ILogger logger,
-			ImportSettings importSettings,
-			IRepository<Product> productRepository,
-			IProductService productService,
-			IImportUtilities importUtilities,
-			ICategoryService categoryService,
-			IRepository<ProductCategory> productCategoryRepository,
+            ImportSettings importSettings,
+            IRepository<Product> productRepository,
+            IProductService productService,
+            IImportUtilities importUtilities,
+            ICategoryService categoryService,
+            IRepository<ProductCategory> productCategoryRepository,
             IRepository<ProductCartPrice> productCartPriceRepository,
-			IUrlRecordService urlRecordService,
-			IManufacturerService manufacturerService,
-			IRepository<Manufacturer> manufacturerRepository,
-			IRepository<ProductManufacturer> productManufacturerRepository,
-			INopDataProvider nopDbContext,
+            IUrlRecordService urlRecordService,
+            IManufacturerService manufacturerService,
+            IRepository<Manufacturer> manufacturerRepository,
+            IRepository<ProductManufacturer> productManufacturerRepository,
+            INopDataProvider nopDbContext,
             IProductAttributeService productAttributeService,
             IShopService shopService,
             IRepository<ShopAbc> shopAbcRepository,
             IRepository<ProductAttributeMapping> productAttributeMappingRepository,
-			IStoreService storeService,
-			IStoreMappingService storeMappingService,
+            IStoreService storeService,
+            IStoreMappingService storeMappingService,
             IRepository<StoreMapping> storeMappingRepository,
             IAclService aclService,
             IRepository<TaxCategory> taxCategoryRepository,
@@ -84,26 +84,26 @@ namespace Nop.Plugin.Misc.AbcSync
             EmailAccountSettings emailAccountSettings,
             IGenericAttributeService genericAttributeService
             )
-		{
+        {
             _logger = logger;
-			_importSettings = importSettings;
-			_productRepository = productRepository;
-			_productService = productService;
-			_importUtilities = importUtilities;
-			_categoryService = categoryService;
-			_productCategoryRepository = productCategoryRepository;
+            _importSettings = importSettings;
+            _productRepository = productRepository;
+            _productService = productService;
+            _importUtilities = importUtilities;
+            _categoryService = categoryService;
+            _productCategoryRepository = productCategoryRepository;
             _productCartPriceRepository = productCartPriceRepository;
-			_urlRecordService = urlRecordService;
-			_manufacturerService = manufacturerService;
-			_manufacturerRepository = manufacturerRepository;
-			_productManufacturerRepository = productManufacturerRepository;
-			_nopDbContext = nopDbContext;
+            _urlRecordService = urlRecordService;
+            _manufacturerService = manufacturerService;
+            _manufacturerRepository = manufacturerRepository;
+            _productManufacturerRepository = productManufacturerRepository;
+            _nopDbContext = nopDbContext;
             _shopService = shopService;
             _shopAbcRepository = shopAbcRepository;
             _productAttributeService = productAttributeService;
             _productAttributeMappingRepository = productAttributeMappingRepository;
-			_storeService = storeService;
-			_storeMappingService = storeMappingService;
+            _storeService = storeService;
+            _storeMappingService = storeMappingService;
             _storeMappingRepository = storeMappingRepository;
             _aclService = aclService;
             _taxCategoryRepository = taxCategoryRepository;
@@ -111,14 +111,14 @@ namespace Nop.Plugin.Misc.AbcSync
             _emailAccountSettings = emailAccountSettings;
             _emailAccountService = emailAccountService;
             _genericAttributeService = genericAttributeService;
-		}
+        }
 
         /// <summary>
         /// import featured product from the excel file given in web config. skus that do not map to products or manufacturer names that do not map to manufacturers will be skipped
         /// </summary>
         public void ImportFeaturedProducts()
         {
-			string featuredProductsPath = _importSettings.GetFeaturedProductsFile();
+            string featuredProductsPath = _importSettings.GetFeaturedProductsFile();
 
             using (var xlPackage = new ExcelPackage(new FileInfo(featuredProductsPath)))
             {
@@ -135,7 +135,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 int iRow = 2;
                 while (categoryWorksheet.Cells[iRow, 1].Value != null && !String.IsNullOrEmpty(categoryWorksheet.Cells[iRow, 1].Value.ToString()))
                 {
-                    
+
                     var productSku = Convert.ToString(categoryWorksheet.Cells[iRow, 1].Value);
                     var product = _importUtilities.GetExistingProductBySku(productSku);
                     // TODO: log if fail
@@ -167,7 +167,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     var displayOrder = 0;
                     try
                     {
-                        displayOrder= Convert.ToInt32(categoryWorksheet.Cells[iRow, 3].Value);
+                        displayOrder = Convert.ToInt32(categoryWorksheet.Cells[iRow, 3].Value);
                     }
                     catch (Exception ex)
                     {
@@ -215,7 +215,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
                     Manufacturer manufacturer = null;
                     if (!String.IsNullOrEmpty(manufacturerName))
-                        manufacturer = _manufacturerService.GetAllManufacturers(manufacturerName:manufacturerName.ToUpper(), showHidden: true).FirstOrDefault();
+                        manufacturer = _manufacturerService.GetAllManufacturers(manufacturerName: manufacturerName.ToUpper(), showHidden: true).FirstOrDefault();
 
                     var displayOrder = 0;
                     try

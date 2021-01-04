@@ -7,31 +7,31 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-	public class ImportMarkdownsTask : Nop.Services.Tasks.IScheduleTask
-	{
-		private readonly IImportMarkdowns _importService;
-		private readonly ImportSettings _importSettings;
+    public class ImportMarkdownsTask : Nop.Services.Tasks.IScheduleTask
+    {
+        private readonly IImportMarkdowns _importService;
+        private readonly ImportSettings _importSettings;
 
-		public ImportMarkdownsTask(
-			IImportMarkdowns importService,
-			ImportSettings importSettings
-		)
-		{
-			_importService = importService;
-			_importSettings = importSettings;
-		}
+        public ImportMarkdownsTask(
+            IImportMarkdowns importService,
+            ImportSettings importSettings
+        )
+        {
+            _importService = importService;
+            _importSettings = importSettings;
+        }
 
-		public void Execute()
-		{
-			if (_importSettings.SkipImportMarkdownsTask)
-			{
-				this.Skipped();
-				return;
-			}
+        public void Execute()
+        {
+            if (_importSettings.SkipImportMarkdownsTask)
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
-			_importService.Import();
+            _importService.Import();
             this.LogEnd();
-		}
-	}
+        }
+    }
 }

@@ -82,7 +82,7 @@ namespace Nop.Plugin.Misc.AbcCore
                     }
                 }
             };
-            
+
             rootNode.ChildNodes.Add(rootMenuItem);
         }
 

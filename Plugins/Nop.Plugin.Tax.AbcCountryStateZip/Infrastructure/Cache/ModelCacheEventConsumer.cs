@@ -9,7 +9,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Infrastructure.Cache
     /// <summary>
     /// Model cache event consumer (used for caching of presentation layer models)
     /// </summary>
-    public partial class ModelCacheEventConsumer : 
+    public partial class ModelCacheEventConsumer :
         //tax rates
         IConsumer<EntityInsertedEvent<TaxRate>>,
         IConsumer<EntityUpdatedEvent<TaxRate>>,
@@ -24,7 +24,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Infrastructure.Cache
         public static CacheKey TAXRATE_ALL_KEY = new CacheKey("Nop.plugins.tax.AbcCountryStateZip.taxrate.all", ALL_TAX_RATES_PATTERN_KEY);
 
         private readonly IStaticCacheManager _staticCacheManager;
-        
+
         public ModelCacheEventConsumer(
             IStaticCacheManager staticCacheManager
         )

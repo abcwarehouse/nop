@@ -23,10 +23,10 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                    .As<IBackendStockService>()
                    .InstancePerLifetimeScope();
             builder.RegisterType<ImportUtilities>()
-				   .As<IImportUtilities>()
+                   .As<IImportUtilities>()
                    .InstancePerLifetimeScope();
             builder.RegisterType<AttributeUtilities>()
-				   .As<IAttributeUtilities>()
+                   .As<IAttributeUtilities>()
                    .InstancePerLifetimeScope();
             builder.RegisterType<FrontEndService>().As<FrontEndService>().SingleInstance();
             builder.RegisterType<AbcPromoService>().As<IAbcPromoService>().InstancePerLifetimeScope();

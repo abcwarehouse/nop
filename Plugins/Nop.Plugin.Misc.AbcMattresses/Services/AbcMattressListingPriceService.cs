@@ -21,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         )
         {
             var mattressSizePam = _productAttributeService.GetProductAttributeMappingsByProductId(productId)
-                                               .Where(pam => 
+                                               .Where(pam =>
                                                    _productAttributeService.GetProductAttributeById(
                                                        pam.ProductAttributeId
                                                     )?.Name == AbcMattressesConsts.MattressSizeName

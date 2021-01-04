@@ -57,8 +57,8 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
                 promo.IsExpired() || promo.IsActive() :
                 promo.IsActive();
 
-            if (!shouldDisplay) return InvokeHttp404(); 
-            
+            if (!shouldDisplay) return InvokeHttp404();
+
             var promoProducts = _abcPromoService.GetPublishedProductsByPromoId(promo.Id);
 
             promoProducts = SortPromoProducts(promoProducts, command);
@@ -85,7 +85,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             model.PagingFilteringContext.LoadPagedList(pagedList);
 
             _catalogModelFactory.PrepareSortingOptions(model.PagingFilteringContext, command);
-            model.PagingFilteringContext.AvailableSortOptions = 
+            model.PagingFilteringContext.AvailableSortOptions =
                 model.PagingFilteringContext.AvailableSortOptions.Where(aso => aso.Text.Contains("Price:")).ToList();
 
             return View("~/Plugins/Widgets.AbcPromos/Views/PromoListing.cshtml", model);

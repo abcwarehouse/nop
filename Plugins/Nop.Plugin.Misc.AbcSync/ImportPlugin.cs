@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    public class ImportPlugin: BasePlugin, IMiscPlugin
+    public class ImportPlugin : BasePlugin, IMiscPlugin
     {
         private readonly ILocalizationService _localizationService;
         private readonly IScheduleTaskService _scheduleTaskService;
@@ -78,7 +78,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             base.Install();
         }
-        
+
         public override void Uninstall()
         {
             RemoveTasks();
@@ -101,33 +101,33 @@ namespace Nop.Plugin.Misc.AbcSync
         {
             _localizationService.AddPluginLocaleResource(
                 new Dictionary<string, string>
-            {
-                [ImportPluginLocales.SkipFillStagingAccessoriesTask] = "FillStagingAccessoriesTask",
-                [ImportPluginLocales.SkipFillStagingBrandsTask] = "FillStagingBrandsTask",
-                [ImportPluginLocales.SkipFillStagingPricingTask] = "FillStagingPricingTask",
-                [ImportPluginLocales.SkipFillStagingProductCategoryMappingsTask] = "FillStagingProductCategoryMappingsTask",
-                [ImportPluginLocales.SkipFillStagingRebatesTask] = "FillStagingRebatesTask",
-                [ImportPluginLocales.SkipFillStagingScandownEndDatesTask] = "FillStagingScandownEndDatesTask",
-                [ImportPluginLocales.SkipFillStagingWarrantiesTask] = "FillStagingWarrantiesTask",
+                {
+                    [ImportPluginLocales.SkipFillStagingAccessoriesTask] = "FillStagingAccessoriesTask",
+                    [ImportPluginLocales.SkipFillStagingBrandsTask] = "FillStagingBrandsTask",
+                    [ImportPluginLocales.SkipFillStagingPricingTask] = "FillStagingPricingTask",
+                    [ImportPluginLocales.SkipFillStagingProductCategoryMappingsTask] = "FillStagingProductCategoryMappingsTask",
+                    [ImportPluginLocales.SkipFillStagingRebatesTask] = "FillStagingRebatesTask",
+                    [ImportPluginLocales.SkipFillStagingScandownEndDatesTask] = "FillStagingScandownEndDatesTask",
+                    [ImportPluginLocales.SkipFillStagingWarrantiesTask] = "FillStagingWarrantiesTask",
 
-                [ImportPluginLocales.SkipImportProductsTask] = "ImportProductsTask",
-                [ImportPluginLocales.SkipMapCategoriesTask] = "MapCategoriesTask",
-                [ImportPluginLocales.SkipImportProductCategoryMappingsTask] = "ImportProductCategoryMappingsTask",
-                [ImportPluginLocales.SkipAddHomeDeliveryAttributesTask] = "AddHomeDeliveryAttributesTask",
-                [ImportPluginLocales.SkipImportMarkdownsTask] = "ImportMarkdownsTask",
-                [ImportPluginLocales.SkipImportRelatedProductsTask] = "ImportRelatedProductsTask",
-                [ImportPluginLocales.SkipImportWarrantiesTask] = "ImportWarrantiesTask",
-                [ImportPluginLocales.SkipUnmapNonstockClearanceTask] = "UnmapNonstockClearanceTask",
-                [ImportPluginLocales.SkipUnmapEmptyCategoriesTask] = "UnmapEmptyCategoriesTask",
-                [ImportPluginLocales.SkipSliExportTask] = "SliExportTask",
+                    [ImportPluginLocales.SkipImportProductsTask] = "ImportProductsTask",
+                    [ImportPluginLocales.SkipMapCategoriesTask] = "MapCategoriesTask",
+                    [ImportPluginLocales.SkipImportProductCategoryMappingsTask] = "ImportProductCategoryMappingsTask",
+                    [ImportPluginLocales.SkipAddHomeDeliveryAttributesTask] = "AddHomeDeliveryAttributesTask",
+                    [ImportPluginLocales.SkipImportMarkdownsTask] = "ImportMarkdownsTask",
+                    [ImportPluginLocales.SkipImportRelatedProductsTask] = "ImportRelatedProductsTask",
+                    [ImportPluginLocales.SkipImportWarrantiesTask] = "ImportWarrantiesTask",
+                    [ImportPluginLocales.SkipUnmapNonstockClearanceTask] = "UnmapNonstockClearanceTask",
+                    [ImportPluginLocales.SkipUnmapEmptyCategoriesTask] = "UnmapEmptyCategoriesTask",
+                    [ImportPluginLocales.SkipSliExportTask] = "SliExportTask",
 
-                [ImportPluginLocales.SkipImportDocumentsTask] = "ImportDocumentsTask",
-                [ImportPluginLocales.SkipImportIsamSpecsTask] = "ImportIsamSpecsTask",
-                [ImportPluginLocales.SkipImportFeaturedProductsTask] = "ImportFeaturedProductsTask",
-                [ImportPluginLocales.SkipImportProductFlagsTask] = "ImportProductFlagsTask",
-                [ImportPluginLocales.SkipImportSotPicturesTask] = "ImportSotPicturesTask",
-                [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask"
-            });
+                    [ImportPluginLocales.SkipImportDocumentsTask] = "ImportDocumentsTask",
+                    [ImportPluginLocales.SkipImportIsamSpecsTask] = "ImportIsamSpecsTask",
+                    [ImportPluginLocales.SkipImportFeaturedProductsTask] = "ImportFeaturedProductsTask",
+                    [ImportPluginLocales.SkipImportProductFlagsTask] = "ImportProductFlagsTask",
+                    [ImportPluginLocales.SkipImportSotPicturesTask] = "ImportSotPicturesTask",
+                    [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask"
+                });
         }
     }
 }

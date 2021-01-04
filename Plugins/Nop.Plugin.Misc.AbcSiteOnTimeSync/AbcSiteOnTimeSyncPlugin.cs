@@ -13,10 +13,10 @@ using System.Linq;
 
 namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
 {
-    public class AbcSiteOnTimeSyncPlugin: BasePlugin, IMiscPlugin
+    public class AbcSiteOnTimeSyncPlugin : BasePlugin, IMiscPlugin
     {
         public static class LocaleKey
-        {         
+        {
             public const string Base = "Plugins.Misc.AbcSiteOnTimeSync.Fields.";
             public const string CmicApiBrandUrl = Base + "CmicApiBrandUrl";
             public const string CmicApiBrandUrlHint = CmicApiBrandUrl + ".Hint";
@@ -611,7 +611,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
         {
             _stagingDb.ExecuteNonQuery("DROP TABLE IF EXISTS SiteOnTimeBrand");
         }
-    
+
         private void AddTask()
         {
             ScheduleTask task = new ScheduleTask();
@@ -632,7 +632,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                 _scheduleTaskService.DeleteTask(task);
             }
         }
-    
+
         private void ClearPDPTables()
         {
             _stagingDb.ExecuteNonQuery(@"

@@ -105,9 +105,10 @@ namespace Nop.Plugin.Misc.AbcSync
                 var description = "";
 
                 //populate tab. Skipping some downloads, such as extra pictures
-                foreach(var download in _productDataProductDownloadService.GetProductDataProductDownloadsByProductDataProductId(sotProduct.id))
+                foreach (var download in _productDataProductDownloadService.GetProductDataProductDownloadsByProductDataProductId(sotProduct.id))
                 {
-                    switch (download.AST_Role_Txt) {
+                    switch (download.AST_Role_Txt)
+                    {
                         case "OwnersManual":
                             description += GetTabLinkItem(download.AST_URL_Txt, "Owners Manual");
                             break;
@@ -137,7 +138,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 //if there were downloads to populate the tab, add a new tab and mappings
                 if (!string.IsNullOrEmpty(description))
                 {
-                    productDocumentsManager.Insert(new ProductDocuments { ProductId = product.Id, Documents = description});
+                    productDocumentsManager.Insert(new ProductDocuments { ProductId = product.Id, Documents = description });
                     idsWithDocuments.Add(product.Id);
                 }
 
@@ -159,14 +160,17 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
 
 
-                var description = "";               
-                var eguidePath =  _importSettings.GetEnergyGuidePdfPath() + $"/{isamProduct.ItemNumber.Trim()}_eguide.pdf";
+                var description = "";
+                var eguidePath = _importSettings.GetEnergyGuidePdfPath() + $"/{isamProduct.ItemNumber.Trim()}_eguide.pdf";
                 var specPath = _importSettings.GetSpecificationPdfPath() + $"/{isamProduct.ItemNumber.Trim()}_spec.pdf";
                 if (File.Exists(eguidePath) && !idsWithEguides.Contains(product.Id))
                 {
                     description += GetTabLinkItem($"/energy_guides/{isamProduct.ItemNumber.Trim()}_eguide.pdf", "Energy Guide");
-                    _energyGuideRepository.Insert(new ProductEnergyGuide { ProductId = product.Id, EnergyGuideUrl = $"/energy_guides/{isamProduct.ItemNumber.Trim()}_eguide.pdf"
-                });
+                    _energyGuideRepository.Insert(new ProductEnergyGuide
+                    {
+                        ProductId = product.Id,
+                        EnergyGuideUrl = $"/energy_guides/{isamProduct.ItemNumber.Trim()}_eguide.pdf"
+                    });
                     idsWithEguides.Add(product.Id);
                 }
                 if (File.Exists(specPath) && !idsWithSpecs.Contains(product.Id))

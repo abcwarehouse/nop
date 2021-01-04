@@ -154,7 +154,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
             //get the customer 
             var customer = _customerService.GetShoppingCartCustomer(cart);
-            
+
             //sub totals
             decimal subTotalExclTaxWithoutDiscount = decimal.Zero;
             decimal subTotalInclTaxWithoutDiscount = decimal.Zero;

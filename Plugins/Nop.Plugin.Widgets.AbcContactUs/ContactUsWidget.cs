@@ -11,7 +11,7 @@ namespace Nop.Plugin.Widgets.AbcContactUs
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
 
-        public ContactUsWidget (
+        public ContactUsWidget(
             ISettingService settingService,
             IWebHelper webHelper
         )

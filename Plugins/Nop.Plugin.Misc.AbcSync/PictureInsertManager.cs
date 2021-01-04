@@ -73,7 +73,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 updateImageBinaryCommand.ExecuteNonQuery();
                 updateImageBinaryCommand.Dispose();
             }
-         }
+        }
 
         public void Insert(byte[] pictureBytes, string seoName, string url, Product product)
         {
@@ -106,10 +106,10 @@ namespace Nop.Plugin.Misc.AbcSync
                 tempTableDeclare.Dispose();
 
                 // parameterized insert into picture table
-                foreach(var pictureInput in _batchedPictureInputs)
+                foreach (var pictureInput in _batchedPictureInputs)
                 {
                     SqlCommand pictureInsert = sqlConnection.CreateCommand();
-                    pictureInsert.CommandText 
+                    pictureInsert.CommandText
                         = "INSERT INTO Picture(MimeType, SeoFilename, IsNew)"
                         + " OUTPUT @ProductId, INSERTED.Id INTO #PictureOutputTemp"
                         + " VALUES(@MimeType, @SeoFilename, 0);";
@@ -126,7 +126,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     selectImageIdCommand.Dispose();
 
                     SqlCommand pictureBinaryInsert = sqlConnection.CreateCommand();
-                    pictureBinaryInsert.CommandText 
+                    pictureBinaryInsert.CommandText
                         = "INSERT INTO PictureBinary (PictureId, BinaryData)"
                         + $" VALUES({pictureId}, @PictureBytes);";
                     pictureBinaryInsert.Parameters.Add(new SqlParameter("PictureBytes", pictureInput.PictureBytes));
@@ -157,7 +157,7 @@ namespace Nop.Plugin.Misc.AbcSync
         {
             EntityManager<ProductPicture> productPictureManager =
                 new EntityManager<ProductPicture>(productPictureRepository);
-            foreach(var productPicture in _productPictures)
+            foreach (var productPicture in _productPictures)
             {
                 productPictureManager.Insert(productPicture);
             }

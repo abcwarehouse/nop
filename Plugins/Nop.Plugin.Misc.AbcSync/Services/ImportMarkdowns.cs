@@ -7,7 +7,7 @@ using Nop.Plugin.Misc.AbcSync.Data;
 namespace Nop.Plugin.Misc.AbcSync
 {
     class ImportMarkdowns : BaseAbcWarehouseService, IImportMarkdowns
-	{
+    {
         private readonly INopDataProvider _nopDbContext;
         private readonly ImportSettings _importSettings;
 
@@ -15,16 +15,16 @@ namespace Nop.Plugin.Misc.AbcSync
             INopDataProvider nopDbContext,
             ImportSettings importSettings
         )
-		{
+        {
             _nopDbContext = nopDbContext;
             _importSettings = importSettings;
-		}
+        }
 
-		/// <summary>
-		///		Begin the import process for product's specifications.
-		/// </summary>
-		public void Import()
-		{
+        /// <summary>
+        ///		Begin the import process for product's specifications.
+        /// </summary>
+        public void Import()
+        {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var productManager = new EntityManager<Product>();
             var genericAttributeTableName = _nopDbContext.GetTable<GenericAttribute>().TableName;
@@ -48,6 +48,6 @@ namespace Nop.Plugin.Misc.AbcSync
             _nopDbContext.ExecuteNonQuery(importMarkdownStartDatesFromStagingCommand);
             _nopDbContext.ExecuteNonQuery(importMarkdownEndDatesFromStagingCommand);
             productManager.Flush();
-		}
-	}
+        }
+    }
 }

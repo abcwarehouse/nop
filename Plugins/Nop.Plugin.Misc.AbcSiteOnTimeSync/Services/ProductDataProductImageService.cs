@@ -16,16 +16,16 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync.Services.Staging
         {
             _importSettings = importSettings;
         }
-        
+
         public void InsertProductDataProductImages(List<ProductDataProductImage> images, int pdpId)
         {
             using (var connection = _importSettings.GetStagingDbConnection())
             {
-                foreach(var i in images)
-				{
+                foreach (var i in images)
+                {
                     i.ProductDataProduct_id = pdpId;
                     connection.Insert(i);
-                }                
+                }
             }
         }
     }

@@ -167,7 +167,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                                 productIdToDeliverySci[sci.ProductId] = sci;
                             }
 
-                            
+
                         }
                         //update the sci with new attributes
                         base.UpdateShoppingCartItem(toCustomer, sci.Id,
@@ -182,7 +182,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 }
             }
 
-            for(int i = 0; i < toDelete.Count; ++i)
+            for (int i = 0; i < toDelete.Count; ++i)
             {
                 base.DeleteShoppingCartItem(toDelete[i]);
             }

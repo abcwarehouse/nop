@@ -43,7 +43,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
             IProductDataProductDimensionService productDataProductDimensionService,
             IProductDataProductDownloadService productDataProductDownloadService,
             IProductDataProductFeatureService productDataProductFeatureService,
-            IProductDataProductFilterService productDataProductFilterService,            
+            IProductDataProductFilterService productDataProductFilterService,
             IProductDataProductImageService productDataProductImageService,
             IProductDataProductpmapService productDataProductpmapService,
             IProductDataProductRelatedItemService productDataProductRelatedItemService,
@@ -65,7 +65,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
         }
 
         public void Execute()
-		{
+        {
             if (!_settings.AreValid)
             {
                 throw new NopException("AbcSiteOnTimeSync Settings are not set up correctly, please set them in ABC Site On Time Sync Configuration.");
@@ -86,11 +86,11 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
             watch.Stop();
             Debug.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             Debug.WriteLine("**  End+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            Debug.WriteLine($"** Execution Time: {watch.ElapsedMilliseconds} ms, {watch.Elapsed}");            
+            Debug.WriteLine($"** Execution Time: {watch.ElapsedMilliseconds} ms, {watch.Elapsed}");
             Debug.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             Debug.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             _logger.Information("Site on Time sync completed");
-		}
+        }
 
         private ProductDataProduct getProductDetail(CJsonItem sku, bool? hawOnly)
         {
@@ -335,9 +335,9 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                             {
                                 ProductDataProductImage image = item.Value;
                                 if (image.Large == "" || image.Large == null)
-								{
+                                {
                                     image.Large = image.Thumb;
-								}
+                                }
                                 if (image.Thumb == "" || image.Thumb == null)
                                 {
                                     image.Thumb = image.Large;
@@ -478,8 +478,8 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
         }
 
         private void main()
-		{            
-            Debug.WriteLine("*** Step2: Read Brand and Category mapping data from SiteOnTimeBrand and SoTCategory_NopCategory tables ************");            
+        {
+            Debug.WriteLine("*** Step2: Read Brand and Category mapping data from SiteOnTimeBrand and SoTCategory_NopCategory tables ************");
             var brandListFromDb = _siteOnTimeBrandService.GetSiteOnTimeBrands().ToList();
 
             Debug.WriteLine("*** Step3: Call a top level CMIC brand API to get all brand list provided by CMIC **********************************");
@@ -501,8 +501,8 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                 brandListFromApi.collection.items,
                 new ParallelOptions { MaxDegreeOfParallelism = MaxTaskNumbers },
                 brandApi =>*/
-            
-            foreach (var brandApi in brandListFromApi.collection.items)            
+
+            foreach (var brandApi in brandListFromApi.collection.items)
             {
                 try
                 {
@@ -531,7 +531,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                                         if (product != null)
                                         {
                                             Debug.WriteLine("AAAAAAAAA PThread {0} :____   {1} ->  {2}  ==  {3}  <->  {4}", Thread.CurrentThread.ManagedThreadId, brandDb.CommonBrandName, sku.data[0].value, product.SKU, product.pkID);
-                                            productList.Add(product);                                            
+                                            productList.Add(product);
                                         }
                                         else
                                         {
@@ -567,7 +567,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                                                 product.Sale = product.MSRP;
 
                                             int pdpId = _productDataProductService.InsertProductDataProduct(product);
-                                            if(product.Dimensions != null)
+                                            if (product.Dimensions != null)
                                                 _productDataProductDimensionService.InsertProductDataProductDimensions(product.Dimensions, pdpId);
                                             if (product.Downloads != null)
                                                 _productDataProductDownloadService.InsertProductDataProductDownloads(product.Downloads, pdpId);
@@ -587,7 +587,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                                     {
                                         Debug.WriteLine("EEEEEEEEEE " + e.Message + "  " + product.SKU);
                                     }
-                                }          
+                                }
                             }
                             //}
                         }
@@ -600,7 +600,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                     Debug.WriteLine("EEEEEEEEEE BThread {0} ___ Error ___ {1}", Thread.CurrentThread.ManagedThreadId, brandApi.data[0].value + e.Message);
                 }
             }
-            
+
 
             Debug.WriteLine("*** Step5.1: convert Proper Case *********************************************************");
             var convertProperCase = $@"
@@ -696,7 +696,7 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                 ";
 
             _stagingDb.ExecuteNonQuery(command);
-		}
+        }
 
         private CJsonRoot callCMICApi(string url)
         {

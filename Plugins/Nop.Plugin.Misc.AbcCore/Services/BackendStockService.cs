@@ -42,10 +42,10 @@ namespace Nop.Plugin.Misc.AbcCore.Services
         private CoreSettings _settings;
         private ILogger _logger;
 
-        public BackendStockService(IShopService shopService, 
-            IProductService productService, 
+        public BackendStockService(IShopService shopService,
+            IProductService productService,
             IUrlRecordService urlRecordService,
-            IRepository<ShopAbc> shopAbcRepository, 
+            IRepository<ShopAbc> shopAbcRepository,
             IRepository<ProductAbcDescription> backendIdRepository,
             ILogger logger,
             CoreSettings settings)
@@ -90,7 +90,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 using (OdbcDataReader reader = dbCommand.ExecuteReader())
                 {
                     // read in the information
-                    while(reader.Read())
+                    while (reader.Read())
                     {
                         string backendBranchId = reader.GetString(0);
                         var shopIdEnumerable = _shopAbcRepository.Table
@@ -160,7 +160,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                         // do additional parsing: add nop information
                         stockResponse.ProductId = productId;
 
-                        for(int i = stockResponse.ProductStocks.Count - 1; i >= 0; i--)
+                        for (int i = stockResponse.ProductStocks.Count - 1; i >= 0; i--)
                         {
                             string branchId = stockResponse.ProductStocks[i].BranchId;
                             ShopAbc shopAbc = _shopAbcRepository.Table
@@ -176,7 +176,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                             {
                                 // add shop & url information
                                 stockResponse.ProductStocks[i].Shop = _shopService.GetShopById(shopAbc.ShopId);
-                                stockResponse.ProductStocks[i].ShopUrl 
+                                stockResponse.ProductStocks[i].ShopUrl
                                     = _urlRecordService.GetAllUrlRecords()
                                         .Where(u => u.EntityName == "Shop" && u.EntityId == shopAbc.ShopId)
                                         .Select(u => u.Slug).FirstOrDefault();
@@ -244,7 +244,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             }
             return false;
         }
-        private string BuildXmlRequestString (string backendId)
+        private string BuildXmlRequestString(string backendId)
         {
             XElement xml = new XElement("Request",
                 new XElement("InventoryPickup",

@@ -10,8 +10,8 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 namespace Nop.Plugin.Misc.AbcSync
 {
     public class FillStagingWarrantiesTask : IScheduleTask
-	{
-		private readonly ILogger _logger;
+    {
+        private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;
         private readonly CoreSettings _coreSettings;
 
@@ -27,7 +27,7 @@ namespace Nop.Plugin.Misc.AbcSync
         }
 
         public void Execute()
-		{
+        {
             if (_importSettings.SkipFillStagingWarrantiesTask)
             {
                 this.Skipped();
@@ -35,19 +35,19 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-			using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
-			{
-				using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
-				{
-					stagingConn.Open();
-					backendConn.Open();
+            using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
+            {
+                using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
+                {
+                    stagingConn.Open();
+                    backendConn.Open();
 
-					Import(stagingConn,
-						backendConn, _logger);
-				}
-			}
+                    Import(stagingConn,
+                        backendConn, _logger);
+                }
+            }
             this.LogEnd();
-		}
+        }
 
         private static void Import(SqlConnection stagingConn,
             IDbConnection backendConn, ILogger logger)

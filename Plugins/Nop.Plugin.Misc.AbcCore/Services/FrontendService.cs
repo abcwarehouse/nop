@@ -100,7 +100,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
 
         public SeoSettings GetSeoSettings()
         {
-            return _staticCacheManager.Get(new CacheKey(SEOSETTINGS_KEY, "Abc."), ()=>
+            return _staticCacheManager.Get(new CacheKey(SEOSETTINGS_KEY, "Abc."), () =>
             {
                 return EngineContext.Current.Resolve<SeoSettings>();
             });
@@ -132,17 +132,19 @@ namespace Nop.Plugin.Misc.AbcCore.Services
 
         public bool ProductIsPickup(int productId)
         {
-            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTISPICKUP_KEY, productId), "Abc."), () => {
-                    return _productAttributeService.GetProductAttributeMappingsByProductId(productId)
-                    .Where(pam => _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Pickup")
-                    .Select(pam => pam)
-                    .Any();
-                });
+            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTISPICKUP_KEY, productId), "Abc."), () =>
+            {
+                return _productAttributeService.GetProductAttributeMappingsByProductId(productId)
+                .Where(pam => _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Pickup")
+                .Select(pam => pam)
+                .Any();
+            });
         }
 
         public ProductFlag GetProductFlag(int productId)
         {
-            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTFLAG_KEY, productId), "Abc."), () => {
+            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTFLAG_KEY, productId), "Abc."), () =>
+            {
                 var productFlagRepository = EngineContext.Current.Resolve<IRepository<ProductFlag>>();
                 return productFlagRepository.Table
                     .Where(pf => pf.ProductId == productId)
@@ -170,15 +172,18 @@ namespace Nop.Plugin.Misc.AbcCore.Services
 
         public string GetProductSeNameById(int productId)
         {
-            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCT_SE_NAME_KEY, productId), "Abc."), () => {
+            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCT_SE_NAME_KEY, productId), "Abc."), () =>
+            {
                 return _urlRecordService.GetSeName(_productService.GetProductById(productId));
             });
         }
 
         public bool IsProductPopup(int productId)
         {
-            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCT_POPUP, productId), "Abc."), () => {
-                return ProductRequiresLogin.GetByProductIdFunc(EngineContext.Current.Resolve<IRepository<ProductRequiresLogin>>(), productId)() != null; });
+            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCT_POPUP, productId), "Abc."), () =>
+            {
+                return ProductRequiresLogin.GetByProductIdFunc(EngineContext.Current.Resolve<IRepository<ProductRequiresLogin>>(), productId)() != null;
+            });
         }
     }
 }

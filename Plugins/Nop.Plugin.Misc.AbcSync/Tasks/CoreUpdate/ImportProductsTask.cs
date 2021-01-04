@@ -98,10 +98,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         public void Execute()
         {
             if (_importSettings.SkipImportProductsTask)
-			{
-				this.Skipped();
-				return;
-			}
+            {
+                this.Skipped();
+                return;
+            }
 
             this.LogStart();
 
@@ -431,7 +431,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                             manufacturer, store);
                     }
                 }
-                
+
                 UpdateAddToCartInfo(priceBucketCode, product, stagingProduct);
                 SetFullDescriptionIfEmpty(stagingProduct, product);
             }

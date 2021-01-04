@@ -80,7 +80,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             HashSet<string> filesToMove = new HashSet<string>();
 
-            foreach(var fileName in fileNames)
+            foreach (var fileName in fileNames)
             {
                 var itemNumber = fileName.Split('_')[0];
                 if (!allowedItemNumbers.Contains(itemNumber))
@@ -90,7 +90,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
             }
 
-            foreach(var file in filesToMove)
+            foreach (var file in filesToMove)
             {
                 var archiveFilePath = Path.Combine(archiveFolderPath, String.Concat(archivePrefix, file));
                 File.Move(Path.Combine(targetDirectory, file), archiveFilePath);

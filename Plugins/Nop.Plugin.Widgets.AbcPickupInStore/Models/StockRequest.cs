@@ -11,7 +11,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Models
     public class StockRequest
     {
         [XmlElement(ElementName = "InventoryPickup")]
-        public ItemNumber InventoryPickup { get; set;}
+        public ItemNumber InventoryPickup { get; set; }
 
         [Serializable]
         public class ItemNumber
