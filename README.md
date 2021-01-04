@@ -1,3 +1,5 @@
+![Build](https://github.com/abcwarehouse/nop/workflows/Build/badge.svg)
+
 # ABCWarehouse
 
 ## Software Required
