@@ -16,7 +16,9 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Lint
-      run: dotnet format --check --exclude Libraries Presentation Tests/Nop.Core.Tests/ Tests/Nop.Services.Tests Tests/Nop.Tests Tests/Nop.Web.MVC.Tests
+      run: |
+        dotnet tool install -g dotnet-format 
+        dotnet format --check --exclude Libraries Presentation Tests/Nop.Core.Tests/ Tests/Nop.Services.Tests Tests/Nop.Tests Tests/Nop.Web.MVC.Tests
     - name: Install dependencies
       run: dotnet restore
     - name: Build
