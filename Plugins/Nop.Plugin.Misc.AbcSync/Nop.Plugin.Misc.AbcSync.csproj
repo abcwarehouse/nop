@@ -23,6 +23,7 @@
     <None Remove="Views\_ViewImports.cshtml" />
     <None Remove="Nopcommerce_Create_IXs.sql" />
     <None Remove="Nopcommerce_Drop_IXs.sql" />
+    <None Remove="Clean_Duplicate_Images.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +46,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Nopcommerce_Drop_IXs.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Clean_Duplicate_Images.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -129,6 +129,9 @@ namespace Nop.Plugin.Misc.AbcSync.Models
 		[NopResourceDisplayName(ImportPluginLocales.SkipUnmapEmptyCategoriesTask)]
         public bool SkipUnmapEmptyCategoriesTask { get; set; }
 
+		[NopResourceDisplayName(ImportPluginLocales.SkipCleanDuplicateImagesTask)]
+        public bool SkipCleanDuplicateImagesTask { get; set; }
+
 		[NopResourceDisplayName(ImportPluginLocales.SkipSliExportTask)]
         public bool SkipSliExportTask { get; set; }
     }

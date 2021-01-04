@@ -53,6 +53,7 @@ namespace Nop.Plugin.Misc.AbcSync
 		public bool SkipImportSotPicturesTask { get; private set; }
 		public bool SkipImportLocalPicturesTask { get; private set; }
 		public bool SkipUnmapEmptyCategoriesTask { get; private set; }
+		public bool SkipCleanDuplicateImagesTask { get; private set; }
 
 
         // Internal settings
@@ -96,6 +97,7 @@ namespace Nop.Plugin.Misc.AbcSync
 				SkipImportSotPicturesTask = model.SkipImportSotPicturesTask,
 				SkipImportLocalPicturesTask = model.SkipImportLocalPicturesTask,
 				SkipUnmapEmptyCategoriesTask = model.SkipUnmapEmptyCategoriesTask,
+				SkipCleanDuplicateImagesTask = model.SkipCleanDuplicateImagesTask,
 				SkipSliExportTask = model.SkipSliExportTask
 			};
 		}
@@ -137,6 +139,7 @@ namespace Nop.Plugin.Misc.AbcSync
 				SkipImportSotPicturesTask = SkipImportSotPicturesTask,
 				SkipImportLocalPicturesTask = SkipImportLocalPicturesTask,
 				SkipUnmapEmptyCategoriesTask = SkipUnmapEmptyCategoriesTask,
+				SkipCleanDuplicateImagesTask = SkipCleanDuplicateImagesTask,
 				SkipSliExportTask = SkipSliExportTask
             };
         }
