@@ -8,5 +8,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Domain
         public string ItemNo { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
+        public decimal Size { get; set; }
     }
 }

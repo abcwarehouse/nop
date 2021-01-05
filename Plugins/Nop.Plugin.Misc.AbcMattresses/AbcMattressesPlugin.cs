@@ -58,6 +58,13 @@ namespace Nop.Plugin.Misc.AbcMattresses
                                                            .Where(m => m.ProductId != null)
                                                            .Select(m => _productService.GetProductById(m.ProductId.Value))
                                                            .Where(p => !p.Deleted);
+            foreach (var product in productsToDelete)
+            {
+                // create a random string for the Sku to satisfy the index
+                product.Sku = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)
+                                .Select(s => s[random.Next(s.Length)]).ToArray());
+                _productService.UpdateProduct(product);
+            }
             _productService.DeleteProducts(productsToDelete.ToList());
 
             base.Uninstall();
@@ -89,6 +96,7 @@ namespace Nop.Plugin.Misc.AbcMattresses
                                                             .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName ||
                                                                          AbcMattressesConsts.IsBase(pa.Name) ||
                                                                          AbcMattressesConsts.IsMattressProtector(pa.Name) ||
+                                                                         AbcMattressesConsts.IsFrame(pa.Name) ||
                                                                          pa.Name == AbcMattressesConsts.FreeGiftName)
                                                             .ToList();
 
@@ -112,6 +120,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorQueen },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorKing },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorCaliforniaKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameTwin },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameTwinXL },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameFull },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameQueen },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameCaliforniaKing },
                 new ProductAttribute() { Name = AbcMattressesConsts.FreeGiftName }
             };
 

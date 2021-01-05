@@ -17,6 +17,15 @@ namespace Nop.Plugin.Misc.AbcMattresses
             MattressProtectorKing,
             MattressProtectorCaliforniaKing
         };
+        private static string[] _frames = new string[]
+        {
+            FrameTwin,
+            FrameTwinXL,
+            FrameFull,
+            FrameQueen,
+            FrameKing,
+            FrameCaliforniaKing
+        };
 
         public static bool IsBase(string value)
         {
@@ -25,6 +34,10 @@ namespace Nop.Plugin.Misc.AbcMattresses
         public static bool IsMattressProtector(string value)
         {
             return _mattressProtectors.Contains(value);
+        }
+        public static bool IsFrame(string value)
+        {
+            return _frames.Contains(value);
         }
 
         public const string MattressSizeName = "Mattress Size";
@@ -40,6 +53,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
         public const string MattressProtectorQueen = "Mattress Protector (Queen)";
         public const string MattressProtectorKing = "Mattress Protector (King)";
         public const string MattressProtectorCaliforniaKing = "Mattress Protector (California King)";
+        public const string FrameTwin = "Frame (Twin)";
+        public const string FrameTwinXL = "Frame (TwinXL)";
+        public const string FrameFull = "Frame (Full)";
+        public const string FrameQueen = "Frame (Queen)";
+        public const string FrameKing = "Frame (King)";
+        public const string FrameCaliforniaKing = "Frame (California King)";
         public const string FreeGiftName = "Free Gift";
 
         public const string Twin = "Twin";
