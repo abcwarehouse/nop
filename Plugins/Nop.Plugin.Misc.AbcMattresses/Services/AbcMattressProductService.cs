@@ -17,11 +17,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IAbcMattressModelService _abcMattressService;
         private readonly IAbcMattressBaseService _abcMattressBaseService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
+        private readonly IAbcMattressFrameService _abcMattressFrameService;
         private readonly IAbcMattressGiftService _abcMattressGiftService;
         private readonly IAbcMattressPackageService _abcMattressPackageService;
         private readonly IAbcMattressProtectorService _abcMattressProtectorService;
         private readonly ICategoryService _categoryService;
-        private readonly IGenericAttributeService _genericAttributeService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
@@ -31,11 +31,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IAbcMattressModelService abcMattressService,
             IAbcMattressBaseService abcMattressBaseService,
             IAbcMattressEntryService abcMattressEntryService,
+            IAbcMattressFrameService abcMattressFrameService,
             IAbcMattressGiftService abcMattressGiftService,
             IAbcMattressPackageService abcMattressPackageService,
             IAbcMattressProtectorService abcMattressProtectorService,
             ICategoryService categoryService,
-            IGenericAttributeService genericAttributeService,
             IManufacturerService manufacturerService,
             IProductService productService,
             IProductAttributeService productAttributeService,
@@ -45,11 +45,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressService = abcMattressService;
             _abcMattressBaseService = abcMattressBaseService;
             _abcMattressEntryService = abcMattressEntryService;
+            _abcMattressFrameService = abcMattressFrameService;
             _abcMattressGiftService = abcMattressGiftService;
             _abcMattressPackageService = abcMattressPackageService;
             _abcMattressProtectorService = abcMattressProtectorService;
             _categoryService = categoryService;
-            _genericAttributeService = genericAttributeService;
             _manufacturerService = manufacturerService;
             _productService = productService;
             _productAttributeService = productAttributeService;
@@ -59,7 +59,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         public Product UpsertAbcMattressProduct(AbcMattressModel abcMattressModel)
         {
             var hasExistingProduct = abcMattressModel.ProductId != null;
-            Product product = (hasExistingProduct) ?
+            Product product = hasExistingProduct ?
                 _productService.GetProductById(abcMattressModel.ProductId.Value) :
                 new Product();
 
@@ -106,7 +106,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 switch (pa.Name)
                 {
                     case "Home Delivery":
-                        MergeHomeDelivery(model, pa, product);
+                        MergeHomeDelivery(pa, product);
                         break;
                     case AbcMattressesConsts.MattressSizeName:
                         MergeSizes(model, pa, product);
@@ -117,19 +117,101 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 }
             }
 
-            var baseProductAttributes = _productAttributeService.GetAllProductAttributes()
-                                                            .Where(pa => AbcMattressesConsts.IsBase(pa.Name));
-            foreach (var pa in baseProductAttributes)
-            {
-                MergeBases(model, pa, product);
-            }
+            SetBases(model, product);
+            SetMattressProtectors(model, product);
+            SetFrames(model, product);
+        }
 
+        private void SetFrames(AbcMattressModel model, Product product)
+        {
+            var frameAttributes = _productAttributeService.GetAllProductAttributes()
+                                                                        .Where(pa => AbcMattressesConsts.IsFrame(pa.Name));
+            foreach (var pa in frameAttributes)
+            {
+                MergeFrames(model, pa, product);
+            }
+        }
+
+        private void SetMattressProtectors(AbcMattressModel model, Product product)
+        {
             var mattressProtectorAttributes = _productAttributeService.GetAllProductAttributes()
-                                                            .Where(pa => AbcMattressesConsts.IsMattressProtector(pa.Name));
+                                                                        .Where(pa => AbcMattressesConsts.IsMattressProtector(pa.Name));
             foreach (var pa in mattressProtectorAttributes)
             {
                 MergeMattressProtectors(model, pa, product);
             }
+        }
+
+        private void SetBases(AbcMattressModel model, Product product)
+        {
+            var baseProductAttributes = _productAttributeService.GetAllProductAttributes()
+                                                                        .Where(pa => AbcMattressesConsts.IsBase(pa.Name));
+            foreach (var pa in baseProductAttributes)
+            {
+                MergeBases(model, pa, product);
+            }
+        }
+
+        private void MergeFrames(AbcMattressModel model, ProductAttribute pa, Product product)
+        {
+            var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                          .Where(pam => pam.ProductAttributeId == pa.Id)
+                                                          .FirstOrDefault();
+            var abcMattressEntry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id)
+                                                           .Where(ame => pa.Name == $"Frame ({ame.Size})")
+                                                           .FirstOrDefault();
+            if (abcMattressEntry == null) { return; }
+
+            var frames = _abcMattressFrameService.GetAbcMattressFramesBySize(abcMattressEntry.Size);
+
+            if (pam == null && frames.Any())
+            {
+                var sizePa = _productAttributeService.GetAllProductAttributes()
+                                                            .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
+                                                            .FirstOrDefault();
+                var sizePam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                          .Where(pam => pam.ProductAttributeId == sizePa.Id)
+                                                          .FirstOrDefault();
+                var sizePav = _productAttributeService.GetProductAttributeValues(sizePam.Id)
+                                                        .Where(pav =>
+                                                            pav.ProductAttributeMappingId == sizePam.Id &&
+                                                            pav.Name == abcMattressEntry.Size
+                                                        )
+                                                        .FirstOrDefault();
+                pam = new ProductAttributeMapping()
+                {
+                    ProductId = product.Id,
+                    ProductAttributeId = pa.Id,
+                    IsRequired = false,
+                    AttributeControlType = AttributeControlType.DropdownList,
+                    DisplayOrder = 30,
+                    TextPrompt = "Frame",
+                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
+                };
+                _productAttributeService.InsertProductAttributeMapping(pam);
+            }
+            else if (pam != null && !frames.Any())
+            {
+                _productAttributeService.DeleteProductAttributeMapping(pam);
+            }
+
+            if (!frames.Any()) { return; }
+
+            var existingFrames = _productAttributeService.GetProductAttributeValues(pam.Id)
+                                                        .Where(pav =>
+                                                            pav.ProductAttributeMappingId == pam.Id
+                                                        );
+            var newFrames = frames.Select(np => np.ToProductAttributeValue(
+                pam.Id
+            )).ToList();
+
+            var toBeDeleted = existingFrames
+                .Where(e => !newFrames.Any(n => n.Name == e.Name));
+            var toBeInserted = newFrames
+                .Where(n => !existingFrames.Any(e => n.Name == e.Name));
+
+            toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
+            toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
         }
 
         private void MergeMattressProtectors(AbcMattressModel model, ProductAttribute pa, Product product)
@@ -194,7 +276,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
         }
 
-        private void MergeHomeDelivery(AbcMattressModel model, ProductAttribute pa, Product product)
+        private void MergeHomeDelivery(ProductAttribute pa, Product product)
         {
             var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
                                                           .Where(pam => pam.ProductAttributeId == pa.Id)

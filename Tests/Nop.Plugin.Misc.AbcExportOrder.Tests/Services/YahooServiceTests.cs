@@ -61,6 +61,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
             _yahooService = new YahooService(
                 new Mock<IAbcMattressBaseService>().Object,
                 new Mock<IAbcMattressEntryService>().Object,
+                new Mock<IAbcMattressFrameService>().Object,
                 new Mock<IAbcMattressGiftService>().Object,
                 new Mock<IAbcMattressModelService>().Object,
                 new Mock<IAbcMattressPackageService>().Object,

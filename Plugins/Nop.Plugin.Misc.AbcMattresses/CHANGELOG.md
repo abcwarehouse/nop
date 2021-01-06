@@ -1,3 +1,7 @@
+## 0.1.10
+
+* Allowing for added Product Attribute on update.
+
 ## 0.1.9
 
 * Modified AbcMattressFrame to link based on size

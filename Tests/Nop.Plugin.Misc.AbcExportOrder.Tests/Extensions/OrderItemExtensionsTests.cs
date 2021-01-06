@@ -31,6 +31,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             AttributeDescription = "Mattress Protector (Twin): Good [+$80.00]<br />"
         };
+        private OrderItem _orderItemWithFrame = new OrderItem()
+        {
+            AttributeDescription = "Frame (Twin): ESSENTIAL TWIN [+$80.00]<br />"
+        };
 
 
         [Test]
@@ -60,6 +64,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             _orderItem.GetMattressProtector().Should().BeNull();
             _orderItemWithMattressProtector.GetMattressProtector().Should().Be("Good");
+        }
+
+        [Test]
+        public void Returns_Frame()
+        {
+            _orderItem.GetFrame().Should().BeNull();
+            _orderItemWithFrame.GetFrame().Should().Be("ESSENTIAL TWIN");
         }
     }
 }

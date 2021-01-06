@@ -22,7 +22,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         private Mock<IAbcMattressModelService> _abcMattressService;
         private Mock<IAbcMattressEntryService> _abcMattressEntryService;
         private Mock<ICategoryService> _categoryService;
-        private Mock<IGenericAttributeService> _genericAttributeService;
         private Mock<IManufacturerService> _manufacturerService;
 
         private AbcMattressModel _abcMattressModelNoProduct = new AbcMattressModel()
@@ -81,18 +80,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                                         }
                                     });
 
-            _genericAttributeService = new Mock<IGenericAttributeService>();
             _manufacturerService = MockManufacturerService();
 
             _abcMattressProductService = new AbcMattressProductService(
                 _abcMattressService.Object,
                 new Mock<IAbcMattressBaseService>().Object,
                 _abcMattressEntryService.Object,
+                new Mock<IAbcMattressFrameService>().Object,
                 new Mock<IAbcMattressGiftService>().Object,
                 new Mock<IAbcMattressPackageService>().Object,
                 new Mock<IAbcMattressProtectorService>().Object,
                 _categoryService.Object,
-                _genericAttributeService.Object,
                 _manufacturerService.Object,
                 _productService.Object,
                 new Mock<IProductAttributeService>().Object,

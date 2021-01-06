@@ -35,7 +35,8 @@
                 var textPrompt = !string.IsNullOrEmpty(attribute.TextPrompt) ? attribute.TextPrompt : attribute.Name;
                 // custom: configure hidden items
                 var isHidden = attribute.TextPrompt == "Base" ||
-                               attribute.TextPrompt == "Mattress Protector" ?
+                               attribute.TextPrompt == "Mattress Protector" ||
+                               attribute.TextPrompt == "Frame" ?
                     "display:none" :
                     "";
                 

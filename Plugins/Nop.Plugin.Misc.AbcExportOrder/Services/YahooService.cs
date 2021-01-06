@@ -25,6 +25,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     {
         private readonly IAbcMattressBaseService _abcMattressBaseService;
         private readonly IAbcMattressEntryService _abcMattressEntryService;
+        private readonly IAbcMattressFrameService _abcMattressFrameService;
         private readonly IAbcMattressGiftService _abcMattressGiftService;
         private readonly IAbcMattressModelService _abcMattressModelService;
         private readonly IAbcMattressPackageService _abcMattressPackageService;
@@ -53,6 +54,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         public YahooService(
             IAbcMattressBaseService abcMattressBaseService,
             IAbcMattressEntryService abcMattressEntryService,
+            IAbcMattressFrameService abcMattressFrameService,
             IAbcMattressGiftService abcMattressGiftService,
             IAbcMattressModelService abcMattressModelService,
             IAbcMattressPackageService abcMattressPackageService,
@@ -79,6 +81,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         {
             _abcMattressBaseService = abcMattressBaseService;
             _abcMattressEntryService = abcMattressEntryService;
+            _abcMattressFrameService = abcMattressFrameService;
             _abcMattressGiftService = abcMattressGiftService;
             _abcMattressModelService = abcMattressModelService;
             _abcMattressPackageService = abcMattressPackageService;
@@ -195,10 +198,36 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     ));
                 }
 
+                ProcessFrame(orderItem, lineNumber, result);
+
                 SetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem, lineNumber);
             }
 
             return result;
+        }
+
+        private void ProcessFrame(OrderItem orderItem, int lineNumber, List<YahooDetailRow> result)
+        {
+            var frame = orderItem.GetFrame();
+            if (frame != null)
+            {
+                lineNumber++;
+                var size = orderItem.GetMattressSize();
+                var amf = _abcMattressFrameService.GetAbcMattressFramesBySize(size)
+                                                      .Where(p => p.Name == frame)
+                                                      .FirstOrDefault();
+                result.Add(new YahooDetailRow(
+                    _settings.OrderIdPrefix,
+                    orderItem,
+                    lineNumber,
+                    "", // no item ID associated
+                    amf.ItemNo,
+                    amf.Price,
+                    frame,
+                    "", // no url
+                    GetPickupStore(orderItem)
+                ));
+            }
         }
 
         private (string, decimal) GetCodeAndPrice(

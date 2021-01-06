@@ -39,6 +39,12 @@ namespace Nop.Plugin.Misc.AbcMattresses
             _nopDataProvider = nopDataProvider;
         }
 
+        public override void Update(string currentVersion, string targetVersion)
+        {
+            RemoveProductAttributes();
+            AddProductAttributes();
+        }
+
         public override void Install()
         {
             RemoveTasks();

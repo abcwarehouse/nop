@@ -9,218 +9,128 @@ delete from AbcMattressGift
 delete from AbcMattressModel
 delete from AbcMattressModelGiftMapping
 delete from AbcMattressPackage
+delete from AbcMattressProtector
+delete from AbcMattressFrame
 
 SET IDENTITY_INSERT [dbo].[AbcMattressModel] ON 
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5255, N'Alverson', 834, N'Alverson', N'Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5255, N'Alverson', 834, N'Alverson', N'Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5261, N'Carrollton', 834, N'Carrollton', N'Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5261, N'Carrollton', 834, N'Carrollton', N'Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5267, N'Dewitt', 834, N'Dewitt', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5267, N'Dewitt', 834, N'Dewitt', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5272, N'TrustII-Hybrid', 215, N'TrustII-Hybrid', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5272, N'TrustII-Hybrid', 215, N'TrustII-Hybrid', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5277, N'KelburnII', 215, N'KelburnII', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5277, N'KelburnII', 215, N'KelburnII', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5281, N'Malloy', 834, N'Malloy', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5281, N'Malloy', 834, N'Malloy', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5287, N'CONTENTO-FIRM', 215, N'Contento-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5287, N'CONTENTO-FIRM', 215, N'Contento-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5293, N'CopperII-Plush', 215, N'CopperII-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5293, N'CopperII-Plush', 215, N'CopperII-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5297, N'CopperII-Firm', 215, N'CopperII-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5297, N'CopperII-Firm', 215, N'CopperII-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5301, N'Q8-Number-Bed', 654, N'Q8-Number-Bed', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5301, N'Q8-Number-Bed', 654, N'Q8-Number-Bed', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5304, N'Harmony-Lux-XFM', 558, N'Harmony-Lux-Extra-Firm', N'Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5304, N'Harmony-Lux-XFM', 558, N'Harmony-Lux-Extra-Firm', N'Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5310, N'Uncommon-Firm', 215, N'Uncommon-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5310, N'Uncommon-Firm', 215, N'Uncommon-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5312, N'BILLINGS', 215, N'Billings', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5312, N'BILLINGS', 215, N'Billings', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5314, N'Mirabai', 215, N'Mirabai', N'Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5314, N'Mirabai', 215, N'Mirabai', N'Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5316, N'CONTENTO-PLUSH', 215, N'Contento-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5316, N'CONTENTO-PLUSH', 215, N'Contento-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5322, N'Tofte', 652, N'Tofte', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5322, N'Tofte', 652, N'Tofte', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5328, N'Harbor', 652, N'Harbor', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5328, N'Harbor', 652, N'Harbor', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5334, N'Baldwin', 652, N'Baldwin', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5334, N'Baldwin', 652, N'Baldwin', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5340, N'Rockwell-Firm', 815, N'Rockwell-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5340, N'Rockwell-Firm', 815, N'Rockwell-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5345, N'Hurston', 815, N'Hurston', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5345, N'Hurston', 815, N'Hurston', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5350, N'Rockwell-Plush', 815, N'Rockwell-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5350, N'Rockwell-Plush', 815, N'Rockwell-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5355, N'SLEEP-RITE-II', 4, N'Sleep-Rite-II', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5355, N'SLEEP-RITE-II', 4, N'Sleep-Rite-II', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5357, N'DESTINYII', 4, N'DestinyII', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5357, N'DESTINYII', 4, N'DestinyII', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5359, N'Cassatt-Plush', 815, N'Cassatt-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5359, N'Cassatt-Plush', 815, N'Cassatt-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5364, N'X-Class-Hyb-PL', 558, N'X-Class-Hybrid-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5364, N'X-Class-Hyb-PL', 558, N'X-Class-Hybrid-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5374, N'MACKINACK-PL', 4, N'MACKINACK-Hybrid-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5374, N'MACKINACK-PL', 4, N'MACKINACK-Hybrid-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5379, N'MACKINACK-CF', 4, N'MACKINACK-Hybrid-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5379, N'MACKINACK-CF', 4, N'MACKINACK-Hybrid-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5384, N'GRAND-HAVEN-CF', 4, N'GRAND-HAVEN-Hybrid-Plush', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5384, N'GRAND-HAVEN-CF', 4, N'GRAND-HAVEN-Hybrid-Plush', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5385, N'SILVIRAZ-CF', 4, N'SILVIRAZ-Hybrid-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5385, N'SILVIRAZ-CF', 4, N'SILVIRAZ-Hybrid-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5387, N'SILVIRAZ-PL', 4, N'SILVIRAZ-Hybrid-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5387, N'SILVIRAZ-PL', 4, N'SILVIRAZ-Hybrid-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5389, N'BR800-Plush', 558, N'BR800-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5389, N'BR800-Plush', 558, N'BR800-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5391, N'BRX1000C-Hyb-PL', 558, N'BRX1000C-Hybrid-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5391, N'BRX1000C-Hyb-PL', 558, N'BRX1000C-Hybrid-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5392, N'BRX1000IP-Hyb-M', 558, N'BRX1000IP-Hybrid-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5392, N'BRX1000IP-Hyb-M', 558, N'BRX1000IP-Hybrid-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5393, N'BR800-Medium', 558, N'BR800-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5393, N'BR800-Medium', 558, N'BR800-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5395, N'BR800-CF', 558, N'BR800-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5395, N'BR800-CF', 558, N'BR800-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5397, N'SIGNATUREII-PL', 4, N'SIGNATUREII-Hybrid-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5397, N'SIGNATUREII-PL', 4, N'SIGNATUREII-Hybrid-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5399, N'SIGNATUREII-CF', 4, N'SIGNATUREII-Hybrid-Cushion Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5399, N'SIGNATUREII-CF', 4, N'SIGNATUREII-Hybrid-Cushion Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5401, N'ROSE', 789, N'ROSE', N'Ultra Luxury Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5401, N'ROSE', 789, N'ROSE', N'Ultra Luxury Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5407, N'ST.CLAIR', 789, N'ST.CLAIR', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5407, N'ST.CLAIR', 789, N'ST.CLAIR', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5409, N'MARIGOLD', 789, N'MARIGOLD', N'Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5409, N'MARIGOLD', 789, N'MARIGOLD', N'Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5411, N'CHESTNUT-STREET', 215, N'CHESTNUT-STREET', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5411, N'CHESTNUT-STREET', 215, N'CHESTNUT-STREET', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5427, N'Cassatt-Ultra', 821, N'Cassatt-Ultra', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5427, N'Cassatt-Ultra', 821, N'Cassatt-Ultra', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5466, N'Pro-Breeze-Med', 546, N'Pro-Breeze-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5466, N'Pro-Breeze-Med', 546, N'Pro-Breeze-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5563, N'Pro-Adapt-Soft', 684, N'Pro-Adapt-Soft', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5563, N'Pro-Adapt-Soft', 684, N'Pro-Adapt-Soft', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5569, N'Pro-Adapt-Med', 684, N'Pro-Adapt-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5569, N'Pro-Adapt-Med', 684, N'Pro-Adapt-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5575, N'Pro-Adapt-Firm', 684, N'Pro-Adapt-Firm', N'Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5575, N'Pro-Adapt-Firm', 684, N'Pro-Adapt-Firm', N'Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5581, N'Adapt-Medium', 678, N'Adapt-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5581, N'Adapt-Medium', 678, N'Adapt-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5587, N'Adapt-Hybrid-Me', 678, N'Adapt-Hybrid-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5587, N'Adapt-Hybrid-Me', 678, N'Adapt-Hybrid-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5593, N'Pro-Adapt-HYB-M', 684, N'Pro-Adapt-Hybrid-Medium', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5593, N'Pro-Adapt-HYB-M', 684, N'Pro-Adapt-Hybrid-Medium', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5609, N'NECTAR', 743, N'NECTAR', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5609, N'NECTAR', 743, N'NECTAR', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5616, N'Luxe-Adapt-Firm', 678, N'Luxe-Adapt-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5616, N'Luxe-Adapt-Firm', 678, N'Luxe-Adapt-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5620, N'Luxe-Adapt-PL', 678, N'Luxe-Adapt-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5620, N'Luxe-Adapt-PL', 678, N'Luxe-Adapt-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5650, N'Luxe-Breeze-PL', 546, N'Luxe-Breeze-Plush', N'Plush', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5650, N'Luxe-Breeze-PL', 546, N'Luxe-Breeze-Plush', N'Plush', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5654, N'Luxe-Breeze-CF', 546, N'Luxe-Breeze-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5654, N'Luxe-Breeze-CF', 546, N'Luxe-Breeze-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5661, N'Pro-Breeze-HYB', 546, N'Pro-Breeze-Medium-Hybrid', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5661, N'Pro-Breeze-HYB', 546, N'Pro-Breeze-Medium-Hybrid', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5721, N'CONFORM', 215, N'CONFORM', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5721, N'CONFORM', 215, N'CONFORM', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (5825, N'Q8-Flexhead-Num', 654, N'Q8-Flexhead-Number-Bed', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (5825, N'Q8-Flexhead-Num', 654, N'Q8-Flexhead-Number-Bed', N'Cushion-Firm', NULL, NULL)
 GO
-INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [BrandCategoryId]) VALUES (6158, N'X-Class-Hyb-CF', 558, N'X-Class-Hybrid-Cushion-Firm', N'Cushion-Firm', NULL)
+INSERT [dbo].[AbcMattressModel] ([Id], [Name], [ManufacturerId], [Description], [Comfort], [ProductId], [BrandCategoryId]) VALUES (6158, N'X-Class-Hyb-CF', 558, N'X-Class-Hybrid-Cushion-Firm', N'Cushion-Firm', NULL, NULL)
 GO
 SET IDENTITY_INSERT [dbo].[AbcMattressModel] OFF
-GO
-SET IDENTITY_INSERT [dbo].[AbcMattressGift] ON 
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7822, N'80538', N'FREE-BOSE-SLEEPBUDS', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7823, N'80570', N'FREE-43"-4K-SMART-TV', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7824, N'80535', N'FREE-55"-4K-SMART-TV', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7825, N'80536', N'FREE (X2)PILLOWS & MATT PROT.', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7826, N'80533', N'FREE-HB/FB/RAILS', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7827, N'80543', N'CHARBROIL GRILL $1297/BEDDING', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7828, N'80539', N'$50-NECTAR-GIFT-W/PURCHASE', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7829, N'80567', N'FREE 32" $1299TO $1699 BEDDING', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7830, N'80568', N'FREE 40" $1799+ UP BEDDING', CAST(0.00000 AS Decimal(19, 5)), 1)
-GO
-SET IDENTITY_INSERT [dbo].[AbcMattressGift] OFF
-GO
-SET IDENTITY_INSERT [dbo].[AbcMattressModelGiftMapping] ON 
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7457, 5272, 7822)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7458, 5277, 7822)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7459, 5293, 7822)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7460, 5297, 7822)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7461, 5301, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7462, 5322, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7463, 5328, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7464, 5334, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7465, 5340, 7823)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7466, 5345, 7823)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7467, 5350, 7823)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7468, 5359, 7823)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7469, 5364, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7470, 6158, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7471, 5391, 7822)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7472, 5392, 7822)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7473, 5427, 7823)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7474, 5466, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7475, 5304, 7826)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7476, 5563, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7477, 5569, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7478, 5575, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7479, 5581, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7480, 5587, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7481, 5593, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7482, 5609, 7828)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7483, 5616, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7484, 5620, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7485, 5650, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7486, 5654, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7487, 5661, 7824)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7488, 5721, 7826)
-GO
-INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7489, 5825, 7824)
-GO
-SET IDENTITY_INSERT [dbo].[AbcMattressModelGiftMapping] OFF
 GO
 SET IDENTITY_INSERT [dbo].[AbcMattressEntry] ON 
 GO
@@ -696,6 +606,98 @@ INSERT [dbo].[AbcMattressEntry] ([Id], [AbcMattressModelId], [Size], [ItemNo], [
 GO
 SET IDENTITY_INSERT [dbo].[AbcMattressEntry] OFF
 GO
+SET IDENTITY_INSERT [dbo].[AbcMattressGift] ON 
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7913, N'80538', N'FREE-BOSE-SLEEPBUDS', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7914, N'80570', N'FREE-43"-4K-SMART-TV', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7915, N'80535', N'FREE-55"-4K-SMART-TV', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7916, N'80536', N'FREE (X2)PILLOWS & MATT PROT.', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7917, N'80533', N'FREE-HB/FB/RAILS', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7918, N'80543', N'CHARBROIL GRILL $1297/BEDDING', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7919, N'80539', N'$50-NECTAR-GIFT-W/PURCHASE', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7920, N'80567', N'FREE 32" $1299TO $1699 BEDDING', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressGift] ([Id], [ItemNo], [Description], [Amount], [Qty]) VALUES (7921, N'80568', N'FREE 40" $1799+ UP BEDDING', CAST(0.00000 AS Decimal(19, 5)), 1)
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressGift] OFF
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressModelGiftMapping] ON 
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7778, 5272, 7913)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7779, 5277, 7913)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7780, 5293, 7913)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7781, 5297, 7913)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7782, 5301, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7783, 5322, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7784, 5328, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7785, 5334, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7786, 5340, 7914)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7787, 5345, 7914)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7788, 5350, 7914)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7789, 5359, 7914)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7790, 5364, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7791, 6158, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7792, 5391, 7913)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7793, 5392, 7913)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7794, 5427, 7914)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7795, 5466, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7796, 5304, 7917)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7797, 5563, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7798, 5569, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7799, 5575, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7800, 5581, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7801, 5587, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7802, 5593, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7803, 5609, 7919)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7804, 5616, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7805, 5620, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7806, 5650, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7807, 5654, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7808, 5661, 7915)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7809, 5721, 7917)
+GO
+INSERT [dbo].[AbcMattressModelGiftMapping] ([Id], [AbcMattressModelId], [AbcMattressGiftId]) VALUES (7810, 5825, 7915)
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressModelGiftMapping] OFF
+GO
 SET IDENTITY_INSERT [dbo].[AbcMattressBase] ON 
 GO
 INSERT [dbo].[AbcMattressBase] ([Id], [ItemNo], [Name], [IsAdjustable]) VALUES (6256, N'37337', N'Low Profile', 0)
@@ -1024,8 +1026,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6537, 18, 6261, N'66906', CAST(1149.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6538, 19, 6262, N'66907', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6539, 20, 6263, N'66908', CAST(1229.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6540, 21, 6264, N'66909', CAST(1249.00000 AS Decimal(19, 5)), 1)
@@ -1046,15 +1046,11 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6548, 29, 6258, N'66972', CAST(559.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6549, 30, 6259, N'66973', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6550, 31, 6257, N'66974', CAST(799.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6551, 32, 6260, N'66975', CAST(799.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6552, 33, 6265, N'67019', CAST(355.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6553, 34, 6266, N'67020', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6554, 35, 6267, N'67021', CAST(497.00000 AS Decimal(19, 5)), 1)
 GO
@@ -1064,23 +1060,17 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6557, 38, 6269, N'67024', CAST(833.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6558, 39, 6262, N'67201', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6559, 40, 6263, N'67202', CAST(1729.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6560, 41, 6264, N'67203', CAST(1749.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6561, 42, 6262, N'67204', CAST(2349.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6562, 43, 6262, N'67206', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6563, 44, 6263, N'67207', CAST(1729.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6564, 45, 6264, N'67208', CAST(1749.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6565, 46, 6262, N'67209', CAST(2349.00000 AS Decimal(19, 5)), 2)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6566, 47, 6262, N'67230', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6567, 48, 6264, N'67231', CAST(2699.00000 AS Decimal(19, 5)), 1)
 GO
@@ -1097,8 +1087,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6573, 54, 6271, N'67256', CAST(1959.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6574, 55, 6274, N'67257', CAST(1959.00000 AS Decimal(19, 5)), 2)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6575, 56, 6268, N'67263', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6576, 57, 6266, N'67264', CAST(997.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1162,8 +1150,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6606, 87, 6281, N'67336', CAST(2149.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6607, 88, 6282, N'67337', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6608, 89, 6280, N'67338', CAST(2899.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6609, 90, 6283, N'67339', CAST(2899.00000 AS Decimal(19, 5)), 2)
@@ -1172,8 +1158,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6611, 92, 6281, N'67341', CAST(1649.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6612, 93, 6282, N'67342', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6613, 94, 6280, N'67343', CAST(2399.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6614, 95, 6283, N'67344', CAST(2399.00000 AS Decimal(19, 5)), 2)
@@ -1181,8 +1165,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6615, 96, 6280, N'67345', CAST(1849.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6616, 97, 6281, N'67346', CAST(1949.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6617, 98, 6282, N'67347', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6618, 99, 6280, N'67348', CAST(2699.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1219,8 +1201,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6634, 115, 6286, N'67474', CAST(1899.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6635, 116, 6287, N'67475', CAST(2209.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6636, 117, 6288, N'67476', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6637, 118, 6286, N'67477', CAST(2999.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1260,10 +1240,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6655, 136, 6271, N'67744', CAST(1199.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6656, 137, 6273, N'67753', 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6657, 138, 6273, N'67759', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6658, 139, 6273, N'67765', CAST(555.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6659, 140, 6271, N'67766', CAST(797.00000 AS Decimal(19, 5)), 2)
@@ -1280,13 +1256,9 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6665, 146, 6293, N'67816', CAST(988.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6666, 147, 6295, N'67930', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6667, 148, 6296, N'67931', CAST(897.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6668, 149, 6297, N'67932', CAST(967.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6669, 150, 6298, N'67933', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6670, 151, 6296, N'67934', CAST(1397.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1378,8 +1350,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6714, 18, 6311, N'76906', CAST(1149.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6715, 19, 6312, N'76907', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6716, 20, 6313, N'76908', CAST(1229.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6717, 21, 6314, N'76909', CAST(1249.00000 AS Decimal(19, 5)), 1)
@@ -1404,8 +1374,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6727, 29, 6308, N'76972', CAST(559.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6728, 30, 6309, N'76973', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6729, 31, 6307, N'76974', CAST(799.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6730, 32, 6310, N'76975', CAST(799.00000 AS Decimal(19, 5)), 2)
@@ -1413,8 +1381,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6731, 161, 6315, N'77005', CAST(5099.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6732, 33, 6316, N'77019', CAST(355.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6733, 34, 6317, N'77020', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6734, 35, 6318, N'77021', CAST(497.00000 AS Decimal(19, 5)), 1)
 GO
@@ -1436,8 +1402,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6743, 6, 6310, N'77097', CAST(997.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6744, 39, 6312, N'77201', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6745, 40, 6313, N'77202', CAST(1729.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6746, 41, 6314, N'77203', CAST(1749.00000 AS Decimal(19, 5)), 1)
@@ -1446,8 +1410,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6748, 160, 6279, N'77205', CAST(2349.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6749, 43, 6312, N'77206', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6750, 44, 6313, N'77207', CAST(1729.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6751, 45, 6314, N'77208', CAST(1749.00000 AS Decimal(19, 5)), 1)
@@ -1455,8 +1417,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6752, 46, 6312, N'77209', CAST(2349.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6753, 160, 6279, N'77210', CAST(2349.00000 AS Decimal(19, 5)), 2)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6754, 47, 6312, N'77230', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6755, 48, 6314, N'77231', CAST(2699.00000 AS Decimal(19, 5)), 1)
 GO
@@ -1475,8 +1435,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6762, 54, 6322, N'77256', CAST(1959.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6763, 55, 6325, N'77257', CAST(1959.00000 AS Decimal(19, 5)), 2)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6764, 56, 6319, N'77263', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6765, 57, 6317, N'77264', CAST(997.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1540,8 +1498,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6795, 87, 6332, N'77336', CAST(2149.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6796, 88, 6333, N'77337', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6797, 89, 6331, N'77338', CAST(2899.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6798, 90, 6334, N'77339', CAST(2899.00000 AS Decimal(19, 5)), 2)
@@ -1550,8 +1506,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6800, 92, 6332, N'77341', CAST(1649.00000 AS Decimal(19, 5)), 1)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6801, 93, 6333, N'77342', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6802, 94, 6331, N'77343', CAST(2399.00000 AS Decimal(19, 5)), 2)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6803, 95, 6334, N'77344', CAST(2399.00000 AS Decimal(19, 5)), 2)
@@ -1559,8 +1513,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6804, 96, 6331, N'77345', CAST(1849.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6805, 97, 6332, N'77346', CAST(1949.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6806, 98, 6333, N'77347', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6807, 99, 6331, N'77348', CAST(2699.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1597,8 +1549,6 @@ GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6823, 115, 6337, N'77474', CAST(1899.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6824, 116, 6341, N'77475', CAST(2209.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6825, 117, 6339, N'77476', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6826, 118, 6337, N'77477', CAST(2999.00000 AS Decimal(19, 5)), 2)
 GO
@@ -1738,8 +1688,6 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6894, 136, 6322, N'77744', CAST(1199.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6895, 137, 6324, N'77753', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6896, 138, 6324, N'77759', CAST(1399.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6897, 139, 6324, N'77765', CAST(555.00000 AS Decimal(19, 5)), 1)
@@ -1758,13 +1706,9 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6904, 146, 6349, N'77816', CAST(988.00000 AS Decimal(19, 5)), 2)
 GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6905, 147, 6351, N'77930', 1)
-GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6906, 148, 6352, N'77931', CAST(897.00000 AS Decimal(19, 5)), 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6907, 149, 6353, N'77932', CAST(967.00000 AS Decimal(19, 5)), 1)
-GO
-INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6908, 150, 6354, N'77933', 1)
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (6909, 151, 6352, N'77934', CAST(1397.00000 AS Decimal(19, 5)), 2)
 GO
@@ -2820,5 +2764,183 @@ INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseI
 GO
 INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7435, 157, 6392, N'87993', CAST(797.00000 AS Decimal(19, 5)), 2)
 GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7436, 19, 6262, N'66907', CAST(1199.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7437, 30, 6259, N'66973', CAST(599.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7438, 34, 6266, N'67020', CAST(477.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7439, 39, 6262, N'67201', CAST(1699.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7440, 43, 6262, N'67206', CAST(1699.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7441, 47, 6262, N'67230', CAST(2399.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7442, 56, 6268, N'67263', CAST(677.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7443, 88, 6282, N'67337', CAST(2199.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7444, 93, 6282, N'67342', CAST(1699.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7445, 98, 6282, N'67347', CAST(1999.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7446, 117, 6288, N'67476', CAST(2399.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7447, 137, 6273, N'67753', CAST(1199.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7448, 138, 6273, N'67759', CAST(1499.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7449, 147, 6295, N'67930', CAST(888.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7450, 150, 6298, N'67933', CAST(997.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7451, 19, 6312, N'76907', CAST(1199.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7452, 30, 6309, N'76973', CAST(599.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7453, 34, 6317, N'77020', CAST(477.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7454, 39, 6312, N'77201', CAST(1699.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7455, 43, 6312, N'77206', CAST(1699.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7456, 47, 6312, N'77230', CAST(2399.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7457, 56, 6319, N'77263', CAST(677.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7458, 88, 6333, N'77337', CAST(2199.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7459, 93, 6333, N'77342', CAST(1699.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7460, 98, 6333, N'77347', CAST(1999.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7461, 117, 6339, N'77476', CAST(2399.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7462, 137, 6324, N'77753', CAST(1199.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7463, 147, 6351, N'77930', CAST(888.00000 AS Decimal(19, 5)), 1)
+GO
+INSERT [dbo].[AbcMattressPackage] ([Id], [AbcMattressEntryId], [AbcMattressBaseId], [ItemNo], [Price], [BaseQuantity]) VALUES (7464, 150, 6354, N'77933', CAST(997.00000 AS Decimal(19, 5)), 1)
+GO
 SET IDENTITY_INSERT [dbo].[AbcMattressPackage] OFF
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressFrame] ON 
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (36, N'ESSENTIAL TWIN', N'39064', CAST(29.99000 AS Decimal(19, 5)), N'Twin')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (37, N'PREMIUM TWIN', N'39067', CAST(55.99000 AS Decimal(19, 5)), N'Twin')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (38, N'ESSENTIAL FULL', N'39065', CAST(59.00000 AS Decimal(19, 5)), N'Full')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (39, N'PREMIUM FULL', N'39068', CAST(59.99000 AS Decimal(19, 5)), N'Full')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (40, N'PREMIUM QUEEN', N'39069', CAST(79.99000 AS Decimal(19, 5)), N'Queen')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (41, N'ESSENTIAL KING', N'39066', CAST(69.99000 AS Decimal(19, 5)), N'King')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (42, N'PREMIUM KING', N'39070', CAST(109.99000 AS Decimal(19, 5)), N'King')
+GO
+INSERT [dbo].[AbcMattressFrame] ([Id], [Name], [ItemNo], [Price], [Size]) VALUES (43, N'PREMIUM CALKING', N'39071', CAST(99.99000 AS Decimal(19, 5)), N'California King')
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressFrame] OFF
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressProtector] ON 
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (522, N'Twin', N'ULS TWIN PROTECTOR', N'35000', CAST(39.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (523, N'Twin', N'L&P TWIN PAD', N'35292', CAST(28.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (524, N'Twin', N'SEALY TWIN PAD', N'35440', CAST(35.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (525, N'Twin', N'UVM TWIN COOLTOUCH', N'36000', CAST(39.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (526, N'Twin', N'TEMPUR TWIN PAD', N'36020', CAST(35.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (527, N'Twin', N'TEMPUR TWIN PAD', N'37020', CAST(109.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (528, N'Twin', N'L&P TWIN PAD', N'37292', CAST(39.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (529, N'Twin', N'GBC TWIN PROTECTOR', N'39072', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (530, N'TwinXL', N'ULS MATT PROTECTOR', N'35006', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (531, N'TwinXL', N'SEALY TWINXL PAD', N'35441', CAST(29.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (532, N'TwinXL', N'UVM TWINXL COOLTOUCH', N'36001', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (533, N'TwinXL', N'TEMPURPEDIC TWINXL', N'36021', CAST(39.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (534, N'TwinXL', N'TEMPUR TWINXL', N'37021', CAST(109.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (535, N'TwinXL', N'L&P TWINXL PAD', N'37293', CAST(39.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (536, N'TwinXL', N'ULS MATT PROTECTOR', N'38001', CAST(79.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (537, N'TwinXL', N'GBC MATT PROTECTOR', N'39073', CAST(59.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (538, N'Full', N'ULS MATT PROTECTOR', N'35002', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (539, N'Full', N'L&P FULL PAD', N'35287', CAST(25.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (540, N'Full', N'SEALY FULL PAD', N'35444', CAST(39.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (541, N'Full', N'UVM FULL COOLTOUCH', N'36002', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (542, N'Full', N'TEMPURPEDIC FULL PAD', N'36022', CAST(44.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (543, N'Full', N'TEMPUR FULL PAD', N'37022', CAST(129.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (544, N'Full', N'L&P FULL PAD', N'37287', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (545, N'Full', N'GBC MATT PROTECTOR', N'39074', CAST(59.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (546, N'Queen', N'ULS MATT PROTECTOR', N'35003', CAST(59.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (547, N'Queen', N'SEALY QUEEN PAD', N'35445', CAST(69.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (548, N'Queen', N'UVM QUEEN COOLTOUCH', N'36003', CAST(55.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (549, N'Queen', N'TEMPUR QUEEN', N'37023', CAST(149.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (550, N'Queen', N'L&P QUEEN PAD', N'37288', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (551, N'Queen', N'ULS ULTIMATE PROT', N'38003', CAST(99.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (552, N'Queen', N'GBC ENCASED PROT', N'39075', CAST(69.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (553, N'King', N'ULS KING MATT PROT', N'35004', CAST(69.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (554, N'King', N'L&P KING PAD', N'35293', CAST(25.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (555, N'King', N'SEALY KING PAD', N'35446', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (556, N'King', N'UVM KING COOLTOUCH', N'36004', CAST(77.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (557, N'King', N'TEMPURPEDIC KING PAD', N'36026', CAST(99.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (558, N'King', N'TEMPUR KING PAD', N'37025', CAST(169.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (559, N'King', N'L&P KING PAD', N'37295', CAST(59.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (560, N'King', N'ULS ULTIMATE PROT', N'38004', CAST(129.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (561, N'King', N'KING ENCASE MATT PRO', N'39076', CAST(79.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (562, N'California King', N'CALKING MATT PROT', N'35005', CAST(69.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (563, N'California King', N'SEALY CALKING PAD', N'35450', CAST(49.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (564, N'California King', N'L&P CALKING PAD', N'35765', CAST(35.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (565, N'California King', N'UVM CALKING COOLTOUC', N'36005', CAST(77.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (566, N'California King', N'TEMPUR CALKING PAD', N'37026', CAST(169.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (567, N'California King', N'L&P CALKING PAD', N'37296', CAST(59.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (568, N'California King', N'ULTIMATE MAT PROT', N'38005', CAST(129.00000 AS Decimal(19, 5)))
+GO
+INSERT [dbo].[AbcMattressProtector] ([Id], [Size], [Name], [ItemNo], [Price]) VALUES (569, N'California King', N'CALK ENCASED PROTECT', N'39077', CAST(79.00000 AS Decimal(19, 5)))
+GO
+SET IDENTITY_INSERT [dbo].[AbcMattressProtector] OFF
 GO

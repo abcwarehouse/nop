@@ -84,6 +84,21 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
             return protectorString.Replace("&quot;", "\"").Trim();
         }
 
+        public static string GetFrame(this OrderItem oi)
+        {
+            if (oi.AttributeDescription == null || !oi.AttributeDescription.Contains("Frame ("))
+            {
+                return null;
+            }
+            var protectorIndex = oi.AttributeDescription.IndexOf("Frame (");
+            var protectorString = oi.AttributeDescription.Substring(protectorIndex);
+            protectorString = protectorString.Substring(7, protectorString.IndexOf("<br />") - 7);
+            protectorString = protectorString.Substring(0, protectorString.IndexOf("["));
+            protectorString = protectorString.Substring(protectorString.IndexOf(":") + 1);
+
+            return protectorString.Replace("&quot;", "\"").Trim();
+        }
+
         public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)
         {
             var pickupItems = ois.Where(oi => oi.IsPickup());
