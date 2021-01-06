@@ -119,14 +119,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem.ProductId
                 );
                 var storeUrl = _storeService.GetStoreById(order.StoreId)?.Url;
-                (string code, decimal price) standardItemCodeAndPrice = GetCodeAndPrice(orderItem, product, productAbcDescription);
-
                 var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
                 if (warranty != null)
                 {
                     // adjust price for item
                     orderItem.UnitPriceExclTax -= warranty.PriceAdjustment;
                 }
+
+                (string code, decimal price) standardItemCodeAndPrice = GetCodeAndPrice(orderItem, product, productAbcDescription);
 
                 result.Add(new YahooDetailRow(
                     _settings.OrderIdPrefix,
