@@ -8,6 +8,7 @@ using Nop.Core.Domain.Catalog;
 using System.Linq;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcMattresses.Services;
+using System;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -61,8 +62,8 @@ namespace Nop.Plugin.Misc.AbcMattresses
             foreach (var product in productsToDelete)
             {
                 // create a random string for the Sku to satisfy the index
-                product.Sku = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)
-                                .Select(s => s[random.Next(s.Length)]).ToArray());
+                product.Sku = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 24)
+                                .Select(s => s[new Random().Next(s.Length)]).ToArray());
                 _productService.UpdateProduct(product);
             }
             _productService.DeleteProducts(productsToDelete.ToList());
