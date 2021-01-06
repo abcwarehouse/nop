@@ -24,7 +24,8 @@ namespace Nop.Plugin.Misc.AbcCore.Data
             Delete.Table("AbcMattressModelFrameMapping");
             Create.Column(nameof(AbcMattressFrame.Size))
                   .OnTable(nameof(AbcMattressFrame))
-                  .AsString();
+                  .AsString()
+                  .WithDefaultValue(" ");
         }
 
         public override void Down()
