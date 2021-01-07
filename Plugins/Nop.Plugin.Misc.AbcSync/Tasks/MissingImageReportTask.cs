@@ -10,6 +10,7 @@ using Nop.Services.Media;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using System.Collections.Generic;
+using Nop.Plugin.Misc.AbcCore.Services.Custom;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -19,6 +20,7 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductAbcDescription> _productAbcRepository;
         private readonly IPictureService _pictureService;
+        private readonly ICustomProductService _customProductService;
 
         private static class ProductTable
         {
@@ -31,12 +33,14 @@ namespace Nop.Plugin.Misc.AbcSync
         public MissingImageReportTask(
             IRepository<Product> productRepository,
             IRepository<ProductAbcDescription> productAbcRepository,
-            IPictureService pictureService
+            IPictureService pictureService,
+            ICustomProductService customProductService
         )
         {
             _productRepository = productRepository;
             _productAbcRepository = productAbcRepository;
             _pictureService = pictureService;
+            _customProductService = customProductService;
 
             var env = EngineContext.Current.Resolve<IWebHostEnvironment>();
             _excelPath = Path.Combine(env.WebRootPath, "ImageReport.xlsx");
@@ -45,21 +49,8 @@ namespace Nop.Plugin.Misc.AbcSync
         public void Execute()
         {
             this.LogStart();
-            var publishedProducts =
-                _productRepository.Table.Where(
-                    p => !p.Deleted &&
-                          p.Published).ToList();
-            var publishedProductsWithNoPictures = new List<Product>();
 
-            foreach (var product in publishedProducts)
-            {
-                if (!_pictureService.GetPicturesByProductId(product.Id, 1).Any())
-                {
-                    publishedProductsWithNoPictures.Add(product);
-                }
-            }
-
-            var prodsInfo = from prod in publishedProductsWithNoPictures
+            var prodsInfo = from prod in _customProductService.GetProductsWithoutImages()
                             from pAbc in _productAbcRepository.Table.Where(pA => pA.Product_Id == prod.Id).ToList()
                             select new
                             {

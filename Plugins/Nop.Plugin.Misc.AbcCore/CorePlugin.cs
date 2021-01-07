@@ -79,6 +79,14 @@ namespace Nop.Plugin.Misc.AbcCore
                         Visible = true,
                         ControllerName = "AbcPromo",
                         ActionName = "List"
+                    },
+                    new SiteMapNode()
+                    {
+                        SystemName = "ABCWarehouse.MissingImageProducts",
+                        Title = "Missing Image Products",
+                        Visible = true,
+                        ControllerName = "MissingImageProduct",
+                        ActionName = "List"
                     }
                 }
             };

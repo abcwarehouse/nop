@@ -4,6 +4,7 @@ using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Plugin.Misc.AbcCore.Services.Custom;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
@@ -37,6 +38,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             builder.RegisterType<ProductAbcDescriptionService>().As<IProductAbcDescriptionService>();
             builder.RegisterType<HomeDeliveryCostService>()
                    .As<IHomeDeliveryCostService>();
+            builder.RegisterType<CustomProductService>()
+                   .As<ICustomProductService>();
         }
     }
 }
