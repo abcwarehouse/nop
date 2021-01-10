@@ -5,6 +5,7 @@
 @using Nop.Services.Catalog
 @using Nop.Services.Media
 @using Nop.Web.Models.Catalog
+@using Nop.Plugin.Misc.AbcFrontend.Extensions;
 @inject IDownloadService downloadService
 @inject CatalogSettings catalogSettings
 
@@ -34,9 +35,7 @@
                 var controlId = $"{NopCatalogDefaults.ProductAttributePrefix}{attribute.Id}";
                 var textPrompt = !string.IsNullOrEmpty(attribute.TextPrompt) ? attribute.TextPrompt : attribute.Name;
                 // custom: configure hidden items
-                var isHidden = attribute.TextPrompt == "Base" ||
-                               attribute.TextPrompt == "Mattress Protector" ||
-                               attribute.TextPrompt == "Frame" ?
+                var isHidden = attribute.IsHiddenPreload() ?
                     "display:none" :
                     "";
                 

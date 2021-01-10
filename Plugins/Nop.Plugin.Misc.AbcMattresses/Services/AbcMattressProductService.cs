@@ -216,6 +216,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         private void MergeMattressProtectors(AbcMattressModel model, ProductAttribute pa, Product product)
         {
+            var displayOrder = 40;
             var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
                                                           .Where(pam => pam.ProductAttributeId == pa.Id)
                                                           .FirstOrDefault();
@@ -246,7 +247,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     ProductAttributeId = pa.Id,
                     IsRequired = false,
                     AttributeControlType = AttributeControlType.DropdownList,
-                    DisplayOrder = 20,
+                    DisplayOrder = displayOrder,
                     TextPrompt = "Mattress Protector",
                     ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
                 };
@@ -268,9 +269,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             )).ToList();
 
             var toBeDeleted = existingMattressProtectors
-                .Where(e => !newMattressProtectors.Any(n => n.Name == e.Name));
+                .Where(e => !newMattressProtectors.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
             var toBeInserted = newMattressProtectors
-                .Where(n => !existingMattressProtectors.Any(e => n.Name == e.Name));
+                .Where(n => !existingMattressProtectors.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
@@ -358,8 +359,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         private void MergeGifts(AbcMattressModel model, ProductAttribute pa, Product product)
         {
+            var displayOrder = 50;
             var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                                                          .Where(pam => pam.ProductAttributeId == pa.Id)
+                                                          .Where(pam => pam.ProductAttributeId == pa.Id && pam.DisplayOrder == displayOrder)
                                                           .FirstOrDefault();
             var modelHasGifts = _abcMattressGiftService.GetAbcMattressGiftsByModelId(model.Id).Any();
 
@@ -371,7 +373,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     ProductAttributeId = pa.Id,
                     IsRequired = false,
                     AttributeControlType = AttributeControlType.DropdownList,
-                    DisplayOrder = 2
+                    DisplayOrder = displayOrder
                 };
                 _productAttributeService.InsertProductAttributeMapping(pam);
             }
@@ -390,9 +392,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             var newGifts = gifts.Select(g => g.ToProductAttributeValue(pam.Id)).ToList();
 
             var toBeDeleted = existingGifts
-                .Where(e => !newGifts.Any(n => n.Name == e.Name));
+                .Where(e => !newGifts.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
             var toBeInserted = newGifts
-                .Where(n => !existingGifts.Any(e => n.Name == e.Name));
+                .Where(n => !existingGifts.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
@@ -400,8 +402,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         private void MergeBases(AbcMattressModel model, ProductAttribute pa, Product product)
         {
+            var attributeName = "Box Spring or Adjustable Base";
             var pam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                                                          .Where(pam => pam.ProductAttributeId == pa.Id)
+                                                          .Where(pam => pam.ProductAttributeId == pa.Id && pam.TextPrompt == attributeName)
                                                           .FirstOrDefault();
             var abcMattressEntry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id)
                                                            .Where(ame => pa.Name == $"Base ({ame.Size})")
@@ -430,8 +433,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     ProductAttributeId = pa.Id,
                     IsRequired = false,
                     AttributeControlType = AttributeControlType.DropdownList,
-                    DisplayOrder = 1,
-                    TextPrompt = "Base",
+                    DisplayOrder = 10,
+                    TextPrompt = attributeName,
                     ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
                 };
                 _productAttributeService.InsertProductAttributeMapping(pam);
@@ -454,9 +457,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             )).ToList();
 
             var toBeDeleted = existingBases
-                .Where(e => !newBases.Any(n => n.Name == e.Name));
+                .Where(e => !newBases.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
             var toBeInserted = newBases
-                .Where(n => !existingBases.Any(e => n.Name == e.Name));
+                .Where(n => !existingBases.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
