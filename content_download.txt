@@ -11,14 +11,14 @@
 open ftp://%FTP_USER%:%FTP_PASS%@%FTP_IP%
 
 # synchronize appropriate directories
-# once we've moved to 4.3, we need to update remore to have wwwroot/
-synchronize local C:/NopAbc/wwwroot/energy_guides NopAbc/energy_guides/
-synchronize local C:/NopAbc/wwwroot/bundle_images NopAbc/bundle_images/
-synchronize local C:/NopAbc/wwwroot/images/uploaded NopAbc/Content/Images/uploaded/
-synchronize local C:/NopAbc/wwwroot/product_images NopAbc/product_images/
-synchronize local C:/NopAbc/wwwroot/product_specs NopAbc/product_specs/
-synchronize local C:/NopAbc/wwwroot/promo_banners NopAbc/promo_banners/
-synchronize local C:/NopAbc/wwwroot/promotion_forms NopAbc/promotion_forms/
-synchronize local C:/NopAbc/wwwroot/rebate_images NopAbc/rebate_images/
+option batch continue
+synchronize local C:/NopAbc/wwwroot/energy_guides NopAbc/wwwroot/energy_guides/
+synchronize local C:/NopAbc/wwwroot/bundle_images NopAbc/wwwroot/bundle_images/
+synchronize local C:/NopAbc/wwwroot/images/uploaded NopAbc/wwwroot/images/uploaded/
+synchronize local C:/NopAbc/wwwroot/product_images NopAbc/wwwroot/product_images/
+synchronize local C:/NopAbc/wwwroot/product_specs NopAbc/wwwroot/product_specs/
+synchronize local C:/NopAbc/wwwroot/promo_banners NopAbc/wwwroot/promo_banners/
+synchronize local C:/NopAbc/wwwroot/promotion_forms NopAbc/wwwroot/promotion_forms/
+synchronize local C:/NopAbc/wwwroot/rebate_images NopAbc/wwwroot/rebate_images/
 
 exit
