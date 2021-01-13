@@ -3,7 +3,7 @@ function changeMattressSize()
     // Get the size value from URL if it exists
     const urlParams = new URLSearchParams(window.location.search);
     const sizeValue = urlParams.get('size');
-    if (sizeValue == null || !isValidBase(sizeValue)) { return; }
+    if (sizeValue == null || !isValidSize(sizeValue)) { return; }
 
     // Find the matching option based on size above
     // SPecial case for TwinXL
@@ -39,7 +39,7 @@ function changeMattressBase()
     });
 }
 
-function isValidBase(size)
+function isValidSize(size)
 {
     const validSizes = ["twin", "twinxl", "full", "queen", "king", "california"];
     return validSizes.includes(size.toLowerCase());
