@@ -73,7 +73,32 @@
     // Custom add to cart text
     var customText = product.GetCustomAddToCartText();
 
-    var priceStr = Model.ProductPrice.Price?.Replace(".00", "");           
+    var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
+
+    // custom: add URL query params for mattress if applicable:
+    var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
+    var path = @Context.Request.Path.Value;
+    switch (path)
+    {
+        case "/twin":
+            productUrl += "?size=twin";
+            break;
+        case "/twin-extra-long":
+            productUrl += "?size=twinxl";
+            break;
+        case "/full":
+            productUrl += "?size=full";
+            break;
+        case "/queen":
+            productUrl += "?size=queen";
+            break;
+        case "/king":
+            productUrl += "?size=king";
+            break;
+        case "/california-king":
+            productUrl += "?size=california";
+            break;
+    }          
 }
 <style>
 	.picture.picture {
@@ -245,10 +270,10 @@
                 manNo = Model.Name.Substring(index);
             }
         }
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })"><span>@man</span><span class="man-no">@manNo</span></a>
+        <a href="@productUrl"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
     <div class="picture">
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+        <a href="@productUrl" title="@Model.DefaultPictureModel.Title">
             <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
         </a>
     </div>
@@ -367,13 +392,13 @@
             }
         </div>
         @{
-            var buttonRef = Model.ProductPrice.DisableBuyButton ? "href = " + Url.RouteUrl("Product", new { SeName = Model.SeName }) : "";
+            var buttonRef = Model.ProductPrice.DisableBuyButton ? "href = " + productUrl : "";
         }
         <div class="buttons-lower" @buttonRef>
             @* custom: add custom product box text *@
             @if (!string.IsNullOrWhiteSpace(customText))
             {
-                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })">
+                <form action="@productUrl">
                     <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@(customText)</span></button>
                 </form>
             }
@@ -390,11 +415,14 @@
                 {
                     addToCartText = T("ShoppingCart.PreOrder").Text;
                 }
-                <button type="button" id="product-box-add-to-cart-button-@Model.Id" class="button-2 product-box-add-to-cart-button"><span>@(addToCartText)</span></button>
+                <button type="button"
+                        id="product-box-add-to-cart-button-@Model.Id"
+                        class="button-2 product-box-add-to-cart-button"
+                        onclick="location.href='@productUrl';"><span>@(addToCartText)</span></button>
             }
             else
             {
-                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })">
+                <form action="@productUrl">
                     <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">See Details</span></button>
                 </form>
             }
