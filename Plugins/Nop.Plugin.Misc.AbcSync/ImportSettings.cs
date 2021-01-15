@@ -74,6 +74,8 @@ namespace Nop.Plugin.Misc.AbcSync
                 StagingDbConnectionString = model.StagingDbConnectionString,
                 ImportABCStores = model.ImportABCStores,
                 ImportHawthorneStores = model.ImportHawthorneStores,
+                // SyncMattressesAsSingleItemsMainStore = model.SyncMattressesAsSingleItemsMainStore,
+                // SyncMattressesAsSingleItemsClearanceStore = model.SyncMattressesAsSingleItemsClearanceStore,
                 LastPictureUpdate = LastPictureUpdate,
                 SkipFillStagingAccessoriesTask = model.SkipFillStagingAccessoriesTask,
                 SkipFillStagingBrandsTask = model.SkipFillStagingBrandsTask,

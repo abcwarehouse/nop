@@ -73,7 +73,32 @@
     // Custom add to cart text
     var customText = product.GetCustomAddToCartText();
 
-    var priceStr = Model.ProductPrice.Price?.Replace(".00", "");           
+    var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
+
+    // custom: add URL query params for mattress if applicable:
+    var urlQueryParams = "";
+    var path = @Context.Request.Path.Value;
+    switch (path)
+    {
+        case "/twin":
+            urlQueryParams = "?base=twin";
+            break;
+        case "/twin-extra-long":
+            urlQueryParams = "?base=twin";
+            break;
+        case "/full":
+            urlQueryParams = "?base=twin";
+            break;
+        case "/queen":
+            urlQueryParams = "?base=twin";
+            break;
+        case "/king":
+            urlQueryParams = "?base=twin";
+            break;
+        case "/california-king":
+            urlQueryParams = "?base=twin";
+            break;
+    }
 }
 <style>
 	.picture.picture {
@@ -245,10 +270,10 @@
                 manNo = Model.Name.Substring(index);
             }
         }
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })"><span>@man</span><span class="man-no">@manNo</span></a>
+        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })@urlQueryParams"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
     <div class="picture">
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })@urlQueryParams" title="@Model.DefaultPictureModel.Title">
             <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
         </a>
     </div>
@@ -366,10 +391,7 @@
                 <input type="button" value="@T("ShoppingCart.AddToWishlist")" title="@T("ShoppingCart.AddToWishlist")" class="button-2 add-to-wishlist-button" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;" />
             }
         </div>
-        @{
-            var buttonRef = Model.ProductPrice.DisableBuyButton ? "href = " + Url.RouteUrl("Product", new { SeName = Model.SeName }) : "";
-        }
-        <div class="buttons-lower" @buttonRef>
+        <div class="buttons-lower">
             @* custom: add custom product box text *@
             @if (!string.IsNullOrWhiteSpace(customText))
             {
@@ -390,7 +412,12 @@
                 {
                     addToCartText = T("ShoppingCart.PreOrder").Text;
                 }
-                <button type="button" id="product-box-add-to-cart-button-@Model.Id" class="button-2 product-box-add-to-cart-button"><span>@(addToCartText)</span></button>
+                @* custom: using form to override URL provided *@
+                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })?size=california">
+                    <button type="submit" id="product-box-add-to-cart-button-@Model.Id" class="button-2 product-box-add-to-cart-button">
+                        <span>@(addToCartText)</span>
+                    </button>
+                </form>
             }
             else
             {
