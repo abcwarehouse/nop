@@ -76,27 +76,27 @@
     var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
 
     // custom: add URL query params for mattress if applicable:
-    var urlQueryParams = "";
+    var urlQueryParams = @Url.RouteUrl("Product", new { SeName = Model.SeName });
     var path = @Context.Request.Path.Value;
     switch (path)
     {
         case "/twin":
-            urlQueryParams = "?base=twin";
+            urlQueryParams += "?size=twin";
             break;
         case "/twin-extra-long":
-            urlQueryParams = "?base=twin";
+            urlQueryParams += "?size=twinxl";
             break;
         case "/full":
-            urlQueryParams = "?base=twin";
+            urlQueryParams += "?size=full";
             break;
         case "/queen":
-            urlQueryParams = "?base=twin";
+            urlQueryParams += "?size=queen";
             break;
         case "/king":
-            urlQueryParams = "?base=twin";
+            urlQueryParams += "?size=king";
             break;
         case "/california-king":
-            urlQueryParams = "?base=twin";
+            urlQueryParams += "?size=california";
             break;
     }
 }
@@ -270,10 +270,10 @@
                 manNo = Model.Name.Substring(index);
             }
         }
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })@urlQueryParams"><span>@man</span><span class="man-no">@manNo</span></a>
+        <a href="@urlQueryParams"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
     <div class="picture">
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })@urlQueryParams" title="@Model.DefaultPictureModel.Title">
+        <a href="@urlQueryParams" title="@Model.DefaultPictureModel.Title">
             <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
         </a>
     </div>
@@ -395,7 +395,7 @@
             @* custom: add custom product box text *@
             @if (!string.IsNullOrWhiteSpace(customText))
             {
-                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })">
+                <form action="@urlQueryParams">
                     <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@(customText)</span></button>
                 </form>
             }
@@ -412,16 +412,14 @@
                 {
                     addToCartText = T("ShoppingCart.PreOrder").Text;
                 }
-                @* custom: using form to override URL provided *@
-                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })?size=california">
-                    <button type="submit" id="product-box-add-to-cart-button-@Model.Id" class="button-2 product-box-add-to-cart-button">
-                        <span>@(addToCartText)</span>
-                    </button>
-                </form>
+                @* custom: using onclick to allow for passing in urlQueryParams *@
+                <button type="button"
+                        class="button-2 product-box-add-to-cart-button"
+                        onclick="location.href='@urlQueryParams';"><span>@(addToCartText)</span></button>
             }
             else
             {
-                <form action="@Url.RouteUrl("Product", new { SeName = Model.SeName })">
+                <form action="@urlQueryParams">
                     <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">See Details</span></button>
                 </form>
             }
