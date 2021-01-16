@@ -70,35 +70,38 @@
     var product = productService.GetProductById(Model.Id);
     var miniDescription = product.GetMiniDescription();
 
-    // Custom add to cart text
-    var customText = product.GetCustomAddToCartText();
-
     var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
 
     // custom: add URL query params for mattress if applicable:
     var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
     var path = @Context.Request.Path.Value;
+    var mattressSize = "";
     switch (path)
     {
         case "/twin":
-            productUrl += "?size=twin";
+            mattressSize = "twin";
             break;
         case "/twin-extra-long":
-            productUrl += "?size=twinxl";
+            mattressSize = "twinxl";
             break;
         case "/full":
-            productUrl += "?size=full";
+            mattressSize = "full";
             break;
         case "/queen":
-            productUrl += "?size=queen";
+            mattressSize = "queen";
             break;
         case "/king":
-            productUrl += "?size=king";
+            mattressSize = "king";
             break;
         case "/california-king":
-            productUrl += "?size=california";
+            mattressSize = "california";
             break;
     }          
+
+    if (!string.IsNullOrWhiteSpace(mattressSize))
+    {
+        productUrl = $"{productUrl}?size={mattressSize}";
+    }
 }
 <style>
 	.picture.picture {
@@ -391,15 +394,13 @@
                 <input type="button" value="@T("ShoppingCart.AddToWishlist")" title="@T("ShoppingCart.AddToWishlist")" class="button-2 add-to-wishlist-button" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;" />
             }
         </div>
-        @{
-            var buttonRef = Model.ProductPrice.DisableBuyButton ? "href = " + productUrl : "";
-        }
-        <div class="buttons-lower" @buttonRef>
-            @* custom: add custom product box text *@
-            @if (!string.IsNullOrWhiteSpace(customText))
+        <div class="buttons-lower">
+            @* custom: add mattress messaging *@
+            @if (!string.IsNullOrWhiteSpace(mattressSize))
             {
                 <form action="@productUrl">
-                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@(customText)</span></button>
+                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">Build Package</span></button>
+                    <input type="hidden" name="size" value="@mattressSize" /> 
                 </form>
             }
             @* end custom *@
@@ -417,8 +418,7 @@
                 }
                 <button type="button"
                         id="product-box-add-to-cart-button-@Model.Id"
-                        class="button-2 product-box-add-to-cart-button"
-                        onclick="location.href='@productUrl';"><span>@(addToCartText)</span></button>
+                        class="button-2 product-box-add-to-cart-button"><span>@(addToCartText)</span></button>
             }
             else
             {
