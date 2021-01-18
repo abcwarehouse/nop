@@ -64,7 +64,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
         private void ClearOldMattressProducts()
         {
-            
             foreach (var itemNo in _abcMattressProductService.GetMattressItemNos())
             {
                 ProcessItemNo(itemNo);
@@ -79,7 +78,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             if (pad == null) { return; }
 
             var product = _productService.GetProductById(pad.Product_Id);
-            
+
             UnmapFromStore(product, pad);
 
             if (!_storeMappingService.GetStoreMappings(product).Any())
