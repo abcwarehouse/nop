@@ -6,6 +6,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
     public interface IAbcMattressProductService
     {
+        List<string> GetMattressItemNos();
         Product UpsertAbcMattressProduct(AbcMattressModel model);
         void SetManufacturer(AbcMattressModel model, Product product);
         void SetCategories(AbcMattressModel model, Product product);

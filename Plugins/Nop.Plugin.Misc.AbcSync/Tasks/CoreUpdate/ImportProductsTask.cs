@@ -7,8 +7,8 @@ using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Plugin.Misc.AbcSync.Data;
-using Nop.Plugin.Misc.AbcSync.Domain;
 using Nop.Plugin.Misc.AbcSync.Domain.Staging;
 using Nop.Plugin.Misc.AbcSync.Extensions;
 using Nop.Plugin.Misc.AbcSync.Services.Staging;
@@ -21,7 +21,6 @@ using Nop.Services.Stores;
 using Nop.Services.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 
@@ -47,6 +46,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly IManufacturerService _manufacturerService;
         private readonly IPrFileDiscountService _prFileDiscountService;
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
+        private readonly IAbcMattressProductService _abcMattressProductService;
 
         private readonly StagingDb _stagingDb;
 
@@ -71,7 +71,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             IManufacturerService manufacturerService,
             StagingDb stagingDb,
             IPrFileDiscountService prFileDiscountService,
-            IRepository<ProductManufacturer> productManufacturerRepository
+            IRepository<ProductManufacturer> productManufacturerRepository,
+            IAbcMattressProductService abcMattressProductService
         )
         {
             _importSettings = importSettings;
@@ -93,6 +94,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _stagingDb = stagingDb;
             _prFileDiscountService = prFileDiscountService;
             _productManufacturerRepository = productManufacturerRepository;
+            _abcMattressProductService = abcMattressProductService;
         }
 
         public void Execute()
@@ -191,6 +193,15 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     continue;
                 }
 
+                // check if the product item number is a mattress with no clearance mappings
+                var mattressItemNos = _abcMattressProductService.GetMattressItemNos();
+                if (_importSettings.SkipOldMattressesImport &&
+                    mattressItemNos.Contains(stagingProduct.ISAMItemNo) &&
+                    !(stagingProduct.OnAbcClearanceSite || stagingProduct.OnHawthorneClearanceSite.Value))
+                {
+                    continue;
+                }
+
                 var newProduct = product == null;
                 var hasPlaceholderFullDescription = false;
                 if (newProduct)
@@ -277,7 +288,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                 // check for each different store & publish state
                 if (stagingProduct.OnAbcSite
-                    && abcWarehouseStore != null)
+                    && abcWarehouseStore != null
+                    && !_importSettings.SkipOldMattressesImport &&
+                    !mattressItemNos.Contains(stagingProduct.ISAMItemNo))
                 {
                     product.Published = true;
                     storeIds.Add(abcWarehouseStore.Id);
@@ -291,7 +304,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
 
                 if (stagingProduct.OnHawthorneSite
-                    && hawthorneStore != null)
+                    && hawthorneStore != null
+                    && !_importSettings.SkipOldMattressesImport &&
+                    !mattressItemNos.Contains(stagingProduct.ISAMItemNo))
                 {
                     product.Published = true;
                     storeIds.Add(hawthorneStore.Id);

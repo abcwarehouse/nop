@@ -45,6 +45,9 @@ namespace Nop.Plugin.Misc.AbcSync.Models
         [NopResourceDisplayName(ImportPluginLocales.ImportHawthorneStores)]
         public bool ImportHawthorneStores { get; set; }
 
+        [NopResourceDisplayName(ImportPluginLocales.SkipOldMattressesImport)]
+        public bool SkipOldMattressesImport { get; set; }
+
         [NopResourceDisplayName(ImportPluginLocales.SkipFillStagingProductsTask)]
         public bool SkipFillStagingProductsTask { get; set; }
 

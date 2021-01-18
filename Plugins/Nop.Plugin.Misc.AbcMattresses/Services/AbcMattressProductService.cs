@@ -56,6 +56,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _urlRecordService = urlRecordService;
         }
 
+        public List<string> GetMattressItemNos()
+        {
+            var entryItemNos = _abcMattressEntryService.GetAllAbcMattressEntries().Select(e => e.ItemNo);
+            var packageItemNos = _abcMattressPackageService.GetAllAbcMattressPackages().Select(p => p.ItemNo);
+
+            return entryItemNos.Union(packageItemNos).ToList();
+        }
+
         public Product UpsertAbcMattressProduct(AbcMattressModel abcMattressModel)
         {
             var hasExistingProduct = abcMattressModel.ProductId != null;

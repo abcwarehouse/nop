@@ -4,6 +4,10 @@ using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
+using System.Linq;
+using Nop.Services.Stores;
+using Nop.Plugin.Misc.AbcCore.Domain;
+using Nop.Core.Domain.Catalog;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 {
@@ -17,6 +21,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
         private readonly IAbcMattressProductService _abcMattressProductService;
         private readonly IProductService _productService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
+        private readonly IStoreService _storeService;
+        private readonly IStoreMappingService _storeMappingService;
 
         public UpdateMattressesTask(
             ILogger logger,
@@ -25,7 +31,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             IAbcMattressPackageService abcMattressPackageService,
             IAbcMattressProductService abcMattressProductService,
             IProductService productService,
-            IProductAbcDescriptionService productAbcDescriptionService
+            IProductAbcDescriptionService productAbcDescriptionService,
+            IStoreService storeService,
+            IStoreMappingService storeMappingService
         )
         {
             _logger = logger;
@@ -35,6 +43,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             _abcMattressProductService = abcMattressProductService;
             _productService = productService;
             _productAbcDescriptionService = productAbcDescriptionService;
+            _storeService = storeService;
+            _storeMappingService = storeMappingService;
         }
 
         public void Execute()
@@ -54,32 +64,43 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
         private void ClearOldMattressProducts()
         {
-            var entries = _abcMattressEntryService.GetAllAbcMattressEntries();
-            foreach (var entry in entries)
+            
+            foreach (var itemNo in _abcMattressProductService.GetMattressItemNos())
             {
-                var pad =
-                    _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumber(
-                        entry.ItemNo.ToString()
-                    );
-                if (pad == null) { continue; }
-
-                var product = _productService.GetProductById(pad.Product_Id);
-                product.Published = false;
-                _productService.UpdateProduct(product);
+                ProcessItemNo(itemNo);
             }
+        }
 
-            var packages = _abcMattressPackageService.GetAllAbcMattressPackages();
-            foreach (var package in packages)
+        private void ProcessItemNo(string itemNo)
+        {
+            var pad = _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumber(
+                itemNo
+            );
+            if (pad == null) { return; }
+
+            var product = _productService.GetProductById(pad.Product_Id);
+            
+            UnmapFromStore(product, pad);
+
+            if (!_storeMappingService.GetStoreMappings(product).Any())
             {
-                var pad =
-                    _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumber(
-                        package.ItemNo.ToString()
-                    );
-                if (pad == null) { continue; }
+                _productService.DeleteProduct(product);
+            }
+        }
 
-                var product = _productService.GetProductById(pad.Product_Id);
-                product.Published = false;
-                _productService.UpdateProduct(product);
+        // currently only doing main store
+        private void UnmapFromStore(Product product, ProductAbcDescription pad)
+        {
+            var mainStore = _storeService.GetAllStores()
+                                         .Where(s => !s.Name.ToLower().Contains("clearance"))
+                                         .First();
+            var mainStoreMapping = _storeMappingService.GetStoreMappings(product)
+                                                       .Where(sm => sm.StoreId == mainStore.Id)
+                                                       .FirstOrDefault();
+
+            if (mainStoreMapping != null)
+            {
+                _storeMappingService.DeleteStoreMapping(mainStoreMapping);
             }
         }
     }

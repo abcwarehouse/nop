@@ -23,6 +23,8 @@ namespace Nop.Plugin.Misc.AbcSync
         public const string FeaturedProductsFilename = Base + "FeaturedProductsFilename";
         public const string ImportABCStores = Base + "ImportABCStores";
         public const string ImportHawthorneStores = Base + "ImportHawthorneStores";
+        public const string SkipOldMattressesImport = Base + "SkipOldMattressesImport";
+
         public const string SkipFillStagingProductsTask = Base + "SkipFillStagingProductsTask";
         public const string SkipFillStagingProductsTaskHint = SkipFillStagingProductsTask + ".Hint";
         public const string SkipFillStagingPricingTask = Base + "SkipFillStagingPricingTask";

@@ -102,6 +102,8 @@ namespace Nop.Plugin.Misc.AbcSync
             _localizationService.AddPluginLocaleResource(
                 new Dictionary<string, string>
                 {
+                    [ImportPluginLocales.SkipOldMattressesImport] = "Skip Import of Old Mattresses",
+
                     [ImportPluginLocales.SkipFillStagingAccessoriesTask] = "FillStagingAccessoriesTask",
                     [ImportPluginLocales.SkipFillStagingBrandsTask] = "FillStagingBrandsTask",
                     [ImportPluginLocales.SkipFillStagingPricingTask] = "FillStagingPricingTask",
@@ -118,6 +120,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     [ImportPluginLocales.SkipImportRelatedProductsTask] = "ImportRelatedProductsTask",
                     [ImportPluginLocales.SkipImportWarrantiesTask] = "ImportWarrantiesTask",
                     [ImportPluginLocales.SkipUnmapNonstockClearanceTask] = "UnmapNonstockClearanceTask",
+                    [ImportPluginLocales.SkipCleanDuplicateImagesTask] = "CleanDuplicateImagesTask",
                     [ImportPluginLocales.SkipUnmapEmptyCategoriesTask] = "UnmapEmptyCategoriesTask",
                     [ImportPluginLocales.SkipSliExportTask] = "SliExportTask",
 

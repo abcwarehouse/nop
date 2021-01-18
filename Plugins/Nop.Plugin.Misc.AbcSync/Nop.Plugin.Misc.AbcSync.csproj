@@ -66,6 +66,7 @@
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AzureWebTestsIntegration\Nop.Plugin.Misc.AzureWebTestsIntegration.csproj" />
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcMattresses\Nop.Plugin.Misc.AbcMattresses.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
   </ItemGroup>
 
