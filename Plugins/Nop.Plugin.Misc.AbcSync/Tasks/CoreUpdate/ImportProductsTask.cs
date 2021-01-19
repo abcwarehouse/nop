@@ -133,7 +133,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             string manufacturerUpdateQuery
                 = $"UPDATE {_nopDbContext.GetTable<Manufacturer>().TableName} set LimitedToStores = 1;";
             // delete all store mappings & manufacturer store mappings for all products
-            string manufacturerStoreMappingDeleteQuery = 
+            string manufacturerStoreMappingDeleteQuery =
                 $"DELETE FROM {_nopDbContext.GetTable<StoreMapping>().TableName} WHERE EntityName='Manufacturer'";
 
             _nopDbContext.ExecuteNonQuery(manufacturerUpdateQuery);
