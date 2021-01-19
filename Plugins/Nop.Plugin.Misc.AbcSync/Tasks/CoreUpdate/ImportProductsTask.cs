@@ -133,12 +133,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             string manufacturerUpdateQuery
                 = $"UPDATE {_nopDbContext.GetTable<Manufacturer>().TableName} set LimitedToStores = 1;";
             // delete all store mappings & manufacturer store mappings for all products
-            string storeMappingDeleteQuery
-                = $"DELETE FROM {_nopDbContext.GetTable<StoreMapping>().TableName} WHERE EntityName='Manufacturer'";
+            string manufacturerStoreMappingDeleteQuery = 
+                $"DELETE FROM {_nopDbContext.GetTable<StoreMapping>().TableName} WHERE EntityName='Manufacturer'";
 
             _nopDbContext.ExecuteNonQuery(manufacturerUpdateQuery);
-            _nopDbContext.ExecuteNonQuery(storeMappingDeleteQuery);
-
+            _nopDbContext.ExecuteNonQuery(manufacturerStoreMappingDeleteQuery);
 
             Store[] storeList = _storeService.GetAllStores().ToArray();
             Store abcWarehouseStore
@@ -189,15 +188,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
 
                 if (product != null && product.Deleted)
-                {
-                    continue;
-                }
-
-                // check if the product item number is a mattress with no clearance mappings
-                var mattressItemNos = _abcMattressProductService.GetMattressItemNos();
-                if (_importSettings.SkipOldMattressesImport &&
-                    mattressItemNos.Contains(stagingProduct.ISAMItemNo) &&
-                    !(stagingProduct.OnAbcClearanceSite || stagingProduct.OnHawthorneClearanceSite.Value))
                 {
                     continue;
                 }
@@ -288,9 +278,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                 // check for each different store & publish state
                 if (stagingProduct.OnAbcSite
-                    && abcWarehouseStore != null
-                    && !_importSettings.SkipOldMattressesImport &&
-                    !mattressItemNos.Contains(stagingProduct.ISAMItemNo))
+                    && abcWarehouseStore != null)
                 {
                     product.Published = true;
                     storeIds.Add(abcWarehouseStore.Id);
@@ -304,9 +292,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
 
                 if (stagingProduct.OnHawthorneSite
-                    && hawthorneStore != null
-                    && !_importSettings.SkipOldMattressesImport &&
-                    !mattressItemNos.Contains(stagingProduct.ISAMItemNo))
+                    && hawthorneStore != null)
                 {
                     product.Published = true;
                     storeIds.Add(hawthorneStore.Id);
@@ -461,12 +447,16 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             // marking products that do not exist in the staging database as deleted
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
             var stagingDbName = stagingDb.Database;
+            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
+                " AND Product.Id NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
+                "";
             var deleteCommand = $@"
                 update[{nopDbName}].dbo.Product set Published = 0, Deleted = 1
                 from [{nopDbName}].[dbo].[Product] 
                 left join[{stagingDbName}].[dbo].[ProductSource] as ps on ([{nopDbName}].[dbo].[Product].[Sku] = ps.IsamSku
                                                                    OR[{nopDbName}].[dbo].[Product].[Sku] = ps.SiteOnTimeSku)
                 where ps.IsamSku is null AND ps.SiteOnTimeSku is null
+                {mattressItemAddition}
             ";
 
             _nopDbContext.ExecuteNonQuery(deleteCommand, 120);
@@ -497,7 +487,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             }
 
             //unpublish any manufacturers that now contain only deleted products
-            _nopDbContext.ExecuteNonQuery($"update [{nopDbName}].dbo.Manufacturer set Published = 0; update [{nopDbName}].dbo.Manufacturer set Published = 1 from [{nopDbName}].dbo.Manufacturer m join [{nopDbName}].dbo.Product_Manufacturer_Mapping pm on m.Id = pm.ManufacturerId left join  (select Id as pid from [{nopDbName}].dbo.Product p where p.Published = 1 or p.Deleted = 0 ) as p on pm.ProductId = p.pid;");
+            _nopDbContext.ExecuteNonQuery(
+                $"update [{nopDbName}].dbo.Manufacturer set Published = 0; update [{nopDbName}].dbo.Manufacturer set Published = 1 from [{nopDbName}].dbo.Manufacturer m join [{nopDbName}].dbo.Product_Manufacturer_Mapping pm on m.Id = pm.ManufacturerId left join  (select Id as pid from [{nopDbName}].dbo.Product p where p.Published = 1 or p.Deleted = 0 ) as p on pm.ProductId = p.pid;");
 
             //clear table and reimport
             _nopDbContext.ExecuteNonQuery(
@@ -686,6 +677,12 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     _logger.Warning($"Product (SKU: {product.Sku}) has multiple pmap records, import skipped");
                     stagingProducts = stagingProducts.Where(sp => sp.Sku != product.Sku).ToList();
                 }
+            }
+
+            if (_importSettings.SkipOldMattressesImport)
+            {
+                var mattressItemNos = _abcMattressProductService.GetMattressItemNos();
+                stagingProducts = stagingProducts.Where(sp => !mattressItemNos.Contains(sp.ISAMItemNo)).ToList();
             }
 
             return stagingProducts;
