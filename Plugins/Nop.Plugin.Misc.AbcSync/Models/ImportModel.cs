@@ -102,6 +102,9 @@ namespace Nop.Plugin.Misc.AbcSync.Models
         [NopResourceDisplayName(ImportPluginLocales.SkipUnmapNonstockClearanceTask)]
         public bool SkipUnmapNonstockClearanceTask { get; set; }
 
+        [NopResourceDisplayName(ImportPluginLocales.SkipUnmapEmptyCategoriesTask)]
+        public bool SkipUnmapEmptyCategoriesTask { get; set; }
+
         [NopResourceDisplayName(ImportPluginLocales.SkipImportRebatesTask)]
         public bool SkipImportRebatesTask { get; set; }
 
@@ -128,9 +131,6 @@ namespace Nop.Plugin.Misc.AbcSync.Models
 
         [NopResourceDisplayName(ImportPluginLocales.SkipImportLocalPicturesTask)]
         public bool SkipImportLocalPicturesTask { get; set; }
-
-        [NopResourceDisplayName(ImportPluginLocales.SkipUnmapEmptyCategoriesTask)]
-        public bool SkipUnmapEmptyCategoriesTask { get; set; }
 
         [NopResourceDisplayName(ImportPluginLocales.SkipCleanDuplicateImagesTask)]
         public bool SkipCleanDuplicateImagesTask { get; set; }

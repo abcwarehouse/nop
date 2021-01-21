@@ -32,7 +32,6 @@ namespace Nop.Plugin.Misc.AbcSync
             EngineContext.Current.Resolve<ImportSotPicturesTask>().Execute();
             EngineContext.Current.Resolve<ImportLocalPicturesTask>().Execute();
             EngineContext.Current.Resolve<CleanDuplicateImagesTask>().Execute();
-            EngineContext.Current.Resolve<UnmapEmptyCategoriesTask>().Execute();
             EngineContext.Current.Resolve<ClearCacheTask>().Execute();
 
             if (!_importSettings.SkipSliExportTask)

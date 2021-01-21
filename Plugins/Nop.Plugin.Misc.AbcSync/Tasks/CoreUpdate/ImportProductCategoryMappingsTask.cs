@@ -159,6 +159,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private void ImportProductCategoryMappings()
         {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
+            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
+                " WHERE ProductId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
+                "";
             _nopDbContext.ExecuteNonQuery($@"
                 If(OBJECT_ID('tempdb..#tempProductCategoryMap') Is Not Null)
                 Begin
@@ -171,7 +174,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 DECLARE @tPCM TABLE (pSku nvarchar(max) COLLATE SQL_Latin1_General_CP1_CS_AS, cId int);
                 INSERT @tPCM EXEC {stagingDbName}.dbo.GetProductCategoryMappings;
 
-                TRUNCATE TABLE [dbo].[Product_Category_Mapping];
+                DELETE FROM [dbo].[Product_Category_Mapping] {mattressItemAddition};
                 --inserting new product category mappings
                 WITH TranslatedPCMs as (SELECT DISTINCT p.Id as prodId, c.Id as catId FROM Product p join @tPCM on  p.Sku = pSku join Category c on cId = c.Id),
                     PreserveredPCMs as (SELECT DISTINCT prodId, catId, ISNULL(IsFeatured, 0) as IsFeatured, ISNULL(DisplayOrder,0) as DisplayOrder FROM TranslatedPCMs left join #tempProductCategoryMap on prodId = ProductId AND catId = CategoryId)

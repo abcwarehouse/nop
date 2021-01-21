@@ -45,6 +45,7 @@ namespace Nop.Plugin.Misc.AbcSync
         public bool SkipImportRelatedProductsTask { get; private set; }
         public bool SkipImportWarrantiesTask { get; private set; }
         public bool SkipUnmapNonstockClearanceTask { get; private set; }
+        public bool SkipUnmapEmptyCategoriesTask { get; private set; }
         public bool SkipSliExportTask { get; private set; }
 
         public bool SkipImportDocumentsTask { get; private set; }
@@ -53,7 +54,6 @@ namespace Nop.Plugin.Misc.AbcSync
         public bool SkipImportProductFlagsTask { get; private set; }
         public bool SkipImportSotPicturesTask { get; private set; }
         public bool SkipImportLocalPicturesTask { get; private set; }
-        public bool SkipUnmapEmptyCategoriesTask { get; private set; }
         public bool SkipCleanDuplicateImagesTask { get; private set; }
 
 
@@ -92,13 +92,13 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportRelatedProductsTask = model.SkipImportRelatedProductsTask,
                 SkipImportWarrantiesTask = model.SkipImportWarrantiesTask,
                 SkipUnmapNonstockClearanceTask = model.SkipUnmapNonstockClearanceTask,
+                SkipUnmapEmptyCategoriesTask = model.SkipUnmapEmptyCategoriesTask,
                 SkipImportDocumentsTask = model.SkipImportDocumentsTask,
                 SkipImportIsamSpecsTask = model.SkipImportIsamSpecsTask,
                 SkipImportFeaturedProductsTask = model.SkipImportFeaturedProductsTask,
                 SkipImportProductFlagsTask = model.SkipImportProductFlagsTask,
                 SkipImportSotPicturesTask = model.SkipImportSotPicturesTask,
                 SkipImportLocalPicturesTask = model.SkipImportLocalPicturesTask,
-                SkipUnmapEmptyCategoriesTask = model.SkipUnmapEmptyCategoriesTask,
                 SkipCleanDuplicateImagesTask = model.SkipCleanDuplicateImagesTask,
                 SkipSliExportTask = model.SkipSliExportTask
             };
@@ -135,13 +135,13 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportRelatedProductsTask = SkipImportRelatedProductsTask,
                 SkipImportWarrantiesTask = SkipImportWarrantiesTask,
                 SkipUnmapNonstockClearanceTask = SkipUnmapNonstockClearanceTask,
+                SkipUnmapEmptyCategoriesTask = SkipUnmapEmptyCategoriesTask,
                 SkipImportDocumentsTask = SkipImportDocumentsTask,
                 SkipImportIsamSpecsTask = SkipImportIsamSpecsTask,
                 SkipImportFeaturedProductsTask = SkipImportFeaturedProductsTask,
                 SkipImportProductFlagsTask = SkipImportProductFlagsTask,
                 SkipImportSotPicturesTask = SkipImportSotPicturesTask,
                 SkipImportLocalPicturesTask = SkipImportLocalPicturesTask,
-                SkipUnmapEmptyCategoriesTask = SkipUnmapEmptyCategoriesTask,
                 SkipCleanDuplicateImagesTask = SkipCleanDuplicateImagesTask,
                 SkipSliExportTask = SkipSliExportTask
             };

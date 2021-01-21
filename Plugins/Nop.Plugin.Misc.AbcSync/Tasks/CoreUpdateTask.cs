@@ -58,6 +58,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 // skipping shop import for now
                 // EngineContext.Current.Resolve<ImportShopsTask>().Execute();
                 EngineContext.Current.Resolve<UnmapNonstockClearanceTask>().Execute();
+                EngineContext.Current.Resolve<UnmapEmptyCategoriesTask>().Execute();
 
                 ImportTaskExtensions.CreateIndexes();
                 _logger.Information(this.GetType().Name + " Opening Store");
