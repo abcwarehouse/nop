@@ -1,29 +1,29 @@
 function updateSizeUrl(select) {
-  const urlParams = new URLSearchParams(window.location.search);
+  const url = new URL(window.location);
   const key = "size";
 
   switch (select.selectedOptions[0].label) {
     case 'Twin':
-      urlParams.set(key, "twin");
+      url.searchParams.set(key, 'twin');
       break;
     case 'TwinXL':
-      urlParams.set(key, "twinxl");
+      url.searchParams.set(key, 'twinxl');
       break;
     case 'Full':
-      urlParams.set(key, "full");
+      url.searchParams.set(key, 'full');
       break;
     case 'Queen':
-      urlParams.set(key, "queen");
+      url.searchParams.set(key, 'queen');
       break;
     case 'King':
-      urlParams.set(key, "king");
+      url.searchParams.set(key, 'king');
       break;
     case 'California King':
-      urlParams.set(key, "california");
+      url.searchParams.set(key, 'california');
       break;
   }
-  var newUrl = urlParams.toString()
-  window.history.pushState({path: newUrl}, '', newUrl);
+  
+  window.history.pushState({}, '', url);
 }
 
 var aTags = document.getElementsByTagName("dd");
