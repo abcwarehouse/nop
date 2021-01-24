@@ -6,7 +6,7 @@ function changeMattressSize()
     if (sizeValue == null || !isValidSize(sizeValue)) { return; }
 
     // Find the matching option based on size above
-    // SPecial case for TwinXL
+    // Special case for TwinXL
     var textToFind = sizeValue.toLowerCase() == "twinxl" ?
         "TwinXL" :
         sizeValue.toLowerCase().charAt(0).toUpperCase();
