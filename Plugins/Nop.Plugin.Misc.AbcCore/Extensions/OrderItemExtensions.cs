@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Orders;
-using Nop.Core.Infrastructure;
-using Nop.Services.Catalog;
 
-namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
+namespace Nop.Plugin.Misc.AbcCore.Extensions
 {
     public static class OrderItemExtensions
     {

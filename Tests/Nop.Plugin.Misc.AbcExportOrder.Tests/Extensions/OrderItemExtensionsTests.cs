@@ -2,7 +2,7 @@ using NUnit.Framework;
 using Nop.Plugin.Misc.AbcExportOrder.Models;
 using FluentAssertions;
 using Nop.Core.Domain.Orders;
-using Nop.Plugin.Misc.AbcExportOrder.Extensions;
+using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {

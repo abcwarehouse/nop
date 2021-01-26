@@ -5,7 +5,7 @@ using Nop.Services.Common;
 using Nop.Services.Orders;
 using System.Linq;
 using Nop.Services.Directory;
-using Nop.Plugin.Misc.AbcExportOrder.Extensions;
+using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Core.Domain.Security;
 using Nop.Services.Security;
 using Nop.Services.Catalog;
@@ -321,7 +321,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var cardCvv2 = _encryptionService.DecryptText(order.CardCvv2, _securitySettings.EncryptionKey);
 
 
-            var ccRefNo = _genericAttributeService.GetAttribute<string>(order, "CardRefNo");
+            var ccRefNo = _customOrderService.GetCCRefNo(order);
 
             var pickupItems = splitItems.pickupItems;
             if (pickupItems.Any())

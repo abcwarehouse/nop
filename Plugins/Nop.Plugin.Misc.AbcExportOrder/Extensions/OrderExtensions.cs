@@ -9,8 +9,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
 {
     public static class OrderExtensions
     {
-        public static readonly string CardRefNoKey = "CardRefNo";
-
         public static bool HasCCInfo(this Order order)
         {
             return order.CardNumber == null &&

@@ -14,5 +14,9 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         IList<Order> GetUnsubmittedOrders();
 
         ProductAttributeValue GetOrderItemWarranty(OrderItem orderItem);
+
+        string GetCCRefNo(Order order);
+
+        void SaveCCRefNo(Order order, string ccRefNo);
     }
 }

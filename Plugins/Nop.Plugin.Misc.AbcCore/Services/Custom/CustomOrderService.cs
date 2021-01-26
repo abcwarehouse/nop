@@ -4,23 +4,27 @@ using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Data;
-using Nop.Plugin.Misc.AbcExportOrder.Extensions;
 using Nop.Services.Catalog;
+using Nop.Services.Common;
 using Nop.Services.Events;
 using Nop.Services.Orders;
 using Nop.Services.Shipping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
     public class CustomOrderService : OrderService, ICustomOrderService
     {
+        private const string CcRefNoKey = "CCRefNo";
         private readonly IRepository<Order> _orderRepository;
 
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductAttributeService _productAttributeService;
+
+        private readonly IGenericAttributeService _genericAttributeService;
 
         public CustomOrderService(
             CachingSettings cachingSettings,
@@ -37,7 +41,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
             IShipmentService shipmentService,
             IProductAttributeParser productAttributeParser,
-            IProductAttributeService productAttributeService
+            IProductAttributeService productAttributeService,
+            IGenericAttributeService genericAttributeService
         ) : base(cachingSettings, eventPublisher, productService, addressRepository,
                  customerRepository, orderRepository, orderItemRepository, orderNoteRepository,
                  productRepository, productWarehouseInventoryRepository, recurringPaymentRepository,
@@ -46,6 +51,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _orderRepository = orderRepository;
             _productAttributeParser = productAttributeParser;
             _productAttributeService = productAttributeService;
+            _genericAttributeService = genericAttributeService;
         }
 
         public ProductAttributeValue GetOrderItemWarranty(OrderItem orderItem)
@@ -73,6 +79,16 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private static bool IsWarranty(ProductAttribute productAttribute)
         {
             return productAttribute.Name == "Warranty";
+        }
+
+        public string GetCCRefNo(Order order)
+        {
+            return _genericAttributeService.GetAttribute<string>(order, CcRefNoKey);
+        }
+
+        public void SaveCCRefNo(Order order, string ccRefNo)
+        {
+            _genericAttributeService.SaveAttribute(order, CcRefNoKey, ccRefNo);
         }
     }
 }

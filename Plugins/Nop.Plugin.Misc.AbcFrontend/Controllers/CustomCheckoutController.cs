@@ -36,6 +36,8 @@ using Nop.Web.Extensions;
 using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcFrontend.Services;
+using Nop.Plugin.Misc.AbcCore.Extensions;
+using Nop.Plugin.Misc.AbcExportOrder.Services;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -52,7 +54,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly ILogger _logger;
         private readonly IOrderProcessingService _orderProcessingService;
-        private readonly IOrderService _orderService;
+        private readonly ICustomOrderService _orderService;
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IPaymentService _paymentService;
         private readonly IProductService _productService;
@@ -89,7 +91,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             ILocalizationService localizationService,
             ILogger logger,
             IOrderProcessingService orderProcessingService,
-            IOrderService orderService,
+            ICustomOrderService orderService,
             IPaymentPluginManager paymentPluginManager,
             IPaymentService paymentService,
             IProductService productService,
@@ -648,7 +650,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (_orderSettings.CheckoutDisabled)
                 return RedirectToRoute("ShoppingCart");
 
-            var cart = _shoppingCartService.GetShoppingCart(_workContext.CurrentCustomer, ShoppingCartType.ShoppingCart, _storeContext.CurrentStore.Id);
+            var cart = _shoppingCartService.GetShoppingCart(
+                _workContext.CurrentCustomer,
+                ShoppingCartType.ShoppingCart,
+                _storeContext.CurrentStore.Id);
 
             if (!cart.Any())
                 return RedirectToRoute("ShoppingCart");
@@ -702,8 +707,15 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 }
 
                 var placeOrderResult = _orderProcessingService.PlaceOrder(processPaymentRequest);
+                
                 if (placeOrderResult.Success)
-                {
+                {   
+                    if (refNo != null) {
+                        _orderService.SaveCCRefNo(
+                            placeOrderResult.PlacedOrder,
+                            refNo
+                        );
+                    }
                     HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
                     {
