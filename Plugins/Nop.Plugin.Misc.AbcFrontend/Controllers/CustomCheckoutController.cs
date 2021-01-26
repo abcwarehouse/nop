@@ -322,7 +322,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                                 var ref_nonode = xmlDoc.SelectSingleNode(xpath);
                                 if (ref_nonode != null)
                                 {
-                                    HttpContext.Session.Set("Ref_No", ref_nonode.InnerText);
+                                    HttpContext.Session.SetString("Ref_No", ref_nonode.InnerText);
                                 }
 
                                 xpath = "Response/Card_Check/Auth_No";
@@ -340,7 +340,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             {
                 _logger.Error("Error occurred when making external payment request. Setting status code to 00 and Ref_No Auth_No to null.", e);
                 status_code = "00";
-                HttpContext.Session.Set("Ref_No", "");
+                HttpContext.Session.SetString("Ref_No", "");
                 HttpContext.Session.Set("Auth_No", "");
             }
         }
@@ -710,13 +710,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 if (placeOrderResult.Success)
                 {
-                    if (refNo != null)
-                    {
-                        _orderService.SaveCCRefNo(
-                            placeOrderResult.PlacedOrder,
-                            refNo
-                        );
-                    }
                     HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
                     {

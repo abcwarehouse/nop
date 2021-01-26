@@ -22,6 +22,7 @@ using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
+using Nop.Services.Payments;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tests
 {
@@ -83,7 +84,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
                 MockUrlRecordService().Object,
                 new Mock<IWarrantyService>().Object,
                 new Mock<ExportOrderSettings>().Object,
-                new Mock<SecuritySettings>().Object
+                new Mock<SecuritySettings>().Object,
+                new Mock<IPaymentService>().Object
             );
         }
 

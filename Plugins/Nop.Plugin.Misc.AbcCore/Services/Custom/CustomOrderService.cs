@@ -18,13 +18,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
     public class CustomOrderService : OrderService, ICustomOrderService
     {
-        private const string CcRefNoKey = "CCRefNo";
         private readonly IRepository<Order> _orderRepository;
 
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductAttributeService _productAttributeService;
-
-        private readonly IGenericAttributeService _genericAttributeService;
 
         public CustomOrderService(
             CachingSettings cachingSettings,
@@ -41,8 +38,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
             IShipmentService shipmentService,
             IProductAttributeParser productAttributeParser,
-            IProductAttributeService productAttributeService,
-            IGenericAttributeService genericAttributeService
+            IProductAttributeService productAttributeService
         ) : base(cachingSettings, eventPublisher, productService, addressRepository,
                  customerRepository, orderRepository, orderItemRepository, orderNoteRepository,
                  productRepository, productWarehouseInventoryRepository, recurringPaymentRepository,
@@ -51,7 +47,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _orderRepository = orderRepository;
             _productAttributeParser = productAttributeParser;
             _productAttributeService = productAttributeService;
-            _genericAttributeService = genericAttributeService;
         }
 
         public ProductAttributeValue GetOrderItemWarranty(OrderItem orderItem)
@@ -79,16 +74,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private static bool IsWarranty(ProductAttribute productAttribute)
         {
             return productAttribute.Name == "Warranty";
-        }
-
-        public string GetCCRefNo(Order order)
-        {
-            return _genericAttributeService.GetAttribute<string>(order, CcRefNoKey);
-        }
-
-        public void SaveCCRefNo(Order order, string ccRefNo)
-        {
-            _genericAttributeService.SaveAttribute(order, CcRefNoKey, ccRefNo);
         }
     }
 }

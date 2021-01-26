@@ -18,6 +18,7 @@ using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
+using Nop.Services.Payments;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -49,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
         private readonly ExportOrderSettings _settings;
         private readonly SecuritySettings _securitySettings;
+        private readonly IPaymentService _paymentService;
 
 
         public YahooService(
@@ -76,7 +78,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IUrlRecordService urlRecordService,
             IWarrantyService warrantyService,
             ExportOrderSettings settings,
-            SecuritySettings securitySettings
+            SecuritySettings securitySettings,
+            IPaymentService paymentService
         )
         {
             _abcMattressBaseService = abcMattressBaseService;
@@ -104,6 +107,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _warrantyService = warrantyService;
             _settings = settings;
             _securitySettings = securitySettings;
+            _paymentService = paymentService;
         }
 
         public IList<YahooDetailRow> GetYahooDetailRows(Order order)
@@ -320,8 +324,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var cardYear = _encryptionService.DecryptText(order.CardExpirationYear, _securitySettings.EncryptionKey);
             var cardCvv2 = _encryptionService.DecryptText(order.CardCvv2, _securitySettings.EncryptionKey);
 
-
-            var ccRefNo = _customOrderService.GetCCRefNo(order);
+            var ccRefNo = _paymentService.DeserializeCustomValues(order)
+                                         .Where(cv => cv.Key == "CC_REFNO")
+                                         .Select(cv => cv.Value.ToString())
+                                         .FirstOrDefault();
 
             var pickupItems = splitItems.pickupItems;
             if (pickupItems.Any())
