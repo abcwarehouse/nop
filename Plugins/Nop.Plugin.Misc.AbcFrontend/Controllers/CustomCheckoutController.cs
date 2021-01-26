@@ -707,10 +707,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 }
 
                 var placeOrderResult = _orderProcessingService.PlaceOrder(processPaymentRequest);
-                
+
                 if (placeOrderResult.Success)
-                {   
-                    if (refNo != null) {
+                {
+                    if (refNo != null)
+                    {
                         _orderService.SaveCCRefNo(
                             placeOrderResult.PlacedOrder,
                             refNo
