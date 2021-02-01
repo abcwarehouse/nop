@@ -41,6 +41,8 @@ set SslEnabled = 0
 
 ### Codebase
 
+If needed, download the [ASP.NET Core runtime](https://dotnet.microsoft.com/download/dotnet/5.0)
+
 1. Clone the repository to your local machine.
 1. Add the `dataSettings.json` and `plugins.json` files to /src/Presentation/Nop.Web/App_Data folder.
 3. Build and run the application.
