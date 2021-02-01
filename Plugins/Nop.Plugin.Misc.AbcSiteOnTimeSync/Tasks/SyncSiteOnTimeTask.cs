@@ -621,8 +621,8 @@ namespace Nop.Plugin.Misc.AbcSiteOnTimeSync
                     DECLARE @BRANDS varchar(100)
                     DECLARE @BRDFRI varchar(100)
 
-                    SET @BRANDS = '25  ,56  ,70  ,85  ,95  ,191 ,267 ,651 ,2452'
-                    SET @BRDFRI = '25  ,56  ,85  ,95  ,191 ,267 ,651 ,2452'   /***   No Fridigdaire****/
+                    SET @BRANDS = '56  ,70  ,85  ,95  ,191 ,267 ,651 ,2452'
+                    SET @BRDFRI = '56  ,85  ,95  ,191 ,267 ,651 ,2452'   /***   No Fridigdaire****/
 	                    -- SET NOCOUNT ON added to prevent extra result sets from
 	                    -- interfering with SELECT statements.
 	                    SET NOCOUNT ON;
