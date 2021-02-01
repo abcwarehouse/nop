@@ -165,7 +165,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
         {
             get
             {
-                return _webPrice ?? BasePrice;
+                return _webPrice.HasValue && _webPrice != 0 ? _webPrice.Value : BasePrice;
             }
         }
 
