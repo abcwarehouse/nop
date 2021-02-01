@@ -27,7 +27,6 @@ namespace Nop.Plugin.Misc.AbcCore.Services
         private const string STOREISHAWTHORNE_KEY = "Abc.isHawthorne.{0}";
         private const string STOREISHAWTHORNECLEARANCE_KEY = "Abc.isHawthorneClearance.{0}";
         private const string PRODUCTISABC_KEY = ProductAbcDescription.PRODUCTABCDESCRIPTION_PATTERN_KEY + "isabc.{0}";
-        private const string PRODUCTISPICKUP_KEY = ProductAbcDescription.PRODUCTABCDESCRIPTION_PATTERN_KEY + "ispickup.{0}";
         private const string PRODUCTFLAG_KEY = ProductAbcDescription.PRODUCTABCDESCRIPTION_PATTERN_KEY + "productflag.{0}";
         private const string PRODUCTHASDOCUMENTS_KEY = ProductDocuments.DOCUMENT_PATTERN_KEY + "hasdocuments.{0}";
         private const string PACKAGE_PRODUCT_KEY = "Abc.packageproduct.{0}";
@@ -112,12 +111,6 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 () => { return EngineContext.Current.Resolve<IRepository<Category>>().Table.Any(c => c.ParentCategoryId == categoryId && c.Published == true && c.Deleted == false); });
         }
 
-        public ProductCartPrice GetCartPriceByProductId(int productId)
-        {
-            return _staticCacheManager.Get(new CacheKey(string.Format(ProductCartPrice.PRODUCTCARTPRICE_BY_PRODID_KEY, productId), "Abc."),
-                ProductCartPrice.GetByProductIdFunc(EngineContext.Current.Resolve<IRepository<ProductCartPrice>>(), productId));
-        }
-
         public ProductAbcDescription GetProductAbcDescriptionByProductId(int productId)
         {
             return _staticCacheManager.Get(new CacheKey(string.Format(ProductAbcDescription.PRODUCTABCDESCRIPTION_BY_PRODID_KEY, productId), "Abc."),
@@ -129,18 +122,6 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTISABC_KEY, productId), "Abc."),
                 () => { return ProductAbcDescription.GetByProductIdFunc(EngineContext.Current.Resolve<IRepository<ProductAbcDescription>>(), productId)() != null; });
         }
-
-        public bool ProductIsPickup(int productId)
-        {
-            return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTISPICKUP_KEY, productId), "Abc."), () =>
-            {
-                return _productAttributeService.GetProductAttributeMappingsByProductId(productId)
-                .Where(pam => _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Pickup")
-                .Select(pam => pam)
-                .Any();
-            });
-        }
-
         public ProductFlag GetProductFlag(int productId)
         {
             return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCTFLAG_KEY, productId), "Abc."), () =>
