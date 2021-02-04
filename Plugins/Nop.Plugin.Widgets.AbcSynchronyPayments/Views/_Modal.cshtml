@@ -1,6 +1,10 @@
 ﻿@using Nop.Plugin.Widgets.AbcSynchronyPayments.Models;
 @model SynchronyPaymentModel
 
+@{
+    var monthCountMinus1 = Model.MonthCount -1;
+}
+
 <div id="equalPaymentsModal-@Model.ProductId" class="synchrony-payments-modal-outer">
     <div class="synchrony-payments-modal-middle">
         <div class="synchrony-payments-modal-inner" style="color: #@Model.ModalHexColor; border-color: #@Model.ModalHexColor">
@@ -31,45 +35,102 @@
                 </p>}
             else
             {
-                if (Model.OfferValidFrom != null && Model.OfferValidTo != null)
-                {
-                    <p style="font-size: 125%; font-weight: bold; text-align: center">
-                        Offer valid @Model.OfferValidFrom through @Model.OfferValidTo
-                    </p>
-                }
                 <table class="min-payment-table">
                     <tr class="min-payment-table-labels">
-                        <td>Minimum Monthly Payment</td>
-                        <td>Suggested Equal Monthly Payment</td>
+                        <td>Promotional Purchase Amount</td>
+                        <td>Estimated Minimum Monthly Payments Month 1-@monthCountMinus1</td>
+                        <td>Estimated Final Payment Month @Model.MonthCount</td>
                         <td>Promotional Period</td>
                     </tr>
                     <tr class="min-payment-table-data">
+                        <td>$EXAMPLE_VALUE</td>
                         <td>$@Model.MonthlyPayment</td>
-                        <td>$@Model.EqualPayment</td>
-                        <td>@Model.MonthCount Months</td>
+                        <td>$EXAMPLE_VALUE</td>
+                        <td>@Model.MonthCount Month</td>
                     </tr>
                 </table>
-                <p>
-                    <b>The Suggested Equal Monthly Payment shown above may be greater than the required minimum monthly payment that will be on your billing statement when your use the @Model.MonthCount Month promotional financing offer.</b><br>
-                    The estimated payment:
+                <div class="min-payment-content">
+                    <p>
+                        The monthly payments shown are estimates only and may be
+                        different than what will be required and shown on your
+                        @Model.StoreName billing statement.
+                    </p>
+                    <p>
+                        These estimated payments:
+                    </p>
                     <ul>
-                        <li>Equals the promotional purchase amount divided by @Model.MonthCount excluding taxes and shipping charges) rounded to the next highest whole dollar.</li>
-                        <li>Would pay off the promotional purchase amount within @Model.MonthCount months, but only if there are no other balances on your account at any time during the @Model.MonthCount month promotional period and you make your payments on time.  Your total payments will equal the amount of the promotional purchase amount.</li>
+                        <li>Equal:</li>
+                        <li>
+                            <ul>
+                                <li>
+                                    For the First @monthCountMinus1 months: 3.5% of
+                                    the promotional purchase amount (although on 
+                                    your billing statement, the required minimum 
+                                    monthly payment will decline as the remaining 
+                                    balance declines each month).
+                                </li>
+                                <li>
+                                    For the @Model.MonthCount month: The remaining
+                                    promotional purchase balance if you make the
+                                    first @monthCountMinus1 monthly payments shown.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            Would pay off the promotional purchase amount within
+                            the promotional period, but only if:
+                        </li>
+                        <li>
+                            <ul>
+                                <li>
+                                    There are no other balances on your account at
+                                    any time during the promotional period. (If
+                                    you have any additional balances on your
+                                    account, the monthly payments applicable to
+                                    those balances will increase your monthly 
+                                    payment and may impact how payments are applied
+                                    to this promotional purchase.)
+                                </li>
+                                <li>
+                                    You make your monthly payments on time.
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
-                <p><b>If the promotional purchase amount is not paid in full within @Model.MonthCount months, interest will be charged to your account from the purchase date and your total payments will be greater than the amount of the promotional purchase amount.</b></p>
-                </p><br>
-
-                <p>
-                    <b>
-                        IMPORTANT:  The information about the Suggested Equal Monthly Payment shown assumes the following promotional financing offer is applied to the purchase:
-                    </b>
-                </p><br>
-
-                <p>
-                    <b>No Interest if Paid in Full Within @Model.MonthCount months.*</b><br>
-                    On purchases with your @Model.StoreName Credit Card.  Interest will be charged to your account from the purchase date if the promotional purchase is not paid in full within @Model.MonthCount months.  Minimum monthly payments required.
-                </p>
-                <em style="color: blue; text-decoration: underline; cursor: pointer; font-size: 10px" onclick="window.location.href = '/special-financing-information'">See Details</em>
+                    <p>
+                        Refer to your billing statement for the actual monthly
+                        payment required each month and the final remaining
+                        promotional purchase balance that must be paid in month
+                        @Model.MonthCount to avoid interest on this purchase.
+                    </p><br />
+                    <p><b>
+                        If the promotional purchase amount is not paid in full
+                        within the promotional period, interest will be charged to
+                        your account from the purchase date and your total payments
+                        will be greater than the amount of the promotional purchase
+                        aomount.
+                    </b></p><br />
+                    <p><b>
+                        IMPORTANT: These estimated monthly payments assume the
+                        following promotional financing offer is applied to the
+                        purchase:
+                    </b></p><br />
+                    <p><b>
+                        No Interest If Paid in Full Within @Model.MonthCount Months*
+                    </b></p>
+                    <p>
+                        On purchases of WHAT_IS_THIS_NUMBER with your
+                        @Model.StoreName credit card between @Model.OfferValidFrom -
+                        @Model.OfferValidTo. Interest will be charged to your
+                        account from the purchase date if the promotional purchase
+                        is not paid in full within @Model.MonthCount months.
+                        Minimum monthly payments required.
+                        <em style="color: blue; text-decoration: underline; cursor: pointer; font-size: 10px"
+                            onclick="window.location.href = '/special-financing-information'">
+                            See Details
+                        </em>
+                    </p>
+                </div>
             }
         </div>
     </div>
