@@ -15,5 +15,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Models
         public string ImageUrl { get; set; }
         public string OfferValidFrom { get; set; }
         public string OfferValidTo { get; set; }
+        public decimal FullPrice { get; internal set; }
+        public decimal FinalPayment { get; internal set; }
     }
 }
