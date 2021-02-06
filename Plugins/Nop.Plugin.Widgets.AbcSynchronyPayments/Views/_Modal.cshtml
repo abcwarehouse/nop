@@ -10,29 +10,49 @@
         <div class="synchrony-payments-modal-inner" style="color: #@Model.ModalHexColor; border-color: #@Model.ModalHexColor">
             @if (@Model.IsMonthlyPaymentStyle)
             {
-                <a href="@Model.ApplyUrl" target="_blank">
-                    <img src="@Model.ImageUrl" style="float: left">
-                </a>
-
-                <span class="month-count">@Model.MonthCount</span>
-                <div class="months-text">Months</div>
-                <div class="financing-text" style="font-size: 1.25rem">Financing**</div>
-
-                <h2 style="clear: both">No Interest for @Model.MonthCount Months**</h2>
-                <h3>With a @Model.StoreName credit card. @Model.MonthCount equal monthly payments required.</h3>
-                <p>
-                    **Offer applies only to single-receipt qualifying purchases.  No interest will be charged on promo purchase and equal monthly
-                    payments are required equal to inital promo purchase amount divided equally by the number of months in promo period until promo
-                    is paid in full.  The equal monthly payment will be rounded to the next highest whole dollar and may be higher than the minimum
-                    payment that would be required if the purchase was a non-promotional purchase.  Regular account terms apply to non-promotional
-                    purchases.  For new accounts: Purchase APR is 29.99%; Minimum Interest Charge is $2.  Existing cardholders should see their
-                    credit card agreement for their applicable terms.  The monthly payment shown equals the purchase price (excluding [taxes and
-                    delivery]) divided by the number of months in the promo period. It is rounded to the next highest whole dollar. It is only
-                    good for the financing shown. If you make these payments by the due date each month, you should pay off this purchase within
-                    the promo period, if it is the only balance you are paying off. If you have other balances on your account, this payment will
-                    be added to any other minimum monthly payments. Subject to credit approval.<br>
-                    We reserve the right to discontinue or alter the terms of this offer at any time.
-                </p>}
+                <p style="text-align: center; font-weight: bold; font-size: 1rem; padding: 1rem">
+                    Offer valid @Model.OfferValidFrom through @Model.OfferValidTo
+                </p>
+                <table class="min-payment-table">
+                    <tr class="min-payment-table-labels">
+                        <td>Promotional Purchase Amount</td>
+                        <td>Equal Monthly Payment Required</td>
+                        <td>Promotional Period</td>
+                    </tr>
+                    <tr class="min-payment-table-data">
+                        <td>@Model.FullPrice.ToString("C").Replace(".00", "")</td>
+                        <td>$@Model.MonthlyPayment</td>
+                        <td>@Model.MonthCount Month</td>
+                    </tr>
+                </table>
+                <div class="min-payment-content">
+                    <p>
+                        The estimated monthly payment shown above equals the
+                        purchase price (excluding taxes and delivery) divided by the
+                        number of months in the promo period. It is rounded to the
+                        next highest whole dollar. It is only good with the
+                        financing offer shown. If you make these payments by the due
+                        date each month, you should pay off this purchase within the
+                        promo period, if it is the only balance you are paying off.
+                        If you have other balances on your account, this payment
+                        will be added to any other minimum monthly payments.
+                    </p><br />
+                    <p style="font-weight: bold">
+                        IMPORTANT: The information about the Equal Monthly Payment
+                        shown assumes the following promotional financing offer is
+                        applied to the purchase:
+                    </p><br />
+                    <p>No Interest for @Model.MonthCount Months*</p><br />
+                    <p>
+                        On qualifying  purchases with your @Model.StoreName Credit
+                        Card. @Model.MonthCount equal monthly payments required. 
+                    </p>
+                    <em style="color: blue; text-decoration: underline; cursor: pointer; font-size: 10px"
+                        onclick="window.location.href = '/special-financing-information'">
+                        *See Details
+                    </em>
+                </div>
+            }
             else
             {
                 <table class="min-payment-table">
