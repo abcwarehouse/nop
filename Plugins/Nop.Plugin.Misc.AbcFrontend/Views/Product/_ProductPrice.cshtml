@@ -157,7 +157,7 @@
             }
         </div>
     }
-    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox())
+    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox() && !product.DisableBuyButton)
     {
         <div class="product-price">
             @* MAP Discount Question Mark Tooltip *@
@@ -208,7 +208,7 @@
     {
         <div class="prices-bottom-message new-model-message">@newModelMessage</div>
     }
-    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && priceBucketCodeImageUrl.Contains("Map"))
+    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && priceBucketCodeImageUrl.Contains("Map") && !product.DisableBuyButton)
     {
         <div class="map-text">To see our current price, add this item to your cart.</div>
     }

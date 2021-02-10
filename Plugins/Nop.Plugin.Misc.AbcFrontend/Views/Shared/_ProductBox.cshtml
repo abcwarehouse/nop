@@ -368,15 +368,23 @@
                         <span class="open-box">Open box from <span class="open-box-price">$@openBoxPrice</span> Available at select locations.</span>
                     }
                 </div>
-                        }
-                        else
-                        {
-                            <div class="prices">
-                                <span class="price old-price">&nbsp</span>
-                                <span class="price you-save">&nbsp</span>
-                                <span class="price actual-price">Add to cart to see price</span>
-                            </div>
-                        }
+                }
+            else if (!Model.DisableBuyButton)
+            {
+                <div class="prices">
+                    <span class="price old-price">&nbsp</span>
+                    <span class="price you-save">&nbsp</span>
+                    <span class="price actual-price">Add to cart to see price</span>
+                </div>
+            }
+            else
+            {
+                <div class="prices">
+                    <span class="price old-price">&nbsp</span>
+                    <span class="price you-save">&nbsp</span>
+                    <span class="price actual-price">&nbsp</span>
+                </div>
+            }
             @if (!usesCartPricing)
             {
                 @Model.ProductPrice.BasePricePAngV
