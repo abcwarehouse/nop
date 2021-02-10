@@ -105,7 +105,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
             };
 
             model.FullPrice = product.Price;
-            model.FinalPayment = model.FullPrice - 
+            model.FinalPayment = model.FullPrice -
                 (model.MonthlyPayment * (model.MonthCount - 1));
 
             if (model.MonthlyPayment == 0)
