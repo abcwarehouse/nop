@@ -21,6 +21,8 @@ function updateSizeUrl(selectedSize) {
     case 'California King':
       url.searchParams.set(key, 'california');
       break;
+    default:
+      throw new Error('Unable to match mattress size, cannot update URL.');
   }
   
   window.history.replaceState({}, '', url);
@@ -62,21 +64,27 @@ function updateBaseUrl(selectedBase) {
   window.history.replaceState({}, '', url);
 }
 
+function isMattressField(textContent) {
+  return textContent.includes("Twin") ||
+      textContent.includes("TwinXL") ||
+      textContent.includes("Full") ||
+      textContent.includes("Queen") ||
+      textContent.includes("King") ||
+      textContent.includes("California King");
+}
+
 var aTags = document.getElementsByTagName("dd");
+var isMattressMatched = false;
 
 // Changes url to add size when selected
 for (var i = 0; i < aTags.length; i++) {
   // map for mattress size
-  if (aTags[i].textContent.includes("Twin") ||
-      aTags[i].textContent.includes("TwinXL") ||
-      aTags[i].textContent.includes("Full") ||
-      aTags[i].textContent.includes("Queen") ||
-      aTags[i].textContent.includes("King") ||
-      aTags[i].textContent.includes("California King")) {
+  if (isMattressField(aTags[i].textContent) && !isMattressMatched) {
     var sizeSelect = aTags[i].firstElementChild;
     sizeSelect.addEventListener("change", function() {
       updateSizeUrl(sizeSelect.selectedOptions[0].label);
     });
+    isMattressMatched = true;
     continue;
   }
 
