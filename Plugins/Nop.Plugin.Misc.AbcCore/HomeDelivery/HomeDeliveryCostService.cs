@@ -76,7 +76,7 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
 
             return mattressItemCost >= 697.00M ?
                 0 :
-                59.95M;
+                99M;
         }
     }
 }
