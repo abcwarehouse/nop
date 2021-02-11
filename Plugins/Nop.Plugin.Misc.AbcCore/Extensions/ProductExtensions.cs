@@ -13,8 +13,6 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
     {
         public const string IsAddToCartKey = "IsAddToCart";
         public const string IsAddToCartWithUserInfoKey = "IsAddToCartWithUserInfo";
-        private const string MiniDescriptionKey = "MiniDescription";
-        private const string CustomAddToCartTextKey = "CustomAddToCartText";
 
         public static bool IsCallOnly(this Product product)
         {
@@ -83,30 +81,6 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             return genericAttributeService.GetAttribute<DateTime?>(product, "SpecialPriceEndDate");
-        }
-
-        public static string GetMiniDescription(this Product product)
-        {
-            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            return genericAttributeService.GetAttribute<string>(product, MiniDescriptionKey);
-        }
-
-        public static void SetMiniDescription(this Product product, string miniDescription)
-        {
-            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            genericAttributeService.SaveAttribute<string>(product, MiniDescriptionKey, miniDescription);
-        }
-
-        public static string GetCustomAddToCartText(this Product product)
-        {
-            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            return genericAttributeService.GetAttribute<string>(product, CustomAddToCartTextKey);
-        }
-
-        public static void SetCustomAddToCartText(this Product product, string text)
-        {
-            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            genericAttributeService.SaveAttribute<string>(product, CustomAddToCartTextKey, text);
         }
     }
 }

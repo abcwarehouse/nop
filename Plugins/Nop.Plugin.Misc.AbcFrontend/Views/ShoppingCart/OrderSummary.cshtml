@@ -15,6 +15,7 @@
 @using Nop.Plugin.Misc.AbcCore.Extensions
 @using Nop.Web.Extensions
 @using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Services.Common
 
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
@@ -25,6 +26,7 @@
 @inject IRepository<ProductAbcDescription> productAbcDescriptionRepository
 @inject IRepository<Product> productRepository
 @inject IProductService productService
+@inject IGenericAttributeService genericAttributeService
 
 @{
     bool isHawthorne = frontEndService.StoreIsHawthorne(storeContext.CurrentStore);
@@ -285,10 +287,11 @@
                             var miniDesc = "";
                             var pad = productAbcDescriptionRepository.Table.Where(p => p.Product_Id == item.ProductId).FirstOrDefault();
                             var product = productService.GetProductById(item.ProductId);
-                            var productMiniDescription = product.GetMiniDescription();
-                            if (!string.IsNullOrWhiteSpace(productMiniDescription))
+                            var plpDescription = genericAttributeService.GetAttribute<string>(
+                                product, "PLPDescription");
+                            if (!string.IsNullOrWhiteSpace(plpDescription))
                             {
-                                miniDesc = productMiniDescription;
+                                miniDesc = plpDescription;
                             }
                             else if (pad != null)
                             {
