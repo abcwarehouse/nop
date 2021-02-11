@@ -72,6 +72,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWorkContext _workContext;
         private readonly VendorSettings _vendorSettings;
+        // custom
+        private readonly IGenericAttributeService _genericAttributeService;
 
         #endregion
 
@@ -108,7 +110,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             IStoreContext storeContext,
             IUrlRecordService urlRecordService,
             IWorkContext workContext,
-            VendorSettings vendorSettings)
+            VendorSettings vendorSettings,
+            IGenericAttributeService genericAttributeService)
         {
             _aclService = aclService;
             _backInStockSubscriptionService = backInStockSubscriptionService;
@@ -142,6 +145,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _urlRecordService = urlRecordService;
             _workContext = workContext;
             _vendorSettings = vendorSettings;
+            _genericAttributeService = genericAttributeService;
         }
 
         #endregion
@@ -1045,6 +1049,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                     _productService.AddStockQuantityHistoryEntry(product, product.StockQuantity - previousStockQuantity, product.StockQuantity,
                         product.WarehouseId, _localizationService.GetResource("Admin.StockQuantityHistory.Messages.Edit"));
                 }
+
+                // custom: add PLP description
+                _genericAttributeService.SaveAttribute<string>(
+                    product, "PLPDescription", model.PLPDescription);
 
                 //activity log
                 _customerActivityService.InsertActivity("EditProduct",

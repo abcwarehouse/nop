@@ -76,6 +76,8 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly MeasureSettings _measureSettings;
         private readonly TaxSettings _taxSettings;
         private readonly VendorSettings _vendorSettings;
+        // custom
+        private readonly IGenericAttributeService _genericAttributeService;
 
         #endregion
 
@@ -115,7 +117,8 @@ namespace Nop.Web.Areas.Admin.Factories
             IWorkContext workContext,
             MeasureSettings measureSettings,
             TaxSettings taxSettings,
-            VendorSettings vendorSettings)
+            VendorSettings vendorSettings,
+            IGenericAttributeService genericAttributeService)
         {
             _catalogSettings = catalogSettings;
             _currencySettings = currencySettings;
@@ -152,6 +155,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _workContext = workContext;
             _taxSettings = taxSettings;
             _vendorSettings = vendorSettings;
+            _genericAttributeService = genericAttributeService;
         }
 
         #endregion
@@ -924,6 +928,9 @@ namespace Nop.Web.Areas.Admin.Factories
             productTagsSb.Append("]");
 
             model.InitialProductTags = productTagsSb.ToString();
+
+            // custom
+            model.PLPDescription = _genericAttributeService.GetAttribute<string>(product, "PLPDescription");
 
             return model;
         }

@@ -39,15 +39,8 @@ namespace Nop.Plugin.Misc.AbcCore
 
         public override void Install()
         {
-            _localizationService.AddPluginLocaleResource(
-            new Dictionary<string, string>
-            {
-                [CoreLocales.BackendDbConnectionString] = "Backend DB Connection String",
-                [CoreLocales.BackendDbConnectionStringHint] = "Connection string for connecting to ERP database.",
-            });
-
             InstallStoredProcs();
-
+            UpdateLocales();
         }
 
         public override void Uninstall()
@@ -60,6 +53,7 @@ namespace Nop.Plugin.Misc.AbcCore
         public override void Update(string oldVersion, string currentVersion)
         {
             InstallStoredProcs();
+            UpdateLocales();
         }
 
         public void ManageSiteMap(SiteMapNode rootNode)
@@ -108,5 +102,17 @@ namespace Nop.Plugin.Misc.AbcCore
             _nopDataProvider.ExecuteNonQuery(updateAbcPromosStoredProcScript);
         }
 
+        private void UpdateLocales()
+        {
+            _localizationService.AddPluginLocaleResource(
+                new Dictionary<string, string>
+                {
+                    [CoreLocales.BackendDbConnectionString] = "Backend DB Connection String",
+                    [CoreLocales.BackendDbConnectionStringHint] = "Connection string for connecting to ERP database.",
+                    ["Admin.Catalog.Products.PLPDescription"] = "PLP description",
+                    ["Admin.Catalog.Products.PLPDescriptionHint"] = "Product listing page description."
+                }
+            );
+        }
     }
 }

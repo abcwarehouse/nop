@@ -469,6 +469,10 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         public ProductAttributeCombinationSearchModel ProductAttributeCombinationSearchModel { get; set; }
 
         #endregion
+
+        // custom: added PLP Description
+        [NopResourceDisplayName("Admin.Catalog.Products.PLPDescription")]
+        public string PLPDescription { get; set; }
     }
 
     public partial class ProductLocalizedModel : ILocalizedLocaleModel
