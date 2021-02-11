@@ -23,7 +23,7 @@ function updateSizeUrl(selectedSize) {
       break;
   }
   
-  window.history.pushState({}, '', url);
+  window.history.replaceState({}, '', url);
 
   ResetOtherDropdowns();
 }
@@ -59,7 +59,7 @@ function updateBaseUrl(selectedBase) {
     url.searchParams.set(key, 'regular');
   }
   
-  window.history.pushState({}, '', url);
+  window.history.replaceState({}, '', url);
 }
 
 var aTags = document.getElementsByTagName("dd");
