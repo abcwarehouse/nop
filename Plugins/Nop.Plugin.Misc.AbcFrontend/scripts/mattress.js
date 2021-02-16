@@ -10,9 +10,7 @@ function changeMattressSize()
 
     // Find the matching option based on size above
     // Special case for TwinXL
-    var textToFind = sizeValue.toLowerCase() == "twinxl" ?
-        "TwinXL" :
-        `${sizeValue.toLowerCase().charAt(0).toUpperCase()}${sizeValue.toLowerCase().substring(1)}`;
+    var textToFind = getConvertedSize(sizeValue);
     var mattressSizeSelect = document.getElementsByClassName("mattress-size");
     if (mattressSizeSelect.length != 1) { return; }
 
@@ -24,6 +22,17 @@ function changeMattressSize()
         }
     }
 }
+
+function getConvertedSize(sizeValue) {
+  switch (sizeValue) {
+      case 'twinxl':
+          return "TwinXL";
+      case 'california':
+              return "California King";
+      default:
+          return `${sizeValue.toLowerCase().charAt(0).toUpperCase()}${sizeValue.toLowerCase().substring(1)}`;
+  }
+} 
 
 function changeMattressBase()
 {
