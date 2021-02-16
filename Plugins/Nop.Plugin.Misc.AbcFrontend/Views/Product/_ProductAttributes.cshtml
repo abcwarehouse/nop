@@ -59,7 +59,11 @@
                     {
                         case AttributeControlType.DropdownList:
                             {
-                                <select name="@(controlId)" id="@(controlId)" @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onchange=\"showHideDropdownQuantity('{controlId}')\"") : null)>
+                                @* custom: add mattress classes *@
+                                var mattressClass = "";
+                                if (attribute.Name == "Mattress Size") { mattressClass = "mattress-size"; }
+                                if (attribute.Name.Contains("Base")) { mattressClass = "mattress-base"; }
+                                <select class="@(mattressClass)" name="@(controlId)" id="@(controlId)" @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onchange=\"showHideDropdownQuantity('{controlId}')\"") : null)>
                                     @if (!attribute.IsRequired)
                                     {
                                         <option value="0">---</option>
