@@ -11,6 +11,7 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcFrontend.Extensions;
 using Nop.Plugin.Misc.AbcCore.Infrastructure;
 using Nop.Services.Common;
+using Nop.Web.Models.Catalog;
 
 namespace Nop.Plugin.Widgets.PowerReviews.Components
 {
