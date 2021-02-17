@@ -22,6 +22,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IAbcMattressPackageService _abcMattressPackageService;
         private readonly IAbcMattressProtectorService _abcMattressProtectorService;
         private readonly ICategoryService _categoryService;
+        private readonly IGenericAttributeService _genericAttributeService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
@@ -36,6 +37,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IAbcMattressPackageService abcMattressPackageService,
             IAbcMattressProtectorService abcMattressProtectorService,
             ICategoryService categoryService,
+            IGenericAttributeService genericAttributeService,
             IManufacturerService manufacturerService,
             IProductService productService,
             IProductAttributeService productAttributeService,
@@ -50,6 +52,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _abcMattressPackageService = abcMattressPackageService;
             _abcMattressProtectorService = abcMattressProtectorService;
             _categoryService = categoryService;
+            _genericAttributeService = genericAttributeService;
             _manufacturerService = manufacturerService;
             _productService = productService;
             _productAttributeService = productAttributeService;
@@ -97,6 +100,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 abcMattressModel.ProductId = product.Id;
                 _abcMattressService.UpdateAbcMattressModel(abcMattressModel);
+            }
+            if (!string.IsNullOrWhiteSpace(abcMattressModel.Sku))
+            {
+                _genericAttributeService.SaveAttribute<string>(
+                    product,
+                    "MattressSku",
+                    abcMattressModel.Sku
+                );
             }
 
             return product;
@@ -344,6 +355,19 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 });
             }
 
+            // brand
+            if (model.BrandCategoryId.HasValue)
+            {
+                var brandCategory = _categoryService.GetCategoryById(model.BrandCategoryId.Value);
+                if (brandCategory != null)
+                {
+                    newProductCategories.Add(new ProductCategory()
+                    {
+                        ProductId = product.Id,
+                        CategoryId = brandCategory.Id
+                    });
+                }
+            }
 
             var toBeDeleted = existingProductCategories
                 .Where(e => !newProductCategories.Any(n => n.ProductId == e.ProductId &&

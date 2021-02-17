@@ -10,5 +10,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Domain
         public string Comfort { get; set; }
         public int? ProductId { get; set; }
         public int? BrandCategoryId { get; set; }
+        public string Sku { get; set; }
     }
 }

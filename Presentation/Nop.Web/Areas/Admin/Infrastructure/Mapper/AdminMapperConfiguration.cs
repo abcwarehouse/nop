@@ -442,7 +442,9 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.StockQuantityHistorySearchModel, options => options.Ignore())
                 .ForMember(model => model.StockQuantityStr, options => options.Ignore())
                 .ForMember(model => model.TierPriceSearchModel, options => options.Ignore())
-                .ForMember(model => model.InitialProductTags, options => options.Ignore());
+                .ForMember(model => model.InitialProductTags, options => options.Ignore())
+                // custom
+                .ForMember(model => model.PLPDescription, options => options.Ignore());
             CreateMap<ProductModel, Product>()
                 .ForMember(entity => entity.ApprovedRatingSum, options => options.Ignore())
                 .ForMember(entity => entity.ApprovedTotalReviews, options => options.Ignore())

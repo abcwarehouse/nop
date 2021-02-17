@@ -1,3 +1,7 @@
+## 0.1.11
+
+* Adds Sku column to AbcMattressModel for PowerReviews
+
 ## 0.1.10
 
 * Allowing for added Product Attribute on update.

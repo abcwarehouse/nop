@@ -2,8 +2,6 @@ using Nop.Services.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Web.Framework.Components;
 using Nop.Web.Framework.Infrastructure;
-using Nop.Plugin.Misc.AbcFrontend.Infrastructure;
-using Nop.Web.Models.Catalog;
 using Nop.Plugin.Misc.AbcCore.Services;
 using System;
 using Nop.Plugin.Widgets.PowerReviews.Models;
@@ -12,6 +10,7 @@ using Nop.Services.Catalog;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcFrontend.Extensions;
 using Nop.Plugin.Misc.AbcCore.Infrastructure;
+using Nop.Services.Common;
 
 namespace Nop.Plugin.Widgets.PowerReviews.Components
 {
@@ -20,16 +19,19 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
         private readonly ILogger _logger;
 
         private readonly FrontEndService _frontEndService;
+        private readonly IGenericAttributeService _genericAttributeService;
         private readonly IProductService _productService;
 
         public WidgetsPowerReviewsViewComponent(
             ILogger logger,
             FrontEndService frontEndService,
+            IGenericAttributeService genericAttributeService,
             IProductService productService
         )
         {
             _logger = logger;
             _frontEndService = frontEndService;
+            _genericAttributeService = genericAttributeService;
             _productService = productService;
         }
 
@@ -68,7 +70,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var model = new ListingModel()
             {
                 ProductId = productOverviewModel.Id,
-                ProductSku = GetPowerReviewsSku(productOverviewModel.Sku)
+                ProductSku = GetPowerReviewsSku(productOverviewModel.Sku, productOverviewModel.Id)
             };
 
             return View(
@@ -97,7 +99,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var model = new DetailModel()
             {
                 ManufacturerName = manufacturerName,
-                ProductSku = GetPowerReviewsSku(productDetailsModel.Sku),
+                ProductSku = GetPowerReviewsSku(productDetailsModel.Sku, productDetailsModel.Id),
                 PriceValidUntil = priceEndDate,
                 ProductName = productDetailsModel.Name,
                 MetaDescription = productDetailsModel.MetaDescription,
@@ -114,7 +116,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
 
         // PowerReviews requires a SKU with only letters, numbers, and -
         // this function also considers the ABC package product
-        private string GetPowerReviewsSku(string sku)
+        private string GetPowerReviewsSku(string sku, int productId)
         {
             if (string.IsNullOrWhiteSpace(sku)) return "";
 
@@ -122,6 +124,14 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var powerReviewsPageId = packageProduct != null && packageProduct.Product_Id != 0 ?
                                         packageProduct.Sku :
                                         sku;
+
+            var mattressSku = _genericAttributeService.GetAttributesForEntity(productId, "Product")
+                                                      .FirstOrDefault(a => a.Key == "MattressSku");
+            if (!string.IsNullOrWhiteSpace(mattressSku?.Value))
+            {
+                powerReviewsPageId = mattressSku.Value;
+            }
+
             char[] conversionString = powerReviewsPageId.ToCharArray();
             conversionString = Array.FindAll<char>(conversionString, (c => (char.IsLetterOrDigit(c)
                                     || c == '-')));

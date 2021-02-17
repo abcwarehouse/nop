@@ -323,11 +323,12 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var cardMonth = _encryptionService.DecryptText(order.CardExpirationMonth, _securitySettings.EncryptionKey);
             var cardYear = _encryptionService.DecryptText(order.CardExpirationYear, _securitySettings.EncryptionKey);
             var cardCvv2 = _encryptionService.DecryptText(order.CardCvv2, _securitySettings.EncryptionKey);
-
-            var ccRefNo = _paymentService.DeserializeCustomValues(order)
-                                         .Where(cv => cv.Key == "CC_REFNO")
-                                         .Select(cv => cv.Value.ToString())
-                                         .FirstOrDefault();
+            var customValues = _paymentService.DeserializeCustomValues(order);
+            var ccRefNo = customValues != null ?
+                customValues.Where(cv => cv.Key == "CC_REFNO")
+                            .Select(cv => cv.Value?.ToString())
+                            .FirstOrDefault() :
+                null;
 
             var pickupItems = splitItems.pickupItems;
             if (pickupItems.Any())
