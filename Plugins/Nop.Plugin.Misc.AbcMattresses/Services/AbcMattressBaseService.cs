@@ -35,7 +35,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             var packages = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(entries.Select(e => e.Id));
             var baseIds = packages.Select(p => p.AbcMattressBaseId);
 
-            return _abcMattressBaseRepository.Table.Where(amb => baseIds.Contains(amb.Id)).ToList();
+            return _abcMattressBaseRepository.Table
+                                             .Where(amb => baseIds.Contains(amb.Id) &&
+                                                    !(amb.Name == null || amb.Name.Trim() == string.Empty))
+                                             .ToList();
         }
 
         public IList<AbcMattressBase> GetAbcMattressBasesByEntryId(int entryId)
@@ -43,7 +46,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             var packages = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(new int[] { entryId });
             var baseIds = packages.Select(p => p.AbcMattressBaseId);
 
-            return _abcMattressBaseRepository.Table.Where(amb => baseIds.Contains(amb.Id)).ToList();
+            return _abcMattressBaseRepository.Table
+                                             .Where(amb => baseIds.Contains(amb.Id) &&
+                                                    !(amb.Name == null || amb.Name.Trim() == string.Empty))
+                                             .ToList();
         }
     }
 }

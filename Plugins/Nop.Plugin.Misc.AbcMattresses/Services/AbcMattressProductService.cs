@@ -185,18 +185,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
             if (pam == null && frames.Any())
             {
-                var sizePa = _productAttributeService.GetAllProductAttributes()
-                                                            .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
-                                                            .FirstOrDefault();
-                var sizePam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                                                          .Where(pam => pam.ProductAttributeId == sizePa.Id)
-                                                          .FirstOrDefault();
-                var sizePav = _productAttributeService.GetProductAttributeValues(sizePam.Id)
-                                                        .Where(pav =>
-                                                            pav.ProductAttributeMappingId == sizePam.Id &&
-                                                            pav.Name == abcMattressEntry.Size
-                                                        )
-                                                        .FirstOrDefault();
+                var sizeAttrs = GetSizeAttributes(product, abcMattressEntry);
+
                 pam = new ProductAttributeMapping()
                 {
                     ProductId = product.Id,
@@ -205,13 +195,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     AttributeControlType = AttributeControlType.DropdownList,
                     DisplayOrder = 30,
                     TextPrompt = "Frame",
-                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
+                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizeAttrs.pam.Id}\"><ProductAttributeValue><Value>{sizeAttrs.pav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
                 };
                 _productAttributeService.InsertProductAttributeMapping(pam);
             }
             else if (pam != null && !frames.Any())
             {
                 _productAttributeService.DeleteProductAttributeMapping(pam);
+            }
+            else if (pam != null)
+            {
+                UpdatePam(product, pam, abcMattressEntry);
             }
 
             if (!frames.Any()) { return; }
@@ -222,15 +216,48 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                                                         );
             var newFrames = frames.Select(np => np.ToProductAttributeValue(
                 pam.Id
-            )).ToList();
+            )).OrderBy(f => f.PriceAdjustment).ToList();
+
+            ApplyDisplayOrder(newFrames);
 
             var toBeDeleted = existingFrames
-                .Where(e => !newFrames.Any(n => n.Name == e.Name));
+                .Where(e => !newFrames.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder &&
+                                                       n.PriceAdjustment == e.PriceAdjustment));
             var toBeInserted = newFrames
-                .Where(n => !existingFrames.Any(e => n.Name == e.Name));
+                .Where(n => !existingFrames.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder &&
+                                                       n.PriceAdjustment == e.PriceAdjustment));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
+        }
+
+        private void UpdatePam(Product product, ProductAttributeMapping pam, AbcMattressEntry abcMattressEntry)
+        {
+            var sizeAttrs = GetSizeAttributes(product, abcMattressEntry);
+
+            pam.ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizeAttrs.pam.Id}\"><ProductAttributeValue><Value>{sizeAttrs.pav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>";
+
+            _productAttributeService.UpdateProductAttributeMapping(pam);
+        }
+
+        private (ProductAttributeMapping pam, ProductAttributeValue pav) GetSizeAttributes(
+            Product product,
+            AbcMattressEntry abcMattressEntry
+        ) {
+            var sizePa = _productAttributeService.GetAllProductAttributes()
+                                                 .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
+                                                 .FirstOrDefault();
+            var sizePam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                      .Where(pam => pam.ProductAttributeId == sizePa.Id)
+                                                      .FirstOrDefault();
+            var sizePav = _productAttributeService.GetProductAttributeValues(sizePam.Id)
+                                                .Where(pav =>
+                                                pav.ProductAttributeMappingId == sizePam.Id &&
+                                                pav.Name == abcMattressEntry.Size
+                                                )
+                                                .FirstOrDefault();
+
+            return (sizePam, sizePav);
         }
 
         private void MergeMattressProtectors(AbcMattressModel model, ProductAttribute pa, Product product)
@@ -248,18 +275,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
             if (pam == null && protectors.Any())
             {
-                var sizePa = _productAttributeService.GetAllProductAttributes()
-                                                            .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
-                                                            .FirstOrDefault();
-                var sizePam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                                                          .Where(pam => pam.ProductAttributeId == sizePa.Id)
-                                                          .FirstOrDefault();
-                var sizePav = _productAttributeService.GetProductAttributeValues(sizePam.Id)
-                                                        .Where(pav =>
-                                                            pav.ProductAttributeMappingId == sizePam.Id &&
-                                                            pav.Name == abcMattressEntry.Size
-                                                        )
-                                                        .FirstOrDefault();
+                var sizeAttrs = GetSizeAttributes(product, abcMattressEntry);
                 pam = new ProductAttributeMapping()
                 {
                     ProductId = product.Id,
@@ -268,13 +284,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     AttributeControlType = AttributeControlType.DropdownList,
                     DisplayOrder = displayOrder,
                     TextPrompt = "Mattress Protector",
-                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
+                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizeAttrs.pam.Id}\"><ProductAttributeValue><Value>{sizeAttrs.pav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
                 };
                 _productAttributeService.InsertProductAttributeMapping(pam);
             }
             else if (pam != null && !protectors.Any())
             {
                 _productAttributeService.DeleteProductAttributeMapping(pam);
+            }
+            else if (pam != null)
+            {
+                UpdatePam(product, pam, abcMattressEntry);
             }
 
             if (!protectors.Any()) { return; }
@@ -285,12 +305,18 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                                                         );
             var newMattressProtectors = protectors.Select(np => np.ToProductAttributeValue(
                 pam.Id
-            )).ToList();
+            )).OrderBy(mp => mp.PriceAdjustment).ToList();
+
+            ApplyDisplayOrder(newMattressProtectors);
 
             var toBeDeleted = existingMattressProtectors
-                .Where(e => !newMattressProtectors.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
+                .Where(e => !newMattressProtectors.Any(n => n.Name == e.Name &&
+                                                       n.DisplayOrder == e.DisplayOrder &&
+                                                       n.PriceAdjustment == e.PriceAdjustment));
             var toBeInserted = newMattressProtectors
-                .Where(n => !existingMattressProtectors.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
+                .Where(n => !existingMattressProtectors.Any(e => n.Name == e.Name &&
+                                                            n.DisplayOrder == e.DisplayOrder &&
+                                                            n.PriceAdjustment == e.PriceAdjustment));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
@@ -475,7 +501,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 _productAttributeService.DeleteProductAttributeMapping(pam);
             }
-            else {
+            else if (pam != null)
+            {
                 var sizePa = _productAttributeService.GetAllProductAttributes()
                                                             .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
                                                             .FirstOrDefault();
@@ -506,12 +533,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 abcMattressEntry.Price
             )).OrderBy(nb => nb.PriceAdjustment).ToList();
 
-            // apply sorting display order
-            var displayOrderCounter = 0;
-            foreach (var newBase in newBases)
-            {
-                newBase.DisplayOrder = displayOrderCounter;
-            }
+            ApplyDisplayOrder(newBases);
 
             var toBeDeleted = existingBases
                 .Where(e => !newBases.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
@@ -597,6 +619,16 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             }
 
             return loweredSize;
+        }
+
+        private static void ApplyDisplayOrder(List<ProductAttributeValue> values)
+        {
+            var displayOrderCounter = 0;
+            foreach (var value in values)
+            {
+                value.DisplayOrder = displayOrderCounter;
+                displayOrderCounter++;
+            }
         }
     }
 }
