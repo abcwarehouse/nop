@@ -237,6 +237,4 @@ Presentation/Nop.Web/wwwroot/ContentAdmin/*
 !Presentation/Nop.Web/Plugins/Shipping.Fedex/
 !Presentation/Nop.Web/Plugins/Widgets.GAEnhanced/
 
-
-Tests/Nop.Plugin.Misc.AbcMattresses.Tests/coverage.json
-Tests/Nop.Plugin.Misc.AbcExportOrder.Tests/coverage.json
+**/coverage.info

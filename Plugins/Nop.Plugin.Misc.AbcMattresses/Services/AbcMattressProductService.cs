@@ -475,6 +475,24 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 _productAttributeService.DeleteProductAttributeMapping(pam);
             }
+            else {
+                var sizePa = _productAttributeService.GetAllProductAttributes()
+                                                            .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
+                                                            .FirstOrDefault();
+                var sizePam = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                                                          .Where(pam => pam.ProductAttributeId == sizePa.Id)
+                                                          .FirstOrDefault();
+                var sizePav = _productAttributeService.GetProductAttributeValues(sizePam.Id)
+                                                        .Where(pav =>
+                                                            pav.ProductAttributeMappingId == sizePam.Id &&
+                                                            pav.Name == abcMattressEntry.Size
+                                                        )
+                                                        .FirstOrDefault();
+
+                pam.ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>";
+
+                _productAttributeService.UpdateProductAttributeMapping(pam);
+            }
 
             if (!bases.Any()) { return; }
 
@@ -486,7 +504,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 pam.Id,
                 _abcMattressPackageService.GetAbcMattressPackageByEntryIdAndBaseId(abcMattressEntry.Id, nb.Id).Price,
                 abcMattressEntry.Price
-            )).ToList();
+            )).OrderBy(nb => nb.PriceAdjustment).ToList();
+
+            // apply sorting display order
+            var displayOrderCounter = 0;
+            foreach (var newBase in newBases)
+            {
+                newBase.DisplayOrder = displayOrderCounter;
+            }
 
             var toBeDeleted = existingBases
                 .Where(e => !newBases.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
@@ -525,10 +550,12 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
             var toBeDeleted = existingSizes
                 .Where(e => !newSizes.Any(n => n.Name == e.Name &&
-                                               n.PriceAdjustment == e.PriceAdjustment));
+                                               n.PriceAdjustment == e.PriceAdjustment &&
+                                               n.DisplayOrder == e.DisplayOrder));
             var toBeInserted = newSizes
                 .Where(n => !existingSizes.Any(e => n.Name == e.Name &&
-                                                    n.PriceAdjustment == e.PriceAdjustment));
+                                                    n.PriceAdjustment == e.PriceAdjustment &&
+                                                    n.DisplayOrder == e.DisplayOrder));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
