@@ -243,7 +243,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private (ProductAttributeMapping pam, ProductAttributeValue pav) GetSizeAttributes(
             Product product,
             AbcMattressEntry abcMattressEntry
-        ) {
+        )
+        {
             var sizePa = _productAttributeService.GetAllProductAttributes()
                                                  .Where(pa => pa.Name == AbcMattressesConsts.MattressSizeName)
                                                  .FirstOrDefault();
