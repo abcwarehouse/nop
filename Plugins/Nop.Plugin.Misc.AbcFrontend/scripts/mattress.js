@@ -1,3 +1,10 @@
+const TwinMattressValue = 'twin-mattress';
+const TwinXLMattressValue = 'twinxl-mattress';
+const FullMattressValue = 'full-mattress';
+const QueenMattressValue = 'queen-mattress';
+const KingMattressValue = 'king-mattress';
+const CaliforniaKingMattressValue = 'california-king-mattress'
+
 // ------
 // onLoad
 // ------
@@ -25,12 +32,13 @@ function changeMattressSize()
 
 function getConvertedSize(sizeValue) {
   switch (sizeValue) {
-      case 'twinxl':
+      case TwinXLMattressValue:
           return "TwinXL";
-      case 'california':
+      case CaliforniaKingMattressValue:
               return "California King";
       default:
-          return `${sizeValue.toLowerCase().charAt(0).toUpperCase()}${sizeValue.toLowerCase().substring(1)}`;
+          return `${sizeValue.toLowerCase().charAt(0).toUpperCase()}${sizeValue.toLowerCase().substring(1)}`
+                 .replace('-mattress', '');
   }
 } 
 
@@ -60,7 +68,14 @@ function changeMattressBase()
 
 function isValidSize(size)
 {
-    const validSizes = ["twin", "twinxl", "full", "queen", "king", "california"];
+    const validSizes = [
+      TwinMattressValue,
+      TwinXLMattressValue,
+      FullMattressValue,
+      QueenMattressValue,
+      KingMattressValue,
+      CaliforniaKingMattressValue
+    ];
     return validSizes.includes(size.toLowerCase());
 }
 
@@ -93,22 +108,22 @@ function updateSizeUrl(selectedSize) {
 
   switch (selectedSize) {
     case 'Twin':
-      url.searchParams.set(key, 'twin');
+      url.searchParams.set(key, TwinMattressValue);
       break;
     case 'TwinXL':
-      url.searchParams.set(key, 'twinxl');
+      url.searchParams.set(key, TwinXLMattressValue);
       break;
     case 'Full':
-      url.searchParams.set(key, 'full');
+      url.searchParams.set(key, FullMattressValue);
       break;
     case 'Queen':
-      url.searchParams.set(key, 'queen');
+      url.searchParams.set(key, QueenMattressValue);
       break;
     case 'King':
-      url.searchParams.set(key, 'king');
+      url.searchParams.set(key, KingMattressValue);
       break;
     case 'California King':
-      url.searchParams.set(key, 'california');
+      url.searchParams.set(key, CaliforniaKingMattressValue);
       break;
     default:
       throw new Error('Unable to match mattress size, cannot update URL.');

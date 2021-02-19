@@ -34,7 +34,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
             var value = _productAttributeService.GetProductAttributeValues(
                 mattressSizePam.Id
-            ).Where(pav => pav.Name == GetMattressSizeFromSlug(categorySlug))
+            ).Where(pav => pav.Name == GetMattressSizeFromUrl(categorySlug))
              .FirstOrDefault();
             if (value == null) // no matching sizes, check for default (queen)
             {
@@ -49,30 +49,25 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         }
 
         // default to queen if nothing matches
-        private string GetMattressSizeFromSlug(string slug)
+        private string GetMattressSizeFromUrl(string url)
         {
-            if (slug.Contains("california-king"))
+            var slug = url.Substring(url.LastIndexOf('/') + 1);
+            switch (slug)
             {
-                return AbcMattressesConsts.CaliforniaKing;
-            }
-            if (slug.Contains("king"))
-            {
-                return AbcMattressesConsts.King;
-            }
-            if (slug.Contains("full"))
-            {
-                return AbcMattressesConsts.Full;
-            }
-            if (slug.Contains("twin-extra-long"))
-            {
-                return AbcMattressesConsts.TwinXL;
-            }
-            if (slug.Contains("twin"))
-            {
-                return AbcMattressesConsts.Twin;
-            }
+                case "california-king-mattress":
+                    return AbcMattressesConsts.CaliforniaKing;
+                case "king-mattress":
+                    return AbcMattressesConsts.King;
+                case "full-mattress":
+                    return AbcMattressesConsts.Full;
+                case "twin-extra-long-mattress":
+                    return AbcMattressesConsts.TwinXL;
+                case "twin-mattress":
+                    return AbcMattressesConsts.Twin;
+                default:
+                    return AbcMattressesConsts.CaliforniaKing;
 
-            return AbcMattressesConsts.Queen;
+            }
         }
     }
 }
