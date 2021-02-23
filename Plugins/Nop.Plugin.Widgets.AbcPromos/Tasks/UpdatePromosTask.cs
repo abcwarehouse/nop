@@ -51,7 +51,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             }
             else
             {
-                _nopDataProvider.ExecuteStoredProcedure("UpdateAbcPromos", 300);
+                _nopDataProvider.ExecuteStoredProcedure("UpdateAbcPromos", 600);
             }
 
             var promos = _abcPromoService.GetAllPromos();
