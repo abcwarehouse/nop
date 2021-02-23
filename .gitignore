@@ -198,7 +198,8 @@ packages/*
 ## ABC Warehouse specific
 Presentation/Nop.Web/Resources
 Presentation/Nop.Web/wwwroot/product_images
-Presentation/Nop.Web/wwwroot/promo_banners
+Presentation/Nop.Web/wwwroot/promo_banners/*
+!Presentation/Nop.Web/wwwroot/promo_banners/placeholder.txt
 Presentation/Nop.Web/SiteOnTime.xml
 Presentation/Nop.Web/SliExport.xml
 Presentation/Nop.Web/wwwroot/bundle_images/

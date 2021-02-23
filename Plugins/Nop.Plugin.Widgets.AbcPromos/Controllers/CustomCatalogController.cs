@@ -53,14 +53,14 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             if (urlRecord == null) return InvokeHttp404();
 
             var promo = _abcPromoService.GetPromoById(urlRecord.EntityId);
+            if (promo == null) return InvokeHttp404();
+
             var shouldDisplay = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
                 promo.IsExpired() || promo.IsActive() :
                 promo.IsActive();
-
             if (!shouldDisplay) return InvokeHttp404();
 
             var promoProducts = _abcPromoService.GetPublishedProductsByPromoId(promo.Id);
-
             promoProducts = SortPromoProducts(promoProducts, command);
 
             var filteredPromoProducts = promoProducts.Skip(command.PageIndex * 20).Take(20);
