@@ -110,7 +110,11 @@ namespace Nop.Plugin.Misc.AbcCore
                     [CoreLocales.BackendDbConnectionString] = "Backend DB Connection String",
                     [CoreLocales.BackendDbConnectionStringHint] = "Connection string for connecting to ERP database.",
                     ["Admin.Catalog.Products.PLPDescription"] = "PLP description",
-                    ["Admin.Catalog.Products.PLPDescriptionHint"] = "Product listing page description."
+                    ["Admin.Catalog.Products.PLPDescriptionHint"] = "Product listing page description.",
+                    [CoreLocales.IsDebugMode] = "Debug Mode",
+                    [CoreLocales.IsDebugModeHint] = "Logs detailed information, useful for debugging issues.",
+                    [CoreLocales.AreExternalCallsSkipped] = "Skip External Calls",
+                    [CoreLocales.AreExternalCallsSkippedHint] = "Skips calls to ISAM API, useful for local development."
                 }
             );
         }

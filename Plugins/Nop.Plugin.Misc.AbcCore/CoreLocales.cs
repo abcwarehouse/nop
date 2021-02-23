@@ -5,13 +5,18 @@ namespace Nop.Plugin.Misc.AbcCore
         public const string Base = "Plugins.Misc.AbcCore.Fields.";
 
         public const string BackendDbConnectionString =
-            Base + ".BackendDbConnectionString";
+            Base + "BackendDbConnectionString";
         public const string BackendDbConnectionStringHint =
             BackendDbConnectionString + ".Hint";
 
         public const string AreExternalCallsSkipped =
-            Base + ".AreExternalCallsSkipped";
+            Base + "AreExternalCallsSkipped";
         public const string AreExternalCallsSkippedHint =
             AreExternalCallsSkipped + ".Hint";
+
+        public const string IsDebugMode =
+            Base + "IsTraceMode";
+        public const string IsDebugModeHint =
+            IsDebugMode + ".Hint";
     }
 }

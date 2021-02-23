@@ -77,6 +77,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly IGiftCardService _giftCardService;
         private readonly IIsamGiftCardService _isamGiftCardService;
         private readonly IWarrantyService _warrantyService;
+        private readonly ITermLookupService _termLookupService;
         private readonly string DefaultTransPromo;
 
         public CustomCheckoutController(
@@ -110,7 +111,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             ISettingService settingService,
             IGiftCardService giftCardService,
             IIsamGiftCardService isamGiftCardService,
-            IWarrantyService warrantyService
+            IWarrantyService warrantyService,
+            ITermLookupService termLookupService
         )
         {
             _addressSettings = addressSettings;
@@ -145,9 +147,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _giftCardService = giftCardService;
             _isamGiftCardService = isamGiftCardService;
             _warrantyService = warrantyService;
+            _termLookupService = termLookupService;
 
             DefaultTransPromo = _settingService.GetSetting("ordersettings.defaulttranspromo")?.Value;
-
             if (string.IsNullOrWhiteSpace(DefaultTransPromo))
             {
                 throw new ConfigurationErrorsException("'ordersettings.defaulttranspromo' setting is required for CustomCheckoutController.");
@@ -157,10 +159,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         #region Methods (one page checkout)
         private string SendExternalShippingMethodRequest()
         {
-            if (DefaultTransPromo == "101" || _coreSettings.AreExternalCallsSkipped)
+            if (DefaultTransPromo == "101")
             {
-                _logger.Warning("External shipping method request skipped.");
-                HttpContext.Session.Set("TransPromo", DefaultTransPromo);
+                _logger.Warning("DefaultTransPromo is 101, term lookup skipped");
                 return string.Empty;
             }
 
@@ -173,70 +174,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 if (cart.Any())
                 {
-                    string xml = "";
-                    xml = $"<Request>{Environment.NewLine}<Term_Lookup>{Environment.NewLine}<Items>";
-                    foreach (var item in cart)
-                    {
-                        var product = _productService.GetProductById(item.ProductId);
-                        xml += $"{Environment.NewLine}<Item>{Environment.NewLine}<Sku>{product.Sku}</Sku>{Environment.NewLine}<Gtin>{product.Gtin}</Gtin>{Environment.NewLine}<Qty>{item.Quantity}</Qty>{Environment.NewLine}<Brand>{product.Name}</Brand>{Environment.NewLine}<Price>{product.Price}</Price>{Environment.NewLine}</Item>";
-                    }
-                    xml += $"{Environment.NewLine}</Items>{Environment.NewLine}</Term_Lookup>{Environment.NewLine}</Request>";
-
-                    var webRequest = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.CreateHttp(AbcConstants.StatusAPIUrl);
-                    webRequest.Method = "POST";
-                    webRequest.ContentType = "text/xml; charset=utf-8";
-
-                    byte[] byteArray = Encoding.UTF8.GetBytes(xml);
-                    webRequest.ContentLength = byteArray.Length;
-                    using (System.IO.Stream requestStream = webRequest.GetRequestStream())
-                    {
-                        requestStream.Write(byteArray, 0, byteArray.Length);
-                    }
-
-                    System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)webRequest.GetResponse();
-                    System.IO.Stream r_stream = response.GetResponseStream();
-
-                    using (System.IO.StreamReader reader = new System.IO.StreamReader(r_stream))
-                    {
-                        string strResponse = reader.ReadToEnd();
-
-                        if (!string.IsNullOrEmpty(strResponse))
-                        {
-                            XmlDocument xmlDoc = new XmlDocument();
-                            xmlDoc.LoadXml(strResponse);
-
-                            string xpath = "Response/Term_Lookup/Term_No";
-                            var term_no = xmlDoc.SelectSingleNode(xpath);
-                            if (term_no != null && !string.IsNullOrEmpty(term_no.InnerText))
-                            {
-                                HttpContext.Session.Set("TransPromo", term_no.InnerText);
-                            }
-                            else
-                            {
-                                HttpContext.Session.Set("TransPromo", DefaultTransPromo);
-                            }
-
-                            xpath = "Response/Term_Lookup/Description";
-                            var description = xmlDoc.SelectSingleNode(xpath);
-                            if (description != null)
-                            {
-                                xpath = "Response/Term_Lookup/Link";
-                                var link = xmlDoc.SelectSingleNode(xpath);
-                                string linkText = string.Empty;
-                                if (link != null)
-                                {
-                                    linkText = link.InnerText;
-                                }
-
-                                HttpContext.Session.SetString("TransDescription", description.InnerText + " " + linkText);
-                            }
-
-                        }
-                    }
+                    var termLookup = _termLookupService.GetTerm(cart);
+                    HttpContext.Session.Set("TransPromo", termLookup.termNo ?? DefaultTransPromo);
+                    HttpContext.Session.SetString("TransDescription", $"{termLookup.description} {termLookup.link}");
                 }
             }
-            catch
+            catch (IsamException e)
             {
+                _logger.Error("Failure occurred during ISAM Term Lookup", e);
                 HttpContext.Session.SetString("TransPromo", DefaultTransPromo);
             }
             return "";

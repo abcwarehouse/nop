@@ -1,3 +1,8 @@
+## 1.2.0
+
+* Adds new locales
+* Set up Debug Mode
+
 ## 1.1.4
 
 * PLP Description Locales

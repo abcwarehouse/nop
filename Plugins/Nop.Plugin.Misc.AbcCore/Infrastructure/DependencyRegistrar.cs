@@ -40,6 +40,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                    .As<IHomeDeliveryCostService>();
             builder.RegisterType<CustomProductService>()
                    .As<ICustomProductService>();
+            builder.RegisterType<TermLookupService>()
+                   .As<ITermLookupService>();
         }
     }
 }

@@ -9,5 +9,8 @@ namespace Nop.Plugin.Misc.AbcCore.Models
 
         [NopResourceDisplayName(CoreLocales.AreExternalCallsSkipped)]
         public bool AreExternalCallsSkipped { get; set; }
+
+        [NopResourceDisplayName(CoreLocales.IsDebugMode)]
+        public bool IsDebugMode { get; set; }
     }
 }
