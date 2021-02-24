@@ -43,8 +43,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 }
             );
 
+            var mockProductService = new Mock<IProductService>();
+            mockProductService.Setup(s => s.GetProductById(It.IsAny<int>())).Returns(new Product());
+
             _abcMattressListingPriceService = new AbcMattressListingPriceService(
-                new Mock<IProductService>().Object,
+                mockProductService.Object,
                 mockProductAttributeService.Object
             );
         }
@@ -110,7 +113,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         {
             var price = _abcMattressListingPriceService.GetListingPriceForMattressProduct
             (
-                productWithNoMattresses.Id, "twin"
+                productWithNoMattresses.Id, "twin-mattress"
             );
 
             price.Should().Be(null);
@@ -121,7 +124,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         {
             var price = _abcMattressListingPriceService.GetListingPriceForMattressProduct
             (
-                productWithTwinAndQueenMattresses.Id, "twin"
+                productWithTwinAndQueenMattresses.Id, "twin-mattress"
             );
 
             price.Should().Be(100);
@@ -132,7 +135,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         {
             var price = _abcMattressListingPriceService.GetListingPriceForMattressProduct
             (
-                productWithTwinAndQueenMattresses.Id, "king"
+                productWithTwinAndQueenMattresses.Id, "king-mattress"
             );
 
             price.Should().Be(200);

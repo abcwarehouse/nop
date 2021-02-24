@@ -72,7 +72,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
             var mockAbcMattressListingPriceService = new Mock<IAbcMattressListingPriceService>();
             mockAbcMattressListingPriceService
-                .Setup(x => x.GetListingPriceForMattressProduct(MattressProduct.Id, null))
+                .Setup(x => x.GetListingPriceForMattressProduct(MattressProduct.Id, It.IsAny<string>()))
                 .Returns(40.00M);
 
             _customProductModelFactory = new CustomProductModelFactory(
@@ -143,7 +143,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             ).FirstOrDefault();
 
             // should be changed to reflect abcMattressListingPriceService results
-            productModel.ProductPrice.Price.Should().Be("$40.00");
+            productModel.ProductPrice.Price.Should().Be("$40");
         }
     }
 }

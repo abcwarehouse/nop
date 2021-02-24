@@ -100,9 +100,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             }
 
             _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(
-                product, 
-                string.Empty, 
-                product.Name, 
+                product,
+                string.Empty,
+                product.Name,
                 false),
                 0
             );
