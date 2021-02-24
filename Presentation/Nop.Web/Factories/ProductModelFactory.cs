@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Web;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -501,7 +502,9 @@ namespace Nop.Web.Factories
             if (!productCategories.Any())
                 return breadcrumbModel;
 
-            var category = _categoryService.GetCategoryById(productCategories[0].CategoryId);
+            // custom: determine the breadcrumb based on referrer
+            var categoryId = GetCategoryIdIncludingUrlAndReferrer(productCategories);
+            var category = _categoryService.GetCategoryById(categoryId);
             if (category == null)
                 return breadcrumbModel;
 
@@ -517,6 +520,64 @@ namespace Nop.Web.Factories
             }
 
             return breadcrumbModel;
+        }
+
+        private int GetCategoryIdIncludingUrlAndReferrer(IList<ProductCategory> productCategories)
+        {
+            var defaultCategoryId = productCategories[0].CategoryId;
+
+            // First check against the URL provided
+            var url = _webHelper.GetThisPageUrl(true);
+            var uri = new Uri(url);
+            string sizeParam = HttpUtility.ParseQueryString(uri.Query).Get("size");
+
+            switch (sizeParam)
+            {
+                case "twin-mattress":
+                    return GetCategoryIdByName(productCategories, "Twin");
+                case "twinxl-mattress":
+                    return GetCategoryIdByName(productCategories, "Twin Extra Long");
+                case "full-mattress":
+                    return GetCategoryIdByName(productCategories, "Full");
+                case "queen-mattress":
+                    return GetCategoryIdByName(productCategories, "Queen");
+                case "king-mattress":
+                    return GetCategoryIdByName(productCategories, "King");
+                case "california-king-mattress":
+                    return GetCategoryIdByName(productCategories, "California King");
+                default:
+                    return defaultCategoryId;
+            }
+
+            // We should also check against the referrer category, will work for all items
+            // plus will work for brands
+            //
+            // // If no luck with URL, check against referrer
+            // var referrer = _webHelper.GetUrlReferrer();
+            // if (referrer == null)
+            // {
+            //     return defaultCategoryId;
+            // }
+
+            // referrer = referrer.Substring(referrer.IndexOf("/"));
+            // switch (referrer)
+            // {
+            //     case "twin-mattress":
+            //         return GetCategoryIdByName(productCategories, "Twin");
+            //     case "twin-extra-long-mattress":
+            //         return GetCategoryIdByName(productCategories, "Twin Extra Long");
+            //     default:
+            //         return defaultCategoryId;
+            // }
+        }
+
+        private int GetCategoryIdByName(IList<ProductCategory> productCategories, string categoryName)
+        {
+            var category = productCategories.Select(pc => _categoryService.GetCategoryById(pc.CategoryId))
+                                            .Where(c => c.Name == categoryName)
+                                            .FirstOrDefault();
+
+            return category != null ? category.Id : 0;
         }
 
         /// <summary>

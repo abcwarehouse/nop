@@ -10,6 +10,7 @@ using Nop.Services.Common;
 using FluentAssertions;
 using System;
 using Nop.Core.Domain.Seo;
+using Nop.Services.Logging;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
@@ -95,7 +96,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 _manufacturerService.Object,
                 _productService.Object,
                 new Mock<IProductAttributeService>().Object,
-                _urlRecordService.Object
+                _urlRecordService.Object,
+                new Mock<ILogger>().Object
             );
         }
 

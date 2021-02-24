@@ -5,6 +5,7 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcMattresses.Domain;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
+using Nop.Services.Logging;
 using Nop.Services.Seo;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IUrlRecordService _urlRecordService;
+        private readonly ILogger _logger;
 
         public AbcMattressProductService(
             IAbcMattressModelService abcMattressService,
@@ -41,7 +43,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IManufacturerService manufacturerService,
             IProductService productService,
             IProductAttributeService productAttributeService,
-            IUrlRecordService urlRecordService
+            IUrlRecordService urlRecordService,
+            ILogger logger
         )
         {
             _abcMattressService = abcMattressService;
@@ -57,6 +60,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _productService = productService;
             _productAttributeService = productAttributeService;
             _urlRecordService = urlRecordService;
+            _logger = logger;
         }
 
         public List<string> GetMattressItemNos()
@@ -84,6 +88,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             product.OrderMinimumQuantity = 1;
             product.OrderMaximumQuantity = 10000;
             product.IsShipEnabled = true;
+            product.Price = CalculatePrice(abcMattressModel);
 
             if (hasExistingProduct)
             {
@@ -94,7 +99,13 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 _productService.InsertProduct(product);
             }
 
-            _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(product, string.Empty, product.Name, false), 0);
+            _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(
+                product, 
+                string.Empty, 
+                product.Name, 
+                false),
+                0
+            );
 
             if (!hasExistingProduct)
             {
@@ -111,6 +122,31 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             }
 
             return product;
+        }
+
+        private decimal CalculatePrice(AbcMattressModel model)
+        {
+            var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
+            if (!entries.Any())
+            {
+                _logger.Warning(
+                    $"Mattress model {model.Name} has no sizes");
+                return 0;
+            }
+
+            var entry = entries.Where(e => e.Size.ToLower() == "queen")
+                                       .FirstOrDefault();
+            if (entry == null)
+            {
+                _logger.Warning(
+                    $"Mattress model {model.Name} has no queen, using mid-priced item");
+
+                entry = entries.OrderBy(e => e.Price)
+                               .Skip(entries.Count / 2)
+                               .First();
+            }
+
+            return entry.Price;
         }
 
         public void SetProductAttributes(AbcMattressModel model, Product product)
@@ -569,7 +605,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                                                             pav.ProductAttributeMappingId == pam.Id
                                                         );
             var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
-            var newSizes = entries.Select(e => e.ToProductAttributeValue(pam.Id)).ToList();
+            var newSizes = entries.Select(e => e.ToProductAttributeValue(pam.Id, product.Price)).ToList();
 
             var toBeDeleted = existingSizes
                 .Where(e => !newSizes.Any(n => n.Name == e.Name &&

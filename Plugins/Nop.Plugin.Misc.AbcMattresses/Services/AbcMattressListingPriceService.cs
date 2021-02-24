@@ -6,12 +6,15 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
     public class AbcMattressListingPriceService : IAbcMattressListingPriceService
     {
+        private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
 
         public AbcMattressListingPriceService(
+            IProductService productService,
             IProductAttributeService productAttributeService
         )
         {
+            _productService = productService;
             _productAttributeService = productAttributeService;
         }
 
@@ -44,8 +47,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 .FirstOrDefault();
             }
 
+            var product = _productService.GetProductById(productId);
             return value == null ? (decimal?)null :
-                                    Math.Round(value.PriceAdjustment, 2);
+                                    Math.Round(product.Price + value.PriceAdjustment, 2);
         }
 
         // default to queen if nothing matches

@@ -35,6 +35,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Factories
     {
         private readonly IWebHelper _webHelper;
         private readonly IAbcMattressListingPriceService _abcMattressListingPriceService;
+        private readonly IPriceFormatter _priceFormatter;
+
         public CustomProductModelFactory(
             CaptchaSettings captchaSettings,
             CatalogSettings catalogSettings,
@@ -87,6 +89,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Factories
         {
             _webHelper = webHelper;
             _abcMattressListingPriceService = abcMattressListingPriceService;
+            _priceFormatter = priceFormatter;
         }
 
         /// <summary>
@@ -110,7 +113,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Factories
 
             if (newPrice != null)
             {
-                model.Price = $"${newPrice}";
+                model.Price = _priceFormatter.FormatPrice(newPrice.Value).Replace(".00", "");
             }
 
             return model;

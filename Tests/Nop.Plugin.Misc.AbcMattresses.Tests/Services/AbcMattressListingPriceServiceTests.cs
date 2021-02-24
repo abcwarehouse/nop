@@ -44,6 +44,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             );
 
             _abcMattressListingPriceService = new AbcMattressListingPriceService(
+                new Mock<IProductService>().Object,
                 mockProductAttributeService.Object
             );
         }

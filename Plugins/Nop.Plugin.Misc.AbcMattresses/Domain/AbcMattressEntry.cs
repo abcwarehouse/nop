@@ -12,13 +12,16 @@ namespace Nop.Plugin.Misc.AbcMattresses.Domain
         public decimal Price { get; set; }
         public string Type { get; set; }
 
-        public ProductAttributeValue ToProductAttributeValue(int productAttributeMappingId)
+        public ProductAttributeValue ToProductAttributeValue(
+            int productAttributeMappingId,
+            decimal productPrice
+        )
         {
             return new ProductAttributeValue()
             {
                 ProductAttributeMappingId = productAttributeMappingId,
                 Name = Size,
-                PriceAdjustment = Price,
+                PriceAdjustment = Price - productPrice,
                 IsPreSelected = Size == "Queen",
                 DisplayOrder = GetDisplayOrder(Size)
             };
