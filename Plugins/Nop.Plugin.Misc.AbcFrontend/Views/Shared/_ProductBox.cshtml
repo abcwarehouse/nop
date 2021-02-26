@@ -80,10 +80,10 @@
                                             .Any();
 
     var mattressSize = "";
+    var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
     if (isMattress)
     {
         // custom: add URL query params for mattress if applicable:
-        var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
         var path = @Context.Request.Path.Value;
         if (path == "/getFilteredProducts")
         {
