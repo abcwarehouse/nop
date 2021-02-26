@@ -79,36 +79,39 @@
                                             .Where(pa => pa.Name == "Mattress Size")
                                             .Any();
 
-    // custom: add URL query params for mattress if applicable:
     var mattressSize = "";
-    var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
-    var path = @Context.Request.Path.Value;
-    if (path == "/getFilteredProducts")
+    if (isMattress)
     {
-        path = @Context.Request.Headers["Referer"];
-        path = path.Substring(path.LastIndexOf("/"));
+        // custom: add URL query params for mattress if applicable:
+        var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
+        var path = @Context.Request.Path.Value;
+        if (path == "/getFilteredProducts")
+        {
+            path = @Context.Request.Headers["Referer"];
+            path = path.Substring(path.LastIndexOf("/"));
+        }
+        switch (path)
+        {
+            case "/twin-mattress":
+                mattressSize = "twin-mattress";
+                break;
+            case "/twin-extra-long-mattress":
+                mattressSize = "twinxl-mattress";
+                break;
+            case "/full-mattress":
+                mattressSize = "full-mattress";
+                break;
+            case "/queen-mattress":
+                mattressSize = "queen-mattress";
+                break;
+            case "/king-mattress":
+                mattressSize = "king-mattress";
+                break;
+            case "/california-king-mattress":
+                mattressSize = "california-king-mattress";
+                break;
+        }   
     }
-    switch (path)
-    {
-        case "/twin-mattress":
-            mattressSize = "twin-mattress";
-            break;
-        case "/twin-extra-long-mattress":
-            mattressSize = "twinxl-mattress";
-            break;
-        case "/full-mattress":
-            mattressSize = "full-mattress";
-            break;
-        case "/queen-mattress":
-            mattressSize = "queen-mattress";
-            break;
-        case "/king-mattress":
-            mattressSize = "king-mattress";
-            break;
-        case "/california-king-mattress":
-            mattressSize = "california-king-mattress";
-            break;
-    }          
 
     if (!string.IsNullOrWhiteSpace(mattressSize))
     {
