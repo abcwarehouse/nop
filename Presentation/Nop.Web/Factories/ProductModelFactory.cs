@@ -525,6 +525,10 @@ namespace Nop.Web.Factories
         private int GetCategoryIdIncludingUrlAndReferrer(IList<ProductCategory> productCategories)
         {
             var defaultCategoryId = productCategories[0].CategoryId;
+            if (productCategories.Count == 1)
+            {
+                return defaultCategoryId;
+            }
 
             // First check against the URL provided
             var url = _webHelper.GetThisPageUrl(true);
@@ -545,30 +549,29 @@ namespace Nop.Web.Factories
                     return GetCategoryIdByName(productCategories, "King");
                 case "california-king-mattress":
                     return GetCategoryIdByName(productCategories, "California King");
-                default:
-                    return defaultCategoryId;
             }
 
-            // We should also check against the referrer category, will work for all items
-            // plus will work for brands
-            //
-            // // If no luck with URL, check against referrer
-            // var referrer = _webHelper.GetUrlReferrer();
-            // if (referrer == null)
-            // {
-            //     return defaultCategoryId;
-            // }
+            // We should also check against the referrer category, will work for
+            // all items plus will work for brands
+            var referrer = _webHelper.GetUrlReferrer();
+            if (referrer == null)
+            {
+                return defaultCategoryId;
+            }
 
-            // referrer = referrer.Substring(referrer.IndexOf("/"));
-            // switch (referrer)
-            // {
-            //     case "twin-mattress":
-            //         return GetCategoryIdByName(productCategories, "Twin");
-            //     case "twin-extra-long-mattress":
-            //         return GetCategoryIdByName(productCategories, "Twin Extra Long");
-            //     default:
-            //         return defaultCategoryId;
-            // }
+            var slug = referrer.Substring(referrer.LastIndexOf("/") + 1);
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                return defaultCategoryId;
+            }
+
+            var urlRecord = _urlRecordService.GetBySlug(slug);
+            if (urlRecord == null)
+            {
+                return defaultCategoryId;
+            }
+
+            return urlRecord.EntityId;
         }
 
         private int GetCategoryIdByName(IList<ProductCategory> productCategories, string categoryName)
