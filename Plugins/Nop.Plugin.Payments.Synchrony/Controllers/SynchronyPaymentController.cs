@@ -202,13 +202,8 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 ShoppingCartType.ShoppingCart,
                 _storeContext.CurrentStore.Id);
 
-            // why do we need to create a ShoppingCartModel?
-            var shoppingCartModel = _shoppingCartModelFactory.PrepareShoppingCartModel(new ShoppingCartModel(), cart);
-
-            foreach (var sci in shoppingCartModel.Items)
-            {
-                transactionAmount += Convert.ToDecimal(sci.SubTotal.Replace("$", ""));
-            }
+            var orderTotalsModel = _shoppingCartModelFactory.PrepareOrderTotalsModel(cart, false);
+            transactionAmount = Convert.ToDecimal(orderTotalsModel.OrderTotal.Replace("$", ""));
 
             AuthenticationTokenResponse model = new AuthenticationTokenResponse();
 
