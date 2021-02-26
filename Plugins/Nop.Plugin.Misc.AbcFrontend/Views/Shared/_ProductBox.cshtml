@@ -22,6 +22,7 @@
 @inject IStoreContext storeContext
 @inject IProductService productService
 @inject IGenericAttributeService genericAttributeService
+@inject IProductAttributeService productAttributeService
 
 @{
     var itemNumber = "";
@@ -72,10 +73,21 @@
 
     var priceStr = Model.ProductPrice.Price?.Replace(".00", "");
 
+    // custom: if product is mattress, use "Build Package"
+    var isMattress = productAttributeService.GetProductAttributeMappingsByProductId(Model.Id)
+                                            .Select(pam => productAttributeService.GetProductAttributeById(pam.ProductAttributeId))
+                                            .Where(pa => pa.Name == "Mattress Size")
+                                            .Any();
+
     // custom: add URL query params for mattress if applicable:
+    var mattressSize = "";
     var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
     var path = @Context.Request.Path.Value;
-    var mattressSize = "";
+    if (path == "/getFilteredProducts")
+    {
+        path = @Context.Request.Headers["Referer"];
+        path = path.Substring(path.LastIndexOf("/"));
+    }
     switch (path)
     {
         case "/twin-mattress":
@@ -405,7 +417,7 @@
         </div>
         <div class="buttons-lower">
             @* custom: add mattress messaging *@
-            @if (!string.IsNullOrWhiteSpace(mattressSize))
+            @if (isMattress)
             {
                 <form action="@productUrl">
                     <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">Build Package</span></button>
