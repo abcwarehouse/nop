@@ -83,7 +83,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 new Product();
 
             product.Name = GetProductName(abcMattressModel);
-            product.Sku = abcMattressModel.Sku ?? abcMattressModel.Name;
+            // So I'd like to only use this once we totally migrate off of
+            // old mattresses
+            product.Sku = abcMattressModel.Sku != null ?
+                $"ABCMATT-{abcMattressModel.Sku}" : abcMattressModel.Name;
             product.AllowCustomerReviews = false;
             product.Published = entries.Any();
             product.CreatedOnUtc = DateTime.UtcNow;
