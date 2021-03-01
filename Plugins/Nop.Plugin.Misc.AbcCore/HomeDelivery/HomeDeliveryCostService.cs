@@ -47,7 +47,7 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
                 return 49.00M;
             }
 
-            // Since that Package Item doens't carry the actual item 
+            // Since that Package Item doesn't carry the actual item 
             if (categories.Any(c => new string[]
                 { "twin", "twin extra long", "full", "queen", "king", "california king" }
                 .Contains(c.Name.ToLower()))

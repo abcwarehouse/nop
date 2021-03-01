@@ -83,7 +83,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 new Product();
 
             product.Name = GetProductName(abcMattressModel);
-            product.Sku = abcMattressModel.Name;
+            product.Sku = abcMattressModel.Sku ?? abcMattressModel.Name;
             product.AllowCustomerReviews = false;
             product.Published = entries.Any();
             product.CreatedOnUtc = DateTime.UtcNow;
