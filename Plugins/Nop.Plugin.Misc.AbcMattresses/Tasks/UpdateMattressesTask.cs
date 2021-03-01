@@ -3,11 +3,11 @@ using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
-using Nop.Services.Common;
 using System.Linq;
 using Nop.Services.Stores;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Core.Domain.Catalog;
+using System;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 {
@@ -50,16 +50,35 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
         public void Execute()
         {
             var models = _abcMattressModelService.GetAllAbcMattressModels();
+            // use this to allow for more robust run
+            var wasSuccessful = true;
 
             foreach (var model in models)
             {
-                var product = _abcMattressProductService.UpsertAbcMattressProduct(model);
-                _abcMattressProductService.SetManufacturer(model, product);
-                _abcMattressProductService.SetCategories(model, product);
-                _abcMattressProductService.SetProductAttributes(model, product);
+                try
+                {
+                    var product = _abcMattressProductService.UpsertAbcMattressProduct(model);
+                    _abcMattressProductService.SetManufacturer(model, product);
+                    _abcMattressProductService.SetCategories(model, product);
+                    _abcMattressProductService.SetProductAttributes(model, product);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(
+                        $"Error when syncing mattress model {model.Name}: {e.Message}",
+                        e
+                    );
+                    wasSuccessful = false;
+                }
+                
             }
 
             ClearOldMattressProducts();
+
+            if (!wasSuccessful)
+            {
+                throw new Exception("Errors occured during mattress sync.");
+            }
         }
 
         private void ClearOldMattressProducts()
