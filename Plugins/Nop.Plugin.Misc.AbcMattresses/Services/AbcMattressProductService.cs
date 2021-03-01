@@ -73,6 +73,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         public Product UpsertAbcMattressProduct(AbcMattressModel abcMattressModel)
         {
+            var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(
+                abcMattressModel.Id
+            );
+
             var hasExistingProduct = abcMattressModel.ProductId != null;
             Product product = hasExistingProduct ?
                 _productService.GetProductById(abcMattressModel.ProductId.Value) :
@@ -81,14 +85,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             product.Name = GetProductName(abcMattressModel);
             product.Sku = abcMattressModel.Name;
             product.AllowCustomerReviews = false;
-            product.Published = true;
+            product.Published = entries.Any();
             product.CreatedOnUtc = DateTime.UtcNow;
             product.VisibleIndividually = true;
             product.ProductType = ProductType.SimpleProduct;
             product.OrderMinimumQuantity = 1;
             product.OrderMaximumQuantity = 10000;
             product.IsShipEnabled = true;
-            product.Price = CalculatePrice(abcMattressModel);
+            product.Price = CalculatePrice(abcMattressModel, entries);
 
             if (hasExistingProduct)
             {
@@ -124,15 +128,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             return product;
         }
 
-        private decimal CalculatePrice(AbcMattressModel model)
+        private decimal CalculatePrice(AbcMattressModel model, IList<AbcMattressEntry> entries)
         {
-            var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
-            if (!entries.Any())
-            {
-                _logger.Warning(
-                    $"Mattress model {model.Name} has no sizes");
-                return 0;
-            }
+            if (!entries.Any()) return 0;
 
             var entry = entries.Where(e => e.Size.ToLower() == "queen")
                                        .FirstOrDefault();
