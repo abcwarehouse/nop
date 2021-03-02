@@ -141,7 +141,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     _settings.OrderIdPrefix,
                     orderItem,
                     lineNumber,
-                    product.Sku.Substring(0, 25),
+                    product.Sku,
                     standardItemCodeAndPrice.code,
                     standardItemCodeAndPrice.price,
                     product.Name,

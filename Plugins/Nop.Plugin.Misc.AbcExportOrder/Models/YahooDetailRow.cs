@@ -30,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Id = $"{prefix}{orderItem.OrderId}+{(orderItem.IsPickup() ? 'p' : 's')}";
             LineNumber = itemLine;
             ItemId = itemId;
-            Code = itemCode;
+            Code = itemCode.Substring(0,25);
             Quantity = orderItem.Quantity;
             UnitPrice = orderItem.UnitPriceExclTax;
             Description = description;
