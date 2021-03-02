@@ -35,7 +35,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             mattressSizeString = mattressSizeString.Substring(14, mattressSizeString.IndexOf("<br />") - 14);
             mattressSizeString = mattressSizeString.Substring(0, mattressSizeString.IndexOf("["));
 
-            return mattressSizeString.Trim();
+            return mattressSizeString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();
         }
 
         public static string GetBase(this OrderItem oi)
@@ -50,7 +50,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             baseString = baseString.Substring(0, baseString.IndexOf("["));
             baseString = baseString.Substring(baseString.IndexOf(":") + 1);
 
-            return baseString.Trim();
+            return baseString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();
         }
 
         public static string GetFreeGift(this OrderItem oi)
