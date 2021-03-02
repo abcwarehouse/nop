@@ -53,15 +53,16 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
                 .Contains(c.Name.ToLower()))
             )
             {
-                return GetMattressCost(attributesXml);
+                return GetMattressCost(attributesXml, productId);
             }
 
             // default
             return 14.75M;
         }
 
-        private decimal GetMattressCost(string attributesXml)
+        private decimal GetMattressCost(string attributesXml, int productId)
         {
+            var product = _productService.GetProductById(productId);
             var mattressProductAttributeIds =
                 _productAttributeService.GetAllProductAttributes()
                 .Where(pa => pa.Name.Contains("Mattress Size") || pa.Name.Contains("Base ("))
@@ -74,7 +75,7 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
                 .Select(idasstring => _productAttributeService.GetProductAttributeValueById(int.Parse(idasstring)))
                 .Sum(pav => pav.PriceAdjustment);
 
-            return mattressItemCost >= 697.00M ?
+            return product.Price + mattressItemCost >= 697.00M ?
                 0 :
                 99M;
         }

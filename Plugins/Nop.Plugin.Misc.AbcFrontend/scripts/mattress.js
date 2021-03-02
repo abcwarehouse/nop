@@ -16,16 +16,17 @@ function changeMattressSize()
     if (sizeValue == null || !isValidSize(sizeValue)) { return; }
 
     // Find the matching option based on size above
-    // Special case for TwinXL
     var textToFind = getConvertedSize(sizeValue);
     var mattressSizeSelect = document.getElementsByClassName("mattress-size");
     if (mattressSizeSelect.length != 1) { return; }
 
     for (var i = 0; i < mattressSizeSelect[0].options.length; i++) {
-        if (mattressSizeSelect[0].options[i].text === textToFind) {
-            mattressSizeSelect[0].selectedIndex = i;
-            mattressSizeSelect[0].dispatchEvent(new Event('change'));
-            break;
+        if (mattressSizeSelect[0].options[i].text === textToFind ||
+            mattressSizeSelect[0].options[i].text === `${textToFind}-Flexhead`)
+        {
+          mattressSizeSelect[0].selectedIndex = i;
+          mattressSizeSelect[0].dispatchEvent(new Event('change'));
+          break;
         }
     }
 }
@@ -117,12 +118,15 @@ function updateSizeUrl(selectedSize) {
       url.searchParams.set(key, FullMattressValue);
       break;
     case 'Queen':
+    case 'Queen-Flexhead':
       url.searchParams.set(key, QueenMattressValue);
       break;
     case 'King':
+    case 'King-Flexhead':
       url.searchParams.set(key, KingMattressValue);
       break;
     case 'California King':
+    case 'California King-Flexhead':
       url.searchParams.set(key, CaliforniaKingMattressValue);
       break;
     default:

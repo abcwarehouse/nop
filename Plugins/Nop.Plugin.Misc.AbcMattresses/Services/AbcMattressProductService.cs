@@ -651,12 +651,19 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private string ConvertSizeToCategoryName(string size)
         {
             var loweredSize = size.ToLower();
-            if (loweredSize == "twinxl")
+            switch (loweredSize)
             {
-                return "twin extra long";
+                case "twinxl":
+                    return "twin extra long";
+                case "queen-flexhead":
+                    return "queen";
+                case "king-flexhead":
+                    return "king";
+                case "california king-flexhead":
+                    return "california king";
+                default:
+                    return loweredSize;
             }
-
-            return loweredSize;
         }
 
         private static void ApplyDisplayOrder(List<ProductAttributeValue> values)

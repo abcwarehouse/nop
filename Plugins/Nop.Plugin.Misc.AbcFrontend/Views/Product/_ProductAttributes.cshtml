@@ -76,7 +76,18 @@
                                                 attributeValue.CustomerEntersQty ? T("Products.ProductAttributes.PriceAdjustment.PerItem").Text : string.Empty).Text;
 
                                         @* custom: remove the price adjustment for mattress sizes *@ 
-                                        var mattressSizes = new string[] { "Twin", "TwinXL", "Full", "Queen", "King", "California King" };
+                                        var mattressSizes = new string[]
+                                        {
+                                            "Twin",
+                                            "TwinXL",
+                                            "Full",
+                                            "Queen",
+                                            "Queen-Flexhead",
+                                            "King",
+                                            "King-Flexhead",
+                                            "California King",
+                                            "California King-Flexhead"
+                                        };
                                         if (mattressSizes.Contains(attributeValue.Name))
                                         {
                                             attributeName = attributeValue.Name;

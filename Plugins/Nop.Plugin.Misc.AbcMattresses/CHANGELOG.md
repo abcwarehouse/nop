@@ -1,3 +1,7 @@
+## 1.0.0
+* Released to production
+* Added Flexhead sizes
+
 ## 0.1.11
 
 * Adds Sku column to AbcMattressModel for PowerReviews

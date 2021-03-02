@@ -41,7 +41,6 @@ namespace Nop.Plugin.Misc.AbcMattresses
 
         public override void Update(string currentVersion, string targetVersion)
         {
-            RemoveProductAttributes();
             AddProductAttributes();
         }
 
@@ -50,7 +49,6 @@ namespace Nop.Plugin.Misc.AbcMattresses
             RemoveTasks();
             AddTask();
 
-            RemoveProductAttributes();
             AddProductAttributes();
 
             base.Install();
@@ -119,26 +117,42 @@ namespace Nop.Plugin.Misc.AbcMattresses
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameTwinXL },
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameFull },
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameQueen },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameQueenFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameKingFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.BaseNameCaliforniaKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.BaseNameCaliforniaKingFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorTwin },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorTwinXL },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorFull },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorQueen },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorQueenFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorKingFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorCaliforniaKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.MattressProtectorCaliforniaKingFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.FrameTwin },
                 new ProductAttribute() { Name = AbcMattressesConsts.FrameTwinXL },
                 new ProductAttribute() { Name = AbcMattressesConsts.FrameFull },
                 new ProductAttribute() { Name = AbcMattressesConsts.FrameQueen },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameQueenFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.FrameKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameKingFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.FrameCaliforniaKing },
+                new ProductAttribute() { Name = AbcMattressesConsts.FrameCaliforniaKingFlexhead },
                 new ProductAttribute() { Name = AbcMattressesConsts.FreeGiftName }
             };
 
             foreach (var productAttribute in productAttributes)
             {
-                _productAttributeService.InsertProductAttribute(productAttribute);
+                var existingProductAttribute = _productAttributeService.GetAllProductAttributes()
+                                                                       .Where(pa => pa.Name == productAttribute.Name)
+                                                                       .FirstOrDefault();
+
+                if (existingProductAttribute == null)
+                {
+                    _productAttributeService.InsertProductAttribute(productAttribute);
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
  "Group": "Misc",
  "FriendlyName": "ABC Mattresses",
  "SystemName": "Misc.AbcMattresses",
- "Version": "0.1.11",
+ "Version": "1.0.0",
  "SupportedVersions": [
   "4.30"
  ],
