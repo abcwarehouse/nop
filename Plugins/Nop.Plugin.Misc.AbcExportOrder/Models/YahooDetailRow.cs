@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Misc.AbcCore.Extensions;
@@ -30,7 +31,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             Id = $"{prefix}{orderItem.OrderId}+{(orderItem.IsPickup() ? 'p' : 's')}";
             LineNumber = itemLine;
             ItemId = itemId;
-            Code = itemCode.Substring(0,25);
+            Code = itemCode.Substring(0, Math.Min(25, itemCode.Length));
             Quantity = orderItem.Quantity;
             UnitPrice = orderItem.UnitPriceExclTax;
             Description = description;
