@@ -34,9 +34,9 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             var mattressSizeString = oi.AttributeDescription.Substring(mattressSizeIndex);
             mattressSizeString = mattressSizeString.Substring(14, mattressSizeString.IndexOf("<br />") - 14);
             var sizeAdjustIndex = mattressSizeString.IndexOf("[");
-            if (sizeAdjustIndex >= 0)
+            if (sizeAdjustIndex > 0)
             {
-                mattressSizeString = mattressSizeString.Substring(0, mattressSizeString.IndexOf("["));
+                mattressSizeString = mattressSizeString.Substring(0, sizeAdjustIndex);
             }
 
             return mattressSizeString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();

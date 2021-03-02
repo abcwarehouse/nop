@@ -13,6 +13,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             AttributeDescription = "Mattress Size: Twin [+$297.00]<br />"
         };
+        private OrderItem _orderItemWithMattressSizeNoPriceAdjustment = new OrderItem()
+        {
+            AttributeDescription = "Mattress Size: Queen<br />"
+        };
 
         private OrderItem _orderItemWithBase = new OrderItem()
         {
@@ -42,6 +46,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tests
         {
             _orderItem.GetMattressSize().Should().BeNull();
             _orderItemWithMattressSize.GetMattressSize().Should().Be("Twin");
+            _orderItemWithMattressSizeNoPriceAdjustment.GetMattressSize().Should().Be("Queen");
         }
 
         [Test]
