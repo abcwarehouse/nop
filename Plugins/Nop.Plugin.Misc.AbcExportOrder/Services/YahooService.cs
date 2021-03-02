@@ -19,6 +19,7 @@ using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Services.Payments;
+using System;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -133,7 +134,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     orderItem.UnitPriceExclTax -= warranty.PriceAdjustment;
                 }
 
-                (string code, decimal price) standardItemCodeAndPrice = GetCodeAndPrice(orderItem, product, productAbcDescription);
+                (string code, decimal price) standardItemCodeAndPrice =
+                    GetCodeAndPrice(orderItem, product, productAbcDescription);
 
                 result.Add(new YahooDetailRow(
                     _settings.OrderIdPrefix,
@@ -168,6 +170,11 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 {
                     lineNumber++;
                     var amg = _abcMattressGiftService.GetAbcMattressGiftByDescription(freeGift);
+                    if (amg == null)
+                    {
+                        throw new Exception($"Unable to match free gift named {freeGift}");
+                    }
+
                     result.Add(new YahooDetailRow(
                         _settings.OrderIdPrefix,
                         orderItem,
@@ -189,6 +196,11 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     var amp = _abcMattressProtectorService.GetAbcMattressProtectorsBySize(size)
                                                           .Where(p => p.Name == mattressProtector)
                                                           .FirstOrDefault();
+                    if (amp == null)
+                    {
+                        throw new Exception($"Unable to match mattress protector named {mattressProtector}");
+                    }
+
                     result.Add(new YahooDetailRow(
                         _settings.OrderIdPrefix,
                         orderItem,
@@ -244,9 +256,12 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             if (mattressSize != null)
             {
                 var model = _abcMattressModelService.GetAbcMattressModelByProductId(product.Id);
+                if (model == null) { throw new Exception($"Unable to find model for productId {product.Id}, size {mattressSize}"); }
+
                 var entry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id)
                                                     .Where(e => e.Size == mattressSize)
                                                     .FirstOrDefault();
+                if (entry == null) { throw new Exception($"Unable to find entry for model {model.Name}, size {mattressSize}"); }
 
                 var baseName = orderItem.GetBase();
                 if (baseName != null)
@@ -254,9 +269,17 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     var abcMattressBase = _abcMattressBaseService.GetAbcMattressBasesByEntryId(entry.Id)
                                                                  .Where(b => b.Name == baseName)
                                                                  .FirstOrDefault();
+                    if (abcMattressBase == null)
+                    {
+                        throw new Exception($"Unable to find base for model {model.Name}, size {entry.Size}, base {baseName}");
+                    }
                     var package = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(new int[] { entry.Id })
                                                             .Where(p => p.AbcMattressBaseId == abcMattressBase.Id)
                                                             .FirstOrDefault();
+                    if (package == null)
+                    {
+                        throw new Exception($"Unable to find base for model {model.Name}, size {entry.Size}, base {baseName}");
+                    }
 
                     return (package.ItemNo, package.Price);
                 }
@@ -265,7 +288,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 return (entry.ItemNo, entry.Price);
             }
 
-            return (productAbcDescription != null ? productAbcDescription.AbcItemNumber : product.Sku,
+            return (productAbcDescription != null ? 
+                        productAbcDescription.AbcItemNumber : product.Sku,
                     orderItem.UnitPriceExclTax);
         }
 

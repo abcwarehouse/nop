@@ -63,7 +63,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             var freeGiftString = oi.AttributeDescription.Substring(freeGiftIndex);
             freeGiftString = freeGiftString.Substring(10, freeGiftString.IndexOf("<br />") - 10);
 
-            return freeGiftString.Replace("&quot;", "\"").Trim();
+            return freeGiftString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();
         }
 
         public static string GetMattressProtector(this OrderItem oi)
@@ -78,7 +78,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             protectorString = protectorString.Substring(0, protectorString.IndexOf("["));
             protectorString = protectorString.Substring(protectorString.IndexOf(":") + 1);
 
-            return protectorString.Replace("&quot;", "\"").Trim();
+            return protectorString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();
         }
 
         public static string GetFrame(this OrderItem oi)
@@ -93,7 +93,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             protectorString = protectorString.Substring(0, protectorString.IndexOf("["));
             protectorString = protectorString.Substring(protectorString.IndexOf(":") + 1);
 
-            return protectorString.Replace("&quot;", "\"").Trim();
+            return protectorString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();
         }
 
         public static (List<OrderItem> pickupItems, List<OrderItem> shippingItems) SplitByPickupAndShipping(this IList<OrderItem> ois)

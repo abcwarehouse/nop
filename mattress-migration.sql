@@ -21,13 +21,13 @@
 --join NOPCommerce.dbo.GenericAttribute pga on pp.Id = pga.EntityId
 --where pp.Id in (select ProductId from AbcMattressModel)
 
-select * from NOPCommerce_Stage_430.dbo.Product_Picture_Mapping ppm
-where ppm.ProductId in (select ProductId from NOPCommerce_Stage_430.dbo.AbcMattressModel)
+--select * from NOPCommerce_Stage_430.dbo.Product_Picture_Mapping ppm
+--where ppm.ProductId in (select ProductId from NOPCommerce_Stage_430.dbo.AbcMattressModel)
 
-select sp.Sku, sp.Id, pp.Id
-from NOPCommerce.dbo.Product pp
-join NOPCommerce_Stage_430.dbo.Product sp on sp.Sku = pp.Sku
-where pp.Id in (select ProductId from AbcMattressModel)
+--select sp.Sku, sp.Id, pp.Id
+--from NOPCommerce.dbo.Product pp
+--join NOPCommerce_Stage_430.dbo.Product sp on sp.Sku = pp.Sku
+--where pp.Id in (select ProductId from AbcMattressModel)
 
 -- Picture (only once!)
 --insert into NOPCommerce.dbo.Picture (MimeType, SeoFilename, AltAttribute, TitleAttribute, IsNew, VirtualPath)
@@ -38,24 +38,36 @@ where pp.Id in (select ProductId from AbcMattressModel)
 --join NOPCommerce.dbo.Product pp on sp.Sku = pp.Sku
 --where ppm.ProductId in (select ProductId from NOPCommerce_Stage_430.dbo.AbcMattressModel)
 
--- specific to prod
-select pic.MimeType, pic.SeoFilename, pic.IsNew, pic.VirtualPath, pic.TitleAttribute
-from NOPCommerce.dbo.Picture pic
-where pic.TitleAttribute in (select ProductId from NOPCommerce.dbo.AbcMattressModel)
+-- PPM (only once!)
+--insert into NOPCommerce.dbo.Product_Picture_Mapping (ProductId, PictureId, DisplayOrder)
+--select pic.TitleAttribute, pic.Id, pic.AltAttribute
+--from Picture pic
+--where pic.TitleAttribute in (select ProductId from NOPCommerce.dbo.AbcMattressModel)
 
 
--- Picture Binary
---insert into NOPCommerce.dbo.PictureBinary (PictureId, BinaryData)
-select spic.SeoFilename, pic.Id, spb.BinaryData
-from NOPCommerce.dbo.Picture pic
-join NOPCommerce_Stage_430.dbo.Picture spic on spic.SeoFilename = pic.SeoFilename
-join NOPCommerce_Stage_430.dbo.Product_Picture_Mapping sppm on sppm.PictureId = spic.Id
-join NOPCommerce_Stage_430.dbo.PictureBinary spb on spic.Id= spb.PictureId
+-- Binary (read only)
+select spb.PictureId as StagePictureId, BinaryData, pp.Id as ProdProductId, pppm.PictureId as ProdPictureId
+from NOPCommerce_Stage_430.dbo.PictureBinary spb
+join NOPCommerce_Stage_430.dbo.Product_Picture_Mapping sppm on sppm.PictureId = spb.PictureId
+join NOPCommerce_Stage_430.dbo.Product sp on sp.Id = sppm.ProductId
+join NOPCommerce.dbo.Product pp on sp.Sku = pp.Sku
+join NOPCommerce.dbo.Product_Picture_Mapping pppm on pppm.ProductId = pp.Id and sppm.DisplayOrder = pppm.DisplayOrder
 where sppm.ProductId in (select ProductId from NOPCommerce_Stage_430.dbo.AbcMattressModel)
 
--- PPM
---insert into NOPCommerce.dbo.Product_Picture_Mapping (ProductId, PictureId, DisplayOrder)
-select pic.TitleAttribute, pic.Id, pic.AltAttribute
-from Picture pic
---join Product_Picture_Mapping ppm on pic.TitleAttribute = ppm.ProductId
-where pic.TitleAttribute in (select ProductId from NOPCommerce.dbo.AbcMattressModel)
+-- Binary (only once!)
+insert into NOPCommerce.dbo.PictureBinary (PictureId, BinaryData)
+select pppm.PictureId as ProdPictureId, spb.BinaryData
+from NOPCommerce_Stage_430.dbo.PictureBinary spb
+join NOPCommerce_Stage_430.dbo.Product_Picture_Mapping sppm on sppm.PictureId = spb.PictureId
+join NOPCommerce_Stage_430.dbo.Product sp on sp.Id = sppm.ProductId
+join NOPCommerce.dbo.Product pp on sp.Sku = pp.Sku
+join NOPCommerce.dbo.Product_Picture_Mapping pppm on pppm.ProductId = pp.Id and sppm.DisplayOrder = pppm.DisplayOrder
+where sppm.ProductId in (select ProductId from NOPCommerce_Stage_430.dbo.AbcMattressModel)
+
+
+-- clear out alt and title
+update Picture
+set AltAttribute = null, TitleAttribute = null
+from Picture
+join Product_Picture_Mapping ppm on Picture.Id = ppm.PictureId
+where ppm.ProductId in (select ProductId from AbcMattressModel)
