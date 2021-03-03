@@ -1,3 +1,6 @@
+## 1.2.3
+* Modifies locales for MapCategoryStoresTask
+
 ## 1.2.0
 
 * Adds new locales

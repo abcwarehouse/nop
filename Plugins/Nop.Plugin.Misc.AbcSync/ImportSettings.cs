@@ -45,7 +45,7 @@ namespace Nop.Plugin.Misc.AbcSync
         public bool SkipImportRelatedProductsTask { get; private set; }
         public bool SkipImportWarrantiesTask { get; private set; }
         public bool SkipUnmapNonstockClearanceTask { get; private set; }
-        public bool SkipUnmapEmptyCategoriesTask { get; private set; }
+        public bool SkipMapCategoryStoresTask { get; private set; }
         public bool SkipSliExportTask { get; private set; }
 
         public bool SkipImportDocumentsTask { get; private set; }
@@ -92,7 +92,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportRelatedProductsTask = model.SkipImportRelatedProductsTask,
                 SkipImportWarrantiesTask = model.SkipImportWarrantiesTask,
                 SkipUnmapNonstockClearanceTask = model.SkipUnmapNonstockClearanceTask,
-                SkipUnmapEmptyCategoriesTask = model.SkipUnmapEmptyCategoriesTask,
+                SkipMapCategoryStoresTask = model.SkipMapCategoryStoresTask,
                 SkipImportDocumentsTask = model.SkipImportDocumentsTask,
                 SkipImportIsamSpecsTask = model.SkipImportIsamSpecsTask,
                 SkipImportFeaturedProductsTask = model.SkipImportFeaturedProductsTask,
@@ -135,7 +135,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportRelatedProductsTask = SkipImportRelatedProductsTask,
                 SkipImportWarrantiesTask = SkipImportWarrantiesTask,
                 SkipUnmapNonstockClearanceTask = SkipUnmapNonstockClearanceTask,
-                SkipUnmapEmptyCategoriesTask = SkipUnmapEmptyCategoriesTask,
+                SkipMapCategoryStoresTask = SkipMapCategoryStoresTask,
                 SkipImportDocumentsTask = SkipImportDocumentsTask,
                 SkipImportIsamSpecsTask = SkipImportIsamSpecsTask,
                 SkipImportFeaturedProductsTask = SkipImportFeaturedProductsTask,

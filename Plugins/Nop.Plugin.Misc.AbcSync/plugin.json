@@ -2,7 +2,7 @@
   "Group": "Misc",
   "FriendlyName": "ABCWarehouse Sync",
   "SystemName": "Misc.AbcSync",
-  "Version": "1.2.2",
+  "Version": "1.2.3",
   "SupportedVersions": [ "4.30" ],
   "Author": "Dave Farinelli",
   "DisplayOrder": 1,

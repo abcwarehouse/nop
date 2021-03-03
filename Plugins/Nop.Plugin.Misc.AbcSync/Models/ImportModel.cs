@@ -102,8 +102,8 @@ namespace Nop.Plugin.Misc.AbcSync.Models
         [NopResourceDisplayName(ImportPluginLocales.SkipUnmapNonstockClearanceTask)]
         public bool SkipUnmapNonstockClearanceTask { get; set; }
 
-        [NopResourceDisplayName(ImportPluginLocales.SkipUnmapEmptyCategoriesTask)]
-        public bool SkipUnmapEmptyCategoriesTask { get; set; }
+        [NopResourceDisplayName(ImportPluginLocales.SkipMapCategoryStoresTask)]
+        public bool SkipMapCategoryStoresTask { get; set; }
 
         [NopResourceDisplayName(ImportPluginLocales.SkipImportRebatesTask)]
         public bool SkipImportRebatesTask { get; set; }

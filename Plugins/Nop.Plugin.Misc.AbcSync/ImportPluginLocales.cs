@@ -45,7 +45,7 @@ namespace Nop.Plugin.Misc.AbcSync
         public const string SkipImportRelatedProductsTask = Base + "SkipImportRelatedProductsTask";
         public const string SkipImportWarrantiesTask = Base + "SkipImportWarrantiesTask";
         public const string SkipUnmapNonstockClearanceTask = Base + "SkipUnmapNonstockClearanceTask";
-        public const string SkipUnmapEmptyCategoriesTask = Base + "SkipUnmapEmptyCategoriesTask";
+        public const string SkipMapCategoryStoresTask = Base + "SkipMapCategoryStoresTask";
         public const string SkipSliExportTask = Base + "SkipSliExportTask";
 
         public const string SkipImportRebatesTask = Base + "SkipImportRebatesTask";

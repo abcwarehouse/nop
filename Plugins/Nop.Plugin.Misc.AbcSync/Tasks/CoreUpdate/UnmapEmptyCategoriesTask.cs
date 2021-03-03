@@ -9,7 +9,7 @@ using Nop.Core.Domain.Stores;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
-    public class UnmapEmptyCategoriesTask : IScheduleTask
+    public class MapCategoryStoresTask : IScheduleTask
     {
         private readonly ICustomCategoryService _categoryService;
         private readonly IStoreService _storeService;
@@ -19,7 +19,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
         private readonly ImportSettings _settings;
 
-        public UnmapEmptyCategoriesTask(
+        public MapCategoryStoresTask(
             ICustomCategoryService categoryService,
             IStoreService storeService,
             IStoreMappingService storeMappingService,
@@ -36,7 +36,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
         public void Execute()
         {
-            if (_settings.SkipUnmapEmptyCategoriesTask)
+            if (_settings.SkipMapCategoryStoresTask)
             {
                 this.Skipped();
                 return;
@@ -45,16 +45,18 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             this.LogStart();
 
             var stores = _storeService.GetAllStores();
-
             foreach (var store in stores)
             {
                 var categories = _categoryService.GetAllCategories(store.Id);
-
                 foreach (var category in categories)
                 {
                     if (IsCategoryEmpty(category, store.Id))
                     {
                         DeleteCategoryStoreMapping(category, store);
+                    }
+                    else
+                    {
+                        AddCategoryStoreMapping(category, store);
                     }
                 }
             }
@@ -87,15 +89,31 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
         private void DeleteCategoryStoreMapping(Category category, Store store)
         {
-            var storeMapping = _storeMappingService.GetStoreMappings<Category>(category)
-                                                                           .Where(sm => sm.StoreId == store.Id)
-                                                                           .FirstOrDefault();
+            var existingStoreMapping = _storeMappingService.GetStoreMappings<Category>(category)
+                                                           .Where(sm => sm.StoreId == store.Id)
+                                                           .FirstOrDefault();
 
-            if (storeMapping != null)
+            if (existingStoreMapping != null)
             {
-                _storeMappingService.DeleteStoreMapping(storeMapping);
+                _storeMappingService.DeleteStoreMapping(existingStoreMapping);
                 _logger.Information(
-                    $"{store.Name}: Unmapped '{category.Name}' category (no products).");
+                    $"{store.Name}: Unmapped '{category.Name}' category (no products)."
+                );
+            }
+        }
+
+        private void AddCategoryStoreMapping(Category category, Store store)
+        {
+            var existingStoreMapping = _storeMappingService.GetStoreMappings<Category>(category)
+                                                           .Where(sm => sm.StoreId == store.Id)
+                                                           .FirstOrDefault();
+
+            if (existingStoreMapping == null)
+            {
+                _storeMappingService.InsertStoreMapping<Category>(category, store.Id);
+                _logger.Information(
+                    $"{store.Name}: Mapped '{category.Name}' category (contained products)."
+                );
             }
         }
     }

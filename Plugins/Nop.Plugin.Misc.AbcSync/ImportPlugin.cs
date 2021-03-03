@@ -121,7 +121,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     [ImportPluginLocales.SkipImportWarrantiesTask] = "ImportWarrantiesTask",
                     [ImportPluginLocales.SkipUnmapNonstockClearanceTask] = "UnmapNonstockClearanceTask",
                     [ImportPluginLocales.SkipCleanDuplicateImagesTask] = "CleanDuplicateImagesTask",
-                    [ImportPluginLocales.SkipUnmapEmptyCategoriesTask] = "UnmapEmptyCategoriesTask",
+                    [ImportPluginLocales.SkipMapCategoryStoresTask] = "MapCategoryStoresTask",
                     [ImportPluginLocales.SkipSliExportTask] = "SliExportTask",
 
                     [ImportPluginLocales.SkipImportDocumentsTask] = "ImportDocumentsTask",
