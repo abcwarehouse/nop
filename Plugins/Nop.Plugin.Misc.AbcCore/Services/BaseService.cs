@@ -160,7 +160,22 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                         if (!IsLocalMode(dbCommand))
                         {
                             dbCommand.Connection = dbConnection;
-                            dbCommand.ExecuteNonQuery();
+                            try
+                            {
+                                dbCommand.ExecuteNonQuery();
+                            }
+                            catch (OdbcException e)
+                            {
+                                // allow for "duplicate"
+                                if (e.Message.Contains("add a duplicate value"))
+                                {
+                                    _logger.Warning("Attempt made to insert duplicate value, skipping.");
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
                         }
                         dbCommand.Dispose();
                     }
