@@ -557,6 +557,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
+            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
+                " AND EntityId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
+                "";
             var command = $@"
                 DROP TABLE IF EXISTS #tmp_products
                 DROP TABLE IF EXISTS #tmp_mappings
@@ -564,6 +567,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 -- Clear all current product mappings
                 DELETE FROM {nopDbName}.dbo.StoreMapping
                 WHERE EntityName = 'Product'
+                {mattressItemAddition}
 
                 -- Gets a full list of ABC and SOT items from staging DB
                 SELECT DISTINCT
