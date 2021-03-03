@@ -114,8 +114,13 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _nopDbContext.ExecuteNonQuery("UPDATE p SET p.Published = 0 FROM Product p left join Product_Category_Mapping pcm ON p.Id = pcm.ProductId WHERE pcm.Id IS NULL;");
 
 
-            //5. set the product store mappings recursively based on products 
-            _nopDbContext.ExecuteNonQuery("DELETE FROM StoreMapping where EntityName = 'Category'; UPDATE Category set LimitedToStores = 1;");
+            //5. set the product store mappings recursively based on products
+            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
+                " AND ProductId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
+                "";
+            _nopDbContext.ExecuteNonQuery(
+                $"DELETE FROM StoreMapping where EntityName = 'Category' {mattressItemAddition}; UPDATE Category set LimitedToStores = 1;"
+            );
 
             var categoryToStores = new Dictionary<int, HashSet<int>>();
             foreach (var pc in _productCategoryRepository.Table.ToList())
