@@ -288,7 +288,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 return (entry.ItemNo, entry.Price);
             }
 
-            return (productAbcDescription != null ? 
+            return (productAbcDescription != null ?
                         productAbcDescription.AbcItemNumber : product.Sku,
                     orderItem.UnitPriceExclTax);
         }

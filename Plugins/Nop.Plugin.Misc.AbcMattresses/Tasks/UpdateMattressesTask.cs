@@ -70,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                     );
                     wasSuccessful = false;
                 }
-                
+
             }
 
             ClearOldMattressProducts();

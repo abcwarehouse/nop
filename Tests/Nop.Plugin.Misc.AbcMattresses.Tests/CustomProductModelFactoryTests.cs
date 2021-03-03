@@ -55,6 +55,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             var mockPriceFormatter = new Mock<IPriceFormatter>();
             mockPriceFormatter.Setup(x => x.FormatPrice(It.IsAny<decimal>()))
                 .Returns("$20.00");
+            mockPriceFormatter.Setup(x => x.FormatPrice(40.00M))
+                .Returns("$40.00");
 
             var mockPermissionService = new Mock<IPermissionService>();
             mockPermissionService.Setup(x => x.Authorize(It.IsAny<PermissionRecord>()))
