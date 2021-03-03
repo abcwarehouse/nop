@@ -7,6 +7,7 @@ using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Logging;
 using Nop.Services.Seo;
+using Nop.Services.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IManufacturerService _manufacturerService;
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
+        private readonly IStoreService _storeService;
+        private readonly IStoreMappingService _storeMappingService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly ILogger _logger;
 
@@ -43,6 +46,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IManufacturerService manufacturerService,
             IProductService productService,
             IProductAttributeService productAttributeService,
+            IStoreService storeService,
+            IStoreMappingService storeMappingService,
             IUrlRecordService urlRecordService,
             ILogger logger
         )
@@ -59,6 +64,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _manufacturerService = manufacturerService;
             _productService = productService;
             _productAttributeService = productAttributeService;
+            _storeMappingService = storeMappingService;
+            _storeService = storeService;
             _urlRecordService = urlRecordService;
             _logger = logger;
         }
@@ -106,6 +113,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 _productService.InsertProduct(product);
             }
 
+            MapProductToStore(product);
+
             _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(
                 product,
                 string.Empty,
@@ -129,6 +138,27 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             }
 
             return product;
+        }
+
+        private void MapProductToStore(Product product)
+        {
+            // product store mapping - hardcoded to ABC Warehouse currently
+            var abcWarehouseStore = _storeService.GetAllStores()
+                                                   .Where(s => s.Name == "ABC Warehouse")
+                                                   .FirstOrDefault();
+            if (abcWarehouseStore == null)
+            {
+                throw new Exception("Unable to find ABC Warehouse store.");
+            }
+            
+            var existingStoreMapping = _storeMappingService.GetStoreMappings<Product>(product)
+                                                           .Where(sm => sm.StoreId == abcWarehouseStore.Id)
+                                                           .FirstOrDefault();
+
+            if (existingStoreMapping == null)
+            {
+                _storeMappingService.InsertStoreMapping<Product>(product, abcWarehouseStore.Id);
+            }
         }
 
         private decimal CalculatePrice(AbcMattressModel model, IList<AbcMattressEntry> entries)

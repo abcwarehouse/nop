@@ -6,12 +6,15 @@ using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcSync.Services;
 using Nop.Services.Logging;
 using Nop.Core.Domain.Stores;
+using Nop.Services.Catalog;
+using System.Collections.Generic;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
     public class MapCategoryStoresTask : IScheduleTask
     {
         private readonly ICustomCategoryService _categoryService;
+        private readonly IProductService _productService;
         private readonly IStoreService _storeService;
         private readonly IStoreMappingService _storeMappingService;
 
@@ -21,6 +24,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
         public MapCategoryStoresTask(
             ICustomCategoryService categoryService,
+            IProductService productService,
             IStoreService storeService,
             IStoreMappingService storeMappingService,
             ILogger logger,
@@ -28,6 +32,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         )
         {
             _categoryService = categoryService;
+            _productService = productService;
             _storeService = storeService;
             _storeMappingService = storeMappingService;
             _logger = logger;
@@ -66,10 +71,15 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
         private bool IsCategoryEmpty(Category category, int storeId)
         {
-            var hasProducts = _categoryService.GetProductCategoriesByCategoryId(category.Id, storeId).Any();
-            if (hasProducts)
+            var productIds = _categoryService.GetProductCategoriesByCategoryId(category.Id, storeId)
+                                             .Select(pc => pc.ProductId)
+                                             .ToArray();
+            var products = _productService.GetProductsByIds(productIds);
+            foreach (var p in products)
             {
-                return false;
+                var storeMappings = _storeMappingService.GetStoreMappings<Product>(p)
+                                                        .Where(sm => sm.StoreId == storeId);
+                if (storeMappings.Any()) { return false; }
             }
 
             var childCategoryIds = _categoryService.GetChildCategoryIds(category.Id, storeId);

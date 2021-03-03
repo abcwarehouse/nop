@@ -11,6 +11,8 @@ using FluentAssertions;
 using System;
 using Nop.Core.Domain.Seo;
 using Nop.Services.Logging;
+using Nop.Services.Stores;
+using Nop.Core.Domain.Stores;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
@@ -24,6 +26,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
         private Mock<IAbcMattressEntryService> _abcMattressEntryService;
         private Mock<ICategoryService> _categoryService;
         private Mock<IManufacturerService> _manufacturerService;
+        private Mock<IStoreService> _storeService;
+        private Mock<IStoreMappingService> _storeMappingService;
 
         private AbcMattressModel _abcMattressModelNoProduct = new AbcMattressModel()
         {
@@ -83,6 +87,27 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
             _manufacturerService = MockManufacturerService();
 
+            _storeService = new Mock<IStoreService>();
+            _storeService.Setup(x => x.GetAllStores())
+                         .Returns(new List<Store>()
+                                    {
+                                        new Store() {
+                                            Id = 1,
+                                            Name = "ABC Warehouse"
+                                        }
+                                    }
+                                 );
+
+            _storeMappingService = new Mock<IStoreMappingService>();
+            _storeMappingService.Setup(x => x.GetStoreMappings(It.IsAny<Product>()))
+                         .Returns(new List<StoreMapping>()
+                                    {
+                                        new StoreMapping() {
+                                            Id = 1
+                                        }
+                                    }
+                                 );
+
             _abcMattressProductService = new AbcMattressProductService(
                 _abcMattressService.Object,
                 new Mock<IAbcMattressBaseService>().Object,
@@ -96,6 +121,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 _manufacturerService.Object,
                 _productService.Object,
                 new Mock<IProductAttributeService>().Object,
+                _storeService.Object,
+                _storeMappingService.Object,
                 _urlRecordService.Object,
                 new Mock<ILogger>().Object
             );
