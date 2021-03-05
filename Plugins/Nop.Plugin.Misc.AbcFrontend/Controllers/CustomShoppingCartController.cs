@@ -43,7 +43,6 @@ using Microsoft.Extensions.Primitives;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
-    [AutoValidateAntiforgeryToken]
     public partial class CustomShoppingCartController : BasePublicController
     {
         private readonly CaptchaSettings _captchaSettings;
@@ -166,6 +165,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public IActionResult RemoveItem(int shoppingCartItemId)
         {
             var cart = _shoppingCartService.GetShoppingCart(
