@@ -10,7 +10,7 @@ using Nop.Web.Framework.Mvc.Filters;
 namespace Nop.Web.Areas.Admin.Controllers
 {
     [Area(AreaNames.Admin)]
-    [HttpsRequirement]
+    
     [AutoValidateAntiforgeryToken]
     [ValidateIpAddress]
     [AuthorizeAdmin]

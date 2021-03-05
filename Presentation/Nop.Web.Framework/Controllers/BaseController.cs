@@ -21,12 +21,14 @@ namespace Nop.Web.Framework.Controllers
     /// <summary>
     /// Base controller
     /// </summary>
+    
     [PublishModelEvents]
     [SignOutFromExternalAuthentication]
     [ValidatePassword]
     [SaveIpAddress]
     [SaveLastActivity]
     [SaveLastVisitedPage]
+    [HttpsRequirement]
     public abstract class BaseController : Controller
     {
         #region Rendering

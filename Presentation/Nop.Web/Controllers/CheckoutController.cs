@@ -27,7 +27,7 @@ using Nop.Web.Models.Checkout;
 
 namespace Nop.Web.Controllers
 {
-    [HttpsRequirement]
+    
     [AutoValidateAntiforgeryToken]
     public partial class CheckoutController : BasePublicController
     {
