@@ -47,13 +47,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 return;
             }
 
-            this.LogStart();
-
-            var stores = _storeService.GetAllStores();
-            foreach (var store in stores)
+            var categories = _categoryService.GetAllCategories();
+            foreach (var category in categories)
             {
-                var categories = _categoryService.GetAllCategories(store.Id);
-                foreach (var category in categories)
+                var stores = _storeService.GetAllStores();
+                foreach (var store in stores)
                 {
                     if (IsCategoryEmpty(category, store.Id))
                     {
@@ -65,17 +63,16 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     }
                 }
             }
-
-            this.LogEnd();
         }
 
         private bool IsCategoryEmpty(Category category, int storeId)
         {
-            var productIds = _categoryService.GetProductCategoriesByCategoryId(category.Id, storeId)
+            var productIds = _categoryService.GetProductCategoriesByCategoryId(category.Id)
                                              .Select(pc => pc.ProductId)
                                              .ToArray();
-            var products = _productService.GetProductsByIds(productIds);
-            foreach (var p in products)
+            var publishedProducts = _productService.GetProductsByIds(productIds)
+                                                   .Where(p => p.Published);
+            foreach (var p in publishedProducts)
             {
                 var storeMappings = _storeMappingService.GetStoreMappings<Product>(p)
                                                         .Where(sm => sm.StoreId == storeId);

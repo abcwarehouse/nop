@@ -103,6 +103,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             product.IsShipEnabled = true;
             product.Price = CalculatePrice(abcMattressModel, entries);
 
+            MapProductToStore(product);
+
             if (hasExistingProduct)
             {
                 _productService.UpdateProduct(product);
@@ -111,8 +113,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 _productService.InsertProduct(product);
             }
-
-            MapProductToStore(product);
 
             _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(
                 product,
@@ -141,7 +141,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         private void MapProductToStore(Product product)
         {
-            // product store mapping - hardcoded to ABC Warehouse currently
+            // hardcoded to ABC Warehouse currently
             var abcWarehouseStore = _storeService.GetAllStores()
                                                    .Where(s => s.Name == "ABC Warehouse")
                                                    .FirstOrDefault();
@@ -149,15 +149,11 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 throw new Exception("Unable to find ABC Warehouse store.");
             }
-            
-            var existingStoreMapping = _storeMappingService.GetStoreMappings<Product>(product)
-                                                           .Where(sm => sm.StoreId == abcWarehouseStore.Id)
-                                                           .FirstOrDefault();
 
-            if (existingStoreMapping == null)
-            {
-                _storeMappingService.InsertStoreMapping<Product>(product, abcWarehouseStore.Id);
-            }
+            _productService.UpdateProductStoreMappings(
+                product,
+                new int[] { abcWarehouseStore.Id }
+            );
         }
 
         private decimal CalculatePrice(AbcMattressModel model, IList<AbcMattressEntry> entries)

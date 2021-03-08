@@ -72,79 +72,12 @@ namespace Nop.Plugin.Misc.AbcSync.Services
 
         // this copies the source from CategoryService and modifies to allow for
         // passing in the store ID.
-        public IPagedList<ProductCategory> GetProductCategoriesByCategoryId(
-            int categoryId,
-            int storeId = 0,
-            int pageIndex = 0,
-            int pageSize = int.MaxValue,
-            bool showHidden = false)
-        {
-            if (categoryId == 0)
-                return new PagedList<ProductCategory>(new List<ProductCategory>(), pageIndex, pageSize);
-
-            var query = from pc in _productCategoryRepository.Table
-                        join p in _productRepository.Table on pc.ProductId equals p.Id
-                        where pc.CategoryId == categoryId &&
-                              !p.Deleted &&
-                              (showHidden || p.Published)
-                        orderby pc.DisplayOrder, pc.Id
-                        select pc;
-
-            if (!showHidden && (!_catalogSettings.IgnoreAcl || !_catalogSettings.IgnoreStoreLimitations))
-            {
-                if (!_catalogSettings.IgnoreAcl)
-                {
-                    //ACL (access control list)
-                    var allowedCustomerRolesIds = _customerService.GetCustomerRoleIds(_workContext.CurrentCustomer);
-                    query = from pc in query
-                            join c in _categoryRepository.Table on pc.CategoryId equals c.Id
-                            join acl in _aclRepository.Table
-                                on new
-                                {
-                                    c1 = c.Id,
-                                    c2 = nameof(Category)
-                                }
-                                equals new
-                                {
-                                    c1 = acl.EntityId,
-                                    c2 = acl.EntityName
-                                }
-                                into c_acl
-                            from acl in c_acl.DefaultIfEmpty()
-                            where !c.SubjectToAcl || allowedCustomerRolesIds.Contains(acl.CustomerRoleId)
-                            select pc;
-                }
-
-                if (!_catalogSettings.IgnoreStoreLimitations)
-                {
-                    //Store mapping
-                    // DFar: this is the modified line
-                    var currentStoreId = storeId != 0 ? storeId : _storeContext.CurrentStore.Id;
-                    query = from pc in query
-                            join c in _categoryRepository.Table on pc.CategoryId equals c.Id
-                            join sm in _storeMappingRepository.Table
-                                on new
-                                {
-                                    c1 = c.Id,
-                                    c2 = nameof(Category)
-                                }
-                                equals new
-                                {
-                                    c1 = sm.EntityId,
-                                    c2 = sm.EntityName
-                                }
-                                into c_sm
-                            from sm in c_sm.DefaultIfEmpty()
-                            where !c.LimitedToStores || currentStoreId == sm.StoreId
-                            select pc;
-                }
-
-                query = query.Distinct().OrderBy(pc => pc.DisplayOrder).ThenBy(pc => pc.Id);
-            }
-
-            var productCategories = new PagedList<ProductCategory>(query, pageIndex, pageSize);
-
-            return productCategories;
+        public IList<ProductCategory> GetProductCategoriesByCategoryId(
+            int categoryId
+        ) {
+            return _productCategoryRepository.Table
+                                             .Where(pc => pc.CategoryId == categoryId)
+                                             .ToList();
         }
     }
 }
