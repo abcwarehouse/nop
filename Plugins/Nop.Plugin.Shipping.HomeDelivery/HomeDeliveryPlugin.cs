@@ -111,16 +111,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                 getShippingOptionRequest.Items.Remove(item);
             }
 
-            var additionalHomeDeliveryCharge = decimal.Zero;
-
-
-            //calculate cost of home delivery items
-            foreach (var item in homeDeliveryList)
-            {
-                var homeDeliveryCost = _homeDeliveryCostService.GetHomeDeliveryCost(item);
-                var quantity = item.OverriddenQuantity.HasValue ? item.OverriddenQuantity.Value : item.ShoppingCartItem.Quantity;
-                additionalHomeDeliveryCharge += homeDeliveryCost * quantity;
-            }
+            var homeDeliveryCharge = _homeDeliveryCostService.GetHomeDeliveryCost(homeDeliveryList);
 
             //if there are items to be shipped, use the base calculation service if items remain that will be shipped by ups
             if (getShippingOptionRequest.Items.Count > 0)
@@ -146,7 +137,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                     foreach (var shippingOption in response.ShippingOptions)
                     {
                         shippingOption.Name += " and Home Delivery";
-                        shippingOption.Rate += additionalHomeDeliveryCharge;
+                        shippingOption.Rate += homeDeliveryCharge;
                     }
                 }
             }//else the cart contains only home delivery and/or pickup in store
@@ -154,7 +145,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             {
                 var zip = getShippingOptionRequest.ShippingAddress.ZipPostalCode;
                 CheckZipcode(zip, response);
-                response.ShippingOptions.Add(new ShippingOption { Name = "Home Delivery", Rate = additionalHomeDeliveryCharge });
+                response.ShippingOptions.Add(new ShippingOption { Name = "Home Delivery", Rate = homeDeliveryCharge });
             }//else the cart contains only pickup in store
             else
             {

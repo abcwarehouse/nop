@@ -389,15 +389,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 decimal homeDeliveryCost = 0;
                 decimal shippingCost = 0;
 
-                homeDeliveryCost = 0;
-                foreach (OrderItem item in shippingItems)
-                {
-                    if (item.IsHomeDelivery())
-                    {
-                        decimal homeDeliveryCostPerItem = _homeDeliveryCostService.GetHomeDeliveryCost(item);
-                        homeDeliveryCost += homeDeliveryCostPerItem * item.Quantity;
-                    }
-                }
+                homeDeliveryCost = _homeDeliveryCostService.GetHomeDeliveryCost(shippingItems);
                 shippingCost = order.OrderShippingExclTax - homeDeliveryCost;
 
                 decimal backendOrderTax, backendOrderTotal;
