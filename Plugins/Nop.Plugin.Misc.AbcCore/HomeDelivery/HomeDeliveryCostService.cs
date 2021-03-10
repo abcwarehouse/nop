@@ -59,7 +59,8 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
             foreach (var packageItem in packageItems.OrderByDescending(
                 pi => GetMattressItemCost(pi.Product.Id, pi.ShoppingCartItem.AttributesXml)
               )
-            ) {
+            )
+            {
                 var productAttributes = _productAttributeFormatter.FormatAttributes(
                     packageItem.Product, packageItem.ShoppingCartItem.AttributesXml
                 );
@@ -126,7 +127,7 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
                 .Where(pa => pa.Name.Contains("Mattress Size") || pa.Name.Contains("Base ("))
                 .Select(pa => pa.Id);
 
-            return product.Price + 
+            return product.Price +
                 _productAttributeParser.ParseProductAttributeMappings(attributesXml)
                 .Where(pam => mattressProductAttributeIds.Contains(pam.ProductAttributeId))
                 .Select(pam => _productAttributeParser.ParseValues(attributesXml, pam.Id).FirstOrDefault())

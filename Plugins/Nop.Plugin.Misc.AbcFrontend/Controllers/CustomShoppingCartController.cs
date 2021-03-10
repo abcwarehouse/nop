@@ -999,7 +999,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             });
         }
 
-        
+
         public ActionResult Cart()
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
@@ -1282,7 +1282,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         #region Wishlist
 
-        
+
         public ActionResult Wishlist(Guid? customerGuid)
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist))
@@ -1301,7 +1301,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             return View(model);
         }
 
-        
+
         public ActionResult EmailWishlist()
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.EnableWishlist) || !_shoppingCartSettings.EmailWishlistEnabled)

@@ -42,6 +42,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                    .As<ICustomProductService>();
             builder.RegisterType<TermLookupService>()
                    .As<ITermLookupService>();
+            builder.RegisterType<CardCheckService>()
+                 .As<ICardCheckService>();
         }
     }
 }

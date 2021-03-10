@@ -74,7 +74,8 @@ namespace Nop.Plugin.Misc.AbcSync.Services
         // passing in the store ID.
         public IList<ProductCategory> GetProductCategoriesByCategoryId(
             int categoryId
-        ) {
+        )
+        {
             return _productCategoryRepository.Table
                                              .Where(pc => pc.CategoryId == categoryId)
                                              .ToList();
