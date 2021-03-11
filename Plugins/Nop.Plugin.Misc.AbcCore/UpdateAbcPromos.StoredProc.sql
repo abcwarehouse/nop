@@ -177,6 +177,21 @@ BEGIN
 	JOIN AbcPromo ap on ap.Name = RTRIM(LTRIM(tep.NAME)) COLLATE SQL_Latin1_General_CP1_CI_AS
 	JOIN ProductAbcDescriptions pad on pad.AbcItemNumber = tep.ITEM_NUMBER COLLATE SQL_Latin1_General_CP1_CI_AS
 
+	-- mattresses
+	IF (EXISTS (SELECT * 
+                 FROM INFORMATION_SCHEMA.TABLES 
+                 WHERE TABLE_SCHEMA = 'dbo' 
+                 AND  TABLE_NAME = 'AbcMattressModel'))
+	BEGIN
+		INSERT INTO #tmpPromoProductMappings
+			select distinct ap.Id, amm.ProductId as Product_Id
+			  FROM ##tmpErpPromos tep
+				JOIN AbcPromo ap on ap.Name = RTRIM(LTRIM(tep.NAME)) COLLATE SQL_Latin1_General_CP1_CI_AS
+				JOIN AbcMattressEntry ame on ame.ItemNo = tep.ITEM_NUMBER COLLATE SQL_Latin1_General_CP1_CI_AS
+				JOIN AbcMattressModel amm on ame.AbcMattressModelId = amm.Id
+				JOIN AbcMattressPackage amp on amp.AbcMattressEntryId = ame.Id
+	END
+
 	MERGE ProductAbcPromo t USING #tmpPromoProductMappings s
 	ON (t.AbcPromoId = s.Id AND t.ProductId = s.Product_Id)
 	WHEN NOT MATCHED BY TARGET THEN

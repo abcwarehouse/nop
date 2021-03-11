@@ -1,5 +1,5 @@
-## 1.2.3
-* Modifies locales for MapCategoryStoresTask
+## 1.3.0
+* Add support for mattresses
 
 ## 1.2.0
 
