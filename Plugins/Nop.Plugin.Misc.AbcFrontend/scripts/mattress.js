@@ -151,7 +151,6 @@ function ResetOtherDropdowns() {
 function updateBaseUrl(selectedBase) {
   const url = new URL(window.location);
   const key = "base";
-  debugger;
 
   if (selectedBase === "---") {
     url.searchParams.delete(key);
