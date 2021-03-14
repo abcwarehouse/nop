@@ -41,30 +41,6 @@ function getConvertedSize(sizeValue) {
           return `${sizeValue.toLowerCase().charAt(0).toUpperCase()}${sizeValue.toLowerCase().substring(1)}`
                  .replace('-mattress', '');
   }
-} 
-
-function changeMattressBase()
-{
-    // Get the base value from URL if it exists
-    const urlParams = new URLSearchParams(window.location.search);
-    const baseValue = urlParams.get('base');
-    if (baseValue == null || !isValidBase(baseValue)) { return; }
-
-    // Find the matching options based on base above (must check all bases)
-    var textToFind = getConvertedBase(baseValue);
-    var mattressBaseSelects = document.getElementsByClassName("mattress-base");
-    if (mattressBaseSelects.length <= 0) { return; }
-
-    for (var i = 0; i < mattressBaseSelects.length; i++)
-    {
-        for (var j = 0; j < mattressBaseSelects[i].options.length; j++) {
-            if (mattressBaseSelects[i].options[j].text.includes(textToFind)) {
-                mattressBaseSelects[i].selectedIndex = j;
-                mattressBaseSelects[i].dispatchEvent(new Event('change'));
-                break;
-            }
-        }
-    }
 }
 
 function isValidSize(size)
@@ -80,21 +56,33 @@ function isValidSize(size)
     return validSizes.includes(size.toLowerCase());
 }
 
-function isValidBase(base)
+function changeMattressBase()
 {
-    const validBases = ["lowprofile", "ease", "regular", "ergo", "ergoextended"];
-    return validBases.includes(base.toLowerCase());
+    // Get the base value from URL if it exists
+    const urlParams = new URLSearchParams(window.location.search);
+    const baseSlug = urlParams.get('base');
+    if (baseSlug == null) { return; }
+
+    // Find the matching options based on base above (must check all bases)
+    var mattressBaseSelects = document.getElementsByClassName("mattress-base");
+    if (mattressBaseSelects.length <= 0) { return; }
+
+    for (var i = 0; i < mattressBaseSelects.length; i++)
+    {
+        for (var j = 0; j < mattressBaseSelects[i].options.length; j++) {
+            var slug = convertBaseToSlug(mattressBaseSelects[i].options[j].text);
+            if (slug === baseSlug) {
+                mattressBaseSelects[i].selectedIndex = j;
+                mattressBaseSelects[i].dispatchEvent(new Event('change'));
+                break;
+            }
+        }
+    }
 }
 
-function getConvertedBase(baseValue) {
-    switch (baseValue) {
-        case 'lowprofile':
-            return "Low Profile";
-        case 'ergoextended':
-                return "Ergo Extended";
-        default:
-            return `${baseValue.toLowerCase().charAt(0).toUpperCase()}${baseValue.toLowerCase().substring(1)}`;
-    }
+function convertBaseToSlug(baseValue) {
+    const result = baseValue.split('[')[0].trim().toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-');
+    return result;
 }
 
 changeMattressSize();
@@ -133,6 +121,7 @@ function updateSizeUrl(selectedSize) {
       throw new Error('Unable to match mattress size, cannot update URL.');
   }
   
+  url.searchParams.delete("base");
   window.history.replaceState({}, '', url);
   ResetOtherDropdowns();
 }
@@ -162,21 +151,15 @@ function ResetOtherDropdowns() {
 function updateBaseUrl(selectedBase) {
   const url = new URL(window.location);
   const key = "base";
+  debugger;
 
-  // Use includes to skip the price adjustment information
-  if (selectedBase.includes('---')) {
+  if (selectedBase === "---") {
     url.searchParams.delete(key);
-  } else if (selectedBase.includes('Low Profile')) {
-    url.searchParams.set(key, 'lowprofile');
-  } else if (selectedBase.includes('Ergo Extended')) {
-    url.searchParams.set(key, 'ergoextended');
-  } else if (selectedBase.includes('Ease')) {
-    url.searchParams.set(key, 'ease');
-  } else if (selectedBase.includes('Ergo')) {
-    url.searchParams.set(key, 'ergo');
-  } else if (selectedBase.includes('Regular')) {
-    url.searchParams.set(key, 'regular');
+    window.history.replaceState({}, '', url);
+    return;
   }
+  
+  url.searchParams.set(key, convertBaseToSlug(selectedBase));
   
   window.history.replaceState({}, '', url);
 }
