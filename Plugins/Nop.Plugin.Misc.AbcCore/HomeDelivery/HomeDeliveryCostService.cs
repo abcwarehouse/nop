@@ -88,6 +88,8 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
 
         private decimal GetCost(int productId, string attributesXml, int quantity)
         {
+            if (!attributesXml.Contains("delivered to you")) { return 0; }
+
             var categories = _categoryService.GetProductCategoriesByProductId(productId)
                                                     .Select(pc => _categoryService.GetCategoryById(pc.CategoryId));
             if (categories.Any(c => new string[]
