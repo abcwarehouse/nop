@@ -134,7 +134,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             var product = _abcMattressProductService.UpsertAbcMattressProduct(_abcMattressModelNoProduct);
 
             product.Name.Should().Be($"Serta {_abcMattressModelNoProduct.Description}");
-            product.Sku.Should().Be(_abcMattressModelNoProduct.Name);
+            product.Sku.Should().Be($"M{_abcMattressModelNoProduct.Name}");
             product.AllowCustomerReviews.Should().BeFalse();
             product.VisibleIndividually.Should().BeTrue();
             product.CreatedOnUtc.Should().BeCloseTo(DateTime.UtcNow);

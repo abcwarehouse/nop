@@ -5,6 +5,7 @@ using Moq;
 using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Collections.Generic;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
@@ -46,9 +47,14 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
             var mockProductService = new Mock<IProductService>();
             mockProductService.Setup(s => s.GetProductById(It.IsAny<int>())).Returns(new Product());
 
+            var mockWebHelper = new Mock<IWebHelper>();
+            mockWebHelper.Setup(s => s.GetThisPageUrl(false, null, false))
+                         .Returns("http://localhost:5000/twin-mattress");
+
             _abcMattressListingPriceService = new AbcMattressListingPriceService(
                 mockProductService.Object,
-                mockProductAttributeService.Object
+                mockProductAttributeService.Object,
+                mockWebHelper.Object
             );
         }
 

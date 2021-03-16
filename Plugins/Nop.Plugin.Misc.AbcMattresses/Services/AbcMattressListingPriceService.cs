@@ -1,6 +1,7 @@
 using Nop.Services.Catalog;
 using System.Linq;
 using System;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
@@ -8,14 +9,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
     {
         private readonly IProductService _productService;
         private readonly IProductAttributeService _productAttributeService;
+        private readonly IWebHelper _webHelper;
 
         public AbcMattressListingPriceService(
             IProductService productService,
-            IProductAttributeService productAttributeService
+            IProductAttributeService productAttributeService,
+            IWebHelper webHelper
         )
         {
             _productService = productService;
             _productAttributeService = productAttributeService;
+            _webHelper = webHelper;
         }
 
         public decimal? GetListingPriceForMattressProduct(
@@ -23,6 +27,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             string categorySlug
         )
         {
+            // only need to do this if we're on the 'shop by size' categories
+            var url = _webHelper.GetThisPageUrl(false);
+            if (!IsSizeCategoryPage(url)) { return null; }
+
             var mattressSizePam = _productAttributeService.GetProductAttributeMappingsByProductId(productId)
                                                .Where(pam =>
                                                    _productAttributeService.GetProductAttributeById(
@@ -50,6 +58,16 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             var product = _productService.GetProductById(productId);
             return value == null ? (decimal?)null :
                                     Math.Round(product.Price + value.PriceAdjustment, 2);
+        }
+
+        private bool IsSizeCategoryPage(string url)
+        {
+            return url.Contains("/twin-mattress") ||
+                   url.Contains("/twinxl-mattress") ||
+                   url.Contains("/full-mattress") ||
+                   url.Contains("/queen-mattress") ||
+                   url.Contains("/king-mattress") ||
+                   url.Contains("/california-king-mattress");
         }
 
         // default to queen if nothing matches
