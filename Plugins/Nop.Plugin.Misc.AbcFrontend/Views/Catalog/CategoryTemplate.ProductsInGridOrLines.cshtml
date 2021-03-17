@@ -45,6 +45,12 @@
     bool isFloorcareAccessories = Model.Name == "Floorcare Accessories";
 
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/mobileFilters.js");
+
+	/* Adding styles specific to categories */
+    if (Model.Name == "Stearns & Foster")
+    {
+        Html.AddHeadCustomParts("<link rel='stylesheet' href='/Misc/StearnsAndFoster/css/style.css'>");
+    }
 }
 
 @using Nop.Core.Domain.Common;

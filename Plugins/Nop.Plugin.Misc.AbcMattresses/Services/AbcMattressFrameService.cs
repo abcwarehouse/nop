@@ -20,7 +20,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         public IList<AbcMattressFrame> GetAbcMattressFramesBySize(string size)
         {
             return _abcMattressFrameRepository.Table
-                                              .Where(p => p.Size.ToLower() == size.ToLower())
+                                              .Where(p => p.Size.ToLower() == size.ToLower() &&
+                                                          p.Price > 0M)
                                               .ToList();
         }
     }

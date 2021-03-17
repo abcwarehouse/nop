@@ -21,7 +21,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         {
             return _abcMattressPackageRepository.Table
                                          .Where(p => p.AbcMattressBaseId == baseId &&
-                                                     p.AbcMattressEntryId == entryId)
+                                                     p.AbcMattressEntryId == entryId &&
+                                                     p.Price > 0M)
                                          .FirstOrDefault();
         }
 

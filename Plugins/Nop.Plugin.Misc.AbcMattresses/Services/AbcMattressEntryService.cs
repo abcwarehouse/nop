@@ -25,7 +25,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         public IList<AbcMattressEntry> GetAbcMattressEntriesByModelId(int modelId)
         {
             return _abcMattressEntryRepository.Table
-                .Where(ame => ame.AbcMattressModelId == modelId)
+                .Where(ame => ame.AbcMattressModelId == modelId && ame.Price > 0M)
                 .ToList();
         }
 
