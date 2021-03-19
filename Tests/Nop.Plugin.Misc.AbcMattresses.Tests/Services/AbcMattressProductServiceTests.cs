@@ -13,6 +13,7 @@ using Nop.Core.Domain.Seo;
 using Nop.Services.Logging;
 using Nop.Services.Stores;
 using Nop.Core.Domain.Stores;
+using Nop.Services.Tax;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
@@ -123,6 +124,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 new Mock<IProductAttributeService>().Object,
                 _storeService.Object,
                 _storeMappingService.Object,
+                new Mock<ITaxCategoryService>().Object,
                 _urlRecordService.Object,
                 new Mock<ILogger>().Object
             );

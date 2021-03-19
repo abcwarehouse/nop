@@ -8,6 +8,7 @@ using Nop.Services.Common;
 using Nop.Services.Logging;
 using Nop.Services.Seo;
 using Nop.Services.Stores;
+using Nop.Services.Tax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IProductAttributeService _productAttributeService;
         private readonly IStoreService _storeService;
         private readonly IStoreMappingService _storeMappingService;
+        private readonly ITaxCategoryService _taxCategoryService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly ILogger _logger;
 
@@ -48,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IProductAttributeService productAttributeService,
             IStoreService storeService,
             IStoreMappingService storeMappingService,
+            ITaxCategoryService taxCategoryService,
             IUrlRecordService urlRecordService,
             ILogger logger
         )
@@ -66,6 +69,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _productAttributeService = productAttributeService;
             _storeMappingService = storeMappingService;
             _storeService = storeService;
+            _taxCategoryService = taxCategoryService;
             _urlRecordService = urlRecordService;
             _logger = logger;
         }
@@ -102,6 +106,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             product.OrderMaximumQuantity = 10000;
             product.IsShipEnabled = true;
             product.Price = CalculatePrice(abcMattressModel, entries);
+            product.TaxCategoryId = _taxCategoryService.GetAllTaxCategories()
+                                                       .Where(tc => tc.Name == "Everything")
+                                                       .Select(tc => tc.Id)
+                                                       .FirstOrDefault();
 
             MapProductToStore(product);
 
