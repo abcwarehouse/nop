@@ -28,7 +28,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         )
         {
             // only need to do this if we're on the 'shop by size' categories
-            var url = _webHelper.GetThisPageUrl(false);
+            // but we're opening this up to be called anywhere
+            // including the JSON schema for google crawler
+            var url = _webHelper.GetThisPageUrl(true);
             if (!IsSizeCategoryPage(url)) { return null; }
 
             var mattressSizePam = _productAttributeService.GetProductAttributeMappingsByProductId(productId)
@@ -62,12 +64,12 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
         private bool IsSizeCategoryPage(string url)
         {
-            return url.Contains("/twin-mattress") ||
-                   url.Contains("/twinxl-mattress") ||
-                   url.Contains("/full-mattress") ||
-                   url.Contains("/queen-mattress") ||
-                   url.Contains("/king-mattress") ||
-                   url.Contains("/california-king-mattress");
+            return url.Contains("twin-mattress") ||
+                   url.Contains("twinxl-mattress") ||
+                   url.Contains("full-mattress") ||
+                   url.Contains("queen-mattress") ||
+                   url.Contains("king-mattress") ||
+                   url.Contains("california-king-mattress");
         }
 
         // default to queen if nothing matches

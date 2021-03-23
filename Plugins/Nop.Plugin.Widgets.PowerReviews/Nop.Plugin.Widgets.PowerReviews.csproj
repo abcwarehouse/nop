@@ -62,6 +62,7 @@
     <!-- move custom to AbcCore later -->
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcFrontend\Nop.Plugin.Misc.AbcFrontend.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcMattresses\Nop.Plugin.Misc.AbcMattresses.csproj" />
     <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
   </ItemGroup>
 

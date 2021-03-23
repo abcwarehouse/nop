@@ -1,17 +1,29 @@
+@using Nop.Plugin.Misc.AbcMattresses.Services
 @using Nop.Plugin.Widgets.PowerReviews.Models
+@using Nop.Core
+
+@inject IAbcMattressListingPriceService abcMattressListingPriceService
+@inject IWebHelper webHelper
 
 @model DetailModel
 
 @{
     Html.AddHeadCustomParts("<script src='//ui.powerreviews.com/stable/4.0/ui.js'></script>");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-detail.css");
+
+	var url = webHelper.GetThisPageUrl(true);
+	var mattressListingPrice =
+		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.ProductId, url);
+
+	var price = mattressListingPrice != null ?
+		mattressListingPrice.ToString() :
+		Model.ProductPrice;
 }
 
 <div id="pr-reviewsnippet"></div>
 
 @*Script to open reviews when clicking read link*@
 <script type="text/javascript">
-
     $(window).on("load", function () {
         var openReviews = function () { $("[href=#quickTab-Reviews]").click(); }
         $("[class^=pr-snippet-review-count]").click(openReviews);
@@ -38,7 +50,7 @@
 			"@@type": "Offer",
 			"url": "this.Request.Url.AbsoluteUri",
 			"priceCurrency": "USD",
-			"price": "@Model.ProductPrice",
+			"price": "@price",
 			"priceValidUntil": "@Model.PriceValidUntil.ToShortDateString()",
 			"itemCondition": "https://schema.org/NewCondition",
 			"availability": "https://schema.org/InStock"

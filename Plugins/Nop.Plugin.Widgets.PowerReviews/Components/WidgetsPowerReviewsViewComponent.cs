@@ -107,6 +107,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 ProductImageUrl = productDetailsModel.DefaultPictureModel.ImageUrl,
                 ProductGtin = productDetailsModel.Gtin,
                 ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                ProductId = productDetailsModel.Id
             };
 
             return View(
