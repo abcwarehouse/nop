@@ -1,3 +1,6 @@
+## 1.3.1
+* Adds FLIX ID locale
+
 ## 1.3.0
 * Add support for mattresses
 

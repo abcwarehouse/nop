@@ -12,5 +12,8 @@ namespace Nop.Plugin.Misc.AbcCore.Models
 
         [NopResourceDisplayName(CoreLocales.IsDebugMode)]
         public bool IsDebugMode { get; set; }
+
+        [NopResourceDisplayName(CoreLocales.FlixId)]
+        public string FlixId { get; set; }
     }
 }
