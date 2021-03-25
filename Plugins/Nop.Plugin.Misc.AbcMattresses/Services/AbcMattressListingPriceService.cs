@@ -76,22 +76,29 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private string GetMattressSizeFromUrl(string url)
         {
             var slug = url.Substring(url.LastIndexOf('/') + 1);
-            switch (slug)
+            if (slug.Contains("california-king-mattress"))
             {
-                case "california-king-mattress":
-                    return AbcMattressesConsts.CaliforniaKing;
-                case "king-mattress":
-                    return AbcMattressesConsts.King;
-                case "full-mattress":
-                    return AbcMattressesConsts.Full;
-                case "twin-extra-long-mattress":
-                    return AbcMattressesConsts.TwinXL;
-                case "twin-mattress":
-                    return AbcMattressesConsts.Twin;
-                default:
-                    return AbcMattressesConsts.CaliforniaKing;
-
+                return AbcMattressesConsts.CaliforniaKing;
             }
+            if (slug.Contains("king-mattress"))
+            {
+                return AbcMattressesConsts.King;
+            }
+            if (slug.Contains("full-mattress"))
+            {
+                return AbcMattressesConsts.Full;
+            }
+            if (slug.Contains("twin-extra-long-mattress") ||
+                slug.Contains("twinxl-mattress"))
+            {
+                return AbcMattressesConsts.TwinXL;
+            }
+            if (slug.Contains("california-king-mattress"))
+            {
+                return AbcMattressesConsts.Twin;
+            }
+
+            return AbcMattressesConsts.Queen;
         }
     }
 }

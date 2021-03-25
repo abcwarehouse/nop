@@ -8,11 +8,15 @@
 @using Nop.Plugin.Misc.AbcCore.Extensions
 @using Nop.Web.Extensions
 @using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Plugin.Misc.AbcMattresses.Services
+@using Nop.Core
 
 @inject IWorkContext workContext
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
 @inject IProductService productService
+@inject IAbcMattressListingPriceService abcMattressListingPriceService
+@inject IWebHelper webHelper
 
 @{
     Html.AddCssFileParts("https://use.fontawesome.com/releases/v5.3.1/css/all.css", "", true);
@@ -62,6 +66,15 @@
         priceBucketCodeImageUrl = productFlag.PriceBucketImageUrl;
         stockMessage = productFlag.StockMessage;
     }
+
+    // get mattress price for schema
+    var url = webHelper.GetThisPageUrl(true);
+	var mattressListingPrice =
+		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.ProductId, url);
+
+	var price = mattressListingPrice != null ?
+		mattressListingPrice.ToString() :
+		Model.Price;
 }
 
 @if (!Model.CustomerEntersPrice)
@@ -108,7 +121,7 @@
                     }
 
                     @*render price*@
-                    <span @if (String.IsNullOrWhiteSpace(Model.PriceWithDiscount)) { <text> itemprop="price" content="@Model.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" class="price-value-@(Model.ProductId)" </text> }>
+                    <span @if (String.IsNullOrWhiteSpace(Model.PriceWithDiscount)) { <text> itemprop="price" content="@price" class="price-value-@(Model.ProductId)" </text> }>
                         @Html.Raw(Model.Price.Replace(".00", ""))
                         <span class="clearance-or-less">Or Less!</span>
                     </span>

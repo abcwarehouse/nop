@@ -87,7 +87,7 @@ namespace Nop.Plugin.Misc.AbcMattresses
         public const string FreeGiftName = "Free Gift";
 
         public const string Twin = "Twin";
-        public const string TwinXL = "Twin XL";
+        public const string TwinXL = "TwinXL";
         public const string Full = "Full";
         public const string Queen = "Queen";
         public const string QueenFlexhead = "Queen-Flexhead";
