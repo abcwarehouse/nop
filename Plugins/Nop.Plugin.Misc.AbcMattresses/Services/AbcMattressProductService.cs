@@ -12,6 +12,7 @@ using Nop.Services.Tax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nop.Plugin.Widgets.AbcSynchronyPayments.Services;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
@@ -28,6 +29,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IProductService _productService;
+        private readonly IProductAbcFinanceService _productAbcFinanceService;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IStoreService _storeService;
         private readonly IStoreMappingService _storeMappingService;
@@ -47,6 +49,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IGenericAttributeService genericAttributeService,
             IManufacturerService manufacturerService,
             IProductService productService,
+            IProductAbcFinanceService productAbcFinanceService,
             IProductAttributeService productAttributeService,
             IStoreService storeService,
             IStoreMappingService storeMappingService,
@@ -66,6 +69,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _genericAttributeService = genericAttributeService;
             _manufacturerService = manufacturerService;
             _productService = productService;
+            _productAbcFinanceService = productAbcFinanceService;
             _productAttributeService = productAttributeService;
             _storeMappingService = storeMappingService;
             _storeService = storeService;
@@ -144,7 +148,56 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 );
             }
 
+            // add information relating to Synchrony payments
+            SyncSynchronyPaymentsData(product, abcMattressModel);
+
             return product;
+        }
+
+        private void SyncSynchronyPaymentsData(Product product, AbcMattressModel model)
+        {
+            var entries = _abcMattressEntryService.GetAbcMattressEntriesByModelId(model.Id);
+            var packages = _abcMattressPackageService.GetAbcMattressPackagesByEntryIds(entries.Select(e => e.Id));
+
+            var itemNos = entries.Select(e => e.ItemNo).Union(packages.Select(p => p.ItemNo));
+
+            int? months = null;
+            bool? isMinimumPayment = null;
+            DateTime? startDate = null;
+            DateTime? endDate = null;
+
+            foreach (var itemNo in itemNos)
+            {
+                var productAbcFinance = _productAbcFinanceService.GetProductAbcFinanceByAbcItemNumber(itemNo);
+
+                if (productAbcFinance == null) { continue; }
+
+                months = productAbcFinance.Months;
+                isMinimumPayment = productAbcFinance.IsDeferredPricing;
+                startDate = productAbcFinance.StartDate.Value;
+                endDate = productAbcFinance.EndDate.Value;
+            }
+
+            _genericAttributeService.SaveAttribute<int?>(
+                product,
+                "SynchronyPaymentMonths",
+                months
+            );
+            _genericAttributeService.SaveAttribute<bool?>(
+                product,
+                "SynchronyPaymentIsMinimum",
+                isMinimumPayment
+            );
+            _genericAttributeService.SaveAttribute<DateTime?>(
+                product,
+                "SynchronyPaymentOfferValidFrom",
+                startDate
+            );
+            _genericAttributeService.SaveAttribute<DateTime?>(
+                product,
+                "SynchronyPaymentOfferValidTo",
+                endDate
+            );
         }
 
         private void MapProductToStore(Product product)

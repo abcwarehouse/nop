@@ -14,6 +14,7 @@ using Nop.Services.Logging;
 using Nop.Services.Stores;
 using Nop.Core.Domain.Stores;
 using Nop.Services.Tax;
+using Nop.Plugin.Widgets.AbcSynchronyPayments.Services;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
@@ -121,6 +122,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 new Mock<IGenericAttributeService>().Object,
                 _manufacturerService.Object,
                 _productService.Object,
+                new Mock<IProductAbcFinanceService>().Object,
                 new Mock<IProductAttributeService>().Object,
                 _storeService.Object,
                 _storeMappingService.Object,

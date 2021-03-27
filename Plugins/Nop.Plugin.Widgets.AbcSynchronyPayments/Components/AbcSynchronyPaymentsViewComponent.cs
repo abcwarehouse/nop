@@ -12,6 +12,9 @@ using Nop.Services.Logging;
 using Nop.Web.Framework.Components;
 using Nop.Web.Models.Catalog;
 using Nop.Web.Framework.Infrastructure;
+using Nop.Services.Common;
+using System.Linq;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
 {
@@ -19,6 +22,8 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
     public class AbcSynchronyPaymentsViewComponent : NopViewComponent
     {
         private readonly ILogger _logger;
+        private readonly IAbcMattressListingPriceService _abcMattressListingPriceService;
+        private readonly IGenericAttributeService _genericAttributeService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IProductAbcFinanceService _productAbcFinanceService;
         private readonly IProductService _productService;
@@ -26,6 +31,8 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
 
         public AbcSynchronyPaymentsViewComponent(
             ILogger logger,
+            IGenericAttributeService genericAttributeService,
+            IAbcMattressListingPriceService abcMattressListingPriceService,
             IProductAbcDescriptionService productAbcDescriptionService,
             IProductAbcFinanceService productAbcFinanceService,
             IProductService productService,
@@ -33,6 +40,8 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
         )
         {
             _logger = logger;
+            _abcMattressListingPriceService = abcMattressListingPriceService;
+            _genericAttributeService = genericAttributeService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _productAbcFinanceService = productAbcFinanceService;
             _productService = productService;
@@ -64,9 +73,15 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
 
             var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(productId);
             var abcItemNumber = productAbcDescription?.AbcItemNumber;
-            if (abcItemNumber == null)
+
+            // also allow getting info from generic attribute
+            var productGenericAttributes = _genericAttributeService.GetAttributesForEntity(productId, "Product");
+            var monthsGenericAttribute = productGenericAttributes.Where(ga => ga.Key == "SynchronyPaymentMonths")
+                                                                 .FirstOrDefault();
+
+            if (abcItemNumber == null && monthsGenericAttribute == null)
             {
-                // No ABC Item number, skip processing
+                // No ABC Item number (or no months indicator), skip processing
                 return View(productListingCshtml, model);
             }
 
@@ -74,37 +89,55 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
                 _productAbcFinanceService.GetProductAbcFinanceByAbcItemNumber(
                     abcItemNumber
                 );
-            if (productAbcFinance == null)
+            if (productAbcFinance == null && monthsGenericAttribute == null)
             {
                 // No financing information
                 return View(productListingCshtml, model);
             }
 
+            // generic attribute data
+            var isMinimumGenericAttribute = productGenericAttributes.Where(ga => ga.Key == "SynchronyPaymentIsMinimum")
+                                                                 .FirstOrDefault();
+            var offerValidFromGenericAttribute = productGenericAttributes.Where(ga => ga.Key == "SynchronyPaymentOfferValidFrom")
+                                                                 .FirstOrDefault();
+            var offerValidToGenericAttribute = productGenericAttributes.Where(ga => ga.Key == "SynchronyPaymentOfferValidTo")
+                                                                 .FirstOrDefault();
+
             var product = _productService.GetProductById(productId);
+            var months = productAbcFinance != null ?
+                productAbcFinance.Months :
+                int.Parse(monthsGenericAttribute.Value);
+            var isMinimumPayment = productAbcFinance != null ?
+                productAbcFinance.IsDeferredPricing :
+                bool.Parse(isMinimumGenericAttribute.Value);
+            var offerValidFrom = productAbcFinance != null ?
+                productAbcFinance.StartDate.Value :
+                DateTime.Parse(offerValidFromGenericAttribute.Value);
+            var offerValidTo = productAbcFinance != null ?
+                productAbcFinance.EndDate.Value :
+                DateTime.Parse(offerValidToGenericAttribute.Value);
+            var price = _abcMattressListingPriceService.GetListingPriceForMattressProduct(productId) ?? product.Price;
+            
             model = new SynchronyPaymentModel
             {
-                MonthCount = productAbcFinance.Months,
+                MonthCount = months,
                 MonthlyPayment = CalculatePayment(
-                    product.Price, productAbcFinance
+                    price, isMinimumPayment, months
                 ),
                 ProductId = productId,
                 ApplyUrl = GetApplyUrl(),
-                IsMonthlyPaymentStyle = productAbcFinance.IsMonthlyPricing,
+                IsMonthlyPaymentStyle = !isMinimumPayment,
                 EqualPayment = CalculateEqualPayments(
-                    product.Price, productAbcFinance
+                    price, months
                 ),
                 ModalHexColor = HtmlHelpers.GetPavilionPrimaryColor(),
                 StoreName = _storeContext.CurrentStore.Name,
                 ImageUrl = GetImageUrl(),
-                OfferValidFrom = productAbcFinance.StartDate.HasValue ?
-                    productAbcFinance.StartDate.Value.ToShortDateString() :
-                    null,
-                OfferValidTo = productAbcFinance.EndDate.HasValue ?
-                    productAbcFinance.EndDate.Value.ToShortDateString() :
-                    null,
+                OfferValidFrom = offerValidFrom.ToShortDateString(),
+                OfferValidTo = offerValidTo.ToShortDateString()
             };
 
-            model.FullPrice = product.Price;
+            model.FullPrice = price;
             model.FinalPayment = model.FullPrice -
                 (model.MonthlyPayment * (model.MonthCount - 1));
 
@@ -138,25 +171,16 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
                 "/Plugins/Widgets.AbcSynchronyPayments/Images/deferredPricing-haw.PNG";
         }
 
-        private int CalculatePayment(decimal productPrice, ProductAbcFinance productAbcFinance)
+        private int CalculatePayment(decimal productPrice, bool isMinimumPayment, int months)
         {
-            if (productAbcFinance.IsDeferredPricing)
-            {
-                return (int)Math.Max(Math.Round(Math.Ceiling(productPrice * 0.035M), 2), 28);
-            }
-            else if (productAbcFinance.IsMonthlyPricing)
-            {
-                return CalculateEqualPayments(productPrice, productAbcFinance);
-            }
-            else
-            {
-                return 0;
-            }
+            return isMinimumPayment ?
+                (int)Math.Max(Math.Round(Math.Ceiling(productPrice * 0.035M), 2), 28) :
+                CalculateEqualPayments(productPrice, months);
         }
 
-        private int CalculateEqualPayments(decimal productPrice, ProductAbcFinance productAbcFinance)
+        private int CalculateEqualPayments(decimal productPrice, int months)
         {
-            return (int)Math.Round(Math.Ceiling(productPrice / productAbcFinance.Months), 2);
+            return (int)Math.Round(Math.Ceiling(productPrice / months), 2);
         }
 
         private string GetApplyUrl()

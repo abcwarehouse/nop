@@ -22,6 +22,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Services
 
         public ProductAbcFinance GetProductAbcFinanceByAbcItemNumber(string abcItemNumber)
         {
+            if (string.IsNullOrWhiteSpace(abcItemNumber)) { return null; }
             return _staticCacheManager.Get(
                 new CacheKey(string.Format(PRODUCT_ABC_FINANCE, abcItemNumber), "Abc."),
                 ProductAbcFinance.GetByAbcItemNumberFunc(_productAbcFinanceRepository, abcItemNumber));

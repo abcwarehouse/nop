@@ -5,6 +5,7 @@ using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
+using Nop.Plugin.Widgets.AbcSynchronyPayments.Services;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
@@ -44,6 +45,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                    .As<ITermLookupService>();
             builder.RegisterType<CardCheckService>()
                  .As<ICardCheckService>();
+            builder.RegisterType<ProductAbcFinanceService>()
+                   .As<IProductAbcFinanceService>();
         }
     }
 }
