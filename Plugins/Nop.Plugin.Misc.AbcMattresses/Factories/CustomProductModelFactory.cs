@@ -98,17 +98,16 @@ namespace Nop.Plugin.Misc.AbcMattresses.Factories
         /// <param name="product">Product</param>
         /// <param name="forceRedirectionAfterAddingToCart">Whether to force redirection after adding to cart</param>
         /// <returns>Product overview price model</returns>
-        protected override ProductOverviewModel.ProductPriceModel PrepareProductOverviewPriceModel(
-            Product product,
-            bool forceRedirectionAfterAddingToCart = false
+        protected override ProductOverviewModel.ProductPriceModel
+            PrepareProductOverviewPriceModel(
+                Product product,
+                bool forceRedirectionAfterAddingToCart = false
         )
         {
             var model = base.PrepareProductOverviewPriceModel(product, forceRedirectionAfterAddingToCart);
 
-            var url = _webHelper.GetThisPageUrl(false);
             var newPrice = _abcMattressListingPriceService.GetListingPriceForMattressProduct(
-                product.Id,
-                url
+                product.Id
             );
 
             if (newPrice != null)

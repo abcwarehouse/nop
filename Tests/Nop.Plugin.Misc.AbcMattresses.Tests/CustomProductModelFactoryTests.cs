@@ -74,7 +74,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
 
             var mockAbcMattressListingPriceService = new Mock<IAbcMattressListingPriceService>();
             mockAbcMattressListingPriceService
-                .Setup(x => x.GetListingPriceForMattressProduct(MattressProduct.Id, It.IsAny<string>()))
+                .Setup(x => x.GetListingPriceForMattressProduct(MattressProduct.Id))
                 .Returns(40.00M);
 
             _customProductModelFactory = new CustomProductModelFactory(

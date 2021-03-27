@@ -11,9 +11,8 @@
 
 @{
     // get mattress price for schema
-    var url = webHelper.GetThisPageUrl(true);
 	var mattressListingPrice =
-		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.Id, url);
+		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.Id);
 
 	var price = mattressListingPrice != null ?
 		mattressListingPrice.ToString() :

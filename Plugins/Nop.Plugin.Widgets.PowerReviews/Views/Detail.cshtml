@@ -11,9 +11,8 @@
     Html.AddHeadCustomParts("<script src='//ui.powerreviews.com/stable/4.0/ui.js'></script>");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-detail.css");
 
-	var url = webHelper.GetThisPageUrl(true);
 	var mattressListingPrice =
-		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.ProductId, url);
+		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.ProductId);
 
 	var price = mattressListingPrice != null ?
 		mattressListingPrice.ToString() :

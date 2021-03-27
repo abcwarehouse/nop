@@ -22,10 +22,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _webHelper = webHelper;
         }
 
-        public decimal? GetListingPriceForMattressProduct(
-            int productId,
-            string categorySlug
-        )
+        public decimal? GetListingPriceForMattressProduct(int productId)
         {
             // only need to do this if we're on the 'shop by size' categories
             // but we're opening this up to be called anywhere
@@ -47,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
 
             var value = _productAttributeService.GetProductAttributeValues(
                 mattressSizePam.Id
-            ).Where(pav => pav.Name == GetMattressSizeFromUrl(categorySlug))
+            ).Where(pav => pav.Name == GetMattressSizeFromUrl(url))
              .FirstOrDefault();
             if (value == null) // no matching sizes, check for default (queen)
             {
@@ -66,6 +63,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         {
             return url.Contains("twin-mattress") ||
                    url.Contains("twinxl-mattress") ||
+                   url.Contains("twin-extra-long-mattress") ||
                    url.Contains("full-mattress") ||
                    url.Contains("queen-mattress") ||
                    url.Contains("king-mattress") ||
@@ -93,7 +91,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             {
                 return AbcMattressesConsts.TwinXL;
             }
-            if (slug.Contains("california-king-mattress"))
+            if (slug.Contains("twin-mattress"))
             {
                 return AbcMattressesConsts.Twin;
             }
