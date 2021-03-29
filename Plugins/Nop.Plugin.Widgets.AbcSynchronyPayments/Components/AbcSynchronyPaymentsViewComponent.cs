@@ -23,6 +23,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
     {
         private readonly ILogger _logger;
         private readonly IAbcMattressListingPriceService _abcMattressListingPriceService;
+        private readonly IAbcMattressProductService _abcMattressProductService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IProductAbcFinanceService _productAbcFinanceService;
@@ -33,6 +34,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
             ILogger logger,
             IGenericAttributeService genericAttributeService,
             IAbcMattressListingPriceService abcMattressListingPriceService,
+            IAbcMattressProductService abcMattressProductService,
             IProductAbcDescriptionService productAbcDescriptionService,
             IProductAbcFinanceService productAbcFinanceService,
             IProductService productService,
@@ -41,6 +43,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
         {
             _logger = logger;
             _abcMattressListingPriceService = abcMattressListingPriceService;
+            _abcMattressProductService = abcMattressProductService;
             _genericAttributeService = genericAttributeService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _productAbcFinanceService = productAbcFinanceService;
@@ -116,7 +119,15 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
             var offerValidTo = productAbcFinance != null ?
                 productAbcFinance.EndDate.Value :
                 DateTime.Parse(offerValidToGenericAttribute.Value);
+            
             var price = _abcMattressListingPriceService.GetListingPriceForMattressProduct(productId) ?? product.Price;
+            var isMattressProduct = _abcMattressProductService.IsMattressProduct(productId);
+
+            // don't show offer if price is under threshold
+            if (isMattressProduct && price < 697.00M)
+            {
+                return View(productListingCshtml, model);
+            }
             
             model = new SynchronyPaymentModel
             {

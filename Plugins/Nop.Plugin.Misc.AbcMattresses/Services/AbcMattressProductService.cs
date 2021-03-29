@@ -761,5 +761,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                 displayOrderCounter++;
             }
         }
+
+        public bool IsMattressProduct(int productId)
+        {
+            return _abcMattressService.GetAbcMattressModelByProductId(productId) != null;
+        }
     }
 }
