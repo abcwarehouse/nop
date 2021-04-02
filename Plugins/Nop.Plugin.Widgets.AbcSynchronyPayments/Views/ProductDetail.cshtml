@@ -20,24 +20,27 @@
     }
 }
 
-<div class="synchrony-payment synchrony-payment-detail">
-    @if (Model.IsMonthlyPaymentStyle)
-    {
-        <span>
-            <b>$@Model.MonthlyPayment</b>/month
-            <i class="fas fa-question-circle deferredPricingIcon-@Model.ProductId">
-            </i><br />
-            with @Model.MonthCount Months Special Financing when<br />
-            you use your @storeText Card.
-        </span>
-    }
-    else
-    {
-        <span>
-            Get <b>@Model.MonthCount Month</b> Special Financing when<br />
-            you use your @storeText Card. <a class="deferredPricingIcon-@Model.ProductId">Get Payment Details</a>
-        </span>
+@if (Model != null)
+{
+    <div class="synchrony-payment synchrony-payment-detail" style="display: @(!Model.IsHidden ? "block" : "none")">
+        @if (Model.IsMonthlyPaymentStyle)
+        {
+            <span>
+                <b>$@Model.MonthlyPayment</b>/month
+                <i class="fas fa-question-circle deferredPricingIcon-@Model.ProductId">
+                </i><br />
+                with @Model.MonthCount Months Special Financing when<br />
+                you use your @storeText Card.
+            </span>
+        }
+        else
+        {
+            <span>
+                Get <b>@Model.MonthCount Month</b> Special Financing when<br />
+                you use your @storeText Card. <a class="deferredPricingIcon-@Model.ProductId">Get Payment Details</a>
+            </span>
 
-    }
-</div>
+        }
+    </div>
+}
 @Html.Partial("_Modal", Model)

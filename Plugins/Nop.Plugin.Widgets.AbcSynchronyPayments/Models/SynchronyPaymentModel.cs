@@ -17,5 +17,6 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Models
         public string OfferValidTo { get; set; }
         public decimal FullPrice { get; internal set; }
         public decimal FinalPayment { get; internal set; }
+        public bool IsHidden { get; internal set; }
     }
 }

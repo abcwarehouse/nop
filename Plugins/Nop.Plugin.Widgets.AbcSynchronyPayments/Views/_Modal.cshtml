@@ -20,9 +20,9 @@
                         <td>Promotional Period</td>
                     </tr>
                     <tr class="min-payment-table-data">
-                        <td>@Model.FullPrice.ToString("C").Replace(".00", "")</td>
-                        <td>$@Model.MonthlyPayment</td>
-                        <td>@Model.MonthCount Month</td>
+                        <td class="equal-payment-full-price">@Model.FullPrice.ToString("C").Replace(".00", "")</td>
+                        <td class="equal-payment-monthly-payment">$@Model.MonthlyPayment</td>
+                        <td class="equal-payment-months">@Model.MonthCount Month</td>
                     </tr>
                 </table>
                 <div class="min-payment-content">
@@ -63,10 +63,10 @@
                         <td>Promotional Period</td>
                     </tr>
                     <tr class="min-payment-table-data">
-                        <td>@Model.FullPrice.ToString("C").Replace(".00", "")</td>
-                        <td>$@Model.MonthlyPayment</td>
-                        <td>@Model.FinalPayment.ToString("C").Replace(".00", "")</td>
-                        <td>@Model.MonthCount Month</td>
+                        <td class="min-payment-full-price">@Model.FullPrice.ToString("C").Replace(".00", "")</td>
+                        <td class="min-payment-monthly-payment">$@Model.MonthlyPayment</td>
+                        <td class="min-payment-final-payment">@Model.FinalPayment.ToString("C").Replace(".00", "")</td>
+                        <td class="min-payment-months">@Model.MonthCount Month</td>
                     </tr>
                 </table>
                 <div class="min-payment-content">

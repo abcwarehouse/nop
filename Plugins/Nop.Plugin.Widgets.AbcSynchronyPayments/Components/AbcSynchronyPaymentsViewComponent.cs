@@ -122,12 +122,6 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
             
             var price = _abcMattressListingPriceService.GetListingPriceForMattressProduct(productId) ?? product.Price;
             var isMattressProduct = _abcMattressProductService.IsMattressProduct(productId);
-
-            // don't show offer if price is under threshold
-            if (isMattressProduct && price < 697.00M)
-            {
-                return View(productListingCshtml, model);
-            }
             
             model = new SynchronyPaymentModel
             {
@@ -151,6 +145,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
             model.FullPrice = price;
             model.FinalPayment = model.FullPrice -
                 (model.MonthlyPayment * (model.MonthCount - 1));
+            model.IsHidden = isMattressProduct && price < 697.00M;
 
             if (model.MonthlyPayment == 0)
             {

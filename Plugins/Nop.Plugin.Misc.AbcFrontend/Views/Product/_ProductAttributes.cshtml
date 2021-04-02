@@ -63,6 +63,8 @@
                                 var mattressClass = "";
                                 if (attribute.Name == "Mattress Size") { mattressClass = "mattress-size"; }
                                 if (attribute.Name.Contains("Base")) { mattressClass = "mattress-base"; }
+                                if (attribute.Name.Contains("Frame")) { mattressClass = "mattress-frame"; }
+                                if (attribute.Name.Contains("Protector")) { mattressClass = "mattress-protector"; }
                                 <select class="@(mattressClass)" name="@(controlId)" id="@(controlId)" @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onchange=\"showHideDropdownQuantity('{controlId}')\"") : null)>
                                     @if (!attribute.IsRequired)
                                     {
@@ -460,6 +462,62 @@
         //render scripts
         //almost the same implementation is used in the \Views\Product\_RentalInfo.cshtml file
         <script asp-location="Footer">
+            //custom: scripts to calculate financing
+            function updateFinancingDisplay(overallPrice) {
+                var financingText = document.getElementsByClassName('synchrony-payment-detail')[0];
+                financingText.style.display = overallPrice >= 697 ? "block" : "none";
+
+                if (financingText.innerText.includes('/month')) {
+                    var monthCount = parseInt(financingText.innerText.split(" ")[2]);
+                    var monthlyPayment = Math.ceil(overallPrice / monthCount);
+                    var oldPrice = financingText.innerHTML.substring(financingText.innerHTML.indexOf('<b>') + 3, financingText.innerHTML.indexOf('</b>'));
+                    financingText.innerHTML = financingText.innerHTML.replace(oldPrice, '$' + monthlyPayment);
+
+                    // now reapply the listener
+                    $('.deferredPricingIcon-@productId').on('click', function () {
+                        var modal = document.getElementById('equalPaymentsModal-@productId');
+                        isModalOpen = true;
+                        modal.style.display = "table";
+
+                        // Close the modal on click
+                        // This extends to the entire viewport
+                        modal.onclick = function (event) {
+                            isModalOpen = false;
+                            modal.style.display = "none";
+                        }
+
+                        return false;
+                    });
+                }
+            }
+
+            function updateMinPaymentModal(overallPrice) {
+                var minPaymentFullPrice = document.getElementsByClassName('min-payment-full-price')[0];
+                if (minPaymentFullPrice === undefined) { return; }
+
+                minPaymentFullPrice.innerText = "$" + overallPrice;
+                
+                var minMonthlyPayment = document.getElementsByClassName('min-payment-monthly-payment')[0];
+                var minimumPayment = Math.max(Math.ceil(overallPrice * 0.035), 28);
+                minMonthlyPayment.innerText = "$" + minimumPayment;
+                
+                var months = parseInt(document.getElementsByClassName('min-payment-months')[0].innerText.split(' ')[0]);
+                var minFinalPayment = document.getElementsByClassName('min-payment-final-payment')[0];
+                minFinalPayment.innerText = "$" + (overallPrice - (minimumPayment * (months - 1)));
+            }
+
+            function updateEqualPaymentModal(overallPrice) {
+                var equalPaymentFullPrice = document.getElementsByClassName('equal-payment-full-price')[0];
+                if (equalPaymentFullPrice === undefined) { return; }
+
+                equalPaymentFullPrice.innerText = "$" + overallPrice;
+
+                var equalMonthlyPayment = document.getElementsByClassName('equal-payment-monthly-payment')[0];
+                var months = parseInt(document.getElementsByClassName('equal-payment-months')[0].innerText.split(' ')[0]);
+                var equalPayment = Math.ceil(overallPrice / months);
+                equalMonthlyPayment.innerText = "$" + equalPayment;
+            }
+
             function @(attributeChangeHandlerFuncName)() {
                 $.ajax({
                     cache: false,
@@ -515,6 +573,11 @@
                             alert(data.message);
                         }
                         $(document).trigger({ type: "product_attributes_changed", changedData: data });
+
+                        var overallPrice = parseFloat($('[class^="price-value-"]')[0].innerText.replace('$', '').replace(',', ''));
+                        updateFinancingDisplay(overallPrice);
+                        updateMinPaymentModal(overallPrice);
+                        updateEqualPaymentModal(overallPrice);
                     }
                 });
             }
