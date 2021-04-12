@@ -92,12 +92,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Factories
             _priceFormatter = priceFormatter;
         }
 
-        /// <summary>
-        /// Prepare the product overview price model
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="forceRedirectionAfterAddingToCart">Whether to force redirection after adding to cart</param>
-        /// <returns>Product overview price model</returns>
+        // Adjusts for mattresses
         protected override ProductOverviewModel.ProductPriceModel
             PrepareProductOverviewPriceModel(
                 Product product,
@@ -105,7 +100,23 @@ namespace Nop.Plugin.Misc.AbcMattresses.Factories
         )
         {
             var model = base.PrepareProductOverviewPriceModel(product, forceRedirectionAfterAddingToCart);
+            var newPrice = _abcMattressListingPriceService.GetListingPriceForMattressProduct(
+                product.Id
+            );
 
+            if (newPrice != null)
+            {
+                model.Price = _priceFormatter.FormatPrice(newPrice.Value).Replace(".00", "");
+            }
+
+            return model;
+        }
+
+        // Adjusts for mattresses
+        protected override ProductDetailsModel.ProductPriceModel
+            PrepareProductPriceModel(Product product)
+        {
+            var model = base.PrepareProductPriceModel(product);
             var newPrice = _abcMattressListingPriceService.GetListingPriceForMattressProduct(
                 product.Id
             );
