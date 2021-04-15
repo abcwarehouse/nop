@@ -141,7 +141,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 //only outdoor tv category
                 if (catId_int == 254 || catId_int == 255)
                 {
-                    if (brand != "SBT" || !desc.Contains("TERRACE"))
+                    if (brand != "SBT" && brand != "FUR" && !desc.Contains("TERRACE"))
                     {
                         continue;
                     }
