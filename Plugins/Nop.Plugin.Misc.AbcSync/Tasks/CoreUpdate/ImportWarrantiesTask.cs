@@ -47,7 +47,7 @@ namespace Nop.Plugin.Misc.AbcSync
 				WHEN MATCHED
 					THEN UPDATE SET T.PriceAdjustment = S.PriceAdjustment
 				WHEN NOT MATCHED BY TARGET
-					THEN INSERT(ProductAttributeId, [Name], PriceAdjustment, WeightAdjustment, Cost, IsPreSelected, DisplayOrder, PriceAdjustmentUsePercentage) VALUES (S.ProdAttrId, S.[Name], S.[PriceAdjustment],0,0,0,1);
+					THEN INSERT(ProductAttributeId, [Name], PriceAdjustment, WeightAdjustment, Cost, IsPreSelected, DisplayOrder, PriceAdjustmentUsePercentage) VALUES (S.ProdAttrId, S.[Name], S.[PriceAdjustment],0,0,0,1,0);
 				--OUTPUT $action, inserted.*, deleted.*;
 
 				--Clear and repopulate WarrantySku
