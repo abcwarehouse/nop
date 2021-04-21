@@ -156,7 +156,7 @@ namespace Nop.Plugin.Misc.AbcSync
             //}
             Dictionary<InstockFlag, string> stockFlagMessages = new Dictionary<InstockFlag, string>();
             stockFlagMessages.Add(InstockFlag.NoValue, String.Empty);
-            stockFlagMessages.Add(InstockFlag.ShipsIn2To3Weeks, "Ships in 2-3 Weeks");
+            stockFlagMessages.Add(InstockFlag.ShipsIn2To3Weeks, "Normally ships in 2-3 weeks.");
             stockFlagMessages.Add(InstockFlag.LowQuantity, "Low Quantity, Check your local store. ");
             stockFlagMessages.Add(InstockFlag.ItemDiscontinued, "Item Discontinued");
             stockFlagMessages.Add(InstockFlag.SeeStoreForDetails, "See Store for Details");

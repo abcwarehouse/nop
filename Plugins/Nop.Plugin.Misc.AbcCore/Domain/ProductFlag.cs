@@ -35,7 +35,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
 
         public bool IsSpecialOrder()
         {
-            return StockMessage == "Ships in 2-3 Weeks";
+            return StockMessage == "Normally ships in 2-3 weeks.";
         }
 
         public decimal CalculateOpenBoxPrice(decimal price)

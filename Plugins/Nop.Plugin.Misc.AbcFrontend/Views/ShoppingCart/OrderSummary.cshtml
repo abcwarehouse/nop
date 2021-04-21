@@ -313,7 +313,7 @@
                             }
                             else if (!frontEndService.ProductIsAbc(item.ProductId))
                             {
-                                stockMessage = "Ships in 2-3 Weeks";
+                                stockMessage = "Normally ships in 2-3 weeks.";
                             }
 
                             counter++;
@@ -340,6 +340,10 @@
                                     @if (!string.IsNullOrEmpty(stockMessage))
                                     {
                                         <div class="prices-bottom-message">@stockMessage</div>
+                                    }
+                                    @if (stockMessage == "Normally ships in 2-3 weeks.")
+                                    {
+                                        <div style="font-size: 80%">Hold your place in line by purchasing now.  Deliveries are first come, first served.  There is potential for longer wait times due to manufacturer delays.</div>
                                     }
                                     @if (!string.IsNullOrEmpty(attributeInfo))
                                     {
