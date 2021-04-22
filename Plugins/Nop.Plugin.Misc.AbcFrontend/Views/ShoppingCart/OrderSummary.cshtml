@@ -337,6 +337,12 @@
                                     <a href="@Url.RouteUrl("Product", new { SeName = item.ProductSeName })" class="product-name">@item.ProductName</a>
                                     <div class="product-mini-description">@Html.Raw(miniDesc)</div>
                                     @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.OrderSummaryAfterProductMiniDescription, additionalData = item.ProductId })
+                                    @if (!string.IsNullOrEmpty(attributeInfo))
+                                    {
+                                        <div class="attributes">
+                                            @Html.Raw(@attributeInfo)
+                                        </div>
+                                    }
                                     @if (!string.IsNullOrEmpty(stockMessage))
                                     {
                                         <div class="prices-bottom-message">@stockMessage</div>
@@ -344,12 +350,6 @@
                                     @if (stockMessage == "Normally ships in 2-3 weeks.")
                                     {
                                         <div style="font-size: 80%">Hold your place in line by purchasing now.  Deliveries are first come, first served.  There is potential for longer wait times due to manufacturer delays.</div>
-                                    }
-                                    @if (!string.IsNullOrEmpty(attributeInfo))
-                                    {
-                                        <div class="attributes">
-                                            @Html.Raw(@attributeInfo)
-                                        </div>
                                     }
                                     @if (!string.IsNullOrEmpty(item.RecurringInfo))
                                     {
