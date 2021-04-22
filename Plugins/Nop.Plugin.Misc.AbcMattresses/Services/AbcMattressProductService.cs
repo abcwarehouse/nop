@@ -660,9 +660,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             ApplyDisplayOrder(newBases);
 
             var toBeDeleted = existingBases
-                .Where(e => !newBases.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
+                .Where(e => !newBases.Any(n => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder && n.PriceAdjustment == e.PriceAdjustment));
             var toBeInserted = newBases
-                .Where(n => !existingBases.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder));
+                .Where(n => !existingBases.Any(e => n.Name == e.Name && n.DisplayOrder == e.DisplayOrder && n.PriceAdjustment == e.PriceAdjustment));
 
             toBeInserted.ToList().ForEach(n => _productAttributeService.InsertProductAttributeValue(n));
             toBeDeleted.ToList().ForEach(e => _productAttributeService.DeleteProductAttributeValue(e));
