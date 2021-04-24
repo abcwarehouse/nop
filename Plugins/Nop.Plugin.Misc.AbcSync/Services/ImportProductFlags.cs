@@ -146,14 +146,6 @@ namespace Nop.Plugin.Misc.AbcSync
 
         private Dictionary<InstockFlag, string> InitializeStockFlagMessageDictionary()
         {
-            //enum InstockFlag
-            //{
-            //	NoValue,
-            //	ShipsIn2To3Weeks,
-            //	LowQuantity,
-            //	ItemDiscontinued,
-            //	SeeStoreForDetails
-            //}
             Dictionary<InstockFlag, string> stockFlagMessages = new Dictionary<InstockFlag, string>();
             stockFlagMessages.Add(InstockFlag.NoValue, String.Empty);
             stockFlagMessages.Add(InstockFlag.ShipsIn2To3Weeks, "Normally ships in 2-3 weeks.");

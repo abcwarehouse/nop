@@ -169,11 +169,11 @@
             }
         </div>
     }
-    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox() && !product.DisableBuyButton)
+    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox())
     {
         <div class="product-price">
             @* MAP Discount Question Mark Tooltip *@
-            @if (priceBucketCodeImageUrl.Contains("Map"))
+            @if (priceBucketCodeImageUrl.Contains("Map") && !product.DisableBuyButton)
             {
                 <span style="color: #b70000">Add to cart to see price</span>
                 <div class="btn btn-primary tooltip"><i class="fas fa-question-circle" style="vertical-align: super;font-size: 0.75rem; color: #4f4f4f"
