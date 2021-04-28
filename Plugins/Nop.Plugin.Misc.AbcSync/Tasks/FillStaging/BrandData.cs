@@ -7,5 +7,6 @@
         public bool onAbc;
         public bool onHawthorne;
         public bool onClearance;
+        public bool onHawthorneClearance;
     }
 }

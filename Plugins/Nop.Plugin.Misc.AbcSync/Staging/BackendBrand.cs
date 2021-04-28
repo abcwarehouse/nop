@@ -97,12 +97,12 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
         /// </param>
         public void InsertProdBrandMapping(SqlCommand insert, ILogger logger)
         {
-            if (!OnAbc && !OnHawthorne && !OnClearance)
+            if (!OnAbc && !OnHawthorne && !OnAbcClearance && !OnHawthorneClearance)
             {
                 string message = "Unable to import a product-brand mapping." +
                     " Product with model ID " + _sku + " is not on" +
                     " the ABC online store, the Hawthorne online store," +
-                    " or the ABC Clearance store.";
+                    " or either clearance store.";
                 logger.Warning(message);
 
                 return;
@@ -129,13 +129,15 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
             brand.brandName = _brandName;
             brand.onAbc = brand.onAbc ? brand.onAbc : OnAbc;
             brand.onHawthorne = brand.onHawthorne ? brand.onHawthorne : OnHawthorne;
-            brand.onClearance = brand.onClearance ? brand.onClearance : OnClearance;
+            brand.onClearance = brand.onClearance ? brand.onClearance : OnAbcClearance;
+            brand.onHawthorneClearance = brand.onHawthorneClearance ?
+                brand.onHawthorneClearance :
+                OnHawthorneClearance;
 
             return brand;
         }
 
         #endregion
-        #region Mapping Accessors
 
         public string ItemNumber
         {
@@ -179,7 +181,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
             }
         }
 
-        public bool OnClearance
+        public bool OnAbcClearance
         {
             get
             {
@@ -192,6 +194,17 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
             }
         }
 
-        #endregion
+        public bool OnHawthorneClearance
+        {
+            get
+            {
+                // No model ID means it cannot be on any store.
+                if (_sku == null)
+                {
+                    return false;
+                }
+                return StagingUtilities.IsProductOnHawthorneClearance(_distCode, _status);
+            }
+        }
     }
 }

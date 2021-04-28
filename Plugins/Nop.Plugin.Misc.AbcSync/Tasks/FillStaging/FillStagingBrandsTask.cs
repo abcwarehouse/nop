@@ -139,6 +139,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     newData.onAbc = false;
                     newData.onClearance = false;
                     newData.onHawthorne = false;
+                    newData.onHawthorneClearance = false;
 
                     brandDict.Add(brand.BrandCode, brand.UpdateBrandData(newData));
                 }
@@ -179,7 +180,8 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             // If the brand wouldn't exist on any store, don't insert it.
-            if (!data.onAbc && !data.onHawthorne && !data.onClearance)
+            if (!data.onAbc && !data.onHawthorne && !data.onClearance
+                 && !data.onHawthorneClearance)
             {
                 string message = "Unable to import this brand." +
                     " The brand with code " + data.brandCode +
@@ -196,6 +198,7 @@ namespace Nop.Plugin.Misc.AbcSync
             insert.Parameters["@StagingManOnAbc"].Value = data.onAbc;
             insert.Parameters["@StagingManOnHawthorne"].Value = data.onHawthorne;
             insert.Parameters["@StagingManOnClearance"].Value = data.onClearance;
+            insert.Parameters["@StagingManOnHawClearance"].Value = data.onHawthorneClearance;
 
             insert.ExecuteNonQuery();
             return true;
@@ -208,19 +211,20 @@ namespace Nop.Plugin.Misc.AbcSync
                 " (" +
                     StagingDbConstants.ManufacturerCode + ", " + StagingDbConstants.ManufacturerName +
                     ", " + StagingDbConstants.ManufacturerOnAbc + ", " + StagingDbConstants.ManufacturerOnHawthorne +
-                    ", " + StagingDbConstants.ManufacturerOnClearance +
+                    ", OnHawthorneClearanceSite" + 
                 ")" +
                 " VALUES" +
                 " (" +
                     "@StagingManCode, @StagingManName" +
                     ", @StagingManOnAbc, @StagingManOnHawthorne" +
-                    ", @StagingManOnClearance" +
+                    ", @StagingManOnClearance, @StagingManOnHawClearance" +
                 ")";
             command.Parameters.Add("@StagingManCode", SqlDbType.NVarChar);
             command.Parameters.Add("@StagingManName", SqlDbType.NVarChar);
             command.Parameters.Add("@StagingManOnAbc", SqlDbType.Bit);
             command.Parameters.Add("@StagingManOnHawthorne", SqlDbType.Bit);
             command.Parameters.Add("@StagingManOnClearance", SqlDbType.Bit);
+            command.Parameters.Add("@StagingManOnHawClearance", SqlDbType.Bit);
 
             return;
         }
