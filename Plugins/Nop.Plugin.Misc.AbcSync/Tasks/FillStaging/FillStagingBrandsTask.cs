@@ -211,7 +211,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 " (" +
                     StagingDbConstants.ManufacturerCode + ", " + StagingDbConstants.ManufacturerName +
                     ", " + StagingDbConstants.ManufacturerOnAbc + ", " + StagingDbConstants.ManufacturerOnHawthorne +
-                    ", OnHawthorneClearanceSite" + 
+                    ", " + StagingDbConstants.ManufacturerOnClearance + ", OnHawthorneClearanceSite" + 
                 ")" +
                 " VALUES" +
                 " (" +
