@@ -38,6 +38,11 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
             return StockMessage == "Normally ships in 2-3 weeks.";
         }
 
+        public bool IsInStoreOnly()
+        {
+            return PriceBucketImageUrl.Contains("InStore");
+        }
+
         public decimal CalculateOpenBoxPrice(decimal price)
         {
             if (IsOpenBox10Percent()) return Math.Floor(price - (price * 0.10M));

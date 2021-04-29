@@ -420,7 +420,13 @@
         </div>
         <div class="buttons-lower">
             @* custom: add mattress messaging *@
-            @if (isMattress)
+            @if (productFlag != null && productFlag.IsInStoreOnly())
+            {
+                <form action="@productUrl">
+                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">In Store Only</span></button>
+                </form>
+            }
+            else if (isMattress)
             {
                 <form action="@productUrl">
                     <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">Build Package</span></button>
