@@ -64,7 +64,7 @@ namespace Nop.Plugin.Misc.AbcSync
 				MERGE Product_ProductAttribute_Mapping AS T
 				USING (SELECT DISTINCT p.Id as ProdId, pa.Id as ProdAttrId
 						FROM {stagingDbName}.dbo.ProductWarrantyGroupMapping pwgm left join {stagingDbName}.dbo.WarrantyGroup wg on pwgm.WarrantyGroupCode = wg.WarrantyGroupCode
-							left join ProductAttribute pa on wg.[Description] = pa.[Description] left join Product p on pwgm.ProductSku = p.Sku) AS S
+							left join ProductAttribute pa on wg.[Description] = pa.[Description] left join Product p on pwgm.ProductSku = p.Sku WHERE p.Id IS NOT NULL) AS S
 				ON (T.ProductId = S.ProdId AND T.ProductAttributeId = S.ProdAttrId) 
 				WHEN NOT MATCHED BY TARGET
 					THEN INSERT(ProductId, ProductAttributeId, IsRequired, AttributeControlTypeId, DisplayOrder) 
