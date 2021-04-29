@@ -212,23 +212,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 product.Length = (stagingProduct.Length <= 0) ? 1 : stagingProduct.Length;
                 product.ManufacturerPartNumber = stagingProduct.ManufacturerNumber;
 
-                //add manufacturer and mappings as needed
-                if (stagingProduct.Manufacturer != null)
-                {
-                    var manufacturer = GetManufacturerByName(stagingProduct.Manufacturer);
-
-                    if (manufacturer != null)
-                    {
-                        if (!_manufacturerService.GetProductManufacturersByProductId(product.Id).Any(pm => pm.ManufacturerId == manufacturer.Id))
-                        {
-                            _manufacturerService.InsertProductManufacturer(
-                                new ProductManufacturer { ProductId = product.Id, ManufacturerId = manufacturer.Id }
-                            );
-                        }
-                    }
-
-                }
-
                 var hasNewName = product.Name != stagingProduct.Name;
                 if (hasNewName)
                 {
@@ -386,6 +369,22 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                         .Select(pam => pam).FirstOrDefault();
                         // updated to not allow home delivery anymore
                         _productAttributeService.DeleteProductAttributeMapping(homeDeliveryAttributeMapping);
+                    }
+                }
+
+                //add manufacturer and mappings as needed
+                if (stagingProduct.Manufacturer != null)
+                {
+                    var manufacturer = GetManufacturerByName(stagingProduct.Manufacturer);
+
+                    if (manufacturer != null)
+                    {
+                        if (!_manufacturerService.GetProductManufacturersByProductId(product.Id).Any(pm => pm.ManufacturerId == manufacturer.Id))
+                        {
+                            _manufacturerService.InsertProductManufacturer(
+                                new ProductManufacturer { ProductId = product.Id, ManufacturerId = manufacturer.Id }
+                            );
+                        }
                     }
                 }
 
