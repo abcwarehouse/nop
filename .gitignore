@@ -23,9 +23,6 @@ x64/
 [Aa]pp[Bb]uild/
 [Oo]ut/
 
-# Visual Studio Code files
-.vscode/
-
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*

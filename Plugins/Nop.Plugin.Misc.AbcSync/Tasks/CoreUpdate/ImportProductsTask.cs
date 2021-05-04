@@ -376,10 +376,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 if (stagingProduct.Manufacturer != null)
                 {
                     var manufacturer = GetManufacturerByName(stagingProduct.Manufacturer);
-
                     if (manufacturer != null)
                     {
-                        if (!_manufacturerService.GetProductManufacturersByProductId(product.Id).Any(pm => pm.ManufacturerId == manufacturer.Id))
+                        var productManufacturers = _productManufacturerRepository.Table
+                            .Where(pm => pm.ManufacturerId == manufacturer.Id && pm.ProductId == product.Id);
+                        if (!productManufacturers.Any())
                         {
                             _manufacturerService.InsertProductManufacturer(
                                 new ProductManufacturer { ProductId = product.Id, ManufacturerId = manufacturer.Id }
