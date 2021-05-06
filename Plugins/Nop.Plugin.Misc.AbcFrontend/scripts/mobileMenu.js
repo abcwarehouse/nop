@@ -139,7 +139,7 @@ function effectBack() {
 
 function menuSetting() {
     var menu_array = header.find('li');
-    var len = menu_array.length - 1;
+    var len = menu_array.length;
     var width = 100 / len + '%';
     var path = '';
     var storeFlag = "abc";
@@ -188,12 +188,6 @@ function menuSetting() {
     }
     $(menu_array[len]).append("<div class='phone-line'></div>");
     $(menu_array[len]).find('span').css('line-height', '0px');
-    var tel = $(menu_array[len]).find('a').attr("title");
-    var re = /-/gi;
-    tel = tel.replace(re, "");
-    tel = "tel:" + tel;
-    // replaces contact-us link with phone number
-    $(menu_array[len]).find('a').removeAttr('href').attr("href", tel);
 }
 
 function removeNonLeafLinks() {

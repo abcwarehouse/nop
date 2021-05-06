@@ -1,4 +1,8 @@
 ﻿/* hides Pavilion navigation for mobile */
+.mobile-sidebar-panel {
+    background-color: white;
+}
+
 .responsive-nav-wrapper-parent {
     display: none;
 }
@@ -208,23 +212,6 @@
                         font-size: 12px;
                         line-height: 110px;
                     }
-
-                .header-menu .mobile-sidebar-category.first li:last-of-type {
-                    position: fixed;
-                    top: 140px;
-                    width: 100%;
-                }
-
-                    .header-menu .mobile-sidebar-category.first li:last-of-type > a {
-                        padding-bottom: 7px;
-                        display: inline-block;
-                        width: 40%;
-                        height: auto;
-                    }
-
-                        .header-menu .mobile-sidebar-category.first li:last-of-type > a > span {
-                            font-size: 18px;
-                        }
 
         .header-menu .mobile-sidebar-category .link-sub:hover {
             cursor: pointer;
