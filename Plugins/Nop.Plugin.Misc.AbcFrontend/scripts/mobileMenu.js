@@ -152,6 +152,7 @@ function menuSetting() {
     for (var i = 0; i < len; i++) {
         const isAbc = storeFlag == "abc";
         var str = $(menu_array[i]).find('span').text().trim();
+        var img = "";
         if (str == "Home") {
             if (storeFlag == "abc") {
                 path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[1] + ')';
@@ -175,11 +176,13 @@ function menuSetting() {
                 path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[6] + ')';
             }
         } else if (str == "Store Locations") {
-            path = `url(/Plugins/Misc.AbcFrontend/Images/${isAbc ? imageArray[2] : imageArray[5]})`;
+            img = isAbc ? imageArray[2] : imageArray[5];
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + img + ')';
         } else if (str == "Weekly Ad") {
             path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[6] + ')';
         } else if (str.indexOf("Back") !== -1) {
-            path = `url(/Plugins/Misc.AbcFrontend/Images/${isAbc ? imageArray[8] : imageArray[9]})`;
+            img = isAbc ? imageArray[8] : imageArray[9];
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + img + ')';
         } else {
             path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[0] + ')';
         }
