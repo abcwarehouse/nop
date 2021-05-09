@@ -1,6 +1,0 @@
-<script>
-{DETAILS}
-
-ga('ec:setAction', 'checkout', {
-    'step': {STEPNUMBER}
-});

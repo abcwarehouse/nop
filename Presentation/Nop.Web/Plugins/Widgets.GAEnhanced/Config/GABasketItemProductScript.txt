@@ -1,7 +1,0 @@
-ga('ec:addProduct', {
-  'id': '{PRODUCTSKU}',
-  'name': '{PRODUCTNAME}',
-  'category': '{CATEGORYNAME}',
-  'brand': '{MANUFACTURERNAME}',
-  'quantity': {QUANTITY}
-});

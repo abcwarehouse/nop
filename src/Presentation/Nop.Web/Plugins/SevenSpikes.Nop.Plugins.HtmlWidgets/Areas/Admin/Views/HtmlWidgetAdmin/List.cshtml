@@ -1,0 +1,97 @@
+@model bool
+@inject AdminAreaSettings adminAreaSettings
+@{
+    Layout = AdminViewLocations.AdminLayoutViewPath;
+
+    Html.SetActiveMenuItemSystemName("SevenSpikes.Plugins.HtmlWidgets.Admin.Submenus.ManageHtmlWidgets");
+
+    var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
+    var gridPageSizes = adminAreaSettings.GridPageSizes;
+}
+
+<nop-antiforgery-token />
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget")
+    </h1>
+    <div class="float-right">
+
+        <a href="Create" class="btn bg-primary">
+            <i class="fa fa-plus-square"></i>
+            @T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.AddNew")
+        </a>
+
+    </div>
+</div>
+
+<section class="content">
+	<div class="form-horizontal">
+		@await Html.TrialMessageAsync(Model, Plugin.Name, Plugin.UrlInStore)
+		<div class="cards-group">
+			<div class="card card-default">
+				<div class="card-body">
+					<div id="htmlwidgets-grid"></div>
+					@await Html.PartialAsync("Table", new DataTablesModel
+					{
+						Name = "html-widgets-grid",
+						UrlRead = new DataUrl("List", "HtmlWidgetAdmin", null),
+						UrlDelete = new DataUrl("DeleteHtmlWidget", "HtmlWidgetAdmin", null),
+						Length = defaultGridPageSize,
+						LengthMenu = gridPageSizes,
+						ColumnCollection = new List<ColumnProperty>
+						{
+							new ColumnProperty(nameof(HtmlWidgetModel.Name))
+							{
+								Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.Name").Text
+							},
+							new ColumnProperty(nameof(HtmlWidgetModel.HtmlContent))
+							{
+								Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.HtmlContent").Text
+							},
+							new ColumnProperty(nameof(HtmlWidgetModel.Visible))
+							{
+								Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.Visible").Text,
+								Render = new RenderCustom("renderVisible"),
+								Width = "70"
+							},
+							new ColumnProperty(nameof(HtmlWidgetModel.Id))
+							{
+								Render = new RenderCustom("renderEditButton"),
+								Width = "100"
+							},
+							new ColumnProperty(nameof(HtmlWidgetModel.Id))
+							{
+								Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+								Width = "100"
+							}
+						}
+					})
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script type="text/javascript">
+
+    function renderVisible(data, type, row, meta) {
+
+        if (row.Visible) {
+
+            return '<i class="fa fa-check true-icon"></i>';
+        }
+        else {
+
+            return '<i class="fa fa-close false-icon"></i>';
+        }
+    }
+
+    function renderEditButton(data, type, row, meta) {
+
+        return '<a class="btn btn-default" href="Edit/' + data + '" title="@T("Admin.Common.Edit")">' +
+            '<i class="fas fa-pencil-alt"></i>' +
+            '@T("Admin.Common.Edit")' +
+            '</a>';
+    }
+</script>
