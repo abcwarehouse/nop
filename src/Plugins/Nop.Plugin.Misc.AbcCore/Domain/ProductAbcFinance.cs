@@ -3,7 +3,7 @@ using Nop.Data;
 using System;
 using System.Linq;
 
-namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Domain
+namespace Nop.Plugin.Misc.AbcCore.Domain
 {
     public class ProductAbcFinance : BaseEntity
     {
@@ -16,18 +16,5 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Domain
         public virtual bool IsDeferredPricing { get; set; }
         public virtual DateTime? StartDate { get; set; }
         public virtual DateTime? EndDate { get; set; }
-
-        public static Func<ProductAbcFinance> GetByAbcItemNumberFunc(
-            IRepository<ProductAbcFinance> repo,
-            string abcItemNumber
-        )
-        {
-            return () =>
-            {
-                return repo.Table.Where(
-     p => p.AbcItemNumber.Trim() == abcItemNumber
- ).FirstOrDefault();
-            };
-        }
     }
 }

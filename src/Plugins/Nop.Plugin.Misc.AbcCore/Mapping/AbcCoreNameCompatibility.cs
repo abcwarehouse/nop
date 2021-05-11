@@ -17,6 +17,11 @@ namespace Nop.Plugin.Misc.AbcCore.Mapping
             { typeof(AbcPromoProductMapping), "ProductAbcPromo" }
         };
 
-        public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string> { };
+        public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string>
+        {
+            { (typeof(ProductAbcFinance), nameof(ProductAbcFinance.IsMonthlyPricing)), "Fix_Pay" },
+            { (typeof(ProductAbcFinance), nameof(ProductAbcFinance.IsDeferredPricing)), "Min_Pay" },
+            { (typeof(ProductAbcFinance), nameof(ProductAbcFinance.StartDate)), "BegDate" }
+        };
     }
 }

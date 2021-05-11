@@ -6,7 +6,6 @@ using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
-using Nop.Plugin.Widgets.AbcSynchronyPayments.Services;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {

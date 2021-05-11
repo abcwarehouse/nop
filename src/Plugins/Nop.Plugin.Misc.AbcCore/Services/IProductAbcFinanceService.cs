@@ -1,9 +1,10 @@
-﻿using Nop.Plugin.Widgets.AbcSynchronyPayments.Domain;
+﻿using Nop.Plugin.Misc.AbcCore.Domain;
+using System.Threading.Tasks;
 
-namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Services
+namespace Nop.Plugin.Misc.AbcCore.Services
 {
     public interface IProductAbcFinanceService
     {
-        ProductAbcFinance GetProductAbcFinanceByAbcItemNumber(string abcItemNumber);
+        Task<ProductAbcFinance> GetProductAbcFinanceByAbcItemNumberAsync(string abcItemNumber);
     }
 }

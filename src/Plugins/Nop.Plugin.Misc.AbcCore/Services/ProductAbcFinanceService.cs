@@ -1,31 +1,26 @@
 ﻿using Nop.Core.Caching;
 using Nop.Data;
-using Nop.Plugin.Widgets.AbcSynchronyPayments.Domain;
+using Nop.Plugin.Misc.AbcCore.Domain;
+using System.Threading.Tasks;
+using System.Linq;
 
-namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Services
+namespace Nop.Plugin.Misc.AbcCore.Services
 {
     public class ProductAbcFinanceService : IProductAbcFinanceService
     {
-        private const string PRODUCT_ABC_FINANCE = "AbcWarehouse.productabcfinance.{0}";
-
-        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IRepository<ProductAbcFinance> _productAbcFinanceRepository;
 
         public ProductAbcFinanceService(
-            IStaticCacheManager staticCacheManager,
             IRepository<ProductAbcFinance> productAbcFinanceRepository
         )
         {
-            _staticCacheManager = staticCacheManager;
             _productAbcFinanceRepository = productAbcFinanceRepository;
         }
 
-        public ProductAbcFinance GetProductAbcFinanceByAbcItemNumber(string abcItemNumber)
+        public async Task<ProductAbcFinance> GetProductAbcFinanceByAbcItemNumberAsync(string abcItemNumber)
         {
-            if (string.IsNullOrWhiteSpace(abcItemNumber)) { return null; }
-            return _staticCacheManager.Get(
-                new CacheKey(string.Format(PRODUCT_ABC_FINANCE, abcItemNumber), "Abc."),
-                ProductAbcFinance.GetByAbcItemNumberFunc(_productAbcFinanceRepository, abcItemNumber));
+            return await _productAbcFinanceRepository.Table.Where(paf => paf.AbcItemNumber == abcItemNumber)
+                                                     .FirstOrDefaultAsync();
         }
     }
 }
