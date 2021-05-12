@@ -42,11 +42,11 @@ namespace Nop.Plugin.Misc.AbcSliExport
         ///		Add all necessary tasks.
         ///		Add all the default settings.
         /// </summary>
-        public override System.Threading.Tasks.Task InstallAsync()
+        public override async System.Threading.Tasks.Task InstallAsync()
         {
-            AddTask("SliExport", 86400);
+            await AddTaskAsync("SliExport", 86400);
 
-            _settingService.SaveSetting(SliExportSettings.Default());
+            await _settingService.SaveSettingAsync(SliExportSettings.Default());
 
             await base.InstallAsync();
         }
@@ -56,11 +56,11 @@ namespace Nop.Plugin.Misc.AbcSliExport
         ///		Remove all tasks owned by this plugin.
         ///		Remove all settings distinct to this plugin.
         /// </summary>
-        public override System.Threading.Tasks.Task UninstallAsync()
+        public override async System.Threading.Tasks.Task UninstallAsync()
         {
-            RemoveTask("SliExport");
+            await RemoveTaskAsync("SliExport");
 
-            _settingService.DeleteSetting<SliExportSettings>();
+            await _settingService.DeleteSettingAsync<SliExportSettings>();
 
             await base.UninstallAsync();
         }
@@ -71,7 +71,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
         ///		Add the specified task using the appropriate service.
         ///		The class must be "[name]Task" and exist in this namespace.
         /// </summary>
-        private void AddTask(string name, int seconds)
+        private async System.Threading.Tasks.Task AddTaskAsync(string name, int seconds)
         {
             ScheduleTask task = new ScheduleTask();
             task.Name = "AbcWarehouse: " + name;
@@ -80,20 +80,20 @@ namespace Nop.Plugin.Misc.AbcSliExport
             task.Enabled = false;
             task.StopOnError = false;
 
-            _scheduleTaskService.InsertTask(task);
+            await _scheduleTaskService.InsertTaskAsync(task);
             return;
         }
 
         /// <summary>
         ///		Delete the specified task from the database.
         /// </summary>
-        private void RemoveTask(string name)
+        private async System.Threading.Tasks.Task RemoveTaskAsync(string name)
         {
-            ScheduleTask task = _scheduleTaskService.GetTaskByType(GetTaskType(name));
+            ScheduleTask task = await _scheduleTaskService.GetTaskByTypeAsync(GetTaskType(name));
 
             if (task != null)
             {
-                _scheduleTaskService.DeleteTask(task);
+                await _scheduleTaskService.DeleteTaskAsync(task);
             }
             return;
         }

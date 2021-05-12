@@ -5,6 +5,7 @@ using Nop.Services.Messages;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSliExport.Models
 {
@@ -39,16 +40,18 @@ namespace Nop.Plugin.Misc.AbcSliExport.Models
         }
 
         [HttpPost]
-        public IActionResult Configure(SliExportModel model)
+        public async Task<IActionResult> Configure(SliExportModel model)
         {
             if (!ModelState.IsValid)
             {
                 return Configure();
             }
 
-            _settingService.SaveSetting(SliExportSettings.FromModel(model));
+            await _settingService.SaveSettingAsync(SliExportSettings.FromModel(model));
 
-            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            _notificationService.SuccessNotification(
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved")
+            );
 
             return Configure();
         }

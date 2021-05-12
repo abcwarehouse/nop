@@ -48,7 +48,7 @@ namespace Nop.Plugin.Misc.AbcMattresses
         public override async System.Threading.Tasks.Task InstallAsync()
         {
             await RemoveTasksAsync();
-            await AddTask();
+            await AddTaskAsync();
 
             await AddProductAttributesAsync();
 
@@ -79,7 +79,7 @@ namespace Nop.Plugin.Misc.AbcMattresses
 
             await base.UninstallAsync();
         }
-        private async System.Threading.Tasks.Task AddTask()
+        private async System.Threading.Tasks.Task AddTaskAsync()
         {
             ScheduleTask task = new ScheduleTask();
             task.Name = $"Update Mattresses";

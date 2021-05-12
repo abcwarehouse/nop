@@ -63,7 +63,6 @@ namespace Nop.Plugin.Misc.AbcSliExport
         #endregion
 
         private readonly SliExportSettings _settings;
-        private readonly Customer _searchCustomer;
 
         private readonly ISettingService _settingService;
         private readonly IManufacturerService _manufacturerService;
@@ -102,7 +101,8 @@ namespace Nop.Plugin.Misc.AbcSliExport
             FrontEndService frontendService,
             ISpecificationAttributeService specificationAttributeService,
             IStoreService storeService,
-            IAbcPromoService abcPromoService
+            IAbcPromoService abcPromoService,
+            SliExportSettings sliExportSettings
         )
         {
             _settingService = settingService;
@@ -120,8 +120,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
             _nopDbContext = nopDbContext;
             _mediaSettings = mediaSettings;
 
-            _settings = _settingService.LoadSetting<SliExportSettings>();
-            _searchCustomer = _customerService.InsertGuestCustomer();
+            _settings = sliExportSettings;
 
             _frontendService = frontendService;
             _specificationAttributeService = specificationAttributeService;
@@ -129,7 +128,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
             _abcPromoService = abcPromoService;
         }
 
-        public Task ExecuteAsync()
+        public async Task ExecuteAsync()
         {
             if (string.IsNullOrWhiteSpace(_settings.XMLFilename))
             {
@@ -157,7 +156,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 var products = _productRepository.Table.Where(p => !p.Deleted && p.Published).ToList();
                 foreach (Product product in products)
                 {
-                    ExportProduct(xml, product);
+                    await ExportProductAsync(xml, product);
                 }
 
                 // End the XML document.
@@ -168,17 +167,17 @@ namespace Nop.Plugin.Misc.AbcSliExport
 
             if (_settings.IsFTPEnabled)
             {
-                SendFileViaFTP(sliXmlPath);
+                await SendFileViaFTPAsync(sliXmlPath);
             }
             else
             {
-                _logger.Warning("FTP Export disabled, generated file will not be sent.");
+                await _logger.WarningAsync("FTP Export disabled, generated file will not be sent.");
             }
 
             this.LogEnd();
         }
 
-        private void SendFileViaFTP(string filepath)
+        private async Task SendFileViaFTPAsync(string filepath)
         {
             if (string.IsNullOrWhiteSpace(_settings.FTPUsername) || string.IsNullOrWhiteSpace(_settings.FTPPassword))
             {
@@ -200,7 +199,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 }
                 catch (WebException ex)
                 {
-                    _logger.Error("Unable to upload generated export file", ex);
+                    await _logger.ErrorAsync("Unable to upload generated export file", ex);
                 }
             }
         }
@@ -231,11 +230,11 @@ namespace Nop.Plugin.Misc.AbcSliExport
         /// <param name="product">
         ///		This is product from which this exports data.
         /// </param>
-        private void ExportProduct(XmlWriter xml, Product product)
+        private async Task ExportProductAsync(XmlWriter xml, Product product)
         {
             // Skip products that are not on at least one store
             // that is being exported.
-            Store store = GetProductStore(product);
+            Store store = await GetProductStoreAsync(product);
             if (store == null)
             {
                 return;
@@ -253,22 +252,22 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 WriteElementHelper(xml, _isClearanceTag, "N");
             }
 
-            ExportBrand(xml, product);
+            await ExportBrandAsync(xml, product);
             WriteElementHelper(xml, _nameTag, product.Name);
-            ExportUrl(xml, product, store);
+            await ExportUrlAsync(xml, product, store);
             ExportItemNumberAndModelDesc(xml, product);
             WriteElementHelper(xml, _nopIdTag, product.Id.ToString());
             WriteElementHelper(xml, _skuTag, product.Sku);
             WriteElementHelper(xml, _shortDescTag, StripMarkupForShortDescription(product.ShortDescription));
             WriteElementHelper(xml, _longDescTag, product.FullDescription);
-            ExportPictureUrl(xml, product);
+            await ExportPictureUrlAsync(xml, product);
             await ExportColorAsync(xml, product);
             await ExportCategoriesAsync(xml, product);
             await ExportPricesAsync(xml, product);
             ExportAvailability(xml, product);
             WriteElementHelper(xml, _manNumTag, product.ManufacturerPartNumber);
-            ExportSpecifications(xml, product);
-            ExportPromo(xml, product, store.Url);
+            await ExportSpecificationsAsync(xml, product);
+            await ExportPromoAsync(xml, product, store.Url);
             ExportOpenBoxPrices(xml, product);
 
             xml.WriteFullEndElement();
@@ -286,9 +285,9 @@ namespace Nop.Plugin.Misc.AbcSliExport
             WriteElementHelper(xml, "open_box_price", price.ToString());
         }
 
-        private void ExportPromo(XmlWriter xml, Product product, String URL)
+        private async Task ExportPromoAsync(XmlWriter xml, Product product, String URL)
         {
-            var promos = _abcPromoService.GetActivePromosByProductId(product.Id);
+            var promos = await _abcPromoService.GetActivePromosByProductIdAsync(product.Id);
             if (!promos.Any()) return;
 
             xml.WriteStartElement(_promosTag);
@@ -304,19 +303,20 @@ namespace Nop.Plugin.Misc.AbcSliExport
             xml.WriteEndElement();
         }
 
-        private void ExportSpecifications(XmlWriter xml, Product product)
+        private async Task ExportSpecificationsAsync(XmlWriter xml, Product product)
         {
-            var features = _specificationAttributeService.GetProductSpecificationAttributes(product.Id)
-                .Where(psa => (
-                    _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id) != null &&
-                    _specificationAttributeService.GetSpecificationAttributeById(
-                    _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id).Id).Name != "Color"
-                        &&
-                    _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id) != null &&
-                    _specificationAttributeService.GetSpecificationAttributeById(
-                        _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id).Id).Name != "Category")
-                )
-                .ToList();
+            var allProductSpecAttrs = await _specificationAttributeService.GetProductSpecificationAttributesAsync(product.Id);
+            var features = new List<ProductSpecificationAttribute>();
+            foreach (var psa in allProductSpecAttrs)
+            {
+                var sao = await _specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(psa.Id);
+                if (sao == null) { continue; }
+
+                var sa = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(sao.Id);
+                if (sa == null || sa.Name == "Color" || sa.Name == "Category") { continue; }
+
+                features.Add(psa);
+            }
 
             if (!features.Any())
             {
@@ -327,17 +327,12 @@ namespace Nop.Plugin.Misc.AbcSliExport
 
             foreach (var feature in features)
             {
+                var specAttrId = (await _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttributeAsync(feature.Id))[0].SpecificationAttributeId;
+                var sa = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(specAttrId);
+
                 xml.WriteStartElement(_featureTag);
-                xml.WriteAttributeString("name", XmlConvert.EncodeName(
-                    _specificationAttributeService.GetSpecificationAttributeById(
-                        await _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttributeAsync(feature.Id)[0].SpecificationAttributeId
-                    ).Name
-                ));
-                xml.WriteValue(XmlSanitize(
-                    _specificationAttributeService.GetSpecificationAttributeById(
-                        await _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttributeAsync(feature.Id)[0].SpecificationAttributeId
-                    ).Name
-                ));
+                xml.WriteAttributeString("name", XmlConvert.EncodeName(sa.Name));
+                xml.WriteValue(XmlSanitize(sa.Name));
                 xml.WriteEndElement();
             }
 
@@ -383,18 +378,15 @@ namespace Nop.Plugin.Misc.AbcSliExport
         ///		NULL means none found given settings.
         ///		Otherwise, the store that the given product is on.
         /// </returns>
-        private Store GetProductStore(Product product)
+        private async Task<Store> GetProductStoreAsync(Product product)
         {
             // Find all store mappings to this product.
             // Limit by the given export settings.
             // Use the URL of (only) the first store that meets all the criteria.
-            var storeList = _storeMappingService
-                .GetStoreMappings(product)
-                .OrderBy(sm => _storeService.GetStoreById(sm.StoreId).DisplayOrder)
-                    .ThenBy(sm => sm.StoreId);
+            var storeList = await _storeMappingService.GetStoreMappingsAsync(product);
             foreach (var storeMapping in storeList)
             {
-                var store = _storeService.GetStoreById(storeMapping.StoreId);
+                var store = await _storeService.GetStoreByIdAsync(storeMapping.StoreId);
 
                 if (_settings.ExportAbcWarehouse &&
                     (store.Name.Contains("ABC")))
@@ -421,22 +413,32 @@ namespace Nop.Plugin.Misc.AbcSliExport
         /// <param name="product">
         ///		This is product from which this exports data.
         /// </param>
-        private void ExportBrand(XmlWriter xml, Product product)
+        private async Task ExportBrandAsync(XmlWriter xml, Product product)
         {
             // Get the manufacturer for this product.
             // If there are multiple,
             // it uses the manufacturer's display order and ID.
-            var manufacturerMapping = _manufacturerService
-                .GetProductManufacturersByProductId(product.Id, true)
-                .Where(p => _manufacturerService.GetManufacturerById(p.ManufacturerId) != null &&
-                            _manufacturerService.GetManufacturerById(p.ManufacturerId).Published)
-                .OrderBy(p => _manufacturerService.GetManufacturerById(p.ManufacturerId).DisplayOrder)
-                    .ThenBy(p => p.ManufacturerId)
-                .FirstOrDefault();
-            if (manufacturerMapping != null)
+
+            ProductManufacturer productManufacturer = null;
+            var productManufacturers = await _manufacturerService.GetProductManufacturersByProductIdAsync(product.Id, true);
+
+            foreach (var pm in productManufacturers)
+            {
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
+                if (manufacturer != null && manufacturer.Published)
+                {
+                    productManufacturer = pm;
+                    break;
+                }
+            }
+
+            if (productManufacturer != null)
             {
                 WriteElementHelper(
-                    xml, _brandTag, _manufacturerService.GetManufacturerById(manufacturerMapping.ManufacturerId).Name);
+                    xml,
+                    _brandTag,
+                    (await _manufacturerService.GetManufacturerByIdAsync(productManufacturer.ManufacturerId)).Name
+                );
             }
 
             return;
@@ -452,9 +454,9 @@ namespace Nop.Plugin.Misc.AbcSliExport
         /// <param name="product">
         ///		This is product from which this exports data.
         /// </param>
-        private void ExportUrl(XmlWriter xml, Product product, Store store)
+        private async Task ExportUrlAsync(XmlWriter xml, Product product, Store store)
         {
-            string slug = _urlRecordService.GetActiveSlug(product.Id, "Product", 0);
+            string slug = await _urlRecordService.GetActiveSlugAsync(product.Id, "Product", 0);
             WriteElementHelper(xml, _productUrlTag, store.Url + slug);
 
             return;
@@ -470,14 +472,14 @@ namespace Nop.Plugin.Misc.AbcSliExport
         /// <param name="product">
         ///		This is product from which this exports data.
         /// </param>
-        private void ExportPictureUrl(XmlWriter xml, Product product)
+        private async Task ExportPictureUrlAsync(XmlWriter xml, Product product)
         {
-            var pic = _pictureService.GetPicturesByProductId(product.Id, 1).FirstOrDefault();
+            var pic = (await _pictureService.GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
             if (pic != null)
             {
                 WriteElementHelper(xml, _imageUrlTag,
-                    _pictureService.GetPictureUrl(pic.Id, _mediaSettings.ProductThumbPictureSize));
-                //_nopDbContext.Detach(pic);
+                    await _pictureService.GetPictureUrlAsync(pic.Id, _mediaSettings.ProductThumbPictureSize)
+                );
             }
 
             return;
@@ -501,14 +503,20 @@ namespace Nop.Plugin.Misc.AbcSliExport
             // If there are more than one,
             // take the specification attribute with the smaller ID.
 
-            var productSpecAttr = _specificationAttributeService.GetProductSpecificationAttributes(product.Id)
-                .Where(psa => _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id) != null &&
-                        _specificationAttributeService.GetSpecificationAttributeById(
-                        _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id).Id).Name != "Color")
-                .OrderBy(psa =>
-                        _specificationAttributeService.GetSpecificationAttributeById(
-                        _specificationAttributeService.GetSpecificationAttributeOptionById(psa.Id).Id).Id)
-                .FirstOrDefault();
+            var productSpecAttrs = await _specificationAttributeService.GetProductSpecificationAttributesAsync(product.Id);
+            ProductSpecificationAttribute productSpecAttr = null;
+
+            foreach (var psa in productSpecAttrs)
+            {
+                var sao = await _specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(psa.Id);
+                if (sao == null) { continue; }
+
+                var sa = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(sao.Id);
+                if (sa == null || sa.Name == "Color") { continue; }
+
+                productSpecAttr = psa;
+                break;
+            }
 
             // If no product specification attribute was found
             // this product does not have a color related to it.
@@ -533,7 +541,6 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 ))[0].Name
             );
 
-            //_nopDbContext.Detach(productSpecAttr);
             return;
         }
 
@@ -620,9 +627,10 @@ namespace Nop.Plugin.Misc.AbcSliExport
         /// </param>
         private async Task ExportPricesAsync(XmlWriter xml, Product product)
         {
+            var searchCustomer = await _customerService.InsertGuestCustomerAsync();
             decimal price = product.OldPrice;
             decimal salePrice = (await _priceCalculationService.GetFinalPriceAsync(
-                product, _searchCustomer, 0, true, 1)).finalPrice;
+                product, searchCustomer, 0, true, 1)).finalPrice;
 
             WriteElementHelper(xml, _priceTag, price.ToString());
             WriteElementHelper(xml, _salePriceTag, salePrice.ToString());
