@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Nop.Plugin.Misc.AbcCore.Domain
 {
-    public class ProductAbcFinance : BaseEntity
+    public class ProductAbcFinance
     {
         public virtual string AbcItemNumber { get; set; }
         public virtual string Sku { get; set; }
