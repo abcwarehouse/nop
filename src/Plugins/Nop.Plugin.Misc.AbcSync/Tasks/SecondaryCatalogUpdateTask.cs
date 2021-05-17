@@ -7,6 +7,7 @@ using Nop.Services.Messages;
 using System;
 using System.Collections.Generic;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -36,7 +37,7 @@ namespace Nop.Plugin.Misc.AbcSync
          * Shares the same core functionality of the regular catalog update with the exception of filling the staging database
          *  and the addition of a selective content migration from the primary database
          */
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             var account = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;

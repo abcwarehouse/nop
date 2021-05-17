@@ -155,7 +155,7 @@ namespace Nop.Plugin.Misc.AbcSync
                         throw new NopException($"Unable to convert cell {iRow},2 to an integer in {categoryWorksheet.Name}", ex);
                     }
 
-                    bool categoryExists = _categoryService.GetCategoryById(categoryId) != null;
+                    bool categoryExists = await _categoryService.GetCategoryByIdAsync(categoryId) != null;
 
                     // TODO: log if fail
                     if (!categoryExists)

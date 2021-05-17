@@ -53,7 +53,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _coreSettings = coreSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (!_settings.ImportABCStores && !_settings.ImportHawthorneStores)
             {
@@ -111,7 +111,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                             //Longitude = coordinates.Longitude.ToString()
                         };
                         _customShopService.InsertShop(shop);
-                        _nopDbContext.ExecuteNonQuery($"INSERT INTO {shopAbcTableName} (ShopId, AbcId, AbcEmail) VALUES ({shop.Id}, '{backendPhysicalStore.BranchId}', '{backendPhysicalStore.Email}')");
+                        await _nopDbContext.ExecuteNonQueryAsync($"INSERT INTO {shopAbcTableName} (ShopId, AbcId, AbcEmail) VALUES ({shop.Id}, '{backendPhysicalStore.BranchId}', '{backendPhysicalStore.Email}')");
                     }
                     // Update the existing shop
                     else
@@ -121,7 +121,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                         existingShop.FullDescription = fullDescription;
 
                         _customShopService.UpdateShop(existingShop);
-                        _nopDbContext.ExecuteNonQuery($"UPDATE {shopAbcTableName} SET AbcId = '{backendPhysicalStore.BranchId}', AbcEmail = '{backendPhysicalStore.Email}' WHERE ShopId = {existingShop.Id}");
+                        await _nopDbContext.ExecuteNonQueryAsync($"UPDATE {shopAbcTableName} SET AbcId = '{backendPhysicalStore.BranchId}', AbcEmail = '{backendPhysicalStore.Email}' WHERE ShopId = {existingShop.Id}");
                     }
                 }
             }

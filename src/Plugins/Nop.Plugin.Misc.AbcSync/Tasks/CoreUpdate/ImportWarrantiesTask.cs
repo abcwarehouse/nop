@@ -84,7 +84,7 @@ namespace Nop.Plugin.Misc.AbcSync
 				--OUTPUT $action, inserted.*, deleted.*;
 			";
 
-            _nopDbContext.ExecuteNonQuery(command);
+            await _nopDbContext.ExecuteNonQueryAsync(command);
 
             this.LogEnd();
         }

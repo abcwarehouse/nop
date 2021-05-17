@@ -4,6 +4,7 @@ using Nop.Services.Logging;
 using Nop.Services.Tasks;
 using System;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks
 {
@@ -16,7 +17,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks
             _nopDbContext = nopDbContext;
         }
 
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             try
             {

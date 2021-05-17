@@ -96,7 +96,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                 string message = "Unable to import the product" +
                     " because there is no item number." +
                     " It cannot be mapped to any data.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }
@@ -105,7 +105,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                 string message = "Unable to import the product with item number " +
                     _itemNum + ". The model ID is missing" +
                     " and is needed for proper mapping.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }

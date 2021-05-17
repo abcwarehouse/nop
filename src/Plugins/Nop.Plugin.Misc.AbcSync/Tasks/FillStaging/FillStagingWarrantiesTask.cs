@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -26,7 +27,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingWarrantiesTask)
             {
@@ -126,7 +127,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     string message = "Unable to import a warranty group." +
                         " The warranty group code is empty.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -135,7 +136,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     string message = "Unablet o import the warranty group" +
                         " with code " + warrCode + "." +
                         " The warranty group does not have a name.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -165,7 +166,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     string message = "Unable to import a warranty item." +
                         " A warranty has no group code.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -178,7 +179,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     string message = "Unable to import the warranty item" +
                         " with UPC " + warrItemNum + "." +
                         " The item has no name/description.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -187,7 +188,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     string message = "Unable to import the warranty item" +
                         " with UPC " + warrItemNum + "." +
                         " Its price is empty or negative.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -224,7 +225,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     string message = "Unable to import a warranty-product mapping." +
                         " The warranty does not have a warranty code.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -233,7 +234,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     string message = "Unable to import a warranty-product mapping" +
                         " for the warranty group code " + warrCode + "." +
                         " The product does not have a UPC.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }

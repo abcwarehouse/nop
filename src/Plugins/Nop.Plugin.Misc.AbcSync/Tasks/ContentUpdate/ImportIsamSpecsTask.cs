@@ -21,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipImportIsamSpecsTask)
             {
@@ -30,12 +30,12 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            //_logger.Information($"Begin Task: ImportColor");
+            //await _logger.InformationAsync($"Begin Task: ImportColor");
             //_import.ImportColor();
-            //_logger.Information($"End Task: ImportColor");
-            _logger.Information($"Begin Task: ImportSOTSpecs");
+            //await _logger.InformationAsync($"End Task: ImportColor");
+            await _logger.InformationAsync($"Begin Task: ImportSOTSpecs");
             _import.ImportSiteOnTimeSpecs();
-            _logger.Information($"End Task: ImportSOTSpecs");
+            await _logger.InformationAsync($"End Task: ImportSOTSpecs");
             this.LogEnd();
         }
     }

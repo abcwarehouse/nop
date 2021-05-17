@@ -34,7 +34,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
             this.LogStart();
 
-            var clearanceStores = _storeService.GetAllStores().Where(s => s.Name.ToLower().Contains("clearance"));
+            var clearanceStores = await _storeService.GetAllStoresAsync().Where(s => s.Name.ToLower().Contains("clearance"));
 
             if (!clearanceStores.Any())
             {
@@ -79,8 +79,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 	            )
                 ";
 
-                _nopDbContext.ExecuteNonQuery(productUnmapCommand);
-                _nopDbContext.ExecuteNonQuery(categoryUnmapCommand);
+                await _nopDbContext.ExecuteNonQueryAsync(productUnmapCommand);
+                await _nopDbContext.ExecuteNonQueryAsync(categoryUnmapCommand);
             }
 
             this.LogEnd();

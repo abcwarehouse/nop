@@ -34,40 +34,24 @@ namespace Nop.Plugin.Misc.AbcSync.Services
         private readonly IWorkContext _workContext;
 
         public CustomCategoryService(
-            CatalogSettings catalogSettings,
             IAclService aclService,
-            ICacheKeyService cacheKeyService,
             ICustomerService customerService,
-            IEventPublisher eventPublisher,
             ILocalizationService localizationService,
-            IRepository<AclRecord> aclRepository,
             IRepository<Category> categoryRepository,
             IRepository<DiscountCategoryMapping> discountCategoryMappingRepository,
             IRepository<Product> productRepository,
             IRepository<ProductCategory> productCategoryRepository,
-            IRepository<StoreMapping> storeMappingRepository,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IWorkContext workContext
-        ) : base(catalogSettings, aclService, cacheKeyService, customerService,
-                eventPublisher, localizationService, aclRepository, categoryRepository,
-                discountCategoryMappingRepository, productRepository, productCategoryRepository,
-                storeMappingRepository, staticCacheManager, storeContext, storeMappingService,
+        ) : base(aclService, customerService, localizationService,
+                categoryRepository, discountCategoryMappingRepository,
+                productRepository, productCategoryRepository,
+                staticCacheManager, storeContext, storeMappingService,
                 workContext)
         {
-            _aclRepository = aclRepository;
-            _categoryRepository = categoryRepository;
-            _productRepository = productRepository;
             _productCategoryRepository = productCategoryRepository;
-            _storeMappingRepository = storeMappingRepository;
-
-            _customerService = customerService;
-
-            _catalogSettings = catalogSettings;
-
-            _storeContext = storeContext;
-            _workContext = workContext;
         }
 
         // this copies the source from CategoryService and modifies to allow for

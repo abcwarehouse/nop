@@ -50,7 +50,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// </summary>
         public void Import()
         {
-            _nopDbContext.ExecuteNonQuery($"DELETE FROM ProductFlag;");
+            await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductFlag;");
 
             var productFlagManager = new EntityManager<ProductFlag>(_productFlagRepository);
 
@@ -122,7 +122,7 @@ namespace Nop.Plugin.Misc.AbcSync
         private Dictionary<PriceBucketCode, string> InitializePriceBucketToImageUrlDictionary()
         {
             // Check if there's a Hawthorne store in the Store list - reference Hawthorne images if so.
-            bool isHawthorne = _storeService.GetAllStores().Where(s => s.Name.Contains("Hawthorne")).FirstOrDefault() != null;
+            bool isHawthorne = await _storeService.GetAllStoresAsync().Where(s => s.Name.Contains("Hawthorne")).FirstOrDefault() != null;
             string StoreDirectory = isHawthorne ? "haw/" : "abc/";
 
             Dictionary<PriceBucketCode, string> priceCodeToPictureId = new Dictionary<PriceBucketCode, string>

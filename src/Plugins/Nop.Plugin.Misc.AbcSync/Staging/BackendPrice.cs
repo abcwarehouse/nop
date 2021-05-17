@@ -2,6 +2,7 @@
 using System.Data;
 using Nop.Services.Logging;
 using Nop.Plugin.Misc.AbcCore;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Staging
 {
@@ -77,7 +78,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
             {
                 string message = "Unable to import this product price data." +
                     " Neither the model ID or item number could be found.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }
@@ -86,7 +87,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                 string message = "Unable to import this product price data." +
                     " The model ID could not be found" +
                     " for item number " + _itemNum + ".";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 skipItemNum = _itemNum;
                 return false;
@@ -96,7 +97,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                 string message = "Unable to import this product price data." +
                     " The item number could not be found for the product" +
                     " with model ID " + _sku + ".";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 skipSku = _sku;
                 return false;
@@ -110,7 +111,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
         ///		is not on any of the online stores.
         ///		A warning is logged if this returns true.
         /// </summary>
-        public bool NotOnAnyStore(ILogger logger)
+        public async Task<bool> NotOnAnyStoreAsync(ILogger logger)
         {
             if (!StagingUtilities.IsProductOnAbcStore(_distCode, _status) &&
                 !StagingUtilities.IsProductOnHawthorneStore(_distCode, _status) &&
@@ -121,7 +122,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                     " Product with model ID " + _sku + " does not exist on" +
                     " the ABC online store, the Hawthorne online store," +
                     " the ABC Clearance store, or the Hawthorne Clearance store.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return true;
             }

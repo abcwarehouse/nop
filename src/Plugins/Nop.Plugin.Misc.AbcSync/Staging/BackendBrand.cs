@@ -52,7 +52,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
             {
                 string message = "Unable to import this brand." +
                     " No brand code is found, so distinct matching cannot be done.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }
@@ -60,7 +60,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
             {
                 string message = "Unable to import this brand." +
                     " No name is associated with brand code " + _brandCode + ".";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
                 brandCodeToSkip = _brandCode;
 
                 return false;
@@ -70,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                 string message = "Unable to import this product-brand mapping." +
                     " An item number cannot be read for the brand with code "
                     + _brandCode + ".";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }
@@ -80,7 +80,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                     " An entry with item number " + _itemNum +
                     " was found without a model ID relating to brand code " +
                     _brandCode + ".";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }
@@ -103,7 +103,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
                     " Product with model ID " + _sku + " is not on" +
                     " the ABC online store, the Hawthorne online store," +
                     " or either clearance store.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return;
             }

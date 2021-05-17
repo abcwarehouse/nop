@@ -22,7 +22,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// </summary>
         public void Import()
         {
-            _nopDbContext.ExecuteNonQuery("EXECUTE [dbo].[ImportRelatedProducts];");
+            await _nopDbContext.ExecuteNonQueryAsync("EXECUTE [dbo].[ImportRelatedProducts];");
         }
     }
 }

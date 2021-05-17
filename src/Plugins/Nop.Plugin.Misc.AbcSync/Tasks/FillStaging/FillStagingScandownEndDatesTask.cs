@@ -7,6 +7,7 @@ using System;
 using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -28,7 +29,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingScandownEndDatesTask)
             {
@@ -106,7 +107,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     string message = "Unable to import a scandown date." +
                         " No item number could be found relating to it.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -116,7 +117,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     string message = "Unable to import a scandown date." +
                         " The associated model ID could not be found" +
                         " for item number " + itemNum;
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }
@@ -126,7 +127,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     string message = "Unable to import the scandown date" +
                         " for model ID " + sku + "." +
                         " The end date is not provided.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }

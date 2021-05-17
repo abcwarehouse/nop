@@ -40,7 +40,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             var account = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;
@@ -63,7 +63,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
                 else
                 {
-                    _logger.Warning("No catalog failure warning emails specified, email will not be sent.");
+                    await _logger.WarningAsync("No catalog failure warning emails specified, email will not be sent.");
                 }
                 throw;
             }

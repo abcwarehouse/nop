@@ -114,7 +114,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 ref archivedItemsSet, $"{_importSettings.GetLocalPicturesDirectory()}/Archive");
 
             //deleting old pictures from archived products
-            _nopDbContext.ExecuteNonQuery(_deleteArchivedProductPictures);
+            await _nopDbContext.ExecuteNonQueryAsync(_deleteArchivedProductPictures);
 
             var account = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
             var ccEmails = new List<string>();
@@ -142,11 +142,11 @@ namespace Nop.Plugin.Misc.AbcSync
 
             if (hasArchivedItems)
             {
-                _logger.Information($"Archived items: {string.Join(",", archivedItemsSet)}");
+                await _logger.InformationAsync($"Archived items: {string.Join(",", archivedItemsSet)}");
             }
             else
             {
-                _logger.Information("No archived items.");
+                await _logger.InformationAsync("No archived items.");
             }
         }
 

@@ -7,6 +7,7 @@ using Nop.Core;
 using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -27,7 +28,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingBrandsTask)
             {
@@ -75,12 +76,12 @@ namespace Nop.Plugin.Misc.AbcSync
             PrepBackendSelect(backendActions);
             using (IDataReader brand = backendActions.ExecuteReader())
             {
-                ImportBrand(brand, stagedItemNums,
+                await ImportBrandAsync(brand, stagedItemNums,
                     stagingManActions, stagingMappingActions, logger);
             }
         }
 
-        private void ImportBrand(
+        private async System.Threading.Tasks.Task ImportBrandAsync(
             IDataReader brandReader, HashSet<string> stagedItemNums,
             SqlCommand manInsert, SqlCommand mappingInsert, ILogger logger)
         {
@@ -154,7 +155,7 @@ namespace Nop.Plugin.Misc.AbcSync
             // And finally import the brands.
             foreach (var data in brandDict.Values)
             {
-                bool currImport = InsertBrand(manInsert, data, logger);
+                bool currImport = await InsertBrandAsync(manInsert, data, logger);
                 didImport = didImport ? didImport : currImport;
             }
 
@@ -171,7 +172,7 @@ namespace Nop.Plugin.Misc.AbcSync
             return;
         }
 
-        private static bool InsertBrand(
+        private static async Task<bool> InsertBrandAsync(
             SqlCommand insert, BrandData data, ILogger logger)
         {
             if (data.brandCode == null)
@@ -188,7 +189,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     " does not have any products on" +
                     " the ABC online store, the Hawthorne online store," +
                     " or the ABC Clearance store.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }

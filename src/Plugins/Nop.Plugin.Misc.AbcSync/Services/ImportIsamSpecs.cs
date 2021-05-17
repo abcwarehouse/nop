@@ -59,7 +59,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// </summary>
         public void ImportSiteOnTimeSpecs()
         {
-            _nopDbContext.ExecuteNonQuery("EXECUTE ImportSiteOnTimeFilters;");
+            await _nopDbContext.ExecuteNonQueryAsync("EXECUTE ImportSiteOnTimeFilters;");
         }
 
 

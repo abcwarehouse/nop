@@ -7,6 +7,7 @@ using System;
 using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -29,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingPricingTask)
             {
@@ -77,7 +78,7 @@ namespace Nop.Plugin.Misc.AbcSync
             PrepBackendSelect(backendActions);
             using (IDataReader productPriceReader = backendActions.ExecuteReader())
             {
-                ImportProductPrice(productPriceReader, snapList, stagedItemNums,
+                await ImportProductPriceAsync(productPriceReader, snapList, stagedItemNums,
                     stagingPriceActions, stagingPrFileActions, logger);
             }
 
@@ -172,7 +173,7 @@ namespace Nop.Plugin.Misc.AbcSync
             return;
         }
 
-        private static bool PrFilePriceIsValid(BackendPrice prodPrice,
+        private static async Task<bool> PrFilePriceIsValidAsync(BackendPrice prodPrice,
             decimal? price, string branch, ILogger logger)
         {
             // The amount is needed for it to be an actual discount.
@@ -182,7 +183,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     " for model ID " + prodPrice.Sku +
                     " using branch " + branch + "." +
                     " The promotion price does not exist, is zero, or is negative.";
-                logger.Warning(message);
+                await logger.WarningAsync(message);
 
                 return false;
             }
@@ -194,7 +195,7 @@ namespace Nop.Plugin.Misc.AbcSync
             return true;
         }
 
-        private static void InsertPrFileDiscount(
+        private static async System.Threading.Tasks.Task InsertPrFileDiscountAsync(
             IDataReader productPriceReader, BackendPrice prodPrice,
             SqlCommand insert, ILogger logger)
         {
@@ -222,7 +223,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            if (!PrFilePriceIsValid(prodPrice, price, branch, logger))
+            if (!await PrFilePriceIsValidAsync(prodPrice, price, branch, logger))
             {
                 return;
             }
@@ -239,7 +240,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 StagingUtilities.GetUtcDate(endDate, _backendDateFormat);
 
             insert.ExecuteNonQuery();
-            return;
         }
 
         private static bool InsertBaseProductPrice(
@@ -252,7 +252,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             // Key checks are done elsewhere.
             // Here, we need to see if it actually belongs on any store.
-            if (productPrice.NotOnAnyStore(logger))
+            if (productPrice.NotOnAnyStoreAsync(logger))
             {
                 return false;
             }
@@ -268,7 +268,7 @@ namespace Nop.Plugin.Misc.AbcSync
             return true;
         }
 
-        private static void ImportProductPrice(IDataReader productPriceReader,
+        private static async System.Threading.Tasks.Task ImportProductPriceAsync(IDataReader productPriceReader,
             HashSet<string> snapList, HashSet<string> stagedItemNums,
             SqlCommand priceUpdate, SqlCommand prFileInsert, ILogger logger)
         {
@@ -328,7 +328,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
 
                 // Insert the sale data.
-                InsertPrFileDiscount(
+                await InsertPrFileDiscountAsync(
                     productPriceReader, productPrice, prFileInsert, logger);
             }
         }

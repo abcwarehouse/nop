@@ -19,7 +19,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
             using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())

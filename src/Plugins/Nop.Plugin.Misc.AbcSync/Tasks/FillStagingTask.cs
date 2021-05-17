@@ -2,6 +2,7 @@
 using Nop.Services.Logging;
 using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -18,7 +19,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
 

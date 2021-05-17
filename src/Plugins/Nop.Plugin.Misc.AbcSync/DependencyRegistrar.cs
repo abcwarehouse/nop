@@ -7,6 +7,7 @@ using Nop.Plugin.Misc.AbcSync.Data;
 using Nop.Plugin.Misc.AbcSync.Services;
 using Nop.Plugin.Misc.AbcSync.Services.Staging;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -15,53 +16,31 @@ namespace Nop.Plugin.Misc.AbcSync
     /// </summary>
     public class DependencyRegistrar : IDependencyRegistrar
     {
-        /// <summary>
-        /// Register services and interfaces
-        /// </summary>
-        /// <param name="builder">Container builder</param>
-        /// <param name="typeFinder">Type finder</param>
-        /// <param name="config">Config</param>
-        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
-        {
-            builder.RegisterType<ArchiveService>()
-                .As<ArchiveService>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportService>()
-                .As<IImportService>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportService>()
-                .As<ImportService>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportMarkdowns>()
-                .As<IImportMarkdowns>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportRelatedProducts>()
-                .As<IImportRelatedProducts>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportIsamSpecs>()
-                .As<IImportIsamSpecs>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportIsamSpecs>()
-                .As<ImportIsamSpecs>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportProductFlags>()
-                .As<IImportProductFlags>().InstancePerLifetimeScope();
-            builder.RegisterType<ShopService>()
-                .As<IShopService>().InstancePerLifetimeScope();
-            builder.RegisterType<DocumentImportService>()
-                .As<IDocumentImportService>().InstancePerLifetimeScope();
-            builder.RegisterType<ImportPictureService>()
-                .As<IImportPictureService>().InstancePerLifetimeScope();
-            builder.RegisterType<GoogleMapsGeocodingService>().As<IGeocodingService>();
+        public void Register(
+               IServiceCollection services,
+               ITypeFinder typeFinder,
+               AppSettings appSettings
+        ) {
+            services.AddScoped<ArchiveService, ArchiveService>();
+            services.AddScoped<IImportService, ImportService>();
+            services.AddScoped<IImportMarkdowns, ImportMarkdowns>();
+            services.AddScoped<IImportRelatedProducts, ImportRelatedProducts>();
+            services.AddScoped<IImportIsamSpecs, ImportIsamSpecs>();
+            services.AddScoped<IImportProductFlags, ImportProductFlags>();
+            services.AddScoped<IDocumentImportService, DocumentImportService>();
+            services.AddScoped<ImportPictureService, IImportPictureService>();
+            services.AddScoped<IGeocodingService, GoogleMapsGeocodingService>();
 
-            // 4.3 Staging
-            builder.RegisterType<SiteOnTimeProductService>().As<ISiteOnTimeProductService>();
-            builder.RegisterType<PrFileDiscountService>().As<IPrFileDiscountService>();
-            builder.RegisterType<PromoService>().As<IPromoService>();
-            builder.RegisterType<RebateService>().As<IRebateService>();
-            builder.RegisterType<RebateProductMappingService>().As<IRebateProductMappingService>();
-            builder.RegisterType<ProductDataProductService>().As<IProductDataProductService>();
-            builder.RegisterType<ProductDataProductImageService>().As<IProductDataProductImageService>();
-            builder.RegisterType<ProductDataProductDownloadService>().As<IProductDataProductDownloadService>();
-            builder.RegisterType<IsamProductService>().As<IIsamProductService>();
-            builder.RegisterType<CustomCategoryService>().As<ICustomCategoryService>();
-
-            builder.RegisterType<StagingDb>().As<StagingDb>();
-
-            builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource(x => x.Name.Contains("Task")));
+            services.AddScoped<ISiteOnTimeProductService, SiteOnTimeProductService>();
+            services.AddScoped<IPrFileDiscountService, PrFileDiscountService>();
+            services.AddScoped<IPromoService, PromoService>();
+            services.AddScoped<IRebateService, RebateService>();
+            services.AddScoped<IRebateProductMappingService, RebateProductMappingService>();
+            services.AddScoped<IProductDataProductService, ProductDataProductService>();
+            services.AddScoped<IProductDataProductImageService, ProductDataProductImageService>();
+            services.AddScoped<IProductDataProductDownloadService, ProductDataProductDownloadService>();
+            services.AddScoped<IIsamProductService, IsamProductService>();
+            services.AddScoped<ICustomCategoryService, CustomCategoryService>();
         }
 
         /// <summary>

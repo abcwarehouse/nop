@@ -60,7 +60,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
         }
 
-        public override void Install()
+        public override async System.Threading.Tasks.Task InstallAsync()
         {
             // Clean up before installation
             RemoveTasks();
@@ -79,14 +79,14 @@ namespace Nop.Plugin.Misc.AbcSync
             base.Install();
         }
 
-        public override void Uninstall()
+        public override async System.Threading.Tasks.Task UninstallAsync()
         {
             RemoveTasks();
 
             base.Uninstall();
         }
 
-        public override void Update(string currentVersion, string targetVersion)
+        public override async System.Threading.Tasks.Task UpdateAsync(string currentVersion, string targetVersion)
         {
             UpdateLocales();
         }

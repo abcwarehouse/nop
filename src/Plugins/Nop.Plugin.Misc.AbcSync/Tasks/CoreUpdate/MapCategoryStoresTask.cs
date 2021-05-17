@@ -48,10 +48,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 return;
             }
 
-            var categories = _categoryService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategoriesAsync();
             foreach (var category in categories)
             {
-                var stores = _storeService.GetAllStores();
+                var stores = await _storeService.GetAllStoresAsync();
                 foreach (var store in stores)
                 {
                     if (IsCategoryEmpty(category, store.Id))
@@ -83,7 +83,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             var childCategoryIds = _categoryService.GetChildCategoryIds(category.Id, storeId);
             foreach (var childCategoryId in childCategoryIds)
             {
-                var childCategory = _categoryService.GetCategoryById(childCategoryId);
+                var childCategory = await _categoryService.GetCategoryByIdAsync(childCategoryId);
                 if (!IsCategoryEmpty(childCategory, storeId))
                 {
                     // found a non-empty child category, this category isn't empty
@@ -104,7 +104,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             if (existingStoreMapping != null)
             {
                 _storeMappingService.DeleteStoreMapping(existingStoreMapping);
-                _logger.Information(
+                await _logger.InformationAsync(
                     $"{store.Name}: Unmapped '{category.Name}' category (no products)."
                 );
             }
@@ -119,7 +119,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             if (existingStoreMapping == null)
             {
                 _storeMappingService.InsertStoreMapping<Category>(category, store.Id);
-                _logger.Information(
+                await _logger.InformationAsync(
                     $"{store.Name}: Mapped '{category.Name}' category (contained products)."
                 );
             }

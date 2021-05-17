@@ -1,6 +1,7 @@
 using Nop.Data;
 using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -18,7 +19,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _nopDataProvider = nopDataProvider;
         }
 
-        public void Execute()
+        public System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipCleanDuplicateImagesTask)
             {

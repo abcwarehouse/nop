@@ -13,6 +13,7 @@ using System.Data;
 using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcSync.Data;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
@@ -48,7 +49,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _productService = productService;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipImportProductCategoryMappingsTask)
             {
@@ -64,13 +65,13 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             string deleteCategoryAttributeOptionsSql
                 = $@"DELETE FROM {_nopDbContext.GetTable<SpecificationAttributeOption>().TableName}
                      WHERE SpecificationAttributeId = {categoryAttribute.Id}";
-            _nopDbContext.ExecuteNonQuery(deleteCategoryAttributeOptionsSql);
+            await _nopDbContext.ExecuteNonQueryAsync(deleteCategoryAttributeOptionsSql);
 
             //2. import new PCs (preserving pc display order and featured products)
-            ImportProductCategoryMappings();
+            await ImportProductCategoryMappingsAsync();
 
             //3. remake the spec attribute options. after name is calculated in nop, send to sproc to create attributes and mappings
-            var categoryList = _categoryService.GetAllCategories(showHidden: true);
+            var categoryList = await _categoryService.GetAllCategoriesAsync(showHidden: true);
             var sortedCategories = _categoryService.SortCategoriesForTree(categoryList);
             var categoryToDisplayOrder = new Dictionary<int, int>();
             categoryToDisplayOrder = sortedCategories.Zip(Enumerable.Range(0, sortedCategories.Count), (c, i) => new { c.Id, i }).ToDictionary(x => x.Id, x => x.i);
@@ -105,27 +106,27 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     new DataParameter { Name = "saoName", DataType = DataType.NVarChar, Value = spaces + category.Name},
                     new DataParameter { Name = "saoDisplayOrder", DataType = DataType.Int32, Value = categoryToDisplayOrder[category.Id] }
                 };
-                _nopDbContext.ExecuteNonQuery("EXEC [dbo].[AddCategorySpecificationAttributeOption] @specAttrId, @categoryId, @saoName, @saoDisplayOrder",
+                await _nopDbContext.ExecuteNonQueryAsync("EXEC [dbo].[AddCategorySpecificationAttributeOption] @specAttrId, @categoryId, @saoName, @saoDisplayOrder",
                     30, parameters);
 
             }
 
             //4. unpublish all products not mapped to a category
-            _nopDbContext.ExecuteNonQuery("UPDATE p SET p.Published = 0 FROM Product p left join Product_Category_Mapping pcm ON p.Id = pcm.ProductId WHERE pcm.Id IS NULL;");
+            await _nopDbContext.ExecuteNonQueryAsync("UPDATE p SET p.Published = 0 FROM Product p left join Product_Category_Mapping pcm ON p.Id = pcm.ProductId WHERE pcm.Id IS NULL;");
 
 
             //5. set the product store mappings recursively based on products
             var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
                 " AND EntityId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
                 "";
-            _nopDbContext.ExecuteNonQuery(
+            await _nopDbContext.ExecuteNonQueryAsync(
                 $"DELETE FROM StoreMapping where EntityName = 'Category' {mattressItemAddition}; UPDATE Category set LimitedToStores = 1;"
             );
 
             var categoryToStores = new Dictionary<int, HashSet<int>>();
             foreach (var pc in _productCategoryRepository.Table.ToList())
             {
-                var categoryToMap = _categoryService.GetCategoryById(pc.CategoryId);
+                var categoryToMap = await _categoryService.GetCategoryByIdAsync(pc.CategoryId);
 
                 var productStoreMappings =
                     _storeMappingService.GetStoreMappings(
@@ -145,7 +146,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                         categoryToStores[categoryToMap.Id].Add(productStoreMapping.StoreId);
                     }
 
-                    categoryToMap = _categoryService.GetCategoryById(categoryToMap.ParentCategoryId);
+                    categoryToMap = await _categoryService.GetCategoryByIdAsync(categoryToMap.ParentCategoryId);
                 }
             }
 
@@ -154,20 +155,21 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             {
                 foreach (var storeId in kvp.Value.ToList())
                 {
-                    _nopDbContext.ExecuteNonQuery($"INSERT INTO [dbo].[StoreMapping]([EntityId],[EntityName],[StoreId]) VALUES ({kvp.Key},'Category', {storeId});");
+                    await _nopDbContext.ExecuteNonQueryAsync(
+                        $"INSERT INTO [dbo].[StoreMapping]([EntityId],[EntityName],[StoreId]) VALUES ({kvp.Key},'Category', {storeId});");
                 }
             }
 
             this.LogEnd();
         }
 
-        private void ImportProductCategoryMappings()
+        private async System.Threading.Tasks.Task ImportProductCategoryMappingsAsync()
         {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
                 " WHERE ProductId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
                 "";
-            _nopDbContext.ExecuteNonQuery($@"
+            await _nopDbContext.ExecuteNonQueryAsync($@"
                 If(OBJECT_ID('tempdb..#tempProductCategoryMap') Is Not Null)
                 Begin
                     Drop Table #tempProductCategoryMap;

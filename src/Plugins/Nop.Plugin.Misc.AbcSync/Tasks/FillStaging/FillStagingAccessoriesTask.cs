@@ -121,7 +121,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     string message = "Unable to import a ." +
                         " No item number could be found relating to it.";
-                    logger.Warning(message);
+                    await logger.WarningAsync(message);
 
                     continue;
                 }

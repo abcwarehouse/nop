@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -37,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _stagingDb = stagingDb;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipMapCategoriesTask)
             {
@@ -85,7 +86,7 @@ namespace Nop.Plugin.Misc.AbcSync
                         var nopName = Convert.ToString(isamWorksheet.Cells[iRow, 5].Value);
                         if (!string.IsNullOrEmpty(nopName))
                         {
-                            var category = _categoryService.GetAllCategories(categoryName: nopName, showHidden: true)
+                            var category = await _categoryService.GetAllCategoriesAsync(categoryName: nopName, showHidden: true)
                                                            .Where(c => c.Name.ToLower().Trim() == nopName.ToLower().Trim()).FirstOrDefault();
                             if (category != null)
                             {
@@ -93,7 +94,7 @@ namespace Nop.Plugin.Misc.AbcSync
                             }
                             else
                             {
-                                _logger.Warning($"No NopCommerce category exists with name \"{nopName}\", unable to map ISAM category with id = {isamId}");
+                                await _logger.WarningAsync($"No NopCommerce category exists with name \"{nopName}\", unable to map ISAM category with id = {isamId}");
                             }
                         }
 
@@ -127,18 +128,20 @@ namespace Nop.Plugin.Misc.AbcSync
                         var nopName = Convert.ToString(sotWorksheet.Cells[iRow, 6].Value);
                         if (!string.IsNullOrEmpty(nopName))
                         {
-                            var category = _categoryService.GetAllCategories(categoryName: nopName, showHidden: true).Where(c => c.Name.ToLower().Trim() == nopName.ToLower().Trim()).FirstOrDefault();
+                            var category = (await _categoryService.GetAllCategoriesAsync(categoryName: nopName, showHidden: true))
+                                .Where(c => c.Name.ToLower().Trim() == nopName.ToLower().Trim())
+                                .FirstOrDefault();
                             if (category != null)
                             {
                                 if (category.Deleted)
                                 {
-                                    _logger.Warning($"Site on time category with id {sotId} has been mapped to a deleted category (name = {nopName}, id = {nopId})");
+                                    await _logger.WarningAsync($"Site on time category with id {sotId} has been mapped to a deleted category (name = {nopName}, id = {nopId})");
                                 }
                                 nopId = category.Id;
                             }
                             else
                             {
-                                _logger.Warning($"No NopCommerce category exists with name \"{nopName}\", unable to map Site on Time category with id = {sotId}");
+                                await _logger.WarningAsync($"No NopCommerce category exists with name \"{nopName}\", unable to map Site on Time category with id = {sotId}");
                             }
                         }
 

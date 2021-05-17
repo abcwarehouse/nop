@@ -61,7 +61,7 @@ namespace Nop.Plugin.Misc.AbcSync
             );
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipImportLocalPicturesTask)
             {
@@ -72,7 +72,7 @@ namespace Nop.Plugin.Misc.AbcSync
             this.LogStart();
             if (!_pictureService.StoreInDb)
             {
-                _logger.Warning("Images not stored in DB, cannot run Import Local Pictures task.");
+                await _logger.WarningAsync("Images not stored in DB, cannot run Import Local Pictures task.");
                 return;
             }
 
@@ -91,10 +91,10 @@ namespace Nop.Plugin.Misc.AbcSync
             // only grab 'large' images
             foreach (string pictureFileUrl in pictureFileUrls)
             {
-                ProcessLocalPicture(pictureFileUrl, pictureManager);
+                await ProcessLocalPictureAsync(pictureFileUrl, pictureManager);
             }
             pictureManager.Flush();
-            pictureManager.FlushProductPictures(_productPictureRepository);
+            pictureManager.FlushProductPicturesAsync(_productPictureRepository);
 
             var setDisplayOrderCommand = @"
                UPDATE Product_Picture_Mapping
@@ -104,13 +104,13 @@ namespace Nop.Plugin.Misc.AbcSync
                 WHERE p.SeoFilename like '%[_]large[_]0'
             ";
 
-            _nopDbContext.ExecuteNonQuery(setDisplayOrderCommand);
+            await _nopDbContext.ExecuteNonQueryAsync(setDisplayOrderCommand);
             _importSettings.LastPictureUpdate = DateTime.Now;
             _settingService.SaveSetting(_importSettings);
             this.LogEnd();
         }
 
-        private void ProcessLocalPicture(string pictureFileUrl, PictureInsertManager pictureInsertManager)
+        private async System.Threading.Tasks.Task ProcessLocalPictureAsync(string pictureFileUrl, PictureInsertManager pictureInsertManager)
         {
             // parse filename
             // assume file name is in format: <item number>_<imgSize - thumb/large/etc>.<ext>
@@ -124,7 +124,7 @@ namespace Nop.Plugin.Misc.AbcSync
             string[] parts = fullFilename.Split('.');
             if (parts.Length < 2)
             {
-                _logger.Warning($"Local picture import: encountered file {fullFilename} with missing extension.");
+                await _logger.WarningAsync($"Local picture import: encountered file {fullFilename} with missing extension.");
                 return;
             }
             string filename = parts[0];
@@ -132,7 +132,7 @@ namespace Nop.Plugin.Misc.AbcSync
             parts = filename.Split('_');
             if (parts.Length < 2)
             {
-                _logger.Warning($"Local picture import: encountered file {fullFilename} formatted incorrectly (missing '_').");
+                await _logger.WarningAsync($"Local picture import: encountered file {fullFilename} formatted incorrectly (missing '_').");
                 return;
             }
             string itemNum = parts[0];
@@ -141,15 +141,14 @@ namespace Nop.Plugin.Misc.AbcSync
             // do string parsing to choose which images we want to use
             if (!imgSize.Equals("large"))
             {
-                _logger.Warning($"Local picture import: encountered file {fullFilename} formatted incorrectly (missing 'large').");
+                await _logger.WarningAsync($"Local picture import: encountered file {fullFilename} formatted incorrectly (missing 'large').");
                 return;
             }
 
-            var nopProduct = _nopDbContext.ExecuteStoredProcedure<Product>(
+            var nopProduct = await _nopDbContext.QueryProcAsync<Product>(
                 "GetProductByItemNo",
-                    30,
-                    new DataParameter { Name = "ItemNo", Value = itemNum, DataType = DataType.NVarChar }
-                );
+                new DataParameter { Name = "ItemNo", Value = itemNum, DataType = DataType.NVarChar }
+            );
 
             if (nopProduct == null || nopProduct.Deleted)
             {
@@ -174,7 +173,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     pictureBytes = File.ReadAllBytes(pictureFileUrl);
                     // insert the picture if no file errors
                     pictureInsertManager.Insert(pictureBytes, seoName, pictureFileUrl, nopProduct);
-                    _logger.Information($"Product #{itemNum} local image added.");
+                    await _logger.InformationAsync($"Product #{itemNum} local image added.");
                 }
 
                 if (isExistingImage)
@@ -185,13 +184,13 @@ namespace Nop.Plugin.Misc.AbcSync
                                                             .Where(p => p.SeoFilename == seoName)
                                                             .FirstOrDefault();
 
-                    var existingPictureBytes = _pictureService.LoadPictureBinary(matchingPicture);
+                    var existingPictureBytes = await _pictureService.LoadPictureBinaryAsync(matchingPicture);
 
                     // If we didn't find an exact matching picture, update the one in place
                     if (matchingPicture == null || !existingPictureBytes.SequenceEqual(pictureBytes))
                     {
                         pictureInsertManager.Update(pictureBytes, seoName, pictureFileUrl);
-                        _logger.Information($"Product #{itemNum} local image updated.");
+                        await _logger.InformationAsync($"Product #{itemNum} local image updated.");
                     }
                 }
             }

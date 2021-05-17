@@ -5,6 +5,7 @@ using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Tasks;
 using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -32,7 +33,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipAddHomeDeliveryAttributesTask)
             {
@@ -51,7 +52,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 $"(SELECT Id FROM {_nopDbContext.GetTable<ProductAttributeMapping>().TableName} pam " +
                 $"WHERE pam.ProductAttributeId = {homeDeliveryAttribute.Id});";
 
-            _nopDbContext.ExecuteNonQuery(deleteHomeDeliveryAttributeValues);
+            await _nopDbContext.ExecuteNonQueryAsync(deleteHomeDeliveryAttributeValues);
 
             // add home delivery product attribute value to all home delivery products
             var attributeValueManager = new EntityManager<ProductAttributeValue>(_productAttributeValueRepository);

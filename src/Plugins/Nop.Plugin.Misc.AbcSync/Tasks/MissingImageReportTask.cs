@@ -47,7 +47,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _excelPath = Path.Combine(env.WebRootPath, "ImageReport.xlsx");
         }
 
-        public async System.Threading.Tasks.Task Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
 

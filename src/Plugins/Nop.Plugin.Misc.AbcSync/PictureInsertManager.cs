@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Nop.Core.Domain.Catalog;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcCore;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -153,15 +154,15 @@ namespace Nop.Plugin.Misc.AbcSync
             _nInserts = 0;
         }
 
-        public void FlushProductPictures(IRepository<ProductPicture> productPictureRepository)
+        public Task FlushProductPicturesAsync(IRepository<ProductPicture> productPictureRepository)
         {
             EntityManager<ProductPicture> productPictureManager =
                 new EntityManager<ProductPicture>(productPictureRepository);
             foreach (var productPicture in _productPictures)
             {
-                productPictureManager.Insert(productPicture);
+                await productPictureManager.InsertAsync(productPicture);
             }
-            productPictureManager.Flush();
+            await productPictureManager.FlushAsync();
             _productPictures.Clear();
         }
     }

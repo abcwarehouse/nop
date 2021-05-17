@@ -21,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
 
@@ -40,7 +40,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
             else
             {
-                _logger.Warning("SliExportTask skipped.");
+                await _logger.WarningAsync("SliExportTask skipped.");
             }
 
 

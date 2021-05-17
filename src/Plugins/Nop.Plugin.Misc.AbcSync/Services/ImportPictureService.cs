@@ -85,7 +85,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
         {
             if (!_pictureService.StoreInDb)
             {
-                _logger.Warning("Images not stored in DB, cannot run Import Site On Time Pictures task.");
+                await _logger.WarningAsync("Images not stored in DB, cannot run Import Site On Time Pictures task.");
                 return;
             }
 
@@ -130,7 +130,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
                 {
                     if (url == null)
                     {
-                        _logger.Warning($"SOT Image URL was null for SKU: {sotProduct.SKU}, skipping processing");
+                        await _logger.WarningAsync($"SOT Image URL was null for SKU: {sotProduct.SKU}, skipping processing");
                         continue;
                     }
 
@@ -217,19 +217,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
             }
 
             pictureManager.Flush();
-            pictureManager.FlushProductPictures(_productPictureRepository);
-        }
-
-        public void DeleteAllProductPictures()
-        {
-            // clear product pictures
-            string deleteQuery = $"DELETE FROM {_nopDbContext.GetTable<Picture>()} WHERE Id in"
-                                    + $" (SELECT PictureId FROM {_nopDbContext.GetTable<ProductPicture>()})";
-
-            string deleteProductPictureMappingQuery = $"DELETE FROM {_nopDbContext.GetTable<ProductPicture>()}";
-
-            _nopDbContext.ExecuteNonQuery(deleteQuery);
-            _nopDbContext.ExecuteNonQuery(deleteProductPictureMappingQuery);
+            pictureManager.FlushProductPicturesAsync(_productPictureRepository);
         }
     }
 }

@@ -82,9 +82,9 @@ namespace Nop.Plugin.Misc.AbcSync
             var idsWithEguides = new HashSet<int>();
             var idsWithSpecs = new HashSet<int>();
 
-            _nopDbContext.ExecuteNonQuery(
+            await _nopDbContext.ExecuteNonQueryAsync(
                 $"DELETE FROM {_nopDbContext.GetTable<ProductDocuments>().TableName}");
-            _nopDbContext.ExecuteNonQuery(
+            await _nopDbContext.ExecuteNonQueryAsync(
                 $"DELETE FROM {_nopDbContext.GetTable<ProductEnergyGuide>().TableName}");
 
             var productDocumentsManager = new EntityManager<ProductDocuments>();

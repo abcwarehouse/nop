@@ -15,7 +15,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
         public const string IsAddToCartKey = "IsAddToCart";
         public const string IsAddToCartWithUserInfoKey = "IsAddToCartWithUserInfo";
 
-        public static async Task<bool> IsCallOnly(this Product product)
+        public static async Task<bool> IsCallOnlyAsync(this Product product)
         {
             var manufacturerService = EngineContext.Current.Resolve<IManufacturerService>();
             var productManufacturers = await manufacturerService.GetProductManufacturersByProductIdAsync(product.Id);
@@ -32,19 +32,19 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             return false;
         }
 
-        public static async Task<bool> IsAddToCart(this Product product)
+        public static async Task<bool> IsAddToCartAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             return await genericAttributeService.GetAttributeAsync<bool>(product, IsAddToCartKey);
         }
 
-        public static async Task EnableAddToCart(this Product product)
+        public static async Task EnableAddToCartAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             await genericAttributeService.SaveAttributeAsync(product, IsAddToCartKey, true);
         }
 
-        public static async Task DisableAddToCart(this Product product)
+        public static async Task DisableAddToCartAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             var attributes = await genericAttributeService.GetAttributesForEntityAsync(product.Id, "Product");
@@ -57,19 +57,19 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             }
         }
 
-        public static async Task<bool> IsAddToCartWithUserInfo(this Product product)
+        public static async Task<bool> IsAddToCartWithUserInfoAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             return await genericAttributeService.GetAttributeAsync<bool>(product, IsAddToCartWithUserInfoKey);
         }
 
-        public static async Task EnableAddToCartWithUserInfo(this Product product)
+        public static async Task EnableAddToCartWithUserInfoAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             await genericAttributeService.SaveAttributeAsync(product, IsAddToCartWithUserInfoKey, true);
         }
 
-        public static async Task DisableAddToCartWithUserInfo(this Product product)
+        public static async Task DisableAddToCartWithUserInfoAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
             var attributes = await genericAttributeService.GetAttributesForEntityAsync(product.Id, "Product");

@@ -36,7 +36,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _stagingDb = stagingDb;
         }
 
-        public void Execute()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
 
@@ -63,10 +63,10 @@ namespace Nop.Plugin.Misc.AbcSync
 
                 var activeSlug = _urlRecordService.GetActiveSlug(product.Id, "Product", 0);
                 var desiredSuffix = string.IsNullOrWhiteSpace(stagingProduct.ISAMItemNo) ? product.ShortDescription : stagingProduct.FactTag;
-                var desiredSlug = _urlRecordService.ValidateSeName(product, "", product.Name + " " + desiredSuffix, true);
+                var desiredSlug = await _urlRecordService.ValidateSeNameAsync(product, "", product.Name + " " + desiredSuffix, true);
                 if (activeSlug != desiredSlug)
                 {
-                    _urlRecordService.SaveSlug(product, desiredSlug, 0);
+                    await _urlRecordService.SaveSlugAsync(product, desiredSlug, 0);
                 }
             }
 

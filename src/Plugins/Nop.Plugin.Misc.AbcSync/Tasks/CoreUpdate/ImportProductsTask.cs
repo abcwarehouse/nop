@@ -115,15 +115,15 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             int everythingTaxCategoryId = _taxCategoryRepository.Table.Where(tc => tc.Name == "Everything").Select(tc => tc.Id).FirstOrDefault();
 
             //remove all product cart price mappings and home delivery mappings
-            _nopDbContext.ExecuteNonQuery($"DELETE FROM ProductCartPrice");
-            _nopDbContext.ExecuteNonQuery($"DELETE FROM ProductHomeDelivery");
-            _nopDbContext.ExecuteNonQuery($"DELETE FROM ProductRequiresLogin");
+            await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductCartPrice");
+            await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductHomeDelivery");
+            await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductRequiresLogin");
 
-            var stagingProducts = GetCleanedStagingProducts();
+            var stagingProducts = await GetCleanedStagingProductsAsync();
 
-            ProductAttribute homeDeliveryAttribute = _importUtilities.GetHomeDeliveryAttributeAsync();
-            PredefinedProductAttributeValue homeDeliveryAttributeValue = _importUtilities.GetHomeDeliveryAttributeValueAsync();
-            ProductAttribute pickupAttribute = _importUtilities.GetPickupAttributeAsync();
+            ProductAttribute homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
+            PredefinedProductAttributeValue homeDeliveryAttributeValue = await _importUtilities.GetHomeDeliveryAttributeValueAsync();
+            ProductAttribute pickupAttribute = await _importUtilities.GetPickupAttributeAsync();
             var productAttributeMappingManager = new EntityManager<ProductAttributeMapping>(EngineContext.Current.Resolve<IRepository<ProductAttributeMapping>>());
             var productCartPriceManager = new EntityManager<ProductCartPrice>(_productCartPriceRepository);
             var homeDeliveryManager = new EntityManager<ProductHomeDelivery>();
@@ -137,10 +137,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             string manufacturerStoreMappingDeleteQuery =
                 $"DELETE FROM {_nopDbContext.GetTable<StoreMapping>().TableName} WHERE EntityName='Manufacturer'";
 
-            _nopDbContext.ExecuteNonQuery(manufacturerUpdateQuery);
-            _nopDbContext.ExecuteNonQuery(manufacturerStoreMappingDeleteQuery);
+            await _nopDbContext.ExecuteNonQueryAsync(manufacturerUpdateQuery);
+            await _nopDbContext.ExecuteNonQueryAsync(manufacturerStoreMappingDeleteQuery);
 
-            Store[] storeList = _storeService.GetAllStores().ToArray();
+            Store[] storeList = (await _storeService.GetAllStoresAsync()).ToArray();
             Store abcWarehouseStore
                 = storeList.Where(s => s.Name == "ABC Warehouse")
                 .Select(s => s).FirstOrDefault();
@@ -292,12 +292,12 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                 product.IsShipEnabled = true;
 
-                if (product.Price <= 0 && !product.IsCallOnly())
+                if (product.Price <= 0 && !await product.IsCallOnlyAsync())
                 {
                     product.Published = false;
                 }
 
-                if (product.IsCallOnly())
+                if (await product.IsCallOnlyAsync())
                 {
                     product.CallForPrice = true;
                     product.DisableBuyButton = true;
@@ -307,9 +307,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 if (newProduct)
                 {
                     //have to insert directly to repo to get back the id
-                    _productRepository.Insert(product);
+                    await _productRepository.InsertAsync(product);
                     ExistingSkuToId[product.Sku] = product.Id;
-                    _urlRecordService.SaveSlug(product, _urlRecordService.ValidateSeName(product, "", product.Name, true), 0);
+                    await _urlRecordService.SaveSlugAsync(product, await _urlRecordService.ValidateSeNameAsync(product, "", product.Name, true), 0);
 
                     if (stagingProduct.AllowInStorePickup)
                     {
@@ -327,20 +327,19 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     if (!_importUtilities.CoreEquals(productSnapshot, product))
                     {
                         product.Deleted = false;
-                        _productService.UpdateProduct(product);
+                        await _productService.UpdateProductAsync(product);
                     }
 
                     // straight sql update
                     //update url record if name has changed
                     if (hasNewName)
                     {
-                        var urlRecord = _urlRecordService.GetBySlug(_urlRecordService.GetActiveSlug(product.Id, "Product", 0));
-
-                        if (urlRecord != null)
-                        {
-                            urlRecord.Slug = _urlRecordService.ValidateSeName(product, "", product.Name, true);
-                            _urlRecordService.UpdateUrlRecord(urlRecord);
-                        }
+                        var slug = await _urlRecordService.ValidateSeNameAsync(product, "", product.Name, true);
+                        await _urlRecordService.SaveSlugAsync<Product>(
+                            product,
+                            slug,
+                            0
+                        );
                     }
 
                     if (!productsWithPickupAttribute.Contains(product.Id) && stagingProduct.AllowInStorePickup)
@@ -351,11 +350,12 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     else if (productsWithPickupAttribute.Contains(product.Id) && !stagingProduct.AllowInStorePickup)
                     {
                         // a mapping to the pickup attribute exists and is not needed, remove it
-                        ProductAttributeMapping pickupAttributeMapping = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                        ProductAttributeMapping pickupAttributeMapping =
+                            (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
                         .Where(pam => pam.ProductAttributeId == pickupAttribute.Id)
                         .Select(pam => pam).FirstOrDefault();
                         // updated to not allow pick up in store anymore
-                        _productAttributeService.DeleteProductAttributeMapping(pickupAttributeMapping);
+                        await _productAttributeService.DeleteProductAttributeMappingAsync(pickupAttributeMapping);
                     }
 
 
@@ -365,25 +365,26 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     }
                     else if (productsWithHomeDeliveryAttribute.Contains(product.Id) && stagingProduct.CanUseUps)
                     {
-                        ProductAttributeMapping homeDeliveryAttributeMapping = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
+                        ProductAttributeMapping homeDeliveryAttributeMapping =
+                            (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
                         .Where(pam => pam.ProductAttributeId == homeDeliveryAttribute.Id)
                         .Select(pam => pam).FirstOrDefault();
                         // updated to not allow home delivery anymore
-                        _productAttributeService.DeleteProductAttributeMapping(homeDeliveryAttributeMapping);
+                        await _productAttributeService.DeleteProductAttributeMappingAsync(homeDeliveryAttributeMapping);
                     }
                 }
 
                 //add manufacturer and mappings as needed
                 if (stagingProduct.Manufacturer != null)
                 {
-                    var manufacturer = GetManufacturerByName(stagingProduct.Manufacturer);
+                    var manufacturer = await GetManufacturerByNameAsync(stagingProduct.Manufacturer);
                     if (manufacturer != null)
                     {
                         var productManufacturers = _productManufacturerRepository.Table
                             .Where(pm => pm.ManufacturerId == manufacturer.Id && pm.ProductId == product.Id);
                         if (!productManufacturers.Any())
                         {
-                            _manufacturerService.InsertProductManufacturer(
+                            await _manufacturerService.InsertProductManufacturerAsync(
                                 new ProductManufacturer { ProductId = product.Id, ManufacturerId = manufacturer.Id }
                             );
                         }
@@ -396,17 +397,17 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 if (priceBucketCode == Staging.PriceBucketCode.AddToCartForCurrentPricing ||
                     priceBucketCode == Staging.PriceBucketCode.AddToCartForCurrentPricingRequireLogin)
                 {
-                    productCartPriceManager.Insert(new ProductCartPrice { Product_Id = product.Id, CartPrice = stagingProduct.CartPrice.Value });
+                    await productCartPriceManager.InsertAsync(new ProductCartPrice { Product_Id = product.Id, CartPrice = stagingProduct.CartPrice.Value });
                     if (priceBucketCode == Staging.PriceBucketCode.AddToCartForCurrentPricingRequireLogin)
                     {
-                        requiresLoginManager.Insert(new ProductRequiresLogin { Product_Id = product.Id });
+                        await requiresLoginManager.InsertAsync(new ProductRequiresLogin { Product_Id = product.Id });
                     }
                 }
 
                 //add to home delivery table if needed
                 if (!stagingProduct.CanUseUps)
                 {
-                    homeDeliveryManager.Insert(new ProductHomeDelivery { Product_Id = product.Id });
+                    await homeDeliveryManager.InsertAsync(new ProductHomeDelivery { Product_Id = product.Id });
                 }
 
                 // After collecting all the store IDs to which this product relates,
@@ -420,30 +421,30 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                     foreach (var prodManMappings in productManufacturers)
                     {
-                        var manufacturer = _manufacturerService.GetManufacturerById(prodManMappings.ManufacturerId);
+                        var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(prodManMappings.ManufacturerId);
 
                         // If the manufacturer is already mapped to this store, skip it.
-                        if (_storeMappingService
-                            .GetStoresIdsWithAccess(manufacturer)
+                        if ((await _storeMappingService
+                            .GetStoresIdsWithAccessAsync(manufacturer))
                             .Contains(store))
                         {
                             continue;
                         }
-                        _storeMappingService.InsertStoreMapping(
+                        await _storeMappingService.InsertStoreMappingAsync(
                             manufacturer, store);
                     }
                 }
 
-                UpdateAddToCartInfo(priceBucketCode, product, stagingProduct);
-                SetFullDescriptionIfEmpty(stagingProduct, product);
+                await UpdateAddToCartInfoAsync(priceBucketCode, product, stagingProduct);
+                await SetFullDescriptionIfEmptyAsync(stagingProduct, product);
             }
 
-            ImportProductStoreMappings();
+            await ImportProductStoreMappingsAsync();
 
-            productAttributeMappingManager.Flush();
-            productCartPriceManager.Flush();
-            homeDeliveryManager.Flush();
-            requiresLoginManager.Flush();
+            await productAttributeMappingManager.FlushAsync();
+            await productCartPriceManager.FlushAsync();
+            await homeDeliveryManager.FlushAsync();
+            await requiresLoginManager.FlushAsync();
 
             // marking products that do not exist in the staging database as deleted
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
@@ -460,7 +461,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 {mattressItemAddition}
             ";
 
-            _nopDbContext.ExecuteNonQuery(deleteCommand, 120);
+            await _nopDbContext.ExecuteNonQueryAsync(deleteCommand);
 
             //updating gift card if one was added
             var giftCardProduct = _productRepository.Table.Where(p => p.Name == "GIFT").FirstOrDefault();
@@ -472,7 +473,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 giftCardProduct.CustomerEntersPrice = true;
                 giftCardProduct.MinimumCustomerEnteredPrice = 25;
                 giftCardProduct.MaximumCustomerEnteredPrice = 1000;
-                _productService.UpdateProduct(giftCardProduct);
+                await _productService.UpdateProductAsync(giftCardProduct);
             }
 
             //update the warranty product
@@ -484,77 +485,80 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 warrantyProduct.Published = false;
                 warrantyProduct.LimitedToStores = false;
                 warrantyProduct.TaxCategoryId = warrantyTaxCategoryId;
-                _productService.UpdateProduct(warrantyProduct);
+                await _productService.UpdateProductAsync(warrantyProduct);
             }
 
             //unpublish any manufacturers that now contain only deleted products
-            _nopDbContext.ExecuteNonQuery(
+            await _nopDbContext.ExecuteNonQueryAsync(
                 $"update [{nopDbName}].dbo.Manufacturer set Published = 0; update [{nopDbName}].dbo.Manufacturer set Published = 1 from [{nopDbName}].dbo.Manufacturer m join [{nopDbName}].dbo.Product_Manufacturer_Mapping pm on m.Id = pm.ManufacturerId left join  (select Id as pid from [{nopDbName}].dbo.Product p where p.Published = 1 or p.Deleted = 0 ) as p on pm.ProductId = p.pid;");
 
             //clear table and reimport
-            _nopDbContext.ExecuteNonQuery(
+            await _nopDbContext.ExecuteNonQueryAsync(
                 $@"TRUNCATE TABLE ProductAbcDescriptions;
                     INSERT INTO ProductAbcDescriptions (Product_Id, AbcDescription, AbcItemNumber, UsesPairPricing)
                     SELECT p.Id, sp.ShortDescription, sp.ItemNumber, sp.UsePairPricing FROM Product p join {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku;"
                 );
 
 
-            _nopDbContext.ExecuteNonQuery("EXECUTE [dbo].[SanitizeSOTShortDescriptions];");
+            await _nopDbContext.ExecuteNonQueryAsync("EXECUTE [dbo].[SanitizeSOTShortDescriptions];");
 
             this.LogEnd();
         }
 
-        private void SetFullDescriptionIfEmpty(StagingProduct stagingProduct, Product product)
+        private async System.Threading.Tasks.Task SetFullDescriptionIfEmptyAsync(StagingProduct stagingProduct, Product product)
         {
             if (string.IsNullOrWhiteSpace(product.FullDescription))
             {
                 if (!string.IsNullOrWhiteSpace(stagingProduct.FactTag))
                 {
-                    _logger.Warning(
+                    await _logger.WarningAsync(
                         $"Product {product.Sku} has no FullDescription, using Fact Tag {stagingProduct.FactTag}");
                     product.FullDescription = stagingProduct.FactTag;
                 }
                 else
                 {
-                    _logger.Warning(
+                    await _logger.WarningAsync(
                         $"Product {product.Sku} has no FullDescription, setting blank");
                     product.FullDescription = "<div></div>";
                 }
 
-                _productService.UpdateProduct(product);
+                await _productService.UpdateProductAsync(product);
             }
         }
 
-        private void UpdateAddToCartInfo(PriceBucketCode priceBucketCode, Product product, StagingProduct stagingProduct)
+        private async System.Threading.Tasks.Task UpdateAddToCartInfoAsync(
+            PriceBucketCode priceBucketCode,
+            Product product,
+            StagingProduct stagingProduct)
         {
             if (priceBucketCode == PriceBucketCode.AddToCartForCurrentPricing)
             {
-                product.EnableAddToCart();
+                await product.EnableAddToCartAsync();
 
                 product.Price = stagingProduct.CartPrice.Value;
                 product.OldPrice = 0.00M;
-                _productService.UpdateProduct(product);
+                await _productService.UpdateProductAsync(product);
             }
-            else if (product.IsAddToCart())
+            else if (await product.IsAddToCartAsync())
             {
-                product.DisableAddToCart();
+                await product.DisableAddToCartAsync();
             }
 
             if (priceBucketCode == PriceBucketCode.AddToCartForCurrentPricingRequireLogin)
             {
-                product.EnableAddToCartWithUserInfo();
+                await product.EnableAddToCartWithUserInfoAsync();
 
                 product.Price = stagingProduct.CartPrice.Value;
                 product.OldPrice = 0.00M;
-                _productService.UpdateProduct(product);
+                await _productService.UpdateProductAsync(product);
             }
-            else if (product.IsAddToCartWithUserInfo())
+            else if (await product.IsAddToCartWithUserInfoAsync())
             {
-                product.DisableAddToCartWithUserInfo();
+                await product.DisableAddToCartWithUserInfoAsync();
             }
         }
 
-        private void ImportProductStoreMappings()
+        private async System.Threading.Tasks.Task ImportProductStoreMappingsAsync()
         {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
@@ -666,10 +670,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 DROP TABLE IF EXISTS #tmp_products
                 DROP TABLE IF EXISTS #tmp_mappings
             ";
-            _nopDbContext.ExecuteNonQuery(command);
+            await _nopDbContext.ExecuteNonQueryAsync(command);
         }
 
-        private List<StagingProduct> GetCleanedStagingProducts()
+        private async Task<List<StagingProduct>> GetCleanedStagingProductsAsync()
         {
             var stagingProducts = _stagingDb.GetProducts().ToList();
             var stagingProductsNoDupeSkus = stagingProducts.GroupBy(sp => sp.Sku).Select(sp => sp.FirstOrDefault()).ToList();
@@ -679,7 +683,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             {
                 foreach (var product in difference)
                 {
-                    _logger.Warning($"Product (SKU: {product.Sku}) has multiple pmap records, import skipped");
+                    await _logger.WarningAsync($"Product (SKU: {product.Sku}) has multiple pmap records, import skipped");
                     stagingProducts = stagingProducts.Where(sp => sp.Sku != product.Sku).ToList();
                 }
             }
@@ -770,7 +774,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 stagingProduct.DisableBuying.Value;
         }
 
-        private Manufacturer GetManufacturerByName(string name)
+        private async Task<Manufacturer> GetManufacturerByNameAsync(string name)
         {
             if (_nameToManufacturer == null || _nameToManufacturer.Count <= 0)
             {
@@ -795,8 +799,16 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     CreatedOnUtc = DateTime.UtcNow,
                     UpdatedOnUtc = DateTime.UtcNow
                 };
-                _manufacturerRepository.Insert(manufacturer);
-                _urlRecordService.SaveSlug(manufacturer, _urlRecordService.ValidateSeName(manufacturer, "", manufacturer.Name, true), 0);
+                await _manufacturerRepository.InsertAsync(manufacturer);
+                await _urlRecordService.SaveSlugAsync(
+                    manufacturer,
+                    await _urlRecordService.ValidateSeNameAsync(
+                        manufacturer,
+                        "",
+                        manufacturer.Name,
+                        true
+                    ),
+                    0);
 
                 _nameToManufacturer[name.ToUpper()] = manufacturer;
                 return manufacturer;

@@ -109,7 +109,7 @@ namespace Nop.Plugin.Misc.AbcSync
                         product.Sku + ". It does not belong on" +
                         " the ABC online store, the Hawthorne online store," +
                         "  the ABC clearance store, or the Hawthorne Clearance store.";
-                    _logger.Warning(message);
+                    await _logger.WarningAsync(message);
 
                     continue;
                 }

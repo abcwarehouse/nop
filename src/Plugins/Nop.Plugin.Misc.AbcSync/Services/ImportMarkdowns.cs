@@ -44,9 +44,9 @@ namespace Nop.Plugin.Misc.AbcSync
                                                                 JOIN Product p on p.Sku = sd.Sku
                                                                 GROUP BY p.Id;";
 
-            _nopDbContext.ExecuteNonQuery(deleteMarkdownsCommand);
-            _nopDbContext.ExecuteNonQuery(importMarkdownStartDatesFromStagingCommand);
-            _nopDbContext.ExecuteNonQuery(importMarkdownEndDatesFromStagingCommand);
+            await _nopDbContext.ExecuteNonQueryAsync(deleteMarkdownsCommand);
+            await _nopDbContext.ExecuteNonQueryAsync(importMarkdownStartDatesFromStagingCommand);
+            await _nopDbContext.ExecuteNonQueryAsync(importMarkdownEndDatesFromStagingCommand);
             productManager.Flush();
         }
     }
