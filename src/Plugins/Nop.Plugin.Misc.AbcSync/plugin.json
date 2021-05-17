@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "ABCWarehouse Sync",
+  "SystemName": "Misc.AbcSync",
+  "Version": "4.40.0",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "Dave Farinelli",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.AbcSync.dll",
+  "Description": "Provides Sync capabilities."
+}

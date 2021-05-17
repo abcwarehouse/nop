@@ -62,7 +62,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             Shop shop = customerShop ?? await GetCustomerShop();
             string shopName = shop != null ? shop.Name : "Select Store";
 
-            ProductAttribute pickupAttribute = await GetPickupAttribute();
+            ProductAttribute pickupAttribute = await GetPickupAttributeAsync();
 
             // current product potential attribute mappings
             var pams =
@@ -202,7 +202,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
         }
 
         // this adds the pickup in store attribute to the attribute string
-        private async Task<ProductAttribute> GetPickupAttribute()
+        private async Task<ProductAttribute> GetPickupAttributeAsync()
         {
             var productAttributes =
                 await _productAttributeService.GetAllProductAttributesAsync();
