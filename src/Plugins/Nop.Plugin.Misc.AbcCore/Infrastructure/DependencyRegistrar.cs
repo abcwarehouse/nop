@@ -33,7 +33,6 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<ICustomerShopService, CustomerShopService>();
             services.AddScoped<ICustomShopService, CustomShopService>();
             services.AddScoped<IProductAbcDescriptionService, ProductAbcDescriptionService>();
-            services.AddScoped<IAttributeUtilities, AttributeUtilities>();
             services.AddScoped<IHomeDeliveryCostService, HomeDeliveryCostService>();
             services.AddScoped<ICustomProductService, CustomProductService>();
             services.AddScoped<ITermLookupService, TermLookupService>();
