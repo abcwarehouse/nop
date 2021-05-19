@@ -1,5 +1,6 @@
 ﻿using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Services;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -20,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <summary>
         ///		Begin the import process for product's specifications.
         /// </summary>
-        public void Import()
+        public async Task ImportAsync()
         {
             await _nopDbContext.ExecuteNonQueryAsync("EXECUTE [dbo].[ImportRelatedProducts];");
         }

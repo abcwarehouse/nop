@@ -7,6 +7,7 @@ using System;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcSync.Services.Staging;
 using Nop.Plugin.Misc.AbcCore.Services;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -57,7 +58,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <summary>
         /// Import site on time filters as filterable specification attributes
         /// </summary>
-        public void ImportSiteOnTimeSpecs()
+        public async Task ImportSiteOnTimeSpecsAsync()
         {
             await _nopDbContext.ExecuteNonQueryAsync("EXECUTE ImportSiteOnTimeFilters;");
         }
@@ -73,15 +74,8 @@ namespace Nop.Plugin.Misc.AbcSync
             int id;
             if (!_attrDict.TryGetValue(name, out id))
             {
-                try
-                {
-                    id = _specificationAttributeRepository.Table.ToList().Where(sa => sa.Name.ToUpper() == name.ToUpper()).First().Id;
-                    _attrDict[name] = id;
-                }
-                catch
-                {
-                    _logger.Error($"Could not find id for name {name}");
-                }
+                id = _specificationAttributeRepository.Table.ToList().Where(sa => sa.Name.ToUpper() == name.ToUpper()).First().Id;
+                _attrDict[name] = id;
             }
             return id;
         }

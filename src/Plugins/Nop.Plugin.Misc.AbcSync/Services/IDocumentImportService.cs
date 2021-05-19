@@ -1,7 +1,9 @@
-﻿namespace Nop.Plugin.Misc.AbcSync
+﻿using System.Threading.Tasks;
+
+namespace Nop.Plugin.Misc.AbcSync
 {
     public interface IDocumentImportService
     {
-        void ImportDocuments();
+        Task ImportDocumentsAsync();
     }
 }

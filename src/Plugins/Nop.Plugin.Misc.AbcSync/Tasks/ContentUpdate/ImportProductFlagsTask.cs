@@ -26,7 +26,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            _import.Import();
+            await _import.ImportAsync();
             this.LogEnd();
         }
     }

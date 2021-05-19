@@ -27,7 +27,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingWarrantiesTask)
             {
@@ -43,22 +43,22 @@ namespace Nop.Plugin.Misc.AbcSync
                     stagingConn.Open();
                     backendConn.Open();
 
-                    Import(stagingConn,
+                    await ImportAsync(stagingConn,
                         backendConn, _logger);
                 }
             }
             this.LogEnd();
         }
 
-        private static void Import(SqlConnection stagingConn,
+        private static async System.Threading.Tasks.Task ImportAsync(SqlConnection stagingConn,
             IDbConnection backendConn, ILogger logger)
         {
-            ImportWarrantyGroups(stagingConn, backendConn, logger);
-            ImportWarrantyItems(stagingConn, backendConn, logger);
-            ImportProductWarrantyMappings(stagingConn, backendConn, logger);
+            await ImportWarrantyGroupsAsync(stagingConn, backendConn, logger);
+            await ImportWarrantyItemsAsync(stagingConn, backendConn, logger);
+            await ImportProductWarrantyMappingsAsync(stagingConn, backendConn, logger);
         }
 
-        private static void ImportWarrantyGroups(SqlConnection stagingConn,
+        private static async System.Threading.Tasks.Task ImportWarrantyGroupsAsync(SqlConnection stagingConn,
             IDbConnection backendConn, ILogger logger)
         {
             SqlCommand stagingActions = stagingConn.CreateCommand();
@@ -71,11 +71,11 @@ namespace Nop.Plugin.Misc.AbcSync
 
             using (IDataReader attrReader = backendActions.ExecuteReader())
             {
-                ImportWarrantyGroupHelper(attrReader, stagingActions, logger);
+                await ImportWarrantyGroupHelperAsync(attrReader, stagingActions, logger);
             }
         }
 
-        private static void ImportWarrantyItems(SqlConnection stagingConn,
+        private static async System.Threading.Tasks.Task ImportWarrantyItemsAsync(SqlConnection stagingConn,
             IDbConnection backendConn, ILogger logger)
         {
             SqlCommand stagingActions = stagingConn.CreateCommand();
@@ -88,12 +88,12 @@ namespace Nop.Plugin.Misc.AbcSync
 
             using (IDataReader attrValReader = backendActions.ExecuteReader())
             {
-                ImportWarrantyItemsHelper(attrValReader, stagingActions, logger);
+                await ImportWarrantyItemsHelperAsync(attrValReader, stagingActions, logger);
             }
 
         }
 
-        private static void ImportProductWarrantyMappings(
+        private static async System.Threading.Tasks.Task ImportProductWarrantyMappingsAsync(
             SqlConnection stagingConn, IDbConnection backendConn, ILogger logger)
         {
             SqlCommand stagingActions = stagingConn.CreateCommand();
@@ -110,12 +110,12 @@ namespace Nop.Plugin.Misc.AbcSync
 
             using (IDataReader prodWarMapReader = backendActions.ExecuteReader())
             {
-                ImportProdWarrantyMappingsHelper(
+                await ImportProdWarrantyMappingsHelperAsync(
                     prodWarMapReader, stagedItemNums, stagingActions, logger);
             }
         }
 
-        private static void ImportWarrantyGroupHelper(IDataReader attrReader,
+        private static async System.Threading.Tasks.Task ImportWarrantyGroupHelperAsync(IDataReader attrReader,
             SqlCommand insert, ILogger logger)
         {
             while (attrReader.Read())
@@ -152,7 +152,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// </summary>
         /// <param name="attrValReader">Reader connected to ISAM</param>
         /// <param name="insert">Sql command to be executed for insert</param>
-        private static void ImportWarrantyItemsHelper(
+        private static async System.Threading.Tasks.Task ImportWarrantyItemsHelperAsync(
             IDataReader attrValReader, SqlCommand insert, ILogger logger)
         {
             while (attrValReader.Read())
@@ -201,7 +201,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
         }
 
-        private static void ImportProdWarrantyMappingsHelper(
+        private static async System.Threading.Tasks.Task ImportProdWarrantyMappingsHelperAsync(
             IDataReader prodWarMapReader, HashSet<string> stagedItemNums,
             SqlCommand insert, ILogger logger)
         {

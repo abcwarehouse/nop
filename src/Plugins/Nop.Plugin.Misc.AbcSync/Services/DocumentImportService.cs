@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -75,7 +76,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <summary>
         /// Import all extra documents associated with a product, will take site on time documents over isam documents
         /// </summary>
-        public void ImportDocuments()
+        public async Task ImportDocumentsAsync()
         {
             //this set will contain skus that already have a tab
             var idsWithDocuments = new HashSet<int>();
@@ -117,7 +118,7 @@ namespace Nop.Plugin.Misc.AbcSync
                             break;
                         case "EnergyGuide":
                             description += GetTabLinkItem(download.AST_URL_Txt, "Energy Guide");
-                            energyGuideManager.Insert(new ProductEnergyGuide { ProductId = product.Id, EnergyGuideUrl = download.AST_URL_Txt });
+                            await energyGuideManager.InsertAsync(new ProductEnergyGuide { ProductId = product.Id, EnergyGuideUrl = download.AST_URL_Txt });
                             idsWithEguides.Add(product.Id);
                             break;
                         case "SpecPage":
@@ -138,14 +139,14 @@ namespace Nop.Plugin.Misc.AbcSync
                 //if there were downloads to populate the tab, add a new tab and mappings
                 if (!string.IsNullOrEmpty(description))
                 {
-                    productDocumentsManager.Insert(new ProductDocuments { ProductId = product.Id, Documents = description });
+                    await productDocumentsManager.InsertAsync(new ProductDocuments { ProductId = product.Id, Documents = description });
                     idsWithDocuments.Add(product.Id);
                 }
 
             }
 
-            energyGuideManager.Flush();
-            productDocumentsManager.Flush();
+            await energyGuideManager.FlushAsync();
+            await productDocumentsManager.FlushAsync();
 
             //add ISAM products next
             foreach (var isamProduct in _isamProductService.GetIsamProducts())
@@ -166,7 +167,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 if (File.Exists(eguidePath) && !idsWithEguides.Contains(product.Id))
                 {
                     description += GetTabLinkItem($"/energy_guides/{isamProduct.ItemNumber.Trim()}_eguide.pdf", "Energy Guide");
-                    _energyGuideRepository.Insert(new ProductEnergyGuide
+                    await _energyGuideRepository.InsertAsync(new ProductEnergyGuide
                     {
                         ProductId = product.Id,
                         EnergyGuideUrl = $"/energy_guides/{isamProduct.ItemNumber.Trim()}_eguide.pdf"
@@ -185,18 +186,18 @@ namespace Nop.Plugin.Misc.AbcSync
                     {
                         var productDocuments = _prodDocRepository.Table.Where(pd => pd.ProductId == product.Id).FirstOrDefault();
                         productDocuments.Documents += description;
-                        productDocumentsManager.Update(productDocuments);
+                        await productDocumentsManager.UpdateAsync(productDocuments);
                     }
                     else
                     {
-                        productDocumentsManager.Insert(new ProductDocuments { ProductId = product.Id, Documents = description });
+                        await productDocumentsManager.InsertAsync(new ProductDocuments { ProductId = product.Id, Documents = description });
                         idsWithDocuments.Add(product.Id);
                     }
                 }
             }
 
-            energyGuideManager.Flush();
-            productDocumentsManager.Flush();
+            await energyGuideManager.FlushAsync();
+            await productDocumentsManager.FlushAsync();
         }
 
         private string GetPopUpScript(string resourcePath, string windowName)

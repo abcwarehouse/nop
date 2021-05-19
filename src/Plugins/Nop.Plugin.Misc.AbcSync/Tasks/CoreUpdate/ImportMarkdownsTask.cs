@@ -21,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipImportMarkdownsTask)
             {
@@ -30,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            _importService.Import();
+            await _importService.ImportAsync();
             this.LogEnd();
         }
     }

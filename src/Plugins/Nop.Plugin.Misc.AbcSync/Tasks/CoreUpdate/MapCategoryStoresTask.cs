@@ -54,37 +54,37 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 var stores = await _storeService.GetAllStoresAsync();
                 foreach (var store in stores)
                 {
-                    if (IsCategoryEmpty(category, store.Id))
+                    if (await IsCategoryEmptyAsync(category, store.Id))
                     {
-                        DeleteCategoryStoreMapping(category, store);
+                        await DeleteCategoryStoreMappingAsync(category, store);
                     }
                     else
                     {
-                        AddCategoryStoreMapping(category, store);
+                        await AddCategoryStoreMappingAsync(category, store);
                     }
                 }
             }
         }
 
-        private bool IsCategoryEmpty(Category category, int storeId)
+        private async System.Threading.Tasks.Task<bool> IsCategoryEmptyAsync(Category category, int storeId)
         {
             var productIds = _categoryService.GetProductCategoriesByCategoryId(category.Id)
                                              .Select(pc => pc.ProductId)
                                              .ToArray();
-            var publishedProducts = _productService.GetProductsByIds(productIds)
+            var publishedProducts = (await _productService.GetProductsByIdsAsync(productIds))
                                                    .Where(p => p.Published);
             foreach (var p in publishedProducts)
             {
-                var storeMappings = _storeMappingService.GetStoreMappings<Product>(p)
+                var storeMappings = (await _storeMappingService.GetStoreMappingsAsync<Product>(p))
                                                         .Where(sm => sm.StoreId == storeId);
                 if (storeMappings.Any()) { return false; }
             }
 
-            var childCategoryIds = _categoryService.GetChildCategoryIds(category.Id, storeId);
+            var childCategoryIds = await _categoryService.GetChildCategoryIdsAsync(category.Id, storeId);
             foreach (var childCategoryId in childCategoryIds)
             {
                 var childCategory = await _categoryService.GetCategoryByIdAsync(childCategoryId);
-                if (!IsCategoryEmpty(childCategory, storeId))
+                if (!await IsCategoryEmptyAsync(childCategory, storeId))
                 {
                     // found a non-empty child category, this category isn't empty
                     return false;
@@ -95,30 +95,30 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             return true;
         }
 
-        private void DeleteCategoryStoreMapping(Category category, Store store)
+        private async System.Threading.Tasks.Task DeleteCategoryStoreMappingAsync(Category category, Store store)
         {
-            var existingStoreMapping = _storeMappingService.GetStoreMappings<Category>(category)
+            var existingStoreMapping = (await _storeMappingService.GetStoreMappingsAsync<Category>(category))
                                                            .Where(sm => sm.StoreId == store.Id)
                                                            .FirstOrDefault();
 
             if (existingStoreMapping != null)
             {
-                _storeMappingService.DeleteStoreMapping(existingStoreMapping);
+                await _storeMappingService.DeleteStoreMappingAsync(existingStoreMapping);
                 await _logger.InformationAsync(
                     $"{store.Name}: Unmapped '{category.Name}' category (no products)."
                 );
             }
         }
 
-        private void AddCategoryStoreMapping(Category category, Store store)
+        private async System.Threading.Tasks.Task AddCategoryStoreMappingAsync(Category category, Store store)
         {
-            var existingStoreMapping = _storeMappingService.GetStoreMappings<Category>(category)
+            var existingStoreMapping = (await _storeMappingService.GetStoreMappingsAsync<Category>(category))
                                                            .Where(sm => sm.StoreId == store.Id)
                                                            .FirstOrDefault();
 
             if (existingStoreMapping == null)
             {
-                _storeMappingService.InsertStoreMapping<Category>(category, store.Id);
+                await _storeMappingService.InsertStoreMappingAsync<Category>(category, store.Id);
                 await _logger.InformationAsync(
                     $"{store.Name}: Mapped '{category.Name}' category (contained products)."
                 );

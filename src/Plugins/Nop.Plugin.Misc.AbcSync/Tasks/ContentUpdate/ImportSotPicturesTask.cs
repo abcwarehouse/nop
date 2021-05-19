@@ -31,7 +31,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            _importPictureService.ImportSiteOnTimePictures();
+            await _importPictureService.ImportSiteOnTimePicturesAsync();
             this.LogEnd();
         }
     }

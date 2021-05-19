@@ -154,7 +154,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _nInserts = 0;
         }
 
-        public Task FlushProductPicturesAsync(IRepository<ProductPicture> productPictureRepository)
+        public async Task FlushProductPicturesAsync(IRepository<ProductPicture> productPictureRepository)
         {
             EntityManager<ProductPicture> productPictureManager =
                 new EntityManager<ProductPicture>(productPictureRepository);

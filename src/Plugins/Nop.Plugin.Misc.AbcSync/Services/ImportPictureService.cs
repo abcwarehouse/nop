@@ -13,14 +13,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Services
 {
     public class ImportPictureService : BaseAbcWarehouseService, IImportPictureService
     {
-        private readonly string ImportFirstPictureOnlySettingKey = "abcwarehouse.importfirstpictureonly";
-        private readonly bool ImportFirstPictureOnly;
-
         private readonly Dictionary<string, int> ExistingImageToId;
         private readonly HashSet<string> ExistingImagesWithMappings;
 
@@ -65,8 +63,6 @@ namespace Nop.Plugin.Misc.AbcSync.Services
             _productDataProductService = productDataProductService;
             _productDataProductImageService = productDataProductImageService;
 
-            ImportFirstPictureOnly = Convert.ToBoolean(_settingService.GetSetting(ImportFirstPictureOnlySettingKey)?.Value);
-
             ExistingImageToId = _pictureRepository.Table
                                                   .Where(p => p.SeoFilename != null).ToList()
                                                   .GroupBy(p => p.SeoFilename)
@@ -81,9 +77,9 @@ namespace Nop.Plugin.Misc.AbcSync.Services
             );
         }
 
-        public void ImportSiteOnTimePictures()
+        public async Task ImportSiteOnTimePicturesAsync()
         {
-            if (!_pictureService.StoreInDb)
+            if (!(await _pictureService.IsStoreInDbAsync()))
             {
                 await _logger.WarningAsync("Images not stored in DB, cannot run Import Site On Time Pictures task.");
                 return;
@@ -115,15 +111,12 @@ namespace Nop.Plugin.Misc.AbcSync.Services
                     sotProduct.large
                 };
 
-                if (!ImportFirstPictureOnly)
-                {
-                    // additional pictures in sot database
-                    List<string> additionalImageUrls =
-                        _productDataProductImageService.GetProductDataProductImages()
-                        .Where(pp => pp.ProductDataProduct_id == sotProduct.id)
-                        .Select(pp => pp.Large).ToList();
-                    pictureUrls.AddRange(additionalImageUrls);
-                }
+                // additional pictures in sot database
+                List<string> additionalImageUrls =
+                    _productDataProductImageService.GetProductDataProductImages()
+                    .Where(pp => pp.ProductDataProduct_id == sotProduct.id)
+                    .Select(pp => pp.Large).ToList();
+                pictureUrls.AddRange(additionalImageUrls);
 
                 // download all images related to that product
                 foreach (string url in pictureUrls)
@@ -150,7 +143,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
                     //if this product image is orphaned, add a new mapping for it
                     if (isExistingImage && !ExistingImagesWithMappings.Contains(seoName))
                     {
-                        _productPictureRepository.Insert(new ProductPicture { PictureId = ExistingImageToId[seoName], ProductId = product.Id });
+                        await _productPictureRepository.InsertAsync(new ProductPicture { PictureId = ExistingImageToId[seoName], ProductId = product.Id });
                         ExistingImagesWithMappings.Add(seoName);
                     }
 
@@ -163,7 +156,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
                         //no good, skip this picture
                         if (webResponse.StatusCode != HttpStatusCode.OK)
                         {
-                            _logger.InsertLog(LogLevel.Warning,
+                            await _logger.InsertLogAsync(LogLevel.Warning,
                             shortLogWarning + $". {unsecureUrl} returned status code {webResponse.StatusCode}", $"There was a problem while fetching the picture at {unsecureUrl} for product {product.Name} with id {product.Id}. Response: {webResponse}");
                             webResponse.Close();
                             continue;
@@ -186,19 +179,19 @@ namespace Nop.Plugin.Misc.AbcSync.Services
                     catch (WebException ex)
                     {
                         // log/show error 
-                        _logger.InsertLog(LogLevel.Warning,
+                        await _logger.InsertLogAsync(LogLevel.Warning,
                             shortLogWarning, string.Format(fullLogWarning, unsecureUrl, product.Name, product.Id, ex));
                         continue;
                     }
                     catch (UriFormatException ex)
                     {
-                        _logger.InsertLog(LogLevel.Warning,
+                        await _logger.InsertLogAsync(LogLevel.Warning,
                             shortLogWarning, string.Format(fullLogWarning, unsecureUrl, product.Name, product.Id, ex));
                         continue;
                     }
                     catch (ArgumentNullException ex)
                     {
-                        _logger.InsertLog(LogLevel.Warning,
+                        await _logger.InsertLogAsync(LogLevel.Warning,
                             shortLogWarning, string.Format(fullLogWarning, unsecureUrl, product.Name, product.Id, ex));
                         continue;
                     }
@@ -217,7 +210,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
             }
 
             pictureManager.Flush();
-            pictureManager.FlushProductPicturesAsync(_productPictureRepository);
+            await pictureManager.FlushProductPicturesAsync(_productPictureRepository);
         }
     }
 }

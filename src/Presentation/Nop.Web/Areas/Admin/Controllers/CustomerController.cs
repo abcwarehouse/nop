@@ -1593,7 +1593,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             try
             {
                 //log
-                //_gdprService.InsertLog(customer, 0, GdprRequestType.ExportData, await _localizationService.GetResource("Gdpr.Exported"));
+                //_gdprService.InsertLog(customer, 0, GdprRequestType.ExportData, await await _localizationService.GetResourceAsync"Gdpr.Exported"));
                 //export
                 //export
                 var bytes = await _exportManager.ExportCustomerGdprInfoToXlsxAsync(customer, (await _storeContext.GetCurrentStoreAsync()).Id);

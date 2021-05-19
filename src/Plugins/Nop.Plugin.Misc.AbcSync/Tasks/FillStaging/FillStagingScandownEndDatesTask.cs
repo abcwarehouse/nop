@@ -42,13 +42,13 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
                 {
-                    Import(stagingConn, backendConn, _logger);
+                    await ImportAsync(stagingConn, backendConn, _logger);
                 }
             }
             this.LogEnd();
         }
 
-        private void Import(
+        private async System.Threading.Tasks.Task ImportAsync(
             SqlConnection stagingConn, IDbConnection backendConn,
             ILogger logger)
         {
@@ -71,13 +71,13 @@ namespace Nop.Plugin.Misc.AbcSync
             PrepBackendSelect(selectScandowns);
             using (IDataReader scandown = selectScandowns.ExecuteReader())
             {
-                ImportScandown(scandown, stagedItemNums, stagingActions, logger);
+                await ImportScandownAsync(scandown, stagedItemNums, stagingActions, logger);
             }
 
             return;
         }
 
-        private static void ImportScandown(IDataReader scandown,
+        private static async System.Threading.Tasks.Task ImportScandownAsync(IDataReader scandown,
             HashSet<string> stagedItemNums, SqlCommand insert, ILogger logger)
         {
             while (scandown.Read())

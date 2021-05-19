@@ -40,13 +40,16 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
                 {
-                    ImportAccessories(stagingConn, backendConn, _logger);
+                    await ImportAccessoriesAsync(stagingConn, backendConn, _logger);
                 }
             }
             this.LogEnd();
         }
 
-        private void ImportAccessories(SqlConnection stagingConn, IDbConnection backendConn, ILogger logger)
+        private async System.Threading.Tasks.Task ImportAccessoriesAsync(
+            SqlConnection stagingConn,
+            IDbConnection backendConn,
+            ILogger logger)
         {
             SqlCommand stagingActions = stagingConn.CreateCommand();
             stagingConn.Open();
@@ -67,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcSync
             PrepBackendSelect(selectAccessories);
             using (IDataReader accessory = selectAccessories.ExecuteReader())
             {
-                ImportAccessory(accessory, stagedItemNums, stagingActions, logger);
+                await ImportAccessoryAsync(accessory, stagedItemNums, stagingActions, logger);
             }
         }
 
@@ -95,7 +98,7 @@ namespace Nop.Plugin.Misc.AbcSync
             return;
         }
 
-        private static void ImportAccessory(IDataReader accessory,
+        private static async System.Threading.Tasks.Task ImportAccessoryAsync(IDataReader accessory,
             HashSet<string> stagedItemNums, SqlCommand insert, ILogger logger)
         {
             while (accessory.Read())

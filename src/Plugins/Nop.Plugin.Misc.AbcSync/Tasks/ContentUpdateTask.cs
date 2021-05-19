@@ -25,18 +25,18 @@ namespace Nop.Plugin.Misc.AbcSync
         {
             this.LogStart();
 
-            EngineContext.Current.Resolve<ImportDocumentsTask>().Execute();
-            EngineContext.Current.Resolve<ImportIsamSpecsTask>().Execute();
-            EngineContext.Current.Resolve<ImportFeaturedProductsTask>().Execute();
-            EngineContext.Current.Resolve<ImportProductFlagsTask>().Execute();
-            EngineContext.Current.Resolve<ImportSotPicturesTask>().Execute();
-            EngineContext.Current.Resolve<ImportLocalPicturesTask>().Execute();
-            EngineContext.Current.Resolve<CleanDuplicateImagesTask>().Execute();
-            EngineContext.Current.Resolve<ClearCacheTask>().Execute();
+            await EngineContext.Current.Resolve<ImportDocumentsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<ImportIsamSpecsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<ImportFeaturedProductsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<ImportProductFlagsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<ImportSotPicturesTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<ImportLocalPicturesTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<CleanDuplicateImagesTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<ClearCacheTask>().ExecuteAsync();
 
             if (!_importSettings.SkipSliExportTask)
             {
-                EngineContext.Current.Resolve<ISliExportTask>().Execute();
+                await EngineContext.Current.Resolve<ISliExportTask>().ExecuteAsync();
             }
             else
             {

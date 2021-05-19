@@ -17,34 +17,34 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks
             _nopDbContext = nopDbContext;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             try
             {
-                MigrateContent();
-                RenameAbcWarehouseToHawthorne();
+                await MigrateContentAsync();
+                await RenameAbcWarehouseToHawthorneAsync();
             }
             catch (Exception e)
             {
-                EngineContext.Current.Resolve<ILogger>().Warning("Unable to migrate content from ABCWarehouse.com", e);
+                await EngineContext.Current.Resolve<ILogger>().WarningAsync("Unable to migrate content from ABCWarehouse.com", e);
             }
         }
 
-        private void MigrateContent()
+        private async System.Threading.Tasks.Task MigrateContentAsync()
         {
             var dbName = "NOPCommerce";
-            int affectedRowCount = EngineContext.Current.Resolve<INopDataProvider>().ExecuteNonQuery(
+            int affectedRowCount = await EngineContext.Current.Resolve<INopDataProvider>().ExecuteNonQueryAsync(
                 ImportTaskExtensions.GetSqlScript("Nopcommerce_Migrate_Primary_Content",
                     dbName));
-            EngineContext.Current.Resolve<ILogger>().Information(
+            await EngineContext.Current.Resolve<ILogger>().InformationAsync(
                 $"{affectedRowCount} rows migrated from ABCWarehouse to Hawthorne content.");
         }
 
-        private static void RenameAbcWarehouseToHawthorne()
+        private static async System.Threading.Tasks.Task RenameAbcWarehouseToHawthorneAsync()
         {
-            int affectedRowCount = EngineContext.Current.Resolve<INopDataProvider>().ExecuteNonQuery(
+            int affectedRowCount = await EngineContext.Current.Resolve<INopDataProvider>().ExecuteNonQueryAsync(
                 ImportTaskExtensions.GetSqlScript("RenameAbcWarehouseToHawthorne"));
-            EngineContext.Current.Resolve<ILogger>().Information(
+            await EngineContext.Current.Resolve<ILogger>().InformationAsync(
                 $"{affectedRowCount} rows renamed from ABCWarehouse to Hawthorne content.");
         }
     }

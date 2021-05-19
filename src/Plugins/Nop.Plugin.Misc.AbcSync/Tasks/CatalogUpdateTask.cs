@@ -42,24 +42,24 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            var account = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
+            var account = await _emailAccountService.GetEmailAccountByIdAsync(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;
             this.LogStart();
             try
             {
-                EngineContext.Current.Resolve<FillStagingTask>().Execute();
+                await EngineContext.Current.Resolve<FillStagingTask>().ExecuteAsync();
                 indexesDropped = true;
-                EngineContext.Current.Resolve<CoreUpdateTask>().Execute();
+                await EngineContext.Current.Resolve<CoreUpdateTask>().ExecuteAsync();
                 indexesDropped = false;
-                EngineContext.Current.Resolve<ContentUpdateTask>().Execute();
-                EngineContext.Current.Resolve<ClearCacheTask>().Execute();
+                await EngineContext.Current.Resolve<ContentUpdateTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<ClearCacheTask>().ExecuteAsync();
             }
             catch (Exception e)
             {
                 var ccEmails = _importSettings.CatalogUpdateFailureCCEmails?.Split(',');
                 if (ccEmails.Any())
                 {
-                    _emailSender.SendEmail(account, "Catalog Update: Sync Failure", $"The catalog update task failed at {DateTime.Now}. Exception: {e.Message}", account.Email, account.DisplayName, ccEmails[0], "", cc: ccEmails);
+                    await _emailSender.SendEmailAsync(account, "Catalog Update: Sync Failure", $"The catalog update task failed at {DateTime.Now}. Exception: {e.Message}", account.Email, account.DisplayName, ccEmails[0], "", cc: ccEmails);
                 }
                 else
                 {

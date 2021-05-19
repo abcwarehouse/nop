@@ -37,21 +37,21 @@ namespace Nop.Plugin.Misc.AbcSync
          * Shares the same core functionality of the regular catalog update with the exception of filling the staging database
          *  and the addition of a selective content migration from the primary database
          */
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            var account = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
+            var account = await _emailAccountService.GetEmailAccountByIdAsync(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;
             this.LogStart();
             try
             {
-                _emailSender.SendEmail(account, "Secondary Catalog Update: Store Closing", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
+                await _emailSender.SendEmailAsync(account, "Secondary Catalog Update: Store Closing", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
                 indexesDropped = true;
-                EngineContext.Current.Resolve<CoreUpdateTask>().Execute();
-                EngineContext.Current.Resolve<MigrateAbcWarehouseContentTask>().Execute();
+                await EngineContext.Current.Resolve<CoreUpdateTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<MigrateAbcWarehouseContentTask>().ExecuteAsync();
                 indexesDropped = false;
-                _emailSender.SendEmail(account, "Secondary Catalog Update: Store Open", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
-                EngineContext.Current.Resolve<ContentUpdateTask>().Execute();
-                EngineContext.Current.Resolve<ClearCacheTask>().Execute();
+                await _emailSender.SendEmailAsync(account, "Secondary Catalog Update: Store Open", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
+                await EngineContext.Current.Resolve<ContentUpdateTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<ClearCacheTask>().ExecuteAsync();
             }
             catch
             {
@@ -60,7 +60,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     ccEmails.AddRange(_importSettings.CatalogUpdateFailureCCEmails.Split(','));
                 }
-                _emailSender.SendEmail(account, "Catalog Update: Sync Failure", $"The catalog update task failed at {DateTime.Now}. More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, ccEmails[0], "", cc: ccEmails);
+                await _emailSender.SendEmailAsync(account, "Catalog Update: Sync Failure", $"The catalog update task failed at {DateTime.Now}. More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, ccEmails[0], "", cc: ccEmails);
                 throw;
             }
             finally

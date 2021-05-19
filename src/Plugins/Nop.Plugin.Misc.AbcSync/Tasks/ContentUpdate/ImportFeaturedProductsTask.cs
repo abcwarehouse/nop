@@ -33,7 +33,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            _importService.ImportFeaturedProducts();
+            await _importService.ImportFeaturedProductsAsync();
             this.LogEnd();
         }
     }

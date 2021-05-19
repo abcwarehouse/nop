@@ -8,6 +8,7 @@ using Nop.Plugin.Misc.AbcSync.Services;
 using Nop.Plugin.Misc.AbcSync.Services.Staging;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -28,8 +29,7 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<IImportIsamSpecs, ImportIsamSpecs>();
             services.AddScoped<IImportProductFlags, ImportProductFlags>();
             services.AddScoped<IDocumentImportService, DocumentImportService>();
-            services.AddScoped<ImportPictureService, IImportPictureService>();
-            services.AddScoped<IGeocodingService, GoogleMapsGeocodingService>();
+            services.AddScoped<IImportPictureService, ImportPictureService>();
 
             services.AddScoped<ISiteOnTimeProductService, SiteOnTimeProductService>();
             services.AddScoped<IPrFileDiscountService, PrFileDiscountService>();
@@ -41,6 +41,11 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<IProductDataProductDownloadService, ProductDataProductDownloadService>();
             services.AddScoped<IIsamProductService, IsamProductService>();
             services.AddScoped<ICustomCategoryService, CustomCategoryService>();
+
+            services.AddScoped<StagingDb, StagingDb>();
+
+            // needed to allow for calling tasks in DI
+            services.AddScoped<ImportProductsTask, ImportProductsTask>();
         }
 
         /// <summary>

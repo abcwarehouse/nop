@@ -9,6 +9,7 @@ using Nop.Services.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -48,7 +49,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <summary>
         ///		Begin the import process for the product flags.
         /// </summary>
-        public void Import()
+        public async Task ImportAsync()
         {
             await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductFlag;");
 
@@ -56,7 +57,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             // insert all price bucket pictures & get their id's
             // produce a dictionary of pricebucketcode -> picture
-            Dictionary<PriceBucketCode, string> priceBucketToImageUrl = InitializePriceBucketToImageUrlDictionary();
+            Dictionary<PriceBucketCode, string> priceBucketToImageUrl = await InitializePriceBucketToImageUrlDictionaryAsync();
             Dictionary<InstockFlag, string> stockFlagMessage = InitializeStockFlagMessageDictionary();
 
             // produce a dictionary of stockflag -> text
@@ -112,17 +113,17 @@ namespace Nop.Plugin.Misc.AbcSync
                 string giftCardGtin = "077777965061";
                 if (nopProduct.Gtin != giftCardGtin && nopProduct.IsFreeShipping)
                 {
-                    _productRepository.Update(nopProduct);
+                    await _productRepository.UpdateAsync(nopProduct);
                 }
-                productFlagManager.Insert(newProductFlag);
+                await productFlagManager.InsertAsync(newProductFlag);
             }
-            productFlagManager.Flush();
+            await productFlagManager.FlushAsync();
         }
 
-        private Dictionary<PriceBucketCode, string> InitializePriceBucketToImageUrlDictionary()
+        private async Task<Dictionary<PriceBucketCode, string>> InitializePriceBucketToImageUrlDictionaryAsync()
         {
             // Check if there's a Hawthorne store in the Store list - reference Hawthorne images if so.
-            bool isHawthorne = await _storeService.GetAllStoresAsync().Where(s => s.Name.Contains("Hawthorne")).FirstOrDefault() != null;
+            bool isHawthorne = (await _storeService.GetAllStoresAsync()).Where(s => s.Name.Contains("Hawthorne")).FirstOrDefault() != null;
             string StoreDirectory = isHawthorne ? "haw/" : "abc/";
 
             Dictionary<PriceBucketCode, string> priceCodeToPictureId = new Dictionary<PriceBucketCode, string>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -101,7 +102,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// moves old energy guides, product specs, and images to archive folders. Deletes pictures attached to deleted products
         /// </summary>
         /// <param name="backendConn">connection to the ISAM backend to check valid products</param>
-        public void ArchiveProductContent(IDbConnection backendConn)
+        public async Task ArchiveProductContentAsync(IDbConnection backendConn)
         {
             var allowedItemNumbers = GetAllowedItemNumbers(backendConn);
 
@@ -116,7 +117,7 @@ namespace Nop.Plugin.Misc.AbcSync
             //deleting old pictures from archived products
             await _nopDbContext.ExecuteNonQueryAsync(_deleteArchivedProductPictures);
 
-            var account = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
+            var account = await _emailAccountService.GetEmailAccountByIdAsync(_emailAccountSettings.DefaultEmailAccountId);
             var ccEmails = new List<string>();
             if (!string.IsNullOrEmpty(_importSettings.ArchiveTaskCCEmails))
             {
@@ -138,7 +139,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
             }
 
-            _emailSender.SendEmail(account, "Archive Task Complete", body, account.Email, account.DisplayName, "johnjh@abcwarehouse.com", "", cc: ccEmails);
+            await _emailSender.SendEmailAsync(account, "Archive Task Complete", body, account.Email, account.DisplayName, "johnjh@abcwarehouse.com", "", cc: ccEmails);
 
             if (hasArchivedItems)
             {

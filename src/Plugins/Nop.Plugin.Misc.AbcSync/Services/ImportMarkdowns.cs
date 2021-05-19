@@ -3,6 +3,7 @@ using Nop.Core.Domain.Common;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcSync.Data;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -23,7 +24,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <summary>
         ///		Begin the import process for product's specifications.
         /// </summary>
-        public void Import()
+        public async Task ImportAsync()
         {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var productManager = new EntityManager<Product>();
@@ -47,7 +48,7 @@ namespace Nop.Plugin.Misc.AbcSync
             await _nopDbContext.ExecuteNonQueryAsync(deleteMarkdownsCommand);
             await _nopDbContext.ExecuteNonQueryAsync(importMarkdownStartDatesFromStagingCommand);
             await _nopDbContext.ExecuteNonQueryAsync(importMarkdownEndDatesFromStagingCommand);
-            productManager.Flush();
+            await productManager.FlushAsync();
         }
     }
 }

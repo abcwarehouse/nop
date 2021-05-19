@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Nop.Services.Logging;
 using Nop.Plugin.Misc.AbcCore;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Staging
 {
@@ -50,38 +51,20 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
 
             if (string.IsNullOrWhiteSpace(_brandCode))
             {
-                string message = "Unable to import this brand." +
-                    " No brand code is found, so distinct matching cannot be done.";
-                await logger.WarningAsync(message);
-
                 return false;
             }
             if (string.IsNullOrWhiteSpace(_brandName))
             {
-                string message = "Unable to import this brand." +
-                    " No name is associated with brand code " + _brandCode + ".";
-                await logger.WarningAsync(message);
                 brandCodeToSkip = _brandCode;
 
                 return false;
             }
             if (string.IsNullOrWhiteSpace(_itemNum))
             {
-                string message = "Unable to import this product-brand mapping." +
-                    " An item number cannot be read for the brand with code "
-                    + _brandCode + ".";
-                await logger.WarningAsync(message);
-
                 return false;
             }
             if (string.IsNullOrWhiteSpace(_sku))
             {
-                string message = "Unable to import this product-brand mapping." +
-                    " An entry with item number " + _itemNum +
-                    " was found without a model ID relating to brand code " +
-                    _brandCode + ".";
-                await logger.WarningAsync(message);
-
                 return false;
             }
 
@@ -95,7 +78,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
         ///		The Command to be used for inserting
         ///		into the staging product-manufacturer mapping table.
         /// </param>
-        public void InsertProdBrandMapping(SqlCommand insert, ILogger logger)
+        public async Task InsertProdBrandMappingAsync(SqlCommand insert, ILogger logger)
         {
             if (!OnAbc && !OnHawthorne && !OnAbcClearance && !OnHawthorneClearance)
             {

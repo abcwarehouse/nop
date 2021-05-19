@@ -20,18 +20,7 @@ namespace Nop.Plugin.Misc.AbcSync.Services
 {
     public class CustomCategoryService : CategoryService, ICustomCategoryService
     {
-        private readonly IRepository<AclRecord> _aclRepository;
-        private readonly IRepository<Category> _categoryRepository;
-        private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductCategory> _productCategoryRepository;
-        private readonly IRepository<StoreMapping> _storeMappingRepository;
-
-        private readonly ICustomerService _customerService;
-
-        private readonly CatalogSettings _catalogSettings;
-
-        private readonly IStoreContext _storeContext;
-        private readonly IWorkContext _workContext;
 
         public CustomCategoryService(
             IAclService aclService,

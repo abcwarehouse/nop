@@ -82,7 +82,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services.Custom
             _pictureService = pictureService;
         }
 
-        public async Task<IList<Product>> GetProductsWithoutImages()
+        public async Task<IList<Product>> GetProductsWithoutImagesAsync()
         {
             var publishedProducts =
                 _productRepository.Table.Where(

@@ -38,6 +38,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<ITermLookupService, TermLookupService>();
             services.AddScoped<ICardCheckService, CardCheckService>();
             services.AddScoped<IProductAbcFinanceService, ProductAbcFinanceService>();
+            services.AddScoped<IImportUtilities, ImportUtilities>();
         }
     }
 }

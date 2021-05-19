@@ -6,6 +6,7 @@ using Nop.Services.Messages;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Controllers
 {
@@ -37,17 +38,18 @@ namespace Nop.Plugin.Misc.AbcSync.Controllers
         }
 
         [HttpPost]
-        public ActionResult Configure(ImportModel model)
+        public async Task<ActionResult> Configure(ImportModel model)
         {
             if (!ModelState.IsValid)
             {
                 return Configure();
             }
 
-            _settingService.SaveSetting(_importSettings.FromModel(model));
+            await _settingService.SaveSettingAsync(_importSettings.FromModel(model));
 
             _notificationService.SuccessNotification(
-                _localizationService.GetResource("Admin.Plugins.Saved"));
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved")
+            );
 
             return Configure();
         }

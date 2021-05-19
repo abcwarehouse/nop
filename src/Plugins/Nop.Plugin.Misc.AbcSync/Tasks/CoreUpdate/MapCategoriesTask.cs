@@ -86,7 +86,7 @@ namespace Nop.Plugin.Misc.AbcSync
                         var nopName = Convert.ToString(isamWorksheet.Cells[iRow, 5].Value);
                         if (!string.IsNullOrEmpty(nopName))
                         {
-                            var category = await _categoryService.GetAllCategoriesAsync(categoryName: nopName, showHidden: true)
+                            var category = (await _categoryService.GetAllCategoriesAsync(categoryName: nopName, showHidden: true))
                                                            .Where(c => c.Name.ToLower().Trim() == nopName.ToLower().Trim()).FirstOrDefault();
                             if (category != null)
                             {

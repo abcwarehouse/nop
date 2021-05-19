@@ -30,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingPricingTask)
             {
@@ -43,13 +43,13 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
                 {
-                    Import(stagingConn, backendConn, _logger);
+                    await ImportAsync(stagingConn, backendConn, _logger);
                 }
             }
             this.LogEnd();
         }
 
-        public void Import(
+        public async System.Threading.Tasks.Task ImportAsync(
             SqlConnection stagingConn, IDbConnection backendConn,
             ILogger logger)
         {
@@ -81,8 +81,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 await ImportProductPriceAsync(productPriceReader, snapList, stagedItemNums,
                     stagingPriceActions, stagingPrFileActions, logger);
             }
-
-            return;
         }
 
         private static void PrepBackendSelect(IDbCommand command)
@@ -148,8 +146,6 @@ namespace Nop.Plugin.Misc.AbcSync
             command.Parameters.Add("@StagingPrFileAmount", SqlDbType.Decimal);
             command.Parameters.Add("@StagingPrFileStartDate", SqlDbType.Date);
             command.Parameters.Add("@StagingPrFileEndDate", SqlDbType.Date);
-
-            return;
         }
 
         private static void PrepStagingPriceUpdate(SqlCommand command)
@@ -169,8 +165,6 @@ namespace Nop.Plugin.Misc.AbcSync
             command.Parameters.Add("@StagingProductPairPricing", SqlDbType.Bit);
             command.Parameters.Add("@StagingProductPriceBucket", SqlDbType.Int);
             command.Parameters.Add("@StagingProductSku", SqlDbType.NVarChar);
-
-            return;
         }
 
         private static async Task<bool> PrFilePriceIsValidAsync(BackendPrice prodPrice,
@@ -242,7 +236,7 @@ namespace Nop.Plugin.Misc.AbcSync
             insert.ExecuteNonQuery();
         }
 
-        private static bool InsertBaseProductPrice(
+        private static async Task<bool> InsertBaseProductPriceAsync(
             BackendPrice productPrice, SqlCommand update, ILogger logger)
         {
             if (productPrice == null)
@@ -252,7 +246,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             // Key checks are done elsewhere.
             // Here, we need to see if it actually belongs on any store.
-            if (productPrice.NotOnAnyStoreAsync(logger))
+            if (await productPrice.NotOnAnyStoreAsync(logger))
             {
                 return false;
             }
@@ -323,7 +317,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 // Insert the price data as long as it's not a duplicate.
                 if (!importedProductSkus.Contains(productPrice.Sku))
                 {
-                    bool currImport = InsertBaseProductPrice(
+                    bool currImport = await InsertBaseProductPriceAsync(
                         productPrice, priceUpdate, logger);
                 }
 

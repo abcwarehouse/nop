@@ -1,7 +1,9 @@
-﻿namespace Nop.Plugin.Misc.AbcSync.Services
+﻿using System.Threading.Tasks;
+
+namespace Nop.Plugin.Misc.AbcSync.Services
 {
     public interface IImportPictureService
     {
-        void ImportSiteOnTimePictures();
+        Task ImportSiteOnTimePicturesAsync();
     }
 }

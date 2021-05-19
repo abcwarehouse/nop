@@ -34,7 +34,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
             this.LogStart();
 
-            var clearanceStores = await _storeService.GetAllStoresAsync().Where(s => s.Name.ToLower().Contains("clearance"));
+            var clearanceStores = (await _storeService.GetAllStoresAsync()).Where(s => s.Name.ToLower().Contains("clearance"));
 
             if (!clearanceStores.Any())
             {

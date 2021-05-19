@@ -36,11 +36,11 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            ImportProducts();
+            await ImportProductsAsync();
             this.LogEnd();
         }
 
-        private void ImportProducts()
+        private async System.Threading.Tasks.Task ImportProductsAsync()
         {
             var stagingConn = _importSettings.GetStagingDbConnection();
             SqlCommand stagingActions = stagingConn.CreateCommand();
@@ -63,13 +63,16 @@ namespace Nop.Plugin.Misc.AbcSync
 
             using (IDataReader productReader = backendActions.ExecuteReader())
             {
-                ImportProduct(productReader, snapList, stagingActions);
+                await ImportProductAsync(productReader, snapList, stagingActions);
             }
 
             return;
         }
 
-        private void ImportProduct(IDataReader productReader, HashSet<string> snapList, SqlCommand stagingActions)
+        private async System.Threading.Tasks.Task ImportProductAsync(
+            IDataReader productReader,
+            HashSet<string> snapList,
+            SqlCommand stagingActions)
         {
             // These are needed to warn about duplicate model IDs
             // and to skip them properly.
@@ -98,7 +101,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 // If key values are missing, then matching will be difficult.
                 // All key values are needed, if they are not present,
                 // we ignore the product.
-                if (!product.HasKeyValues(_logger))
+                if (!(await product.HasKeyValuesAsync(_logger)))
                 {
                     continue;
                 }

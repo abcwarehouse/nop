@@ -22,6 +22,7 @@ using Nop.Core.Domain.Messages;
 using Nop.Services.Common;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.Services;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -116,7 +117,7 @@ namespace Nop.Plugin.Misc.AbcSync
         /// <summary>
         /// import featured product from the excel file given in web config. skus that do not map to products or manufacturer names that do not map to manufacturers will be skipped
         /// </summary>
-        public void ImportFeaturedProducts()
+        public async Task ImportFeaturedProductsAsync()
         {
             string featuredProductsPath = _importSettings.GetFeaturedProductsFile();
 
@@ -187,13 +188,13 @@ namespace Nop.Plugin.Misc.AbcSync
                             DisplayOrder = displayOrder,
                             IsFeaturedProduct = true
                         };
-                        _productCategoryRepository.Insert(productCategory);
+                        await _productCategoryRepository.InsertAsync(productCategory);
                     }
                     else
                     {
                         productCategory.DisplayOrder = displayOrder;
                         productCategory.IsFeaturedProduct = true;
-                        _productCategoryRepository.Update(productCategory);
+                        await _productCategoryRepository.UpdateAsync(productCategory);
                     }
 
                     ++iRow;
@@ -215,7 +216,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
                     Manufacturer manufacturer = null;
                     if (!String.IsNullOrEmpty(manufacturerName))
-                        manufacturer = _manufacturerService.GetAllManufacturers(manufacturerName: manufacturerName.ToUpper(), showHidden: true).FirstOrDefault();
+                        manufacturer = (await _manufacturerService.GetAllManufacturersAsync(manufacturerName: manufacturerName.ToUpper(), showHidden: true)).FirstOrDefault();
 
                     var displayOrder = 0;
                     try
@@ -229,7 +230,6 @@ namespace Nop.Plugin.Misc.AbcSync
 
                     if (manufacturer != null)
                     {
-                        //featuredProductManager.Insert(new EntityFeaturedProduct { Product_Id = product.Id, Entity_Id = manufacturer.Id, DisplayOrder = displayOrder, isCategory = false });
                         var productManufacturer = _productManufacturerRepository.Table
                             .Where(pm => pm.ProductId == product.Id && pm.ManufacturerId == manufacturer.Id)
                             .Select(pm => pm).FirstOrDefault();
@@ -238,14 +238,12 @@ namespace Nop.Plugin.Misc.AbcSync
                             // update the table if it exists
                             productManufacturer.DisplayOrder = displayOrder;
                             productManufacturer.IsFeaturedProduct = true;
-                            _productManufacturerRepository.Update(productManufacturer);
+                            await _productManufacturerRepository.UpdateAsync(productManufacturer);
                         }
                     }
 
                     ++iRow;
                 }
-
-                //featuredProductManager.Flush();
             }
         }
     }

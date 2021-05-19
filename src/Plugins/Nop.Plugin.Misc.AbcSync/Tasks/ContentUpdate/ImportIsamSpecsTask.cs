@@ -30,11 +30,8 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            //await _logger.InformationAsync($"Begin Task: ImportColor");
-            //_import.ImportColor();
-            //await _logger.InformationAsync($"End Task: ImportColor");
             await _logger.InformationAsync($"Begin Task: ImportSOTSpecs");
-            _import.ImportSiteOnTimeSpecs();
+            await _import.ImportSiteOnTimeSpecsAsync();
             await _logger.InformationAsync($"End Task: ImportSOTSpecs");
             this.LogEnd();
         }

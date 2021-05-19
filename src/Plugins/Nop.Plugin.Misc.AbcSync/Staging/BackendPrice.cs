@@ -76,29 +76,15 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
 
             if (emptySku && emptyItemNum)
             {
-                string message = "Unable to import this product price data." +
-                    " Neither the model ID or item number could be found.";
-                await logger.WarningAsync(message);
-
                 return false;
             }
             if (emptySku && !emptyItemNum)
             {
-                string message = "Unable to import this product price data." +
-                    " The model ID could not be found" +
-                    " for item number " + _itemNum + ".";
-                await logger.WarningAsync(message);
-
                 skipItemNum = _itemNum;
                 return false;
             }
             if (emptyItemNum && !emptySku)
             {
-                string message = "Unable to import this product price data." +
-                    " The item number could not be found for the product" +
-                    " with model ID " + _sku + ".";
-                await logger.WarningAsync(message);
-
                 skipSku = _sku;
                 return false;
             }

@@ -70,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            if (!_pictureService.StoreInDb)
+            if (!(await _pictureService.IsStoreInDbAsync()))
             {
                 await _logger.WarningAsync("Images not stored in DB, cannot run Import Local Pictures task.");
                 return;
@@ -94,7 +94,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 await ProcessLocalPictureAsync(pictureFileUrl, pictureManager);
             }
             pictureManager.Flush();
-            pictureManager.FlushProductPicturesAsync(_productPictureRepository);
+            await pictureManager.FlushProductPicturesAsync(_productPictureRepository);
 
             var setDisplayOrderCommand = @"
                UPDATE Product_Picture_Mapping
@@ -106,7 +106,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             await _nopDbContext.ExecuteNonQueryAsync(setDisplayOrderCommand);
             _importSettings.LastPictureUpdate = DateTime.Now;
-            _settingService.SaveSetting(_importSettings);
+            await _settingService.SaveSettingAsync(_importSettings);
             this.LogEnd();
         }
 
@@ -145,11 +145,14 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            var nopProduct = await _nopDbContext.QueryProcAsync<Product>(
+            var nopProducts = await _nopDbContext.QueryProcAsync<Product>(
                 "GetProductByItemNo",
                 new DataParameter { Name = "ItemNo", Value = itemNum, DataType = DataType.NVarChar }
             );
 
+            if (nopProducts == null || !nopProducts.Any()) { return ;}
+
+            var nopProduct = nopProducts.First();
             if (nopProduct == null || nopProduct.Deleted)
             {
                 return;
@@ -165,7 +168,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 //if this product image is orphaned, add a new mapping for it
                 if (isExistingImage && !ExistingImagesWithMappings.Contains(seoName))
                 {
-                    _productPictureRepository.Insert(new ProductPicture { PictureId = ExistingImageToId[seoName], ProductId = nopProduct.Id });
+                    await _productPictureRepository.InsertAsync(new ProductPicture { PictureId = ExistingImageToId[seoName], ProductId = nopProduct.Id });
                     ExistingImagesWithMappings.Add(seoName);
                 }
                 else if (!isExistingImage)

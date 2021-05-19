@@ -313,12 +313,20 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                     if (stagingProduct.AllowInStorePickup)
                     {
-                        _importUtilities.InsertProductAttributeMappingAsync(product.Id, pickupAttribute.Id, productAttributeMappingManager);
+                        await _importUtilities.InsertProductAttributeMappingAsync(
+                            product.Id,
+                            pickupAttribute.Id,
+                            productAttributeMappingManager
+                        );
                     }
 
                     if (!stagingProduct.CanUseUps)
                     {
-                        _importUtilities.InsertProductAttributeMappingAsync(product.Id, homeDeliveryAttribute.Id, productAttributeMappingManager);
+                        await _importUtilities.InsertProductAttributeMappingAsync(
+                            product.Id,
+                            homeDeliveryAttribute.Id,
+                            productAttributeMappingManager
+                        );
                     }
                 }
                 else
@@ -345,7 +353,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     if (!productsWithPickupAttribute.Contains(product.Id) && stagingProduct.AllowInStorePickup)
                     {
                         // a mapping to the pickup attribute does not exist and is needed, add one
-                        _importUtilities.InsertProductAttributeMappingAsync(product.Id, pickupAttribute.Id, productAttributeMappingManager);
+                        await _importUtilities.InsertProductAttributeMappingAsync(
+                            product.Id,
+                            pickupAttribute.Id,
+                            productAttributeMappingManager
+                        );
                     }
                     else if (productsWithPickupAttribute.Contains(product.Id) && !stagingProduct.AllowInStorePickup)
                     {
@@ -361,7 +373,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                     if (!productsWithHomeDeliveryAttribute.Contains(product.Id) && !stagingProduct.CanUseUps)
                     {
-                        _importUtilities.InsertProductAttributeMappingAsync(product.Id, homeDeliveryAttribute.Id, productAttributeMappingManager);
+                        await _importUtilities.InsertProductAttributeMappingAsync(
+                            product.Id,
+                            homeDeliveryAttribute.Id,
+                            productAttributeMappingManager
+                        );
                     }
                     else if (productsWithHomeDeliveryAttribute.Contains(product.Id) && stagingProduct.CanUseUps)
                     {

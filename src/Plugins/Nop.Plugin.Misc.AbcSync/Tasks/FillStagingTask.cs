@@ -19,17 +19,17 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
 
-            EngineContext.Current.Resolve<FillStagingProductsTask>().Execute();
-            EngineContext.Current.Resolve<FillStagingPricingTask>().Execute();
-            EngineContext.Current.Resolve<FillStagingAccessoriesTask>().Execute();
-            EngineContext.Current.Resolve<FillStagingBrandsTask>().Execute();
-            EngineContext.Current.Resolve<FillStagingProductCategoryMappingsTask>().Execute();
-            EngineContext.Current.Resolve<FillStagingScandownEndDatesTask>().Execute();
-            EngineContext.Current.Resolve<FillStagingWarrantiesTask>().Execute();
+            await EngineContext.Current.Resolve<FillStagingProductsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<FillStagingPricingTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<FillStagingAccessoriesTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<FillStagingBrandsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<FillStagingProductCategoryMappingsTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<FillStagingScandownEndDatesTask>().ExecuteAsync();
+            await EngineContext.Current.Resolve<FillStagingWarrantiesTask>().ExecuteAsync();
 
             this.LogEnd();
         }

@@ -5,6 +5,7 @@ using System.Globalization;
 using Nop.Services.Logging;
 using System.Collections.ObjectModel;
 using Nop.Plugin.Misc.AbcCore;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Staging
 {
@@ -89,7 +90,7 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
         ///		Determine whether the product has a model ID and item number.
         ///		It needs to have both of these key values.
         /// </summary>
-        public bool HasKeyValues(ILogger logger)
+        public async Task<bool> HasKeyValuesAsync(ILogger logger)
         {
             if (string.IsNullOrWhiteSpace(_itemNum))
             {

@@ -38,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _nopDataProvider = nopDataProvider;
         }
 
-        private void AddTask(string name, int seconds, bool isActive = false)
+        private async System.Threading.Tasks.Task AddTaskAsync(string name, int seconds, bool isActive = false)
         {
             ScheduleTask task = new ScheduleTask();
             task.Name = $"AbcWarehouse: {name}";
@@ -47,48 +47,48 @@ namespace Nop.Plugin.Misc.AbcSync
             task.Enabled = isActive;
             task.StopOnError = false;
 
-            _scheduleTaskService.InsertTask(task);
+            await _scheduleTaskService.InsertTaskAsync(task);
         }
 
-        private void RemoveTasks()
+        private async System.Threading.Tasks.Task RemoveTasksAsync()
         {
             var oldTasks = _scheduleTaskRepository.Table.ToList().Where(st => st.Name.StartsWith("AbcWarehouse: "));
             foreach (var task in oldTasks)
             {
                 if (task != null)
-                    _scheduleTaskService.DeleteTask(task);
+                    await _scheduleTaskService.DeleteTaskAsync(task);
             }
         }
 
         public override async System.Threading.Tasks.Task InstallAsync()
         {
             // Clean up before installation
-            RemoveTasks();
+            await RemoveTasksAsync();
 
             //each task corresponds to an import
-            AddTask("Archive", 86400);
-            AddTask("FillStaging", 86400);
-            AddTask("CoreUpdate", 86400);
-            AddTask("ContentUpdate", 86400);
-            AddTask("CatalogUpdate", 86400);
-            AddTask("SecondaryCatalogUpdate", 86400);
-            AddTask("MissingImageReport", 86400);
+            await AddTaskAsync("Archive", 86400);
+            await AddTaskAsync("FillStaging", 86400);
+            await AddTaskAsync("CoreUpdate", 86400);
+            await AddTaskAsync("ContentUpdate", 86400);
+            await AddTaskAsync("CatalogUpdate", 86400);
+            await AddTaskAsync("SecondaryCatalogUpdate", 86400);
+            await AddTaskAsync("MissingImageReport", 86400);
 
-            _settingService.SaveSetting(ImportSettings.CreateDefault());
+            await _settingService.SaveSettingAsync(ImportSettings.CreateDefault());
 
-            base.Install();
+            await base.InstallAsync();
         }
 
         public override async System.Threading.Tasks.Task UninstallAsync()
         {
-            RemoveTasks();
+            await RemoveTasksAsync();
 
-            base.Uninstall();
+            await base.UninstallAsync();
         }
 
         public override async System.Threading.Tasks.Task UpdateAsync(string currentVersion, string targetVersion)
         {
-            UpdateLocales();
+            await UpdateLocalesAsync();
         }
 
         public override string GetConfigurationPageUrl()
@@ -97,9 +97,9 @@ namespace Nop.Plugin.Misc.AbcSync
                 $"{_webHelper.GetStoreLocation()}Admin/AbcSync/Configure";
         }
 
-        private void UpdateLocales()
+        private async System.Threading.Tasks.Task UpdateLocalesAsync()
         {
-            _localizationService.AddPluginLocaleResource(
+            await _localizationService.AddLocaleResourceAsync(
                 new Dictionary<string, string>
                 {
                     [ImportPluginLocales.SkipOldMattressesImport] = "Skip Import of Old Mattresses",
@@ -130,7 +130,8 @@ namespace Nop.Plugin.Misc.AbcSync
                     [ImportPluginLocales.SkipImportProductFlagsTask] = "ImportProductFlagsTask",
                     [ImportPluginLocales.SkipImportSotPicturesTask] = "ImportSotPicturesTask",
                     [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask"
-                });
+                }
+            );
         }
     }
 }

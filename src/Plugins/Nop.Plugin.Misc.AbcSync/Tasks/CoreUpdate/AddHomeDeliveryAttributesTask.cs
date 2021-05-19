@@ -42,8 +42,8 @@ namespace Nop.Plugin.Misc.AbcSync
             }
 
             this.LogStart();
-            var homeDeliveryAttribute = _importUtilities.GetHomeDeliveryAttributeAsync();
-            var homeDeliveryAttributeValue = _importUtilities.GetHomeDeliveryAttributeValueAsync();
+            var homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
+            var homeDeliveryAttributeValue = await _importUtilities.GetHomeDeliveryAttributeValueAsync();
 
             // clear all home delivery values
             string deleteHomeDeliveryAttributeValues =
@@ -70,9 +70,9 @@ namespace Nop.Plugin.Misc.AbcSync
                 pav.ProductAttributeMappingId = mapping;
                 pav.WeightAdjustment = 0;
 
-                attributeValueManager.Insert(pav);
+                await attributeValueManager.InsertAsync(pav);
             }
-            attributeValueManager.Flush();
+            await attributeValueManager.FlushAsync();
             this.LogEnd();
         }
     }

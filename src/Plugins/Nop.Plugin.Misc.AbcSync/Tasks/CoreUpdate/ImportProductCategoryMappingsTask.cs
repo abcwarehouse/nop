@@ -59,7 +59,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
             this.LogStart();
 
-            SpecificationAttribute categoryAttribute = _importUtilities.GetCategorySpecificationAttributeAsync();
+            SpecificationAttribute categoryAttribute = await _importUtilities.GetCategorySpecificationAttributeAsync();
 
             //1. clear category attribute options, we are going to re-import them
             string deleteCategoryAttributeOptionsSql
@@ -72,15 +72,16 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
             //3. remake the spec attribute options. after name is calculated in nop, send to sproc to create attributes and mappings
             var categoryList = await _categoryService.GetAllCategoriesAsync(showHidden: true);
-            var sortedCategories = _categoryService.SortCategoriesForTree(categoryList);
+            // was sorting here pre-4.40, but this was removed in NOP code.
+            //var sortedCategories = _categoryService.SortCategoriesForTree(categoryList);
             var categoryToDisplayOrder = new Dictionary<int, int>();
-            categoryToDisplayOrder = sortedCategories.Zip(Enumerable.Range(0, sortedCategories.Count), (c, i) => new { c.Id, i }).ToDictionary(x => x.Id, x => x.i);
+            categoryToDisplayOrder = categoryList.Zip(Enumerable.Range(0, categoryList.Count), (c, i) => new { c.Id, i }).ToDictionary(x => x.Id, x => x.i);
             //specification attribute data
             foreach (var category in categoryList)
             {
                 // build dictionary of category -> all category parents
                 List<int> categoryBreadCrumbIds
-                    = _categoryService.GetCategoryBreadCrumb(category)
+                    = (await _categoryService.GetCategoryBreadCrumbAsync(category))
                     .Select(c => c.Id).ToList();
 
                 // Categories might be syncing wrong - this allows for a case with no breadcrumbs
@@ -106,8 +107,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     new DataParameter { Name = "saoName", DataType = DataType.NVarChar, Value = spaces + category.Name},
                     new DataParameter { Name = "saoDisplayOrder", DataType = DataType.Int32, Value = categoryToDisplayOrder[category.Id] }
                 };
-                await _nopDbContext.ExecuteNonQueryAsync("EXEC [dbo].[AddCategorySpecificationAttributeOption] @specAttrId, @categoryId, @saoName, @saoDisplayOrder",
-                    30, parameters);
+                await _nopDbContext.ExecuteNonQueryAsync(
+                    "EXEC [dbo].[AddCategorySpecificationAttributeOption] @specAttrId, @categoryId, @saoName, @saoDisplayOrder",
+                    parameters
+                );
 
             }
 
@@ -127,10 +130,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             foreach (var pc in _productCategoryRepository.Table.ToList())
             {
                 var categoryToMap = await _categoryService.GetCategoryByIdAsync(pc.CategoryId);
+                var product = await _productService.GetProductByIdAsync(pc.ProductId);
 
                 var productStoreMappings =
-                    _storeMappingService.GetStoreMappings(
-                        _productService.GetProductById(pc.ProductId)
+                    await _storeMappingService.GetStoreMappingsAsync(
+                        product
                     );
 
                 //for each store mapping, add it to all categories in the tree, up to root

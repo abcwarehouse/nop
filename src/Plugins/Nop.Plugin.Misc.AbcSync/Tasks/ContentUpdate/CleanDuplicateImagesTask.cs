@@ -19,7 +19,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _nopDataProvider = nopDataProvider;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipCleanDuplicateImagesTask)
             {
@@ -29,9 +29,8 @@ namespace Nop.Plugin.Misc.AbcSync
 
             this.LogStart();
 
-            _nopDataProvider.ExecuteNonQuery(
-                ImportTaskExtensions.GetSqlScript("Clean_Duplicate_Images"),
-                300
+            await _nopDataProvider.ExecuteNonQueryAsync(
+                ImportTaskExtensions.GetSqlScript("Clean_Duplicate_Images")
             );
 
             this.LogEnd();

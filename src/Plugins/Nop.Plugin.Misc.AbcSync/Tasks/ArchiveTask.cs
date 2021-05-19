@@ -24,7 +24,7 @@ namespace Nop.Plugin.Misc.AbcSync
             this.LogStart();
             using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
             {
-                _archiveService.ArchiveProductContent(backendConn);
+                await _archiveService.ArchiveProductContentAsync(backendConn);
             }
             this.LogEnd();
         }

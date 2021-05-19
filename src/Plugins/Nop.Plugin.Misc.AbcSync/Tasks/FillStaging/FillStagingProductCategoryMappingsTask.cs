@@ -29,21 +29,24 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            if (_importSettings.SkipFillStagingProductCategoryMappingsTask)
-            {
-                this.Skipped();
-                return;
-            }
-
-            this.LogStart();
-            using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
-            {
-                using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
+            // I don't really understand this, but for now it works.
+            await System.Threading.Tasks.Task.Run(() => {
+                if (_importSettings.SkipFillStagingProductCategoryMappingsTask)
                 {
-                    Import(stagingConn, backendConn, _logger);
+                    this.Skipped();
+                    return;
                 }
-            }
-            this.LogEnd();
+
+                this.LogStart();
+                using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
+                {
+                    using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
+                    {
+                        Import(stagingConn, backendConn, _logger);
+                    }
+                }
+                this.LogEnd();
+            });
         }
 
         private void Import(

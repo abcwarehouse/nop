@@ -7,6 +7,6 @@ namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 {
     public interface ICustomProductService : IProductService
     {
-        Task<IList<Product>> GetProductsWithoutImages();
+        Task<IList<Product>> GetProductsWithoutImagesAsync();
     }
 }

@@ -28,7 +28,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _coreSettings = coreSettings;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipFillStagingBrandsTask)
             {
@@ -41,13 +41,13 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
                 {
-                    ImportBrands(stagingConn, backendConn, _logger);
+                    await ImportBrandsAsync(stagingConn, backendConn, _logger);
                 }
             }
             this.LogEnd();
         }
 
-        private void ImportBrands(
+        private async System.Threading.Tasks.Task ImportBrandsAsync(
             SqlConnection stagingConn, IDbConnection backendConn,
             ILogger logger)
         {
@@ -146,7 +146,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
 
                 // Insert the mapping.
-                brand.InsertProdBrandMapping(mappingInsert, logger);
+                await brand.InsertProdBrandMappingAsync(mappingInsert, logger);
             }
 
             // Track to see if any brand has been imported.

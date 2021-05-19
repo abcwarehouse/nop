@@ -19,52 +19,50 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly IStoreService _storeService;
         private readonly ImportSettings _importSettings;
 
+        private readonly ImportProductsTask _importProductsTask;
+
         public CoreUpdateTask(
             ISettingService settingService,
             ILogger logger,
             IStoreService storeService,
-            ImportSettings importSettings)
+            ImportSettings importSettings,
+            ImportProductsTask importProductsTask)
         {
             _settingService = settingService;
             _logger = logger;
             _storeService = storeService;
             _importSettings = importSettings;
+
+            _importProductsTask = importProductsTask;
         }
 
-        public System.Threading.Tasks.Task ExecuteAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
             this.LogStart();
 
             try
             {
-                var cacheManager = EngineContext.Current.Resolve<IStaticCacheManager>();
                 await _logger.InformationAsync(this.GetType().Name + " Closing Store");
-                _settingService.SetSetting("storeinformationsettings.storeclosed", "True");
-                cacheManager.Clear();
+                await _settingService.SetSettingAsync("storeinformationsettings.storeclosed", "True");
                 ImportTaskExtensions.DropIndexes();
 
-                EngineContext.Current.Resolve<ImportProductsTask>().Execute();
-                EngineContext.Current.Resolve<MapCategoriesTask>().Execute();
-                EngineContext.Current.Resolve<ImportProductCategoryMappingsTask>().Execute();
-                EngineContext.Current.Resolve<AddHomeDeliveryAttributesTask>().Execute();
-                EngineContext.Current.Resolve<ImportMarkdownsTask>().Execute();
-                EngineContext.Current.Resolve<ImportRelatedProductsTask>().Execute();
-                EngineContext.Current.Resolve<ImportWarrantiesTask>().Execute();
-                // skipping shop import for now
-                // EngineContext.Current.Resolve<ImportShopsTask>().Execute();
-                EngineContext.Current.Resolve<UnmapNonstockClearanceTask>().Execute();
-                EngineContext.Current.Resolve<MapCategoryStoresTask>().Execute();
+                await _importProductsTask.ExecuteAsync();
+                await EngineContext.Current.Resolve<MapCategoriesTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<ImportProductCategoryMappingsTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<AddHomeDeliveryAttributesTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<ImportMarkdownsTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<ImportRelatedProductsTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<ImportWarrantiesTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<UnmapNonstockClearanceTask>().ExecuteAsync();
+                await EngineContext.Current.Resolve<MapCategoryStoresTask>().ExecuteAsync();
 
                 ImportTaskExtensions.CreateIndexes();
                 await _logger.InformationAsync(this.GetType().Name + " Opening Store");
-                _settingService.SetSetting("storeinformationsettings.storeclosed", "False");
-                cacheManager.Clear();
-
-                VerifyStoresAreOpen();
+                await _settingService.SetSettingAsync("storeinformationsettings.storeclosed", "False");
             }
             catch
             {
-                _logger.Error("Error when running CoreUpdate, store is likely closed.");
+                await _logger.ErrorAsync("Error when running CoreUpdate, store is likely closed.");
                 throw;
             }
 
