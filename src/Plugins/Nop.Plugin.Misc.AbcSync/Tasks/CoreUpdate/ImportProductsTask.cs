@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Nop.Plugin.Misc.AbcCore.Services.Custom;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
@@ -44,14 +45,12 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IRepository<Manufacturer> _manufacturerRepository;
         private readonly ILogger _logger;
-        private readonly IManufacturerService _manufacturerService;
+        private readonly ICustomManufacturerService _manufacturerService;
         private readonly IPrFileDiscountService _prFileDiscountService;
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
         private readonly IAbcMattressProductService _abcMattressProductService;
 
         private readonly StagingDb _stagingDb;
-
-        private Dictionary<string, Manufacturer> _nameToManufacturer = new Dictionary<string, Manufacturer>();
 
         public ImportProductsTask(
             ImportSettings importSettings,
@@ -69,7 +68,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             IGenericAttributeService genericAttributeService,
             IRepository<Manufacturer> manufacturerRepository,
             ILogger logger,
-            IManufacturerService manufacturerService,
+            ICustomManufacturerService manufacturerService,
             StagingDb stagingDb,
             IPrFileDiscountService prFileDiscountService,
             IRepository<ProductManufacturer> productManufacturerRepository,
@@ -393,7 +392,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 //add manufacturer and mappings as needed
                 if (stagingProduct.Manufacturer != null)
                 {
-                    var manufacturer = await GetManufacturerByNameAsync(stagingProduct.Manufacturer);
+                    var manufacturers = await _manufacturerService.GetManufacturersByNameAsync(stagingProduct.Manufacturer);
+                    var manufacturer = manufacturers.FirstOrDefault() ?? await CreateManufacturerAsync(stagingProduct.Manufacturer);
                     if (manufacturer != null)
                     {
                         var productManufacturers = _productManufacturerRepository.Table
@@ -790,45 +790,32 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 stagingProduct.DisableBuying.Value;
         }
 
-        private async Task<Manufacturer> GetManufacturerByNameAsync(string name)
+        private async Task<Manufacturer> CreateManufacturerAsync(string name)
         {
-            if (_nameToManufacturer == null || _nameToManufacturer.Count <= 0)
+            //create a new manufacturer if none was found
+            var manufacturer = new Manufacturer
             {
-                _nameToManufacturer = _manufacturerRepository.Table.GroupBy(m => m.Name).Select(mg => mg.FirstOrDefault()).ToDictionary(m => m.Name.ToUpper(), m => m);
-            }
-
-            if (_nameToManufacturer.ContainsKey(name.ToUpper()))
-            {
-                return _nameToManufacturer[name.ToUpper()];
-            }
-            else
-            {
-                //create a new manufacturer if none was found
-                var manufacturer = new Manufacturer
-                {
-                    Name = name.ToUpper(),
-                    PageSizeOptions = "3, 6, 9, 12",
-                    PageSize = 16,
-                    Published = true,
-                    AllowCustomersToSelectPageSize = false,
-                    LimitedToStores = true,
-                    CreatedOnUtc = DateTime.UtcNow,
-                    UpdatedOnUtc = DateTime.UtcNow
-                };
-                await _manufacturerRepository.InsertAsync(manufacturer);
-                await _urlRecordService.SaveSlugAsync(
+                Name = name.ToUpper(),
+                PageSizeOptions = "3, 6, 9, 12",
+                PageSize = 16,
+                Published = true,
+                AllowCustomersToSelectPageSize = false,
+                LimitedToStores = true,
+                CreatedOnUtc = DateTime.UtcNow,
+                UpdatedOnUtc = DateTime.UtcNow
+            };
+            await _manufacturerRepository.InsertAsync(manufacturer);
+            await _urlRecordService.SaveSlugAsync(
+                manufacturer,
+                await _urlRecordService.ValidateSeNameAsync(
                     manufacturer,
-                    await _urlRecordService.ValidateSeNameAsync(
-                        manufacturer,
-                        "",
-                        manufacturer.Name,
-                        true
-                    ),
-                    0);
+                    "",
+                    manufacturer.Name,
+                    true
+                ),
+                0);
 
-                _nameToManufacturer[name.ToUpper()] = manufacturer;
-                return manufacturer;
-            }
+            return manufacturer;
         }
     }
 }
