@@ -61,6 +61,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                     _abcMattressProductService.SetManufacturer(model, product);
                     _abcMattressProductService.SetCategories(model, product);
                     _abcMattressProductService.SetProductAttributes(model, product);
+                    _abcMattressProductService.SetComfortRibbon(model, product);
                 }
                 catch (Exception e)
                 {

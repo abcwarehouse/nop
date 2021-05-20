@@ -15,6 +15,8 @@ using Nop.Services.Stores;
 using Nop.Core.Domain.Stores;
 using Nop.Services.Tax;
 using Nop.Plugin.Widgets.AbcSynchronyPayments.Services;
+using Nop.Data;
+using Nop.Plugin.Misc.AbcMattresses;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tests
 {
@@ -128,7 +130,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 _storeMappingService.Object,
                 new Mock<ITaxCategoryService>().Object,
                 _urlRecordService.Object,
-                new Mock<ILogger>().Object
+                new Mock<ILogger>().Object,
+                new Mock<INopDataProvider>().Object,
+                new Mock<AbcMattressesSettings>().Object
             );
         }
 

@@ -9,6 +9,9 @@ using System.Linq;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using System;
+using System.Collections.Generic;
+using Nop.Services.Localization;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -23,13 +26,17 @@ namespace Nop.Plugin.Misc.AbcMattresses
         private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly INopDataProvider _nopDataProvider;
+        private readonly ILocalizationService _localizationService;
+        private readonly IWebHelper _webHelper;
 
         public AbcMattressesPlugin(
             IAbcMattressModelService abcMattressModelService,
             IProductService productService,
             IProductAttributeService productAttributeService,
             IScheduleTaskService scheduleTaskService,
-            INopDataProvider nopDataProvider
+            INopDataProvider nopDataProvider,
+            ILocalizationService localizationService,
+            IWebHelper webHelper
         )
         {
             _abcMattressModelService = abcMattressModelService;
@@ -37,17 +44,26 @@ namespace Nop.Plugin.Misc.AbcMattresses
             _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
             _nopDataProvider = nopDataProvider;
+            _localizationService = localizationService;
+            _webHelper = webHelper;
+        }
+
+        public override string GetConfigurationPageUrl()
+        {
+            return $"{_webHelper.GetStoreLocation()}Admin/AbcMattresses/Configure";
         }
 
         public override void Update(string currentVersion, string targetVersion)
         {
             AddProductAttributes();
+            UpdateLocales();
         }
 
         public override void Install()
         {
             RemoveTasks();
             AddTask();
+            UpdateLocales();
 
             AddProductAttributes();
 
@@ -154,6 +170,17 @@ namespace Nop.Plugin.Misc.AbcMattresses
                     _productAttributeService.InsertProductAttribute(productAttribute);
                 }
             }
+        }
+
+        private void UpdateLocales()
+        {
+            _localizationService.AddPluginLocaleResource(
+                new Dictionary<string, string>
+                {
+                    [AbcMattressesLocales.ShouldSyncRibbons] = "Sync Product Ribbons?",
+                    [AbcMattressesLocales.ShouldSyncRibbonsHint] = "Turn on/off syncing product ribbons to mattress model products.",
+                }
+            );
         }
     }
 }
