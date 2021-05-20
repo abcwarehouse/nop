@@ -25,6 +25,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
+using Nop.Plugin.Misc.AbcCore.Data;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
@@ -33,7 +34,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly ImportSettings _importSettings;
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<TaxCategory> _taxCategoryRepository;
-        private readonly INopDataProvider _nopDbContext;
+        private readonly ICustomNopDataProvider _nopDbContext;
         private readonly IImportUtilities _importUtilities;
         private readonly IRepository<ProductCartPrice> _productCartPriceRepository;
         private readonly IStoreService _storeService;
@@ -56,7 +57,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             ImportSettings importSettings,
             IRepository<Product> productRepository,
             IRepository<TaxCategory> taxCategoryRepository,
-            INopDataProvider nopDbContext,
+            ICustomNopDataProvider nopDbContext,
             IImportUtilities importUtilities,
             IRepository<ProductCartPrice> productCartPriceRepository,
             IStoreService storeService,
@@ -477,7 +478,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 {mattressItemAddition}
             ";
 
-            await _nopDbContext.ExecuteNonQueryAsync(deleteCommand);
+            await _nopDbContext.ExecuteNonQueryAsync(deleteCommand, 60);
 
             //updating gift card if one was added
             var giftCardProduct = _productRepository.Table.Where(p => p.Name == "GIFT").FirstOrDefault();

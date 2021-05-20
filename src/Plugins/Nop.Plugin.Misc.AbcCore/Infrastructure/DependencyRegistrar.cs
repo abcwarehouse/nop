@@ -6,6 +6,7 @@ using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
+using Nop.Plugin.Misc.AbcCore.Data;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
@@ -40,6 +41,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<IProductAbcFinanceService, ProductAbcFinanceService>();
             services.AddScoped<IImportUtilities, ImportUtilities>();
             services.AddScoped<ICustomManufacturerService, CustomManufacturerService>();
+            services.AddScoped<ICustomNopDataProvider, CustomMsSqlDataProvider>();
         }
     }
 }
