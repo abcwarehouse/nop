@@ -10,6 +10,9 @@ using Nop.Data;
 using Nop.Plugin.Misc.AbcMattresses.Services;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Nop.Services.Localization;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.AbcMattresses
 {
@@ -24,13 +27,17 @@ namespace Nop.Plugin.Misc.AbcMattresses
         private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly INopDataProvider _nopDataProvider;
+        private readonly ILocalizationService _localizationService;
+        private readonly IWebHelper _webHelper;
 
         public AbcMattressesPlugin(
             IAbcMattressModelService abcMattressModelService,
             IProductService productService,
             IProductAttributeService productAttributeService,
             IScheduleTaskService scheduleTaskService,
-            INopDataProvider nopDataProvider
+            INopDataProvider nopDataProvider,
+            ILocalizationService localizationService,
+            IWebHelper webHelper
         )
         {
             _abcMattressModelService = abcMattressModelService;
@@ -38,17 +45,26 @@ namespace Nop.Plugin.Misc.AbcMattresses
             _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
             _nopDataProvider = nopDataProvider;
+            _localizationService = localizationService;
+            _webHelper = webHelper;
+        }
+
+        public override string GetConfigurationPageUrl()
+        {
+            return $"{_webHelper.GetStoreLocation()}Admin/AbcMattresses/Configure";
         }
 
         public override async System.Threading.Tasks.Task UpdateAsync(string currentVersion, string targetVersion)
         {
             await AddProductAttributesAsync();
+            await UpdateLocalesAsync();
         }
 
         public override async System.Threading.Tasks.Task InstallAsync()
         {
             await RemoveTasksAsync();
             await AddTaskAsync();
+            await UpdateLocalesAsync();
 
             await AddProductAttributesAsync();
 
@@ -159,6 +175,17 @@ namespace Nop.Plugin.Misc.AbcMattresses
                     await _productAttributeService.InsertProductAttributeAsync(productAttribute);
                 }
             }
+        }
+
+        private async System.Threading.Tasks.Task UpdateLocalesAsync()
+        {
+            await _localizationService.AddLocaleResourceAsync(
+                new Dictionary<string, string>
+                {
+                    [AbcMattressesLocales.ShouldSyncRibbons] = "Sync Product Ribbons?",
+                    [AbcMattressesLocales.ShouldSyncRibbonsHint] = "Turn on/off syncing product ribbons to mattress model products.",
+                }
+            );
         }
     }
 }

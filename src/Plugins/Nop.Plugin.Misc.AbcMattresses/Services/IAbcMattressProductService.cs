@@ -13,5 +13,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         Task SetCategoriesAsync(AbcMattressModel model, Product product);
         Task SetProductAttributesAsync(AbcMattressModel model, Product product);
         bool IsMattressProduct(int productId);
+        Task SetComfortRibbonAsync(AbcMattressModel model, Product product);
     }
 }

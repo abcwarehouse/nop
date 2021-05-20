@@ -62,6 +62,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                     await _abcMattressProductService.SetManufacturerAsync(model, product);
                     await _abcMattressProductService.SetCategoriesAsync(model, product);
                     await _abcMattressProductService.SetProductAttributesAsync(model, product);
+                    await _abcMattressProductService.SetComfortRibbonAsync(model, product);
                 }
                 catch (Exception e)
                 {

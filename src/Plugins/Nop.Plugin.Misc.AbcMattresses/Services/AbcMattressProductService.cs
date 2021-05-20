@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Services
 {
@@ -37,6 +38,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly ITaxCategoryService _taxCategoryService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly ILogger _logger;
+        private readonly INopDataProvider _nopDataProvider;
+        private readonly AbcMattressesSettings _settings;
 
         public AbcMattressProductService(
             IAbcMattressModelService abcMattressService,
@@ -56,7 +59,9 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IStoreMappingService storeMappingService,
             ITaxCategoryService taxCategoryService,
             IUrlRecordService urlRecordService,
-            ILogger logger
+            ILogger logger,
+            INopDataProvider nopDataProvider,
+            AbcMattressesSettings settings
         )
         {
             _abcMattressService = abcMattressService;
@@ -77,6 +82,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _taxCategoryService = taxCategoryService;
             _urlRecordService = urlRecordService;
             _logger = logger;
+            _nopDataProvider = nopDataProvider;
+            _settings = settings;
         }
 
         public List<string> GetMattressItemNos()
@@ -773,6 +780,59 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         public bool IsMattressProduct(int productId)
         {
             return _abcMattressService.GetAbcMattressModelByProductId(productId) != null;
+        }
+
+        public async Task SetComfortRibbonAsync(AbcMattressModel model, Product product)
+        {
+            if (!_settings.ShouldSyncRibbons)
+            {
+                await _logger.WarningAsync("Syncing products ribbons disabled, will not sync.");
+                return;
+            }
+
+            var productRibbonName = GetRibbonByComfort(model.Comfort);
+
+            var conditionIdCommand = $@"
+	        SELECT TOP 1 ec.ConditionId FROM SS_PR_ProductRibbon pr
+	        JOIN SS_C_EntityCondition ec ON pr.Id = ec.EntityId
+	        WHERE pr.Name = '{productRibbonName}'
+	        AND ec.EntityType = 30
+            ";
+
+            var conditionId = (await _nopDataProvider.QueryAsync<int?>(conditionIdCommand)).FirstOrDefault();
+            if (conditionId == null)
+            {
+                throw new NopException(
+                    $"Did not find condition ID needed for mattress ribbon sync, make sure '{productRibbonName}' product ribbon exists."
+                );
+            }
+
+            var syncCommand = $@"
+            DELETE FROM SS_C_ProductOverride
+	        WHERE ProductId = {product.Id}
+	        INSERT INTO SS_C_ProductOverride VALUES
+            ({conditionId}, {product.Id}, 0)
+            ";
+            await _nopDataProvider.ExecuteNonQueryAsync(syncCommand);
+
+            return;
+        }
+
+        private string GetRibbonByComfort(string comfort)
+        {
+            switch (comfort)
+            {
+                case "Firm":
+                    return "mattress-comfort-firm";
+                case "Cushion-Firm":
+                    return "mattress-comfort-cushion-firm";
+                case "Plush":
+                    return "mattress-comfort-plush";
+                case "Ultra Luxury Plush":
+                    return "mattress-comfort-ultra-luxury-plush";
+                default:
+                    throw new ArgumentException($"Unsupported mattress comfort provided: {comfort}");
+            }
         }
     }
 }
