@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class ImportIsamSpecs : BaseAbcWarehouseService, IImportIsamSpecs
+    public class ImportIsamSpecs : BaseAbcWarehouseService, IImportIsamSpecs
     {
         private readonly IProductService _productService;
         private readonly ILogger _logger;

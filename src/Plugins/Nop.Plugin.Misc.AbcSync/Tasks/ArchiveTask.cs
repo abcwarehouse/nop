@@ -21,12 +21,11 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            this.LogStart();
             using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
             {
                 await _archiveService.ArchiveProductContentAsync(backendConn);
             }
-            this.LogEnd();
+            
         }
     }
 }

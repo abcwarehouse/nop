@@ -29,16 +29,6 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             return script;
         }
 
-        public static void LogStart(this IScheduleTask task)
-        {
-            EngineContext.Current.Resolve<ILogger>().InformationAsync($"Begin Task: {task.GetType().Name}");
-        }
-
-        public static void LogEnd(this IScheduleTask task)
-        {
-            EngineContext.Current.Resolve<ILogger>().InformationAsync($"End Task: {task.GetType().Name}");
-        }
-
         public static void Skipped(this IScheduleTask task)
         {
             EngineContext.Current.Resolve<ILogger>().WarningAsync($"Skipped Task: {task.GetType().Name}");

@@ -49,7 +49,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            this.LogStart();
+            
 
             var prodsInfo = from prod in (await _customProductService.GetProductsWithoutImagesAsync())
                             from pAbc in _productAbcRepository.Table.Where(pA => pA.Product_Id == prod.Id).ToList()
@@ -73,7 +73,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 ++rowIdx;
             }
             ex.Save();
-            this.LogEnd();
+            
         }
 
         private ExcelPackage GetPackage()

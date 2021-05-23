@@ -36,7 +36,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             using (SqlConnection stagingConn = _importSettings.GetStagingDbConnection() as SqlConnection)
             {
                 using (IDbConnection backendConn = _coreSettings.GetBackendDbConnection())
@@ -44,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     await ImportBrandsAsync(stagingConn, backendConn, _logger);
                 }
             }
-            this.LogEnd();
+            
         }
 
         private async System.Threading.Tasks.Task ImportBrandsAsync(

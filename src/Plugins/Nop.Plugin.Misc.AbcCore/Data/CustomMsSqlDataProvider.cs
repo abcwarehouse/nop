@@ -16,6 +16,9 @@ using Nop.Data.DataProviders;
 using LinqToDB.Mapping;
 using LinqToDB.Tools;
 using System.Data;
+using StackExchange.Profiling;
+using StackExchange.Profiling.Data;
+using Nop.Data.Mapping;
 
 namespace Nop.Plugin.Misc.AbcCore.Data
 {
@@ -26,14 +29,19 @@ namespace Nop.Plugin.Misc.AbcCore.Data
             int timeout,
             params DataParameter[] dataParameters)
         {
-            using var dataContext = await CreateDataConnectionAsync();
-            var command = new CommandInfo(dataContext, sql, dataParameters);
-            var affectedRecords = await command.ExecuteAsync();
-            UpdateOutputParameters(dataContext, dataParameters);
-            return affectedRecords;
+            using (var dataContext = new DataConnection(
+                LinqToDbDataProvider,
+                await CreateDbConnectionAsync(),
+                GetMappingSchema()) { CommandTimeout = timeout })
+            {
+                var command = new CommandInfo(dataContext, sql, dataParameters);
+                var affectedRecords = await command.ExecuteAsync();
+                UpdateOutputParameters(dataContext, dataParameters);
+                return affectedRecords;
+            }
         }
 
-        // this is duplicated from BaseDataProvider.cs
+        // all private methods are duplicated from BaseDataProvider.cs
         private void UpdateOutputParameters(
             DataConnection dataConnection,
             DataParameter[] dataParameters)
@@ -47,7 +55,6 @@ namespace Nop.Plugin.Misc.AbcCore.Data
             }
         }
 
-        // this is duplicated from BaseDataProvider.cs
         private void UpdateParameterValue(DataConnection dataConnection, DataParameter parameter)
         {
             if (dataConnection is null)
@@ -63,6 +70,32 @@ namespace Nop.Plugin.Misc.AbcCore.Data
             {
                 parameter.Value = param.Value;
             }
+        }
+
+        private MappingSchema GetMappingSchema()
+        {
+            if (Singleton<MappingSchema>.Instance is null)
+            {
+                Singleton<MappingSchema>.Instance = new MappingSchema(ConfigurationName)
+                {
+                    MetadataReader = new FluentMigratorMetadataReader()
+                };
+            }
+
+            if (MiniProfillerEnabled)
+            {
+                var mpMappingSchema = new MappingSchema(new[] { Singleton<MappingSchema>.Instance });
+
+                mpMappingSchema.SetConvertExpression<ProfiledDbConnection, IDbConnection>(db => db.WrappedConnection);
+                mpMappingSchema.SetConvertExpression<ProfiledDbDataReader, IDataReader>(db => db.WrappedReader);
+                mpMappingSchema.SetConvertExpression<ProfiledDbTransaction, IDbTransaction>(db => db.WrappedTransaction);
+                mpMappingSchema.SetConvertExpression<ProfiledDbCommand, IDbCommand>(db => db.InternalCommand);
+
+                return mpMappingSchema;
+            }
+
+            return Singleton<MappingSchema>.Instance;
+
         }
     }
 }

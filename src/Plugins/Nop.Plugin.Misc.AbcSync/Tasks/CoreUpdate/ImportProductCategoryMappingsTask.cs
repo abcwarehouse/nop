@@ -57,7 +57,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 return;
             }
 
-            this.LogStart();
+            
 
             SpecificationAttribute categoryAttribute = await _importUtilities.GetCategorySpecificationAttributeAsync();
 
@@ -164,7 +164,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
             }
 
-            this.LogEnd();
+            
         }
 
         private async System.Threading.Tasks.Task ImportProductCategoryMappingsAsync()

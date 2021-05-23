@@ -9,6 +9,7 @@ using Nop.Plugin.Misc.AbcSync.Services.Staging;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate;
+using Nop.Services.Caching;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -46,6 +47,23 @@ namespace Nop.Plugin.Misc.AbcSync
 
             // needed to allow for calling tasks in DI
             services.AddScoped<ImportProductsTask, ImportProductsTask>();
+            services.AddScoped<MapCategoriesTask, MapCategoriesTask>();
+            services.AddScoped<ImportProductCategoryMappingsTask, ImportProductCategoryMappingsTask>();
+            services.AddScoped<AddHomeDeliveryAttributesTask, AddHomeDeliveryAttributesTask>();
+            services.AddScoped<ImportMarkdownsTask, ImportMarkdownsTask>();
+            services.AddScoped<ImportRelatedProductsTask, ImportRelatedProductsTask>();
+            services.AddScoped<ImportWarrantiesTask, ImportWarrantiesTask>();
+            services.AddScoped<UnmapNonstockClearanceTask, UnmapNonstockClearanceTask>();
+            services.AddScoped<MapCategoryStoresTask, MapCategoryStoresTask>();
+
+            services.AddScoped<CleanDuplicateImagesTask, CleanDuplicateImagesTask>();
+            services.AddScoped<ImportDocumentsTask, ImportDocumentsTask>();
+            services.AddScoped<ImportFeaturedProductsTask, ImportFeaturedProductsTask>();
+            services.AddScoped<ImportIsamSpecsTask, ImportIsamSpecsTask>();
+            services.AddScoped<ImportLocalPicturesTask, ImportLocalPicturesTask>();
+            services.AddScoped<ImportProductFlagsTask, ImportProductFlagsTask>();
+            services.AddScoped<ImportSotPicturesTask, ImportSotPicturesTask>();
+            services.AddScoped<ClearCacheTask, ClearCacheTask>();
         }
 
         /// <summary>

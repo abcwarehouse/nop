@@ -32,7 +32,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 return;
             }
 
-            this.LogStart();
+            
 
             var clearanceStores = (await _storeService.GetAllStoresAsync()).Where(s => s.Name.ToLower().Contains("clearance"));
 
@@ -83,7 +83,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 await _nopDbContext.ExecuteNonQueryAsync(categoryUnmapCommand);
             }
 
-            this.LogEnd();
+            
         }
     }
 }

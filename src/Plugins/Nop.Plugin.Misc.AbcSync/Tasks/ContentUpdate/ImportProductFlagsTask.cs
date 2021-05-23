@@ -25,9 +25,9 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             await _import.ImportAsync();
-            this.LogEnd();
+            
         }
     }
 }

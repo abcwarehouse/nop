@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class ImportWarrantiesTask : IScheduleTask
+    public class ImportWarrantiesTask : IScheduleTask
     {
         private readonly INopDataProvider _nopDbContext;
         private readonly ImportSettings _importSettings;
@@ -26,7 +26,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
 
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var command = $@"
@@ -86,7 +86,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             await _nopDbContext.ExecuteNonQueryAsync(command);
 
-            this.LogEnd();
+            
         }
     }
 }

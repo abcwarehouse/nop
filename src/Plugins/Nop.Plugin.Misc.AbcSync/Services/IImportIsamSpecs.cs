@@ -2,7 +2,7 @@
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    interface IImportIsamSpecs
+    public interface IImportIsamSpecs
     {
         /// <summary>
         ///		Begin the import process for product's specifications.

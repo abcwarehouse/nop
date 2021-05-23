@@ -139,7 +139,6 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 throw new NopException("No export store is selected, will not be able to generate XML file.");
             }
 
-            this.LogStart();
             XmlWriterSettings xmlSettings = InitializeXmlWriter();
 
             var env = EngineContext.Current.Resolve<IWebHostEnvironment>();
@@ -174,7 +173,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 await _logger.WarningAsync("FTP Export disabled, generated file will not be sent.");
             }
 
-            this.LogEnd();
+            
         }
 
         private async Task SendFileViaFTPAsync(string filepath)

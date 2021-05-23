@@ -35,9 +35,9 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             await ImportProductsAsync();
-            this.LogEnd();
+            
         }
 
         private async System.Threading.Tasks.Task ImportProductsAsync()

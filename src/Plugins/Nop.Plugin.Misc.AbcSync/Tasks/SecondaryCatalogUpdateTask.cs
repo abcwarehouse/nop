@@ -41,7 +41,7 @@ namespace Nop.Plugin.Misc.AbcSync
         {
             var account = await _emailAccountService.GetEmailAccountByIdAsync(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;
-            this.LogStart();
+            
             try
             {
                 await _emailSender.SendEmailAsync(account, "Secondary Catalog Update: Store Closing", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
@@ -71,7 +71,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
             }
 
-            this.LogEnd();
+            
         }
     }
 }

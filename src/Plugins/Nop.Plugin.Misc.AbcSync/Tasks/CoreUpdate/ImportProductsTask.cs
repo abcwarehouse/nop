@@ -106,7 +106,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 return;
             }
 
-            this.LogStart();
+            
 
             var stagingDb = _importSettings.GetStagingDbConnection();
 
@@ -519,7 +519,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
             await _nopDbContext.ExecuteNonQueryAsync("EXECUTE [dbo].[SanitizeSOTShortDescriptions];");
 
-            this.LogEnd();
+            
         }
 
         private async System.Threading.Tasks.Task SetFullDescriptionIfEmptyAsync(StagingProduct stagingProduct, Product product)

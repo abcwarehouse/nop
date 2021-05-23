@@ -20,13 +20,29 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportSettings _importSettings;
 
         private readonly ImportProductsTask _importProductsTask;
+        private readonly MapCategoriesTask _mapCategoriesTask;
+        private readonly ImportProductCategoryMappingsTask _importProductCategoryMappingsTask;
+        private readonly AddHomeDeliveryAttributesTask _addHomeDeliveryAttributesTask;
+        private readonly ImportMarkdownsTask _importMarkdownsTask;
+        private readonly ImportRelatedProductsTask _importRelatedProductsTask;
+        private readonly ImportWarrantiesTask _importWarrantiesTask;
+        private readonly UnmapNonstockClearanceTask _unmapNonstockClearanceTask;
+        private readonly MapCategoryStoresTask _mapCategoryStoresTask;
 
         public CoreUpdateTask(
             ISettingService settingService,
             ILogger logger,
             IStoreService storeService,
             ImportSettings importSettings,
-            ImportProductsTask importProductsTask)
+            ImportProductsTask importProductsTask,
+            MapCategoriesTask mapCategoriesTask,
+            ImportProductCategoryMappingsTask importProductCategoryMappingsTask,
+            AddHomeDeliveryAttributesTask addHomeDeliveryAttributesTask,
+            ImportMarkdownsTask importMarkdownsTask,
+            ImportRelatedProductsTask importRelatedProductsTask,
+            ImportWarrantiesTask importWarrantiesTask,
+            UnmapNonstockClearanceTask unmapNonstockClearanceTask,
+            MapCategoryStoresTask mapCategoryStoresTask)
         {
             _settingService = settingService;
             _logger = logger;
@@ -34,11 +50,19 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
 
             _importProductsTask = importProductsTask;
+            _mapCategoriesTask = mapCategoriesTask;
+            _importProductCategoryMappingsTask = importProductCategoryMappingsTask;
+            _addHomeDeliveryAttributesTask = addHomeDeliveryAttributesTask;
+            _importMarkdownsTask = importMarkdownsTask;
+            _importRelatedProductsTask = importRelatedProductsTask;
+            _importWarrantiesTask = importWarrantiesTask;
+            _unmapNonstockClearanceTask = unmapNonstockClearanceTask;
+            _mapCategoryStoresTask = mapCategoryStoresTask;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            this.LogStart();
+            
 
             try
             {
@@ -47,14 +71,14 @@ namespace Nop.Plugin.Misc.AbcSync
                 ImportTaskExtensions.DropIndexes();
 
                 await _importProductsTask.ExecuteAsync();
-                await EngineContext.Current.Resolve<MapCategoriesTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<ImportProductCategoryMappingsTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<AddHomeDeliveryAttributesTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<ImportMarkdownsTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<ImportRelatedProductsTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<ImportWarrantiesTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<UnmapNonstockClearanceTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<MapCategoryStoresTask>().ExecuteAsync();
+                await _mapCategoriesTask.ExecuteAsync();
+                await _importProductCategoryMappingsTask.ExecuteAsync();
+                await _addHomeDeliveryAttributesTask.ExecuteAsync();
+                await _importMarkdownsTask.ExecuteAsync();
+                await _importRelatedProductsTask.ExecuteAsync();
+                await _importWarrantiesTask.ExecuteAsync();
+                await _unmapNonstockClearanceTask.ExecuteAsync();
+                await _mapCategoryStoresTask.ExecuteAsync();
 
                 ImportTaskExtensions.CreateIndexes();
                 await _logger.InformationAsync(this.GetType().Name + " Opening Store");
@@ -66,7 +90,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 throw;
             }
 
-            this.LogEnd();
+            
         }
     }
 }

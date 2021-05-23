@@ -2,17 +2,18 @@ using Nop.Data;
 using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using System.Threading.Tasks;
+using Nop.Plugin.Misc.AbcCore.Data;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
     public class CleanDuplicateImagesTask : IScheduleTask
     {
         private readonly ImportSettings _importSettings;
-        private readonly INopDataProvider _nopDataProvider;
+        private readonly ICustomNopDataProvider _nopDataProvider;
 
         public CleanDuplicateImagesTask(
             ImportSettings importSettings,
-            INopDataProvider nopDataProvider
+            ICustomNopDataProvider nopDataProvider
         )
         {
             _importSettings = importSettings;
@@ -27,13 +28,14 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
 
             await _nopDataProvider.ExecuteNonQueryAsync(
-                ImportTaskExtensions.GetSqlScript("Clean_Duplicate_Images")
+                ImportTaskExtensions.GetSqlScript("Clean_Duplicate_Images"),
+                300
             );
 
-            this.LogEnd();
+            
         }
     }
 }

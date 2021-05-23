@@ -46,7 +46,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
 
             string mappingFile = _importSettings.GetCategoryMappingFile();
             using (var xlPackage = new ExcelPackage(new FileInfo(mappingFile)))
@@ -152,7 +152,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
             }
 
-            this.LogEnd();
+            
         }
     }
 }

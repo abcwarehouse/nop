@@ -69,7 +69,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             if (!(await _pictureService.IsStoreInDbAsync()))
             {
                 await _logger.WarningAsync("Images not stored in DB, cannot run Import Local Pictures task.");
@@ -107,7 +107,7 @@ namespace Nop.Plugin.Misc.AbcSync
             await _nopDbContext.ExecuteNonQueryAsync(setDisplayOrderCommand);
             _importSettings.LastPictureUpdate = DateTime.Now;
             await _settingService.SaveSettingAsync(_importSettings);
-            this.LogEnd();
+            
         }
 
         private async System.Threading.Tasks.Task ProcessLocalPictureAsync(string pictureFileUrl, PictureInsertManager pictureInsertManager)

@@ -44,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcSync
         {
             var account = await _emailAccountService.GetEmailAccountByIdAsync(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;
-            this.LogStart();
+            
             try
             {
                 await EngineContext.Current.Resolve<FillStagingTask>().ExecuteAsync();
@@ -75,7 +75,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 }
             }
 
-            this.LogEnd();
+            
         }
     }
 }

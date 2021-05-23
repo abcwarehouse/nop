@@ -41,7 +41,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             var homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
             var homeDeliveryAttributeValue = await _importUtilities.GetHomeDeliveryAttributeValueAsync();
 
@@ -73,7 +73,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 await attributeValueManager.InsertAsync(pav);
             }
             await attributeValueManager.FlushAsync();
-            this.LogEnd();
+            
         }
     }
 }

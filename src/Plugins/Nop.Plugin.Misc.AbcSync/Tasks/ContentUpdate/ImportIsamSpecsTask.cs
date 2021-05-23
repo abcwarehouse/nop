@@ -4,7 +4,7 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class ImportIsamSpecsTask : IScheduleTask
+    public class ImportIsamSpecsTask : IScheduleTask
     {
         private readonly IImportIsamSpecs _import;
         private readonly ILogger _logger;
@@ -29,11 +29,11 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             await _logger.InformationAsync($"Begin Task: ImportSOTSpecs");
             await _import.ImportSiteOnTimeSpecsAsync();
             await _logger.InformationAsync($"End Task: ImportSOTSpecs");
-            this.LogEnd();
+            
         }
     }
 }

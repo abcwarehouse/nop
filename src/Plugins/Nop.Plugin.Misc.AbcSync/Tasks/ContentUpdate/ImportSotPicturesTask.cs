@@ -30,9 +30,9 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            this.LogStart();
+            
             await _importPictureService.ImportSiteOnTimePicturesAsync();
-            this.LogEnd();
+            
         }
     }
 }
