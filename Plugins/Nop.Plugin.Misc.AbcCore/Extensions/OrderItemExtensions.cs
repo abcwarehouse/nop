@@ -67,7 +67,10 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             var freeGiftString = oi.AttributeDescription.Substring(freeGiftIndex);
             freeGiftString = freeGiftString.Substring(10, freeGiftString.IndexOf("<br />") - 10);
 
-            return freeGiftString.Replace("&quot;", "\"").Replace("&amp;", "&").Trim();
+            return freeGiftString.Replace("&quot;", "\"")
+                                 .Replace("&amp;", "&")
+                                 .Replace("&gt;", ">")
+                                 .Replace("&lt;", "<").Trim();
         }
 
         public static string GetMattressProtector(this OrderItem oi)
