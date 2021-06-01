@@ -64,6 +64,14 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<ImportProductFlagsTask, ImportProductFlagsTask>();
             services.AddScoped<ImportSotPicturesTask, ImportSotPicturesTask>();
             services.AddScoped<ClearCacheTask, ClearCacheTask>();
+
+            services.AddScoped<FillStagingAccessoriesTask, FillStagingAccessoriesTask>();
+            services.AddScoped<FillStagingBrandsTask, FillStagingBrandsTask>();
+            services.AddScoped<FillStagingPricingTask, FillStagingPricingTask>();
+            services.AddScoped<FillStagingProductCategoryMappingsTask, FillStagingProductCategoryMappingsTask>();
+            services.AddScoped<FillStagingProductsTask, FillStagingProductsTask>();
+            services.AddScoped<FillStagingScandownEndDatesTask, FillStagingScandownEndDatesTask>();
+            services.AddScoped<FillStagingWarrantiesTask, FillStagingWarrantiesTask>();
         }
 
         /// <summary>

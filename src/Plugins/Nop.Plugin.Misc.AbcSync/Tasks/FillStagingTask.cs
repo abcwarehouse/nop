@@ -21,8 +21,6 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            
-
             await EngineContext.Current.Resolve<FillStagingProductsTask>().ExecuteAsync();
             await EngineContext.Current.Resolve<FillStagingPricingTask>().ExecuteAsync();
             await EngineContext.Current.Resolve<FillStagingAccessoriesTask>().ExecuteAsync();
@@ -30,8 +28,6 @@ namespace Nop.Plugin.Misc.AbcSync
             await EngineContext.Current.Resolve<FillStagingProductCategoryMappingsTask>().ExecuteAsync();
             await EngineContext.Current.Resolve<FillStagingScandownEndDatesTask>().ExecuteAsync();
             await EngineContext.Current.Resolve<FillStagingWarrantiesTask>().ExecuteAsync();
-
-            
         }
     }
 }
