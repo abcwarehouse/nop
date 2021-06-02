@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class FillStagingScandownEndDatesTask : IScheduleTask
+    public class FillStagingScandownEndDatesTask : IScheduleTask
     {
         private const string _backendDateFormat = "yyyyMMdd";
         private readonly ILogger _logger;

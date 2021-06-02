@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class FillStagingAccessoriesTask : IScheduleTask
+    public class FillStagingAccessoriesTask : IScheduleTask
     {
         private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;

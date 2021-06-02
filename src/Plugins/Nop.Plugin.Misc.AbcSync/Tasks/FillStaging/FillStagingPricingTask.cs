@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class FillStagingPricingTask : IScheduleTask
+    public class FillStagingPricingTask : IScheduleTask
     {
         private const string _backendDateFormat = "yyMMdd";
 

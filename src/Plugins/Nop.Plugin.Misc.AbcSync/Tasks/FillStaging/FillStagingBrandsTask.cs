@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    class FillStagingBrandsTask : IScheduleTask
+    public class FillStagingBrandsTask : IScheduleTask
     {
         private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;

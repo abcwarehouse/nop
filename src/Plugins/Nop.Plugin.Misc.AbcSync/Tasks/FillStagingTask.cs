@@ -11,23 +11,46 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ILogger _logger;
         private readonly ImportSettings _importSettings;
 
+        private readonly FillStagingProductsTask _fillStagingProductsTask;
+        private readonly FillStagingPricingTask _fillStagingPricingTask;
+        private readonly FillStagingAccessoriesTask _fillStagingAccessoriesTask;
+        private readonly FillStagingBrandsTask _fillStagingBrandsTask;
+        private readonly FillStagingProductCategoryMappingsTask _fillStagingProductCategoryMappingsTask;
+        private readonly FillStagingScandownEndDatesTask _fillStagingScandownEndDatesTask;
+        private readonly FillStagingWarrantiesTask _fillStagingWarrantiesTask;
+
         public FillStagingTask(
             ILogger logger,
-            ImportSettings importSettings)
+            ImportSettings importSettings,
+            FillStagingProductsTask fillStagingProductsTask,
+            FillStagingPricingTask fillStagingPricingTask,
+            FillStagingAccessoriesTask fillStagingAccessoriesTask,
+            FillStagingBrandsTask fillStagingBrandsTask,
+            FillStagingProductCategoryMappingsTask fillStagingProductCategoryMappingsTask,
+            FillStagingScandownEndDatesTask fillStagingScandownEndDatesTask,
+            FillStagingWarrantiesTask fillStagingWarrantiesTask)
         {
             _logger = logger;
             _importSettings = importSettings;
+
+            _fillStagingProductsTask = fillStagingProductsTask;
+            _fillStagingPricingTask = fillStagingPricingTask;
+            _fillStagingAccessoriesTask = fillStagingAccessoriesTask;
+            _fillStagingBrandsTask = fillStagingBrandsTask;
+            _fillStagingProductCategoryMappingsTask = fillStagingProductCategoryMappingsTask;
+            _fillStagingScandownEndDatesTask = fillStagingScandownEndDatesTask;
+            _fillStagingWarrantiesTask = fillStagingWarrantiesTask;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            await EngineContext.Current.Resolve<FillStagingProductsTask>().ExecuteAsync();
-            await EngineContext.Current.Resolve<FillStagingPricingTask>().ExecuteAsync();
-            await EngineContext.Current.Resolve<FillStagingAccessoriesTask>().ExecuteAsync();
-            await EngineContext.Current.Resolve<FillStagingBrandsTask>().ExecuteAsync();
-            await EngineContext.Current.Resolve<FillStagingProductCategoryMappingsTask>().ExecuteAsync();
-            await EngineContext.Current.Resolve<FillStagingScandownEndDatesTask>().ExecuteAsync();
-            await EngineContext.Current.Resolve<FillStagingWarrantiesTask>().ExecuteAsync();
+            await _fillStagingProductsTask.ExecuteAsync();
+            await _fillStagingPricingTask.ExecuteAsync();
+            await _fillStagingAccessoriesTask.ExecuteAsync();
+            await _fillStagingBrandsTask.ExecuteAsync();
+            await _fillStagingProductCategoryMappingsTask.ExecuteAsync();
+            await _fillStagingScandownEndDatesTask.ExecuteAsync();
+            await _fillStagingWarrantiesTask.ExecuteAsync();
         }
     }
 }
