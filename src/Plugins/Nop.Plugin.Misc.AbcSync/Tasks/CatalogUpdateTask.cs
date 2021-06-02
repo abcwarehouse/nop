@@ -24,12 +24,21 @@ namespace Nop.Plugin.Misc.AbcSync
         ILogger _logger;
         private readonly ImportSettings _importSettings;
 
+        private readonly FillStagingTask _fillStagingTask;
+        private readonly CoreUpdateTask _coreUpdateTask;
+        private readonly ContentUpdateTask _contentUpdateTask;
+        private readonly ClearCacheTask _clearCacheTask;
+
         public CatalogUpdateTask(ISettingService settingService,
             EmailAccountSettings emailAccountSettings,
             IEmailAccountService emailAccountService,
             IEmailSender emailSender,
             ILogger logger,
-            ImportSettings importSettings)
+            ImportSettings importSettings,
+            FillStagingTask fillStagingTask,
+            CoreUpdateTask coreUpdateTask,
+            ContentUpdateTask contentUpdateTask,
+            ClearCacheTask clearCacheTask)
         {
 
             _emailAccountSettings = emailAccountSettings;
@@ -38,6 +47,11 @@ namespace Nop.Plugin.Misc.AbcSync
             _settingService = settingService;
             _logger = logger;
             _importSettings = importSettings;
+
+            _fillStagingTask = fillStagingTask;
+            _coreUpdateTask = coreUpdateTask;
+            _contentUpdateTask = contentUpdateTask;
+            _clearCacheTask = clearCacheTask;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -47,12 +61,12 @@ namespace Nop.Plugin.Misc.AbcSync
             
             try
             {
-                await EngineContext.Current.Resolve<FillStagingTask>().ExecuteAsync();
+                await _fillStagingTask.ExecuteAsync();
                 indexesDropped = true;
-                await EngineContext.Current.Resolve<CoreUpdateTask>().ExecuteAsync();
+                await _coreUpdateTask.ExecuteAsync();
                 indexesDropped = false;
-                await EngineContext.Current.Resolve<ContentUpdateTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<ClearCacheTask>().ExecuteAsync();
+                await _contentUpdateTask.ExecuteAsync();
+                await _clearCacheTask.ExecuteAsync();
             }
             catch (Exception e)
             {
@@ -74,8 +88,6 @@ namespace Nop.Plugin.Misc.AbcSync
                     ImportTaskExtensions.CreateIndexes();
                 }
             }
-
-            
         }
     }
 }

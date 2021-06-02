@@ -46,6 +46,10 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<StagingDb, StagingDb>();
 
             // needed to allow for calling tasks in DI
+            services.AddScoped<FillStagingTask, FillStagingTask>();
+            services.AddScoped<CoreUpdateTask, CoreUpdateTask>();
+            services.AddScoped<ContentUpdateTask, ContentUpdateTask>();
+
             services.AddScoped<ImportProductsTask, ImportProductsTask>();
             services.AddScoped<MapCategoriesTask, MapCategoriesTask>();
             services.AddScoped<ImportProductCategoryMappingsTask, ImportProductCategoryMappingsTask>();
