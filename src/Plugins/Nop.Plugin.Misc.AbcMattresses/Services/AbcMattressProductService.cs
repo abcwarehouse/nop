@@ -40,6 +40,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private readonly ILogger _logger;
         private readonly INopDataProvider _nopDataProvider;
         private readonly AbcMattressesSettings _settings;
+        private readonly ISpecificationAttributeService _specificationAttributeService;
 
         public AbcMattressProductService(
             IAbcMattressModelService abcMattressService,
@@ -61,7 +62,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             IUrlRecordService urlRecordService,
             ILogger logger,
             INopDataProvider nopDataProvider,
-            AbcMattressesSettings settings
+            AbcMattressesSettings settings,
+            ISpecificationAttributeService specificationAttributeService
         )
         {
             _abcMattressService = abcMattressService;
@@ -84,6 +86,52 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             _logger = logger;
             _nopDataProvider = nopDataProvider;
             _settings = settings;
+            _specificationAttributeService = specificationAttributeService;
+        }
+
+        public async Task SetSpecificationAttributesAsync(AbcMattressModel model, Product product)
+        {
+            var comfortSpecAttr = (await _specificationAttributeService.GetSpecificationAttributesAsync())
+                                                            .Where(sa => sa.Name == "Comfort")
+                                                            .FirstOrDefault();
+            if (comfortSpecAttr == null)
+            {
+                throw new NopException("Unable to find 'Comfort' specification attribute.");
+            }
+
+            var option = (await _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttributeAsync(comfortSpecAttr.Id))
+                                                         .Where(so => so.Name == model.Comfort)
+                                                         .FirstOrDefault();
+            if (option == null)
+            {
+                throw new NopException($"Unable to find '{model.Comfort}' " +
+                "specification attribute option for the 'Comfort' " +
+                "specification attribute.");
+            }
+
+            var comfortProductSpecAttr = (await _specificationAttributeService.GetProductSpecificationAttributesAsync(product.Id))
+                                                                       .Where(psa => psa.AttributeTypeId == comfortSpecAttr.Id)
+                                                                       .FirstOrDefault();
+            if (comfortProductSpecAttr == null)
+            {
+                var productSpecAttr = new ProductSpecificationAttribute()
+                {
+                    ProductId = product.Id,
+                    AttributeType = SpecificationAttributeType.Option,
+                    SpecificationAttributeOptionId = option.Id,
+                    AllowFiltering = true
+                };
+                await _specificationAttributeService.InsertProductSpecificationAttributeAsync(
+                    productSpecAttr
+                );
+            }
+            else
+            {
+                comfortProductSpecAttr.SpecificationAttributeOptionId = option.Id;
+                await _specificationAttributeService.UpdateProductSpecificationAttributeAsync(
+                    comfortProductSpecAttr
+                );
+            }
         }
 
         public List<string> GetMattressItemNos()
