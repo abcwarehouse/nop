@@ -13,5 +13,6 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         void SetProductAttributes(AbcMattressModel model, Product product);
         bool IsMattressProduct(int productId);
         void SetComfortRibbon(AbcMattressModel model, Product product);
+        void SetSpecificationAttributes(AbcMattressModel model, Product product);
     }
 }

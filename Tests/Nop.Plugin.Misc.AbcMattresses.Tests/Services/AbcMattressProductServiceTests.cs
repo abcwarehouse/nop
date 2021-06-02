@@ -132,7 +132,8 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tests
                 _urlRecordService.Object,
                 new Mock<ILogger>().Object,
                 new Mock<INopDataProvider>().Object,
-                new Mock<AbcMattressesSettings>().Object
+                new Mock<AbcMattressesSettings>().Object,
+                new Mock<ISpecificationAttributeService>().Object
             );
         }
 
