@@ -1,0 +1,242 @@
+﻿@{
+    Layout = "_ConfigurePlugin";
+}
+@model ConfigurationModel
+@using Nop.Web.Framework;
+@using Nop.Plugin.Tax.AbcCountryStateZip.Models;
+@using Nop.Core.Infrastructure;
+@using Nop.Web.Framework.Models.DataTables
+
+<form asp-controller="AbcTaxCountryStateZip" asp-action="Configure" method="post">
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                TaxJar API Token
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="TaxJarAPIToken" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="TaxJarAPIToken" />
+                        <span asp-validation-for="TaxJarAPIToken"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9 col-md-offset-3">
+                        <input type="submit" name="save" class="btn bg-blue" value="@T("Admin.Common.Save")" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="panel-group advanced-setting">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "tax-countrystatezip-grid",
+               UrlRead = new DataUrl("RatesListAsync", "AbcTaxCountryStateZip", null),
+               UrlUpdate = new DataUrl("RateUpdateAsync", "AbcTaxCountryStateZip", null),
+               UrlDelete = new DataUrl("RateDeleteAsync", "AbcTaxCountryStateZip", null),
+               Length = Model.PageSize,
+               LengthMenu = Model.AvailablePageSizes,
+               ColumnCollection = new List<ColumnProperty>
+               {
+                   new ColumnProperty(nameof(TaxRateModel.EnableTaxState))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.EnableTaxState").Text,
+                       Width = "200",
+                       ClassName = NopColumnClassDefaults.CenterAll,
+                       Render = new RenderBoolean(),
+                       Editable = true,
+                       EditType = EditType.Checkbox
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.StoreName))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.Store").Text,
+                       Width = "300"
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.CountryName))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.Country").Text,
+                       Width = "200"
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.StateProvinceName))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.StateProvince").Text,
+                       Width = "200"
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.Zip))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.Zip").Text,
+                       Width = "200",
+                       Editable = true,
+                       EditType = EditType.String
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.TaxCategoryName))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.TaxCategory").Text,
+                       Width = "200"
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.Percentage))
+                   {
+                       Title = T("Plugins.Tax.AbcCountryStateZip.Fields.Percentage").Text,
+                       Width = "100",
+                       Editable = true,
+                       EditType = EditType.Number
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.Id))
+                   {
+                       Title = T("Admin.Common.Edit").Text,
+                       Width = "200",
+                       ClassName =  NopColumnClassDefaults.Button,
+                       Render = new RenderButtonsInlineEdit()
+                   },
+                   new ColumnProperty(nameof(TaxRateModel.Id))
+                   {
+                       Title = T("Admin.Common.Delete").Text,
+                       ClassName = NopColumnClassDefaults.Button,
+                       Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                       Width = "100"
+                   }
+               }
+           })
+        </div>
+    </div>
+</div>
+<div class="panel-group advanced-setting">
+    <form asp-controller="AbcTaxCountryStateZip" asp-action="Configure" method="post">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @T("Plugins.Tax.FixedOrByCountryStateZip.AddRecordTitle")
+            </div>
+            <div class="panel-body">
+                <script>
+                    $(document)
+                        .ready(function() {
+                            $("#@Html.IdFor(model => model.AddCountryId)")
+                                .change(function() {
+                                    var selectedItem = $(this).val();
+                                    var ddlStates = $("#@Html.IdFor(model => model.AddStateProvinceId)");
+                                    $.ajax({
+                                        cache: false,
+                                        type: "GET",
+                                        url: "@(Url.Action("GetStatesByCountryId", "Country"))",
+                                        data: {
+                                            "countryId": selectedItem,
+                                            "addAsterisk": "true"
+                                        },
+                                        success: function (data, textStatus, jqXHR) {
+                                            ddlStates.html('');
+                                            $.each(data,
+                                                function(id, option) {
+                                                    ddlStates
+                                                        .append($('<option></option>').val(option.id)
+                                                            .html(option.name));
+                                                });
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            $("#getStatesByCountryIdAlert").click();
+                                        }
+                                    });
+                                });
+                        });
+                </script>
+                <div class="form-group" @(Model.AvailableStores.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+                    <div class="col-md-3">
+                        <nop-label asp-for="AddStoreId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="AddStoreId" asp-items="Model.AvailableStores" />
+                        <span asp-validation-for="AddStoreId"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="AddCountryId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="AddCountryId" asp-items="Model.AvailableCountries" />
+                        <span asp-validation-for="AddCountryId"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="AddStateProvinceId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="AddStateProvinceId" asp-items="Model.AvailableStates" />
+                        <span asp-validation-for="AddStateProvinceId"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="AddZip" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="AddZip" />
+                        <span asp-validation-for="AddZip"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="AddTaxCategoryId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="AddTaxCategoryId" asp-items="Model.AvailableTaxCategories" />
+                        <span asp-validation-for="AddTaxCategoryId"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="AddPercentage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="AddPercentage" />
+                        <span asp-validation-for="AddPercentage"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-9">
+                        <input type="button" id="addtaxrate" class="btn btn-primary" value="@T("Plugins.Tax.FixedOrByCountryStateZip.AddRecord")"/>
+                        <script>
+                            $(document)
+                                .ready(function() {
+                                    $('#addtaxrate')
+                                        .click(function() {
+
+                                            var postData = $(this.form).serialize();
+                                            addAntiForgeryToken(postData);
+
+                                            $.ajax({
+                                                cache: false,
+                                                type: "POST",
+                                                url: "@Url.Action("AddTaxRate", "AbcTaxCountryStateZip")",
+                                                data: postData,
+                                                dataType: "json",
+                                                success: function (data, textStatus, jqXHR) {
+                                                    updateTable('#tax-countrystatezip-grid');
+                                                },
+                                                error: function (jqXHR, textStatus, errorThrown) {
+                                                    $("#addRateByCountryStateZipAlert").click();
+                                                }
+                                            });
+                                            return false;
+                                        });
+                                });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<nop-alert asp-alert-id="getStatesByCountryIdAlert" asp-alert-message="@T("Admin.Common.Alert.States.Failed")" />
+<nop-alert asp-alert-id="addRateByCountryStateZipAlert" asp-alert-message="@T("Admin.Common.Alert.Add.Error")" />
