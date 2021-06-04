@@ -39,9 +39,9 @@
             @await Html.PartialAsync("Table", new DataTablesModel
            {
                Name = "tax-countrystatezip-grid",
-               UrlRead = new DataUrl("RatesListAsync", "AbcTaxCountryStateZip", null),
-               UrlUpdate = new DataUrl("RateUpdateAsync", "AbcTaxCountryStateZip", null),
-               UrlDelete = new DataUrl("RateDeleteAsync", "AbcTaxCountryStateZip", null),
+               UrlRead = new DataUrl("RatesList", "AbcTaxCountryStateZip", null),
+               UrlUpdate = new DataUrl("RateUpdate", "AbcTaxCountryStateZip", null),
+               UrlDelete = new DataUrl("RateDelete", "AbcTaxCountryStateZip", null),
                Length = Model.PageSize,
                LengthMenu = Model.AvailablePageSizes,
                ColumnCollection = new List<ColumnProperty>

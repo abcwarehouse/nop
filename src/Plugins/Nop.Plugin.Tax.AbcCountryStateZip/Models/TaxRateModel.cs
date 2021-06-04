@@ -31,7 +31,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Models
         public string StateProvinceName { get; set; }
 
         [NopResourceDisplayName("Plugins.Tax.AbcCountryStateZip.Fields.Zip")]
-        public string ZipCode { get; set; }
+        public string Zip { get; set; }
 
         [NopResourceDisplayName("Plugins.Tax.AbcCountryStateZip.Fields.Percentage")]
         public decimal Percentage { get; set; }

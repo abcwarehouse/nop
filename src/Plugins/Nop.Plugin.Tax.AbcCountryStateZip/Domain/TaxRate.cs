@@ -8,7 +8,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Domain
         public int TaxCategoryId { get; set; }
         public int CountryId { get; set; }
         public int StateProvinceId { get; set; }
-        public string ZipCode { get; set; }
+        public string Zip { get; set; }
         public decimal Percentage { get; set; }
         public bool EnableTaxState { get; set; }
     }

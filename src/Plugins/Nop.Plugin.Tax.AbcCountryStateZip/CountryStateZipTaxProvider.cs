@@ -91,13 +91,6 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
         {
             var result = new TaxRateResult();
 
-            //the tax rate calculation by fixed rate
-            if (!_countryStateZipSettings.CountryStateZipEnabled)
-            {
-                result.TaxRate = await _settingService.GetSettingByKeyAsync<decimal>(string.Format(FixedOrByCountryStateZipDefaults.FixedRateSettingsKey, taxRateRequest.TaxCategoryId));
-                return result;
-            }
-
             //the tax rate calculation by country & state & zip 
             if (taxRateRequest.Address == null)
             {
@@ -138,15 +131,15 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
 
             if (matchedByZip.Any())
             {
-                if (matchedByZip[0].EnableTaxState)
+                if (matchedByZip.FirstOrDefault().EnableTaxState)
                 {
-                    var response = CalculateTaxJarRateAsync(calculateTaxRequest);
+                    var response = await CalculateTaxJarRateAsync(taxRateRequest);
                     if (response != null && response.Success && response.TaxRate != 0)
                     {
                         return response;
                     }
                 }
-                result.TaxRate = matchedByZip[0].Percentage;
+                result.TaxRate = matchedByZip.FirstOrDefault().Percentage;
             }
 
             return result;
@@ -160,42 +153,37 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
                 return null;
             }
 
-            try
-            {
-                var taxJarCacheKeyString = string.Format(TAXRATE_KEY,
-                    !string.IsNullOrEmpty(calculateTaxRequest.Address.ZipPostalCode) ? calculateTaxRequest.Address.ZipPostalCode : string.Empty,
-                    calculateTaxRequest.Address.CountryId ?? 0,
-                    !string.IsNullOrEmpty(calculateTaxRequest.Address.City) ? calculateTaxRequest.Address.City : string.Empty);
-                var taxJarCacheKey = new CacheKey(taxJarCacheKeyString, "Nop.plugins.Tax.AbcCountryStateZip.taxjar.");
+            var taxJarCacheKeyString = string.Format(TAXRATE_KEY,
+                !string.IsNullOrEmpty(calculateTaxRequest.Address.ZipPostalCode) ? calculateTaxRequest.Address.ZipPostalCode : string.Empty,
+                calculateTaxRequest.Address.CountryId ?? 0,
+                !string.IsNullOrEmpty(calculateTaxRequest.Address.City) ? calculateTaxRequest.Address.City : string.Empty);
+            var taxJarCacheKey = new CacheKey(taxJarCacheKeyString, "Nop.plugins.Tax.AbcCountryStateZip.taxjar.");
 
-                // we don't use standard way _cacheManager.Get() due the need write errors to CalculateTaxResult
-                if (_staticCacheManager.IsSet(taxJarCacheKey))
-                {
-                    return new TaxRateResult
-                    {
-                        TaxRate = _staticCacheManager.Get<decimal>(
-                        taxJarCacheKey,
-                        () => CalculateTaxJarRateAsync(calculateTaxRequest).TaxRate)
-                    };
-                }
+            // we don't use standard way _cacheManager.Get() due the need write errors to CalculateTaxResult
+            // if (_staticCacheManager.GetAsync(taxJarCacheKey))
+            // {
+            //     return new TaxRateResult
+            //     {
+            //         TaxRate = _staticCacheManager.Get<decimal>(
+            //             taxJarCacheKey,
+            //             async () => (await CalculateTaxJarRateAsync(calculateTaxRequest)).TaxRate
+            //         )
+            //     };
+            // }
 
 
-                var taxJarManager = new TaxJarManager { Api = _settings.TaxJarAPIToken };
-                var taxJarResult = taxJarManager.GetTaxRate(
-                _countryService.GetCountryById(calculateTaxRequest.Address.CountryId.Value)?.TwoLetterIsoCode,
+            var taxJarManager = new TaxJarManager { Api = _settings.TaxJarAPIToken };
+            var taxJarResult = taxJarManager.GetTaxRate(
+                (await _countryService.GetCountryByIdAsync(calculateTaxRequest.Address.CountryId.Value))?.TwoLetterIsoCode,
                 calculateTaxRequest.Address.City,
                 calculateTaxRequest.Address.Address1,
-                calculateTaxRequest.Address.ZipPostalCode);
-                if (!taxJarResult.IsSuccess)
-                    return new TaxRateResult { Errors = new List<string> { taxJarResult.ErrorMessage } };
+                calculateTaxRequest.Address.ZipPostalCode
+            );
+            if (!taxJarResult.IsSuccess)
+                return new TaxRateResult { Errors = new List<string> { taxJarResult.ErrorMessage } };
 
-                await _staticCacheManager.SetAsync(taxJarCacheKey, taxJarResult.Rate.TaxRate * 100);
-                return new TaxRateResult { TaxRate = taxJarResult.Rate.TaxRate * 100 };
-            }
-            catch
-            {
-                return null;
-            }
+            await _staticCacheManager.SetAsync(taxJarCacheKey, taxJarResult.Rate.TaxRate * 100);
+            return new TaxRateResult { TaxRate = taxJarResult.Rate.TaxRate * 100 };
         }
 
         public async Task<bool> GetCustomerInTaxableStateAsync(int taxCategoryId, int countryId, int stateProvinceId, string zip)
@@ -210,7 +198,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
                 TaxCategoryId = taxRate.TaxCategoryId,
                 CountryId = taxRate.CountryId,
                 StateProvinceId = taxRate.StateProvinceId,
-                ZipCode = taxRate.ZipCode,
+                Zip = taxRate.Zip,
                 Percentage = taxRate.Percentage,
                 EnableTaxState = taxRate.EnableTaxState
             }).ToList());
@@ -221,7 +209,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
             var matchedByStateProvince = existingRates.Where(taxRate => stateProvinceId == taxRate.StateProvinceId || taxRate.StateProvinceId == 0);
 
             //filter by zip
-            var matchedByZip = matchedByStateProvince.Where(taxRate => string.IsNullOrWhiteSpace(taxRate.ZipCode) || taxRate.ZipCode.Equals(zip, StringComparison.InvariantCultureIgnoreCase));
+            var matchedByZip = matchedByStateProvince.Where(taxRate => string.IsNullOrWhiteSpace(taxRate.Zip) || taxRate.Zip.Equals(zip, StringComparison.InvariantCultureIgnoreCase));
 
             return matchedByZip.Any();
         }
@@ -231,7 +219,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
         /// </summary>
         public override async Task InstallAsync()
         {
-            _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Tax.AbcCountryStateZip.Fields.TaxCategoryName"] = "Tax category",
                 ["Plugins.Tax.AbcCountryStateZip.Fields.Rate"] = "Rate",

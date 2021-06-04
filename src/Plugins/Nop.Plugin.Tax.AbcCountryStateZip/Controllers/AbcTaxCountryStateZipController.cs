@@ -1,16 +1,17 @@
-﻿using System.ComponentModel;
-using System;
+﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
+using Nop.Core.Domain.Customers;
 using Nop.Plugin.Tax.AbcCountryStateZip.Domain;
 using Nop.Plugin.Tax.AbcCountryStateZip.Models;
 using Nop.Plugin.Tax.AbcCountryStateZip.Services;
+using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
-using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
@@ -19,7 +20,7 @@ using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
-using System.Threading.Tasks;
+using Nop.Services.Messages;
 
 namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
 {
@@ -63,26 +64,26 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
             _settings = settings;
         }
 
-        public IActionResult Configure()
+        public async Task<IActionResult> Configure()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageTaxSettings))
+            if (!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings)))
                 return AccessDeniedView();
 
-            var taxCategories = _taxCategoryService.GetAllTaxCategories();
+            var taxCategories = await _taxCategoryService.GetAllTaxCategoriesAsync();
             if (!taxCategories.Any())
                 return Content("No tax categories can be loaded");
 
             var model = new ConfigurationModel();
             //stores
             model.AvailableStores.Add(new SelectListItem { Text = "*", Value = "0" });
-            var stores = _storeService.GetAllStores();
+            var stores = await _storeService.GetAllStoresAsync();
             foreach (var s in stores)
                 model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
             //tax categories
             foreach (var tc in taxCategories)
                 model.AvailableTaxCategories.Add(new SelectListItem { Text = tc.Name, Value = tc.Id.ToString() });
             //countries
-            var countries = _countryService.GetAllCountries(showHidden: true);
+            var countries = await _countryService.GetAllCountriesAsync(showHidden: true);
             foreach (var c in countries)
                 model.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id.ToString() });
             //states
@@ -90,7 +91,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
             var defaultCountry = countries.FirstOrDefault();
             if (defaultCountry != null)
             {
-                var states = _stateProvinceService.GetStateProvincesByCountryId(defaultCountry.Id);
+                var states = await _stateProvinceService.GetStateProvincesByCountryIdAsync(defaultCountry.Id);
                 foreach (var s in states)
                     model.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
             }
@@ -101,27 +102,27 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
         }
 
         [HttpPost]
-        public IActionResult Configure(ConfigurationModel model)
+        public async Task<IActionResult> Configure(ConfigurationModel model)
         {
-            _settingService.SaveSetting(AbcCountyStateZipSettings.FromModel(model));
+            await _settingService.SaveSettingAsync(AbcCountyStateZipSettings.FromModel(model));
 
             _notificationService.SuccessNotification(
-                _localizationService.GetResource("Admin.Plugins.Saved"));
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
-            return Configure();
+            return await Configure();
         }
 
         [HttpPost]
-        public async Task<ActionResult> RatesListAsync(ConfigurationModel searchModel)
+        public async Task<ActionResult> RatesList(ConfigurationModel searchModel)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageTaxSettings))
-                return AccessDeniedDataTablesJson();
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
+                return await AccessDeniedDataTablesJson();
 
-            var records = _taxRateService.GetAllTaxRates(searchModel.Page - 1, searchModel.PageSize);
+            var records = await _taxRateService.GetAllTaxRatesAsync(searchModel.Page - 1, searchModel.PageSize);
 
-            var gridModel = new TaxRateListModel().PrepareToGrid(searchModel, records, () =>
+            var gridModel = await new TaxRateListModel().PrepareToGridAsync(searchModel, records, () =>
             {
-                return records.Select(record => new TaxRateModel
+                return records.SelectAwait(async record => new TaxRateModel
                 {
                     Id = record.Id,
                     StoreId = record.StoreId,
@@ -132,7 +133,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
                     CountryName = (await _countryService.GetCountryByIdAsync(record.CountryId))?.Name ?? "Unavailable",
                     StateProvinceId = record.StateProvinceId,
                     StateProvinceName = (await _stateProvinceService.GetStateProvinceByIdAsync(record.StateProvinceId))?.Name ?? "*",
-                    ZipCode = !string.IsNullOrEmpty(record.ZipCode) ? record.ZipCode : "*",
+                    Zip = !string.IsNullOrEmpty(record.Zip) ? record.Zip : "*",
                     Percentage = record.Percentage,
                     EnableTaxState = record.EnableTaxState
                 });
@@ -142,13 +143,13 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> RateUpdateAsync(TaxRateModel model)
+        public async Task<ActionResult> RateUpdate(TaxRateModel model)
         {
             if (!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings)))
                 return Content("Access denied");
 
             var taxRate = await _taxRateService.GetTaxRateByIdAsync(model.Id);
-            taxRate.ZipCode = model.ZipCode == "*" ? null : model.ZipCode;
+            taxRate.Zip = model.Zip == "*" ? null : model.Zip;
             taxRate.Percentage = model.Percentage;
             taxRate.EnableTaxState = model.EnableTaxState;
             await _taxRateService.UpdateTaxRateAsync(taxRate);
@@ -157,7 +158,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> RateDeleteAsync(int id)
+        public async Task<ActionResult> RateDelete(int id)
         {
             if (!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings)))
                 return Content("Access denied");
@@ -170,7 +171,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddTaxRateAsync(ConfigurationModel model)
+        public async Task<ActionResult> AddTaxRate(ConfigurationModel model)
         {
             if (!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings)))
                 return Content("Access denied");
@@ -181,7 +182,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
                 TaxCategoryId = model.AddTaxCategoryId,
                 CountryId = model.AddCountryId,
                 StateProvinceId = model.AddStateProvinceId,
-                ZipCode = model.AddZip,
+                Zip = model.AddZip,
                 Percentage = model.AddPercentage
             };
             await _taxRateService.InsertTaxRateAsync(taxRate);
@@ -189,7 +190,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Controllers
             return Json(new { Result = true });
         }
         [HttpPost]
-        public async Task<ActionResult> EnableStateAsync(string Id, bool status)
+        public async Task<ActionResult> EnableState(string Id, bool status)
         {
             var taxRate = await _taxRateService.GetTaxRateByIdAsync(Convert.ToInt32(Id));
             if (taxRate != null)

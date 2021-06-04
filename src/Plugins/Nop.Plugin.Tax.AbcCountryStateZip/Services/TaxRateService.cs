@@ -16,39 +16,17 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Services
     /// </summary>
     public partial class TaxRateService : ITaxRateService
     {
-        #region Constants
         private const string TAXRATE_ALL_KEY = "Nop.taxrate.all-{0}-{1}";
         private const string TAXRATE_PATTERN_KEY = "Nop.taxrate.";
-        #endregion
-
-        #region Fields
 
         private readonly IRepository<TaxRate> _taxRateRepository;
-        private readonly IStaticCacheManager _staticCacheManager;
 
-        #endregion
-
-        #region Ctor
-
-        /// <summary>
-        /// Ctor
-        /// </summary>
-        /// <param name="eventPublisher">Event publisher</param>
-        /// <param name="staticCacheManager">Cache manager</param>
-        /// <param name="taxRateRepository">Tax rate repository</param>
         public TaxRateService(
-            IStaticCacheManager staticCacheManager,
             IRepository<TaxRate> taxRateRepository
         )
         {
-            _eventPublisher = eventPublisher;
-            _staticCacheManager = staticCacheManager;
             _taxRateRepository = taxRateRepository;
         }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// Deletes a tax rate
@@ -56,15 +34,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Services
         /// <param name="taxRate">Tax rate</param>
         public virtual async Task DeleteTaxRateAsync(TaxRate taxRate)
         {
-            if (taxRate == null)
-                throw new ArgumentNullException("taxRate");
-
-            _taxRateRepository.Delete(taxRate);
-
-            _staticCacheManager.RemoveByPrefix(TAXRATE_PATTERN_KEY);
-
-            //event notification
-            _eventPublisher.EntityDeleted(taxRate);
+            await _taxRateRepository.DeleteAsync(taxRate);
         }
 
         /// <summary>
@@ -73,15 +43,12 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Services
         /// <returns>Tax rates</returns>
         public virtual async Task<IPagedList<TaxRate>> GetAllTaxRatesAsync(int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var key = _cacheKeyService.PrepareKeyForShortTermCache(ModelCacheEventConsumer.TAXRATE_ALL_KEY);
-            var rez = _staticCacheManager.Get(key, () =>
+            var rez = await _taxRateRepository.GetAllAsync(query =>
             {
-                var query = from tr in _taxRateRepository.Table
-                            orderby tr.StoreId, tr.CountryId, tr.StateProvinceId, tr.Zip, tr.TaxCategoryId
-                            select tr;
-
-                return query.ToList();
-            });
+                return from tr in query
+                    orderby tr.StoreId, tr.CountryId, tr.StateProvinceId, tr.Zip, tr.TaxCategoryId
+                    select tr;
+            }, cache => cache.PrepareKeyForShortTermCache(ModelCacheEventConsumer.TAXRATE_ALL_KEY));
 
             var records = new PagedList<TaxRate>(rez, pageIndex, pageSize);
 
@@ -115,6 +82,5 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip.Services
         {
             await _taxRateRepository.UpdateAsync(taxRate);
         }
-        #endregion
     }
 }
