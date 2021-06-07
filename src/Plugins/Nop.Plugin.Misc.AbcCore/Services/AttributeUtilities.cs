@@ -222,7 +222,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
 
         private async Task<Shop> GetCustomerShop()
         {
-            var currentCustomer = _workContext.GetCurrentCustomerAsync();
+            var currentCustomer = await _workContext.GetCurrentCustomerAsync();
             CustomerShopMapping csm = _customerShopMappingRepository.Table
                 .Where(c => c.CustomerId == currentCustomer.Id)
                 .Select(c => c).FirstOrDefault();

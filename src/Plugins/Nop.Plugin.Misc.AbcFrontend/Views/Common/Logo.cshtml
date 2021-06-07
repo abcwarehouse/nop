@@ -1,0 +1,43 @@
+﻿@using Nop.Core
+@using Nop.Core.Infrastructure
+@using Nop.Services.Localization
+@using Nop.Web.Framework.Themes
+@using System.Web.Mvc
+@using Nop.Services.Stores;
+@using Nop.Core.Domain.Stores;
+@using System.Linq;
+@using Nop.Web.Framework;
+@using Nop.Web.Framework.UI;
+@using Nop.Plugin.Misc.AbcFrontend.Services;
+
+@model LogoModel
+@using Nop.Web.Models.Common;
+
+@{
+    FrontEndService frontEndService = EngineContext.Current.Resolve<FrontEndService>();
+    var currentThemeName = frontEndService.GetThemeName();
+    var logoPath = "~/Themes/" + currentThemeName + "/Content/img/logo.png";
+    var themeLogo = Html.Widget("pavilion_theme_logo");
+    var currentStore = EngineContext.Current.Resolve<IStoreContext>().CurrentStore;
+
+    string routeUrl = Url.RouteUrl("HomePage");
+    if (frontEndService.StoreIsClearance(currentStore))
+    {
+        //clearance store will redirect to abcwarehouse main page
+        routeUrl = frontEndService.GetNonClearanceUrl(currentStore.Id);
+    }
+}
+
+
+
+<a href="@routeUrl" class="logo">
+    @if (!MvcHtmlString.IsNullOrEmpty(themeLogo))
+    {
+        @themeLogo
+    }
+    else
+    {
+        string storeName = currentStore.GetLocalized(x => x.Name);
+        <img title="" alt="@storeName" src="@Url.Content(logoPath)">
+    }
+</a>

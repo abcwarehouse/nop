@@ -1,0 +1,25 @@
+﻿.p-w-r {
+	margin: 0;
+}
+
+.p-w-r .pr-no-reviews {
+	display: none;
+}
+
+.p-w-r .pr-category-snippet {
+	margin: 0;
+}
+
+.p-w-r .pr-category-snippet__total {
+	display: none;
+}
+
+.p-w-r .pr-snippet .pr-snippet-stars-png .pr-snippet-rating-decimal {
+	display: none;
+}
+
+@media (min-width: 375px) {
+	.p-w-r .pr-snippet .pr-snippet-stars-png .pr-snippet-rating-decimal {
+		display: inline-block;
+	}
+}
