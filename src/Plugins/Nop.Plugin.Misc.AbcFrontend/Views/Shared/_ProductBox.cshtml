@@ -241,7 +241,7 @@
         var miniDesc = "";
 
         bool usesPairPricing = false;
-        var plpDescription = genericAttributeService.GetAttribute<string>(
+        var plpDescription = await genericAttributeService.GetAttributeAsync<string>(
             product, "PLPDescription");
         if (!string.IsNullOrWhiteSpace(plpDescription))
         {

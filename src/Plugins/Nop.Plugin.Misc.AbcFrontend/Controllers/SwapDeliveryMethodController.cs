@@ -13,6 +13,7 @@ using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using SevenSpikes.Nop.Plugins.StoreLocator.Domain.Shops;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Models;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -58,20 +59,20 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Change(int shoppingCartItemId)
+        public async Task<IActionResult> Change(int shoppingCartItemId)
         {
             ShoppingCartItem item = _shoppingCartItemRepository.Table
                 .Where(i => i.Id == shoppingCartItemId)
                 .Select(i => i).FirstOrDefault();
 
-            CustomerShopMapping csm = _customerShopService.GetCurrentCustomerShopMapping(await _workContext.GetCurrentCustomerAsync().Id);
+            CustomerShopMapping csm = _customerShopService.GetCurrentCustomerShopMapping((await _workContext.GetCurrentCustomerAsync()).Id);
 
             // no store selected yet
             if (csm == null)
             {
                 // kick back to product page
                 var product = await _productService.GetProductByIdAsync(item.ProductId);
-                var seName = _urlRecordService.GetSeName<Product>(product);
+                var seName = await _urlRecordService.GetSeNameAsync<Product>(product);
                 string url = Url.RouteUrl("Product", new { SeName = seName });
                 url += "?updatecartitemid=" + item.Id;
                 return Json(new FailResponse
@@ -80,7 +81,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
-            Shop currentShop = _shopService.GetShopById(csm.ShopId);
+            Shop currentShop = await _shopService.GetShopByIdAsync(csm.ShopId);
 
             bool isHomeDeliveryProduct = _productHomeDeliveryRepository.Table
                 .Where(hdp => hdp.Product_Id == item.ProductId)
@@ -103,7 +104,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 else
                 {
                     // remove pickup attributemapping
-                    attributes = _attributeUtilities.RemovePickupAttributes(attributes);
+                    attributes = await _attributeUtilities.RemovePickupAttributesAsync(attributes);
                 }
             }
             // is currently home delivery

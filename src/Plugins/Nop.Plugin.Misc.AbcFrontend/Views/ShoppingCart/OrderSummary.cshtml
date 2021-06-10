@@ -287,7 +287,7 @@
                             var miniDesc = "";
                             var pad = productAbcDescriptionRepository.Table.Where(p => p.Product_Id == item.ProductId).FirstOrDefault();
                             var product = productService.GetProductById(item.ProductId);
-                            var plpDescription = genericAttributeService.GetAttribute<string>(
+                            var plpDescription = await genericAttributeService.GetAttributeAsync<string>(
                                 product, "PLPDescription");
                             if (!string.IsNullOrWhiteSpace(plpDescription))
                             {

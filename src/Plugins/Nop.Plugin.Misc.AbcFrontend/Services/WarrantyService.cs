@@ -8,6 +8,7 @@ using Nop.Services.Catalog;
 using Nop.Services.Tax;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
@@ -66,18 +67,18 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             out decimal warrantyUnitPriceExclTax, out decimal warrantyUnitPriceInclTax)
         {
             taxRate = decimal.Zero;
-            var product = await _productService.GetProductByIdAsync(sci.ProductId);
-            sciSubTotalInclTax = _taxService.GetProductPrice(product, sciSubTotalExclTax, true, customer, out taxRate);
-            sciUnitPriceInclTax = _taxService.GetProductPrice(product, sciUnitPriceExclTax, true, customer, out taxRate);
             warrantyUnitPriceExclTax = decimal.Zero;
             warrantyUnitPriceInclTax = decimal.Zero;
-
+            var product = await _productService.GetProductByIdAsync(sci.ProductId);
+            sciSubTotalInclTax = await _taxService.GetProductPriceAsync(product, sciSubTotalExclTax, true, customer, out taxRate);
+            sciUnitPriceInclTax = await _taxService.GetProductPriceAsync(product, sciUnitPriceExclTax, true, customer, out taxRate);
+            
             // warranty item handling
             ProductAttributeMapping warrantyPam = _attributeUtilities.GetWarrantyAttributeMapping(sci.AttributesXml);
             if (warrantyPam != null)
             {
                 warrantyUnitPriceExclTax =
-                    _productAttributeParser.ParseProductAttributeValues(sci.AttributesXml)
+                    await _productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml)
                     .Where(pav => pav.ProductAttributeMappingId == warrantyPam.Id)
                     .Select(pav => pav.PriceAdjustment)
                     .FirstOrDefault();
@@ -93,30 +94,34 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 if (warrProduct == null)
                 {
                     // taxed warranty price
-                    warrantyUnitPriceInclTax = _taxService.GetProductPrice(product, warrantyUnitPriceExclTax, false, customer, out taxRate);
+                    warrantyUnitPriceInclTax = await _taxService.GetProductPriceAsync(product, warrantyUnitPriceExclTax, false, customer, out taxRate);
                 }
                 else
                 {
-                    warrantyUnitPriceInclTax = _taxService.GetProductPrice(warrProduct, warrantyUnitPriceExclTax, isCustomerInTaxableState, customer, out taxRate);
+                    warrantyUnitPriceInclTax = await _taxService.GetProductPriceAsync(warrProduct, warrantyUnitPriceExclTax, isCustomerInTaxableState, customer, out taxRate);
                 }
 
                 decimal productUnitPriceInclTax
-                    = _taxService.GetProductPrice(product, sciUnitPriceExclTax - warrantyUnitPriceExclTax, true, customer, out taxRate);
+                    = await _taxService.GetProductPriceAsync(product, sciUnitPriceExclTax - warrantyUnitPriceExclTax, true, customer, out taxRate);
 
                 sciUnitPriceInclTax = productUnitPriceInclTax + warrantyUnitPriceInclTax;
                 sciSubTotalInclTax = sciUnitPriceInclTax * sci.Quantity;
             }
         }
 
-        public bool CartContainsWarranties(IList<ShoppingCartItem> cart)
+        public async Task<bool> CartContainsWarrantiesAsync(IList<ShoppingCartItem> cart)
         {
-            return cart.Any(sci =>
-                _productAttributeService.GetProductAttributeMappingsByProductId(
-                    sci.ProductId
-                )
-                .Where(pam => _productAttributeService.GetProductAttributeById(
-                    pam.ProductAttributeId).Name == "Warranty")
-                .Any());
+            foreach (var sci in cart)
+            {
+                var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(sci.ProductId);
+                foreach (var pam in pams)
+                {
+                    var pa = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
+                    if (pa.Name == "Warranty") { return true; }
+                }
+            }
+
+            return false;
         }
 
         public string GetWarrantySkuByName(string name)

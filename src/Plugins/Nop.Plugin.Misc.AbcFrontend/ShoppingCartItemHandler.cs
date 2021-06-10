@@ -56,13 +56,13 @@ namespace Nop.Plugin.Misc.AbcFrontend
 
                 // calculate from special price if it is being used instead of price
                 var specialPriceEndDate = product.GetSpecialPriceEndDate();
-                var specialPrice = product.GetSpecialPrice();
+                var specialPrice = product.GetSpecialPriceAsync();
                 if (specialPriceEndDate != null && specialPrice != 0.0M && specialPriceEndDate > DateTime.UtcNow)
                 {
                     priceAdjustment = prodCartPrice.CartPrice - specialPrice;
                 }
 
-                _hiddenAttributeValueRepository.Insert(new HiddenAttributeValue
+                await _hiddenAttributeValueRepository.InsertAsync(new HiddenAttributeValue
                 {
                     ShoppingCartItem_Id = sci.Id,
                     HiddenAttribute_Id = addToCartForPriceAttrId,

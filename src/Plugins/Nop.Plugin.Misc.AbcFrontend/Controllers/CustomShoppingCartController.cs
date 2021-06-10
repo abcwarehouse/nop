@@ -130,7 +130,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         {
             _captchaSettings = captchaSettings;
             _customerSettings = customerSettings;
-            _cacheKeyService = cacheKeyService;
             _checkoutAttributeParser = checkoutAttributeParser;
             _checkoutAttributeService = checkoutAttributeService;
             _currencyService = currencyService;
@@ -170,7 +169,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public IActionResult RemoveItem(int shoppingCartItemId)
+        public async Task<IActionResult> RemoveItem(int shoppingCartItemId)
         {
             var cart = await _shoppingCartService.GetShoppingCartAsync(
                 await _workContext.GetCurrentCustomerAsync(),
@@ -194,7 +193,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         //currently we use this method on catalog pages (category/manufacturer/etc)
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public ActionResult AddProductToCart_Catalog(int productId, int shoppingCartTypeId,
+        public async Task<ActionResult> AddProductToCart_Catalog(int productId, int shoppingCartTypeId,
             int quantity, bool forceredirection = false)
         {
             var cartType = (ShoppingCartType)shoppingCartTypeId;
@@ -213,7 +212,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             {
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) })
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
                 });
             }
 
@@ -224,7 +223,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //it can confuse customers. That's why we redirect customers to the product details page
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) })
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
                 });
             }
 
@@ -233,7 +232,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //cannot be added to the cart (requires a customer to enter price)
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) })
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
                 });
             }
 
@@ -242,7 +241,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //rental products require start/end dates to be entered
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) })
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
                 });
             }
 
@@ -252,7 +251,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //cannot be added to the cart (requires a customer to select a quantity from dropdownlist)
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) })
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
                 });
             }
 
@@ -277,21 +276,32 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
             // decrement this value as we check for various attributes
             int numCustomerSelectionAttributes =
-                _productAttributeService.GetProductAttributeMappingsByProductId(product.Id).Count();
+                (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id)).Count();
 
             string attributes = "";
-            var hdProductAttribute =
-                _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                .Where(pam => _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Home Delivery")
-                .Select(pam => pam).FirstOrDefault();
-            var pickupAttribute =
-                _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                .Where(pam => _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Pickup")
-                .Select(pam => pam).FirstOrDefault();
-            var warrantyAttribute =
-                _productAttributeService.GetProductAttributeMappingsByProductId(product.Id)
-                .Where(pam => _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Warranty")
-                .Select(pam => pam).FirstOrDefault();
+            ProductAttributeMapping hdProductAttribute = null;
+            ProductAttributeMapping pickupAttribute = null;
+            ProductAttributeMapping warrantyAttribute = null;
+
+            var pams =  await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+
+            foreach (var pam in pams)
+            {
+                var pa = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
+
+                switch (pa.Name)
+                {
+                    case "Home Delivery":
+                        hdProductAttribute = pam;
+                        break;
+                    case "Pickup":
+                        pickupAttribute = pam;
+                        break;
+                    case "Warranty":
+                        warrantyAttribute = pam;
+                        break;
+                }
+            }
 
             // home delivery is default, so if it is home delivered, add the attribute no matter what
             if (hdProductAttribute != null)
@@ -317,7 +327,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //product has some attributes. let a customer see them
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) }),
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) }),
                 });
             }
 
@@ -332,8 +342,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
             //if we already have the same product in the cart, then use the total quantity to validate
             var quantityToValidate = shoppingCartItem != null ? shoppingCartItem.Quantity + quantity : quantity;
-            var addToCartWarnings = _shoppingCartService
-                .GetShoppingCartItemWarnings(await _workContext.GetCurrentCustomerAsync(), cartType,
+            var addToCartWarnings = await _shoppingCartService
+                .GetShoppingCartItemWarningsAsync(await _workContext.GetCurrentCustomerAsync(), cartType,
                 product, (await _storeContext.GetCurrentStoreAsync()).Id, string.Empty,
                 decimal.Zero, null, null, quantityToValidate, false, shoppingCartItem?.Id ?? 0, true, false, false, false);
             if (addToCartWarnings.Any())
@@ -361,7 +371,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //but we do not display attribute and gift card warnings here. let's do it on the product details page
                 return Json(new
                 {
-                    redirect = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) })
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
                 });
             }
 
@@ -437,7 +447,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         //currently we use this method on the product details pages
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult AddProductToCart_Details(int productId, int shoppingCartTypeId, IFormCollection form)
+        public virtual async Task<IActionResult> AddProductToCart_Details(int productId, int shoppingCartTypeId, IFormCollection form)
         {
             var product = await _productService.GetProductByIdAsync(productId);
             if (product == null)

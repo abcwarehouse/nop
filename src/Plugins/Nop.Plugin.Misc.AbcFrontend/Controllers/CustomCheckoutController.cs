@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
-    public class CustomCheckoutController : BasePublicController
+    public class CustomCheckoutController : CheckoutController
     {
         private readonly AddressSettings _addressSettings;
         private readonly CustomerSettings _customerSettings;
@@ -153,7 +153,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _termLookupService = termLookupService;
             _cardCheckService = cardCheckService;
 
-            DefaultTransPromo = _settingService.GetSetting("ordersettings.defaulttranspromo")?.Value;
+            DefaultTransPromo = await _settingService.GetSettingAsync("ordersettings.defaulttranspromo")?.Value;
             if (string.IsNullOrWhiteSpace(DefaultTransPromo))
             {
                 throw new ConfigurationErrorsException("'ordersettings.defaulttranspromo' setting is required for CustomCheckoutController.");
@@ -165,7 +165,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         {
             if (DefaultTransPromo == "101")
             {
-                _logger.Warning("DefaultTransPromo is 101, term lookup skipped");
+                await _logger.WarningAsync("DefaultTransPromo is 101, term lookup skipped");
                 return string.Empty;
             }
 
@@ -185,33 +185,33 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             }
             catch (IsamException e)
             {
-                _logger.Error("Failure occurred during ISAM Term Lookup", e);
+                await _logger.ErrorAsync("Failure occurred during ISAM Term Lookup", e);
                 HttpContext.Session.SetString("TransPromo", DefaultTransPromo);
             }
             return "";
         }
 
-        private void SendPaymentRequest(ProcessPaymentRequest paymentInfo, out string status_code, out string response_message)
+        private async Task<(string status_code, string response_message)> SendPaymentRequestAsync(ProcessPaymentRequest paymentInfo)
         {
-            status_code = "";
-            response_message = "";
+            var status_code = "";
+            var response_message = "";
 
             var cart = await _shoppingCartService.GetShoppingCartAsync(
                     await _workContext.GetCurrentCustomerAsync(),
                     ShoppingCartType.ShoppingCart,
                     (await _storeContext.GetCurrentStoreAsync()).Id);
-            var customer = _customerService.GetCustomerById(
+            var customer = await _customerService.GetCustomerByIdAsync(
                 cart.FirstOrDefault().CustomerId
             );
             var billingAddress = _customerService.GetCustomerBillingAddress(
                 customer
             );
-            var domain = await _storeContext.GetCurrentStoreAsync().Url;
+            var domain = (await _storeContext.GetCurrentStoreAsync()).Url;
             var ip = _webHelper.GetCurrentIpAddress();
 
             try
             {
-                var cardCheck = _cardCheckService.CheckCard(
+                var cardCheck = await _cardCheckService.CheckCardAsync(
                     paymentInfo,
                     billingAddress,
                     domain,
@@ -225,17 +225,21 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             }
             catch (Exception e)
             {
-                _logger.Error("Error occurred when making external payment request. Setting status code to 00 and Ref_No Auth_No to null.", e);
+                await _logger.ErrorAsync("Error occurred when making external payment request. Setting status code to 00 and Ref_No Auth_No to null.", e);
                 status_code = "00";
                 HttpContext.Session.SetString("Ref_No", "");
                 HttpContext.Session.Set("Auth_No", "");
             }
+
+            return (status_code, response_message);
         }
 
-        private void ValidateGiftCardAmounts()
+        private async Task ValidateGiftCardAmountsAsync()
         {
             // grab every gift card that the customer applied to this order
-            IList<GiftCard> appliedGiftCards = _giftCardService.GetActiveGiftCardsAppliedByCustomer(await _workContext.GetCurrentCustomerAsync());
+            IList<GiftCard> appliedGiftCards = await _giftCardService.GetActiveGiftCardsAppliedByCustomerAsync(
+                await _workContext.GetCurrentCustomerAsync()
+            );
 
             if (appliedGiftCards.Count > 1)
             {
@@ -248,7 +252,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 GiftCard isamGiftCard = _isamGiftCardService.GetGiftCardInfo(nopGiftCard.GiftCardCouponCode).GiftCard;
 
                 decimal nopAmtLeft = nopGiftCard.Amount;
-                List<GiftCardUsageHistory> nopGcHistory = _giftCardService.GetGiftCardUsageHistory(nopGiftCard).ToList();
+                List<GiftCardUsageHistory> nopGcHistory = (await _giftCardService.GetGiftCardUsageHistoryAsync(nopGiftCard)).ToList();
 
                 foreach (var history in nopGcHistory)
                 {
@@ -267,7 +271,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         #region Utilities
         [NonAction]
-        private IDictionary<ShoppingCartItem, List<ProductAttributeValue>> GetWarranties(
+        private async Task<IDictionary<ShoppingCartItem, List<ProductAttributeValue>>> GetWarrantiesAsync(
             IList<ShoppingCartItem> cart
         )
         {
@@ -275,20 +279,26 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 new Dictionary<ShoppingCartItem, List<ProductAttributeValue>>();
             foreach (var sci in cart)
             {
-
-                var mappings =
-                    _productAttributeService.GetProductAttributeMappingsByProductId(
+                var mappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(
                         sci.ProductId
-                    ).Where(
-                        pam =>
-                        _productAttributeService.GetProductAttributeById(pam.ProductAttributeId) != null &&
-                        _productAttributeService.GetProductAttributeById(pam.ProductAttributeId).Name == "Warranty");
+                    );
+                var warrantyMappings = new List<ProductAttributeMapping>();
+
+                foreach (var mapping in mappings)
+                {
+                    var pa = await _productAttributeService.GetProductAttributeByIdAsync(mapping.ProductAttributeId);
+
+                    if (pa != null && pa.Name == "Warranty")
+                    {
+                        warrantyMappings.Add(mapping);
+                    }
+                }
 
                 var options = new List<ProductAttributeValue>();
                 foreach (var mapping in mappings)
                 {
                     options.AddRange(
-                        _productAttributeService.GetProductAttributeValues(mapping.Id));
+                        await _productAttributeService.GetProductAttributeValuesAsync(mapping.Id));
                 }
                 if (options.Any())
                 {
@@ -304,7 +314,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         // Makes an external request
         [HttpPost, ActionName("ShippingMethod")]
         [FormValueRequired("nextstep")]
-        public IActionResult SelectShippingMethod(string shippingoption, IFormCollection form)
+        public async Task<IActionResult> SelectShippingMethod(string shippingoption, IFormCollection form)
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -321,9 +331,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
-            if (!_shoppingCartService.ShoppingCartRequiresShipping(cart))
+            if (!(await _shoppingCartService.ShoppingCartRequiresShippingAsync(cart)))
             {
-                _genericAttributeService.SaveAttribute<ShippingOption>(await _workContext.GetCurrentCustomerAsync(),
+                await _genericAttributeService.SaveAttributeAsync<ShippingOption>(await _workContext.GetCurrentCustomerAsync(),
                     NopCustomerDefaults.SelectedShippingOptionAttribute, null, (await _storeContext.GetCurrentStoreAsync()).Id);
                 return RedirectToRoute("CheckoutPaymentMethod");
             }
@@ -334,14 +344,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 var pickupInStore = ParsePickupInStore(form);
                 if (pickupInStore)
                 {
-                    var pickupOption = ParsePickupOption(form);
-                    SavePickupOption(pickupOption);
+                    var pickupOption = await ParsePickupOptionAsync(form);
+                    await SavePickupOptionAsync(pickupOption);
 
                     return RedirectToRoute("CheckoutPaymentMethod");
                 }
 
                 //set value indicating that "pick up in store" option has not been chosen
-                _genericAttributeService.SaveAttribute<PickupPoint>(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedPickupPointAttribute, null, (await _storeContext.GetCurrentStoreAsync()).Id);
+                await _genericAttributeService.SaveAttributeAsync<PickupPoint>(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedPickupPointAttribute, null, (await _storeContext.GetCurrentStoreAsync()).Id);
             }
 
             //parse selected method 
@@ -360,8 +370,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (shippingOptions == null || !shippingOptions.Any())
             {
                 //not found? let's load them using shipping service
-                shippingOptions = _shippingService.GetShippingOptions(cart, _customerService.GetCustomerShippingAddress(await _workContext.GetCurrentCustomerAsync()),
-                    await _workContext.GetCurrentCustomerAsync(), shippingRateComputationMethodSystemName, (await _storeContext.GetCurrentStoreAsync()).Id).ShippingOptions.ToList();
+                shippingOptions = (await _shippingService.GetShippingOptionsAsync(cart, await _customerService.GetCustomerShippingAddressAsync(await _workContext.GetCurrentCustomerAsync()),
+                    await _workContext.GetCurrentCustomerAsync(), shippingRateComputationMethodSystemName, (await _storeContext.GetCurrentStoreAsync()).Id)).ShippingOptions.ToList();
             }
             else
             {
@@ -376,11 +386,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 return RedirectToAction("ShippingMethod");
 
             //save
-            _genericAttributeService.SaveAttribute(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, shippingOption, (await _storeContext.GetCurrentStoreAsync()).Id);
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, shippingOption, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             SendExternalShippingMethodRequest();
 
-            if (_warrantyService.CartContainsWarranties(cart))
+            if (await _warrantyService.CartContainsWarrantiesAsync(cart))
             {
                 return RedirectToRoute("WarrantySelection");
             }
@@ -388,7 +398,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             return RedirectToRoute("CheckoutPaymentMethod");
         }
 
-        public IActionResult WarrantySelection()
+        public async Task<IActionResult> WarrantySelection()
         {
             var cart = await _shoppingCartService.GetShoppingCartAsync(
                 await _workContext.GetCurrentCustomerAsync(),
@@ -404,56 +414,75 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
-            return View(GetWarranties(cart));
+            return View(await GetWarrantiesAsync(cart));
         }
 
         [HttpPost, ActionName("WarrantySelection")]
         [FormValueRequired("nextstep")]
-        public IActionResult SelectWarranty(IFormCollection form)
+        public async Task<IActionResult> SelectWarranty(IFormCollection form)
         {
             var cart = await _shoppingCartService.GetShoppingCartAsync(
                 await _workContext.GetCurrentCustomerAsync(),
                 ShoppingCartType.ShoppingCart,
                 (await _storeContext.GetCurrentStoreAsync()).Id);
 
-            SaveWarranty(cart, form);
+            await SaveWarranty(cart, form);
 
             return RedirectToRoute("CheckoutPaymentMethod");
         }
 
-        private void SaveWarranty(IList<ShoppingCartItem> cart, IFormCollection form)
+        private async Task SaveWarranty(IList<ShoppingCartItem> cart, IFormCollection form)
         {
-            foreach (var keyValue in GetWarranties(cart))
+            foreach (var keyValue in await GetWarrantiesAsync(cart))
             {
                 var value = form[keyValue.Key.Id.ToString()];
                 var sci = keyValue.Key;
 
                 //Remove currently selected warranty
-                var warranties = _productAttributeParser.ParseProductAttributeValues(
-                    sci.AttributesXml)
-                    .Where(val => _productAttributeService.GetProductAttributeById(
-                            _productAttributeService.GetProductAttributeMappingById(val.ProductAttributeMappingId).ProductAttributeId
-                            ).Name == "Warranty")
-                    .ToList();
+                var pavs = await _productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml);
+                List<ProductAttributeValue> warranties = new List<ProductAttributeValue>();
+
+
+                foreach (var pav in pavs)
+                {
+                    var pam = await _productAttributeService.GetProductAttributeMappingByIdAsync(pav.ProductAttributeMappingId);
+                    var pa = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
+
+                    var isWarranty = pa.Name == "Warranty";
+                    if (isWarranty)
+                    {
+                        warranties.Add(pav);
+                    }
+                }
 
                 if (warranties.Count > 0)
                 {
-                    var pam =
-                        _productAttributeService.GetProductAttributeMappingsByProductId(
-                            await _productService.GetProductByIdAsync(sci.ProductId).Id)
-                        .Where(map => _productAttributeService.GetProductAttributeById(map.ProductAttributeId).Name == "Warranty").Single();
+                    var pams = (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(
+                            (await _productService.GetProductByIdAsync(sci.ProductId)).Id));
+                    ProductAttributeMapping warrantyPam = null;
+
+                    foreach (var pam in pams)
+                    {
+                        var isWarranty = (await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId)).Name == "Warranty";
+
+                        if (isWarranty)
+                        {
+                            warrantyPam = pam;
+                            continue;
+                        }
+                    }
 
                     sci.AttributesXml =
-                        _productAttributeParser.RemoveProductAttribute(sci.AttributesXml, pam);
+                        _productAttributeParser.RemoveProductAttribute(sci.AttributesXml, warrantyPam);
                 }
 
                 if (value != "NoWarranty")
                 {
-                    var pav = _productAttributeService.GetProductAttributeValueById(
+                    var pav = await _productAttributeService.GetProductAttributeValueByIdAsync(
                         int.Parse(value));
 
                     sci.AttributesXml = _productAttributeParser.AddProductAttribute(
-                        sci.AttributesXml, _productAttributeService.GetProductAttributeMappingById(pav.ProductAttributeMappingId), pav.Id.ToString());
+                        sci.AttributesXml, await _productAttributeService.GetProductAttributeMappingByIdAsync(pav.ProductAttributeMappingId), pav.Id.ToString());
                 }
 
                 // get checkout state before it gets deleted
@@ -482,7 +511,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 // updating shopping cart resets the order state, so we are going to save the state, and re-initialize it after the reset
                 await _shoppingCartService.UpdateShoppingCartItemAsync(
-                    _customerService.GetCustomerById(sci.CustomerId),
+                    await _customerService.GetCustomerByIdAsync(sci.CustomerId),
                     sci.Id,
                     sci.AttributesXml,
                     sci.CustomerEnteredPrice,
@@ -493,19 +522,19 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 // re-add shopping cart state to what it was before
 
                 // OfferedShippingOptions
-                _genericAttributeService.SaveAttribute(await _workContext.GetCurrentCustomerAsync(),
+                await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
                                                        NopCustomerDefaults.OfferedShippingOptionsAttribute,
                                                        shippingOptions,
                                                        (await _storeContext.GetCurrentStoreAsync()).Id);
 
                 // SelectedShippingOption
-                _genericAttributeService.SaveAttribute(await _workContext.GetCurrentCustomerAsync(),
+                await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
                     NopCustomerDefaults.SelectedShippingOptionAttribute,
                     selectedShippingOption,
                     (await _storeContext.GetCurrentStoreAsync()).Id);
 
                 // SelectedPaymentMethod
-                _genericAttributeService.SaveAttribute(await _workContext.GetCurrentCustomerAsync(),
+                await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
                                                        NopCustomerDefaults.SelectedPaymentMethodAttribute,
                                                        selectedPaymentMethodSystemName,
                                                        (await _storeContext.GetCurrentStoreAsync()).Id);
@@ -514,7 +543,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         // Custom - uses CC_REF_NO and AUTH_CODE
         [HttpPost, ActionName("Confirm")]
-        public IActionResult ConfirmOrder()
+        public async Task<IActionResult> ConfirmOrder()
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -534,14 +563,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
-            ValidateGiftCardAmounts();
+            await ValidateGiftCardAmountsAsync();
 
             //model
-            var model = _checkoutModelFactory.PrepareConfirmOrderModel(cart);
+            var model = await _checkoutModelFactory.PrepareConfirmOrderModelAsync(cart);
             try
             {
                 //prevent 2 orders being placed within an X seconds time frame
-                if (!IsMinimumOrderPlacementIntervalValid(await _workContext.GetCurrentCustomerAsync()))
+                if (!(await IsMinimumOrderPlacementIntervalValidAsync(await _workContext.GetCurrentCustomerAsync())))
                     throw new Exception(await _localizationService.GetResourceAsync( "Checkout.MinOrderPlacementInterval"));
 
                 //place order
@@ -557,7 +586,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 _paymentService.GenerateOrderGuid(processPaymentRequest);
                 processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
-                processPaymentRequest.CustomerId = await _workContext.GetCurrentCustomerAsync().Id;
+                processPaymentRequest.CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id;
                 processPaymentRequest.PaymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentCustomerAsync(),
                     NopCustomerDefaults.SelectedPaymentMethodAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
                 HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
@@ -576,7 +605,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     HttpContext.Session.Remove("Auth_No");
                 }
 
-                var placeOrderResult = _orderProcessingService.PlaceOrder(processPaymentRequest);
+                var placeOrderResult = await _orderProcessingService.PlaceOrderAsync(processPaymentRequest);
 
                 if (placeOrderResult.Success)
                 {
@@ -585,7 +614,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     {
                         Order = placeOrderResult.PlacedOrder
                     };
-                    _paymentService.PostProcessPayment(postProcessPaymentRequest);
+                    await _paymentService.PostProcessPaymentAsync(postProcessPaymentRequest);
 
                     if (_webHelper.IsRequestBeingRedirected || _webHelper.IsPostBeingDone)
                     {
@@ -601,7 +630,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             }
             catch (Exception exc)
             {
-                _logger.Warning(exc.Message, exc);
+                await _logger.WarningAsync(exc.Message, exc);
                 model.Warnings.Add(exc.Message);
             }
 
@@ -671,9 +700,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 {
                     return new OkResult();
                 }
-                SendPaymentRequest(paymentInfo, out status_code, out response_message);
+                var paymentResponse = await SendPaymentRequestAsync(paymentInfo);
 
-                if (status_code == "00")
+                if (paymentResponse.status_code == "00")
                 {
                     //session save
                     HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
@@ -681,8 +710,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 }
                 else
                 {
-                    response_message = WebUtility.HtmlDecode(response_message);
-                    ModelState.AddModelError("", response_message);
+                    paymentResponse.response_message = WebUtility.HtmlDecode(paymentResponse.response_message);
+                    ModelState.AddModelError("", paymentResponse.response_message);
                 }
             }
 

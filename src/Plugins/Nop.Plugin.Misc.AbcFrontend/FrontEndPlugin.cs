@@ -19,9 +19,9 @@ namespace Nop.Plugin.Misc.AbcFrontend
         public async override Task InstallAsync()
         {
             _storeInformationSettings.DefaultStoreTheme = "Pavilion";
-            _settingService.SaveSetting(_storeInformationSettings);
+            await _settingService.SaveSettingAsync(_storeInformationSettings);
 
-            base.Install();
+            await base.InstallAsync();
         }
     }
 

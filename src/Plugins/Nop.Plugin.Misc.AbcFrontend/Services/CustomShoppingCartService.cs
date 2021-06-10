@@ -146,7 +146,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 ProductAttributeMapping warrantyPam = _attributeUtilities.GetWarrantyAttributeMapping(attributesXml);
 
                 decimal attributesTotalPrice = decimal.Zero;
-                var attributeValues = _productAttributeParser.ParseProductAttributeValues(attributesXml);
+                var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml);
                 if (attributeValues != null)
                 {
                     foreach (var attributeValue in attributeValues)
@@ -209,7 +209,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
             //rounding
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                finalPrice = _priceCalculationService.RoundPrice(finalPrice);
+                finalPrice = await _priceCalculationService.RoundPriceAsync(finalPrice);
 
             return finalPrice;
         }
@@ -218,7 +218,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             ShoppingCartItem shoppingCartItem,
             bool includeDiscounts)
         {
-            var unitPrice = base.GetUnitPriceAsync(
+            var discountAmount = decimal.Zero;
+            var appliedDiscounts = new List<Discount>();
+            (decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts) baseResult = base.GetUnitPriceAsync(
                 shoppingCartItem,
                 includeDiscounts,
                 out discountAmount,
@@ -226,17 +228,17 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
             if (_hiddenAttributeValueRepository == null)
             {
-                return unitPrice;
+                return baseResult;
             }
 
             var hiddenAttrVals = _hiddenAttributeValueRepository.Table.Where(hav => hav.ShoppingCartItem_Id == shoppingCartItem.Id);
 
             foreach (var hav in hiddenAttrVals)
             {
-                unitPrice += hav.PriceAdjustment;
+                baseResult.unitPrice += hav.PriceAdjustment;
             }
 
-            return unitPrice;
+            return baseResult;
         }
     }
 }

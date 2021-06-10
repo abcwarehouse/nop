@@ -136,25 +136,23 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             Order order
         )
         {
-            //move shopping cart items to order items
             foreach (var sc in details.Cart)
             {
                 var product = await _productService.GetProductByIdAsync(sc.ProductId);
 
                 //prices
-                var scUnitPrice = await _shoppingCartService.GetUnitPriceAsync(sc);
-                var scSubTotal = _shoppingCartService.GetSubTotal(sc, true, out var discountAmount,
-                    out var scDiscounts, out _);
+                var scUnitPrice = (await _shoppingCartService.GetUnitPriceAsync(sc, true)).unitPrice;
+                var (scSubTotal, discountAmount, scDiscounts, _) = await _shoppingCartService.GetSubTotalAsync(sc, true);
                 var scUnitPriceInclTax =
-                    _taxService.GetProductPrice(product, scUnitPrice, true, details.Customer, out var _);
+                    await _taxService.GetProductPriceAsync(product, scUnitPrice, true, details.Customer);
                 var scUnitPriceExclTax =
-                    _taxService.GetProductPrice(product, scUnitPrice, false, details.Customer, out _);
+                    await _taxService.GetProductPriceAsync(product, scUnitPrice, false, details.Customer);
                 var scSubTotalInclTax =
-                    _taxService.GetProductPrice(product, scSubTotal, true, details.Customer, out _);
+                    await _taxService.GetProductPriceAsync(product, scSubTotal, true, details.Customer);
                 var scSubTotalExclTax =
-                    _taxService.GetProductPrice(product, scSubTotal, false, details.Customer, out _);
+                    await _taxService.GetProductPriceAsync(product, scSubTotal, false, details.Customer);
 
-
+                // custom
                 decimal warrantyUnitPriceExclTax;
                 decimal warrantyUnitPriceInclTax;
 
@@ -166,18 +164,20 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     out warrantyUnitPriceExclTax, out warrantyUnitPriceInclTax);
 
                 var discountAmountInclTax =
-                    _taxService.GetProductPrice(product, discountAmount, true, details.Customer, out _);
+                    await _taxService.GetProductPriceAsync(product, discountAmount, true, details.Customer);
                 var discountAmountExclTax =
-                    _taxService.GetProductPrice(product, discountAmount, false, details.Customer, out _);
+                    await _taxService.GetProductPriceAsync(product, discountAmount, false, details.Customer);
                 foreach (var disc in scDiscounts)
                     if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
                         details.AppliedDiscounts.Add(disc);
 
+                
+
                 //attributes
                 var attributeDescription =
-                    _productAttributeFormatter.FormatAttributes(product, sc.AttributesXml, details.Customer);
+                    await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.Customer);
 
-                var itemWeight = _shippingService.GetShoppingCartItemWeight(sc);
+                var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(sc);
 
                 //save order item
                 var orderItem = new OrderItem
@@ -185,16 +185,16 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     OrderItemGuid = Guid.NewGuid(),
                     OrderId = order.Id,
                     ProductId = product.Id,
-                    UnitPriceInclTax = scUnitPriceInclTax,
-                    UnitPriceExclTax = scUnitPriceExclTax,
-                    PriceInclTax = scSubTotalInclTax,
-                    PriceExclTax = scSubTotalExclTax,
-                    OriginalProductCost = _priceCalculationService.GetProductCost(product, sc.AttributesXml),
+                    UnitPriceInclTax = scUnitPriceInclTax.price,
+                    UnitPriceExclTax = scUnitPriceExclTax.price,
+                    PriceInclTax = scSubTotalInclTax.price,
+                    PriceExclTax = scSubTotalExclTax.price,
+                    OriginalProductCost = await _priceCalculationService.GetProductCostAsync(product, sc.AttributesXml),
                     AttributeDescription = attributeDescription,
                     AttributesXml = sc.AttributesXml,
                     Quantity = sc.Quantity,
-                    DiscountAmountInclTax = discountAmountInclTax,
-                    DiscountAmountExclTax = discountAmountExclTax,
+                    DiscountAmountInclTax = discountAmountInclTax.price,
+                    DiscountAmountExclTax = discountAmountExclTax.price,
                     DownloadCount = 0,
                     IsDownloadActivated = false,
                     LicenseDownloadId = 0,
@@ -203,18 +203,18 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     RentalEndDateUtc = sc.RentalEndDateUtc
                 };
 
-                _orderService.InsertOrderItem(orderItem);
+                await _orderService.InsertOrderItemAsync(orderItem);
 
                 //gift cards
-                AddGiftCards(product, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax);
+                await AddGiftCardsAsync(product, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax.price);
 
                 //inventory
-                _productService.AdjustInventory(product, -sc.Quantity, sc.AttributesXml,
-                    string.Format(await _localizationService.GetResourceAsync( "Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
+                await _productService.AdjustInventoryAsync(product, -sc.Quantity, sc.AttributesXml,
+                    string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
             }
 
             //clear shopping cart
-            details.Cart.ToList().ForEach(sci => await _shoppingCartService.DeleteShoppingCartItemAsync(sci, false));
+            details.Cart.ToList().ForEach(async sci => await _shoppingCartService.DeleteShoppingCartItemAsync(sci, false));
         }
     }
 }

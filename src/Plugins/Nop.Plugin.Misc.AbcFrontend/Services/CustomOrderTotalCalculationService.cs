@@ -125,53 +125,50 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _warrantyService = warrantyService;
         }
 
+        // Custom - calculates warranty tax
         public async override Task<(decimal discountAmount, List<Discount> appliedDiscounts, decimal subTotalWithoutDiscount, decimal subTotalWithDiscount, SortedDictionary<decimal, decimal> taxRates)> GetShoppingCartSubTotalAsync(
             IList<ShoppingCartItem> cart,
             bool includingTax)
         {
-            discountAmount = decimal.Zero;
-            appliedDiscounts = new List<Discount>();
-            subTotalWithoutDiscount = decimal.Zero;
-            subTotalWithDiscount = decimal.Zero;
-            taxRates = new SortedDictionary<decimal, decimal>();
+            var discountAmount = decimal.Zero;
+            var appliedDiscounts = new List<Discount>();
+            var subTotalWithoutDiscount = decimal.Zero;
+            var subTotalWithDiscount = decimal.Zero;
+            var taxRates = new SortedDictionary<decimal, decimal>();
 
             if (!cart.Any())
-                return;
+                return (discountAmount, appliedDiscounts, subTotalWithoutDiscount, subTotalWithDiscount, taxRates);
 
             //get the customer 
-            var customer = _customerService.GetShoppingCartCustomer(cart);
+            var customer = await _customerService.GetShoppingCartCustomerAsync(cart);
 
             //sub totals
-            decimal subTotalExclTaxWithoutDiscount = decimal.Zero;
-            decimal subTotalInclTaxWithoutDiscount = decimal.Zero;
+            var subTotalExclTaxWithoutDiscount = decimal.Zero;
+            var subTotalInclTaxWithoutDiscount = decimal.Zero;
             foreach (var shoppingCartItem in cart)
             {
-                decimal sciSubTotal = _shoppingCartService.GetSubTotal(shoppingCartItem);
+                var sciSubTotal = (await _shoppingCartService.GetSubTotalAsync(shoppingCartItem, true)).subTotal;
                 var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
-                decimal taxRate;
-                decimal sciExclTax = _taxService.GetProductPrice(
-                    product, sciSubTotal, false, customer, out taxRate);
-                decimal sciInclTax;
+                var (sciExclTax, taxRate) = await _taxService.GetProductPriceAsync(product, sciSubTotal, false, customer);
+                var (sciInclTax, _) = await _taxService.GetProductPriceAsync(product, sciSubTotal, true, customer);
                 _warrantyService.CalculateWarrantyTax(
                     shoppingCartItem, customer, sciExclTax, out taxRate, out sciInclTax);
-
                 subTotalExclTaxWithoutDiscount += sciExclTax;
                 subTotalInclTaxWithoutDiscount += sciInclTax;
 
-
                 //tax rates
-                decimal sciTax = sciInclTax - sciExclTax;
-                if (taxRate > decimal.Zero && sciTax > decimal.Zero)
+                var sciTax = sciInclTax - sciExclTax;
+                if (taxRate <= decimal.Zero || sciTax <= decimal.Zero)
+                    continue;
+
+                if (!taxRates.ContainsKey(taxRate))
                 {
-                    if (!taxRates.ContainsKey(taxRate))
-                    {
-                        taxRates.Add(taxRate, sciTax);
-                    }
-                    else
-                    {
-                        taxRates[taxRate] = taxRates[taxRate] + sciTax;
-                    }
+                    taxRates.Add(taxRate, sciTax);
+                }
+                else
+                {
+                    taxRates[taxRate] = taxRates[taxRate] + sciTax;
                 }
             }
 
@@ -182,12 +179,12 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 var attributeValues = _checkoutAttributeParser.ParseCheckoutAttributeValues(checkoutAttributesXml);
                 if (attributeValues != null)
                 {
-                    foreach (var (attribute, values) in attributeValues)
+                    await foreach (var (attribute, values) in attributeValues)
                     {
-                        foreach (var attributeValue in values)
+                        await foreach (var attributeValue in values)
                         {
-                            var caExclTax = _taxService.GetCheckoutAttributePrice(attribute, attributeValue, false, customer, out var taxRate);
-                            var caInclTax = _taxService.GetCheckoutAttributePrice(attribute, attributeValue, true, customer, out taxRate);
+                            var (caExclTax, taxRate) = await _taxService.GetCheckoutAttributePriceAsync(attribute, attributeValue, false, customer);
+                            var (caInclTax, _) = await _taxService.GetCheckoutAttributePriceAsync(attribute, attributeValue, true, customer);
 
                             subTotalExclTaxWithoutDiscount += caExclTax;
                             subTotalInclTaxWithoutDiscount += caInclTax;
@@ -209,54 +206,55 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     }
                 }
             }
-
+            
             //subtotal without discount
             subTotalWithoutDiscount = includingTax ? subTotalInclTaxWithoutDiscount : subTotalExclTaxWithoutDiscount;
             if (subTotalWithoutDiscount < decimal.Zero)
                 subTotalWithoutDiscount = decimal.Zero;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                subTotalWithoutDiscount = _priceCalculationService.RoundPrice(subTotalWithoutDiscount);
+                subTotalWithoutDiscount = await _priceCalculationService.RoundPriceAsync(subTotalWithoutDiscount);
 
             //We calculate discount amount on order subtotal excl tax (discount first)
             //calculate discount amount ('Applied to order subtotal' discount)
-            decimal discountAmountExclTax = GetOrderSubtotalDiscount(customer, subTotalExclTaxWithoutDiscount, out appliedDiscounts);
+            decimal discountAmountExclTax;
+            (discountAmountExclTax, appliedDiscounts) = await GetOrderSubtotalDiscountAsync(customer, subTotalExclTaxWithoutDiscount);
             if (subTotalExclTaxWithoutDiscount < discountAmountExclTax)
                 discountAmountExclTax = subTotalExclTaxWithoutDiscount;
-            decimal discountAmountInclTax = discountAmountExclTax;
+            var discountAmountInclTax = discountAmountExclTax;
             //subtotal with discount (excl tax)
-            decimal subTotalExclTaxWithDiscount = subTotalExclTaxWithoutDiscount - discountAmountExclTax;
-            decimal subTotalInclTaxWithDiscount = subTotalExclTaxWithDiscount;
+            var subTotalExclTaxWithDiscount = subTotalExclTaxWithoutDiscount - discountAmountExclTax;
+            var subTotalInclTaxWithDiscount = subTotalExclTaxWithDiscount;
 
             //add tax for shopping items & checkout attributes
             var tempTaxRates = new Dictionary<decimal, decimal>(taxRates);
-            foreach (KeyValuePair<decimal, decimal> kvp in tempTaxRates)
+            foreach (var kvp in tempTaxRates)
             {
-                decimal taxRate = kvp.Key;
-                decimal taxValue = kvp.Value;
+                var taxRate = kvp.Key;
+                var taxValue = kvp.Value;
 
-                if (taxValue != decimal.Zero)
+                if (taxValue == decimal.Zero)
+                    continue;
+
+                //discount the tax amount that applies to subtotal items
+                if (subTotalExclTaxWithoutDiscount > decimal.Zero)
                 {
-                    //discount the tax amount that applies to subtotal items
-                    if (subTotalExclTaxWithoutDiscount > decimal.Zero)
-                    {
-                        decimal discountTax = taxRates[taxRate] * (discountAmountExclTax / subTotalExclTaxWithoutDiscount);
-                        discountAmountInclTax += discountTax;
-                        taxValue = taxRates[taxRate] - discountTax;
-                        if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                            taxValue = _priceCalculationService.RoundPrice(taxValue);
-                        taxRates[taxRate] = taxValue;
-                    }
-
-                    //subtotal with discount (incl tax)
-                    subTotalInclTaxWithDiscount += taxValue;
+                    var discountTax = taxRates[taxRate] * (discountAmountExclTax / subTotalExclTaxWithoutDiscount);
+                    discountAmountInclTax += discountTax;
+                    taxValue = taxRates[taxRate] - discountTax;
+                    if (_shoppingCartSettings.RoundPricesDuringCalculation)
+                        taxValue = await _priceCalculationService.RoundPriceAsync(taxValue);
+                    taxRates[taxRate] = taxValue;
                 }
+
+                //subtotal with discount (incl tax)
+                subTotalInclTaxWithDiscount += taxValue;
             }
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
             {
-                discountAmountInclTax = _priceCalculationService.RoundPrice(discountAmountInclTax);
-                discountAmountExclTax = _priceCalculationService.RoundPrice(discountAmountExclTax);
+                discountAmountInclTax = await _priceCalculationService.RoundPriceAsync(discountAmountInclTax);
+                discountAmountExclTax = await _priceCalculationService.RoundPriceAsync(discountAmountExclTax);
             }
 
             if (includingTax)
@@ -274,7 +272,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 subTotalWithDiscount = decimal.Zero;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                subTotalWithDiscount = _priceCalculationService.RoundPrice(subTotalWithDiscount);
+                subTotalWithDiscount = await _priceCalculationService.RoundPriceAsync(subTotalWithDiscount);
+
+            return (discountAmount, appliedDiscounts, subTotalWithoutDiscount, subTotalWithDiscount, taxRates);
         }
     }
 

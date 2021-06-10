@@ -21,7 +21,7 @@
                 workContext.CurrentCustomer,
                 ShoppingCartType.ShoppingCart,
                 storeContext.CurrentStore.Id);
-    var hasWarranties = warrantyService.CartContainsWarranties(cart);
+    var hasWarranties = warrantyService.await CartContainsWarrantiesAsync(cart);
 }
 
 <div class="order-progress">

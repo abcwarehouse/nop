@@ -2,6 +2,7 @@
 using Nop.Core.Infrastructure;
 using Nop.Services.Common;
 using System;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Extensions
 {
@@ -12,10 +13,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Extensions
             return product.Gtin == "077777965061";
         }
 
-        public static decimal GetSpecialPrice(this Product product)
+        public static async Task<decimal> GetSpecialPriceAsync(this Product product)
         {
             var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
-            return genericAttributeService.GetAttribute<decimal>(product, "SpecialPrice");
+            return await genericAttributeService.GetAttributeAsync<decimal>(product, "SpecialPrice");
         }
     }
 }
