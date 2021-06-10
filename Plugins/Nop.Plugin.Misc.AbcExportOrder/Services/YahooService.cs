@@ -184,7 +184,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         0.00M, // free item
                         freeGift,
                         "", // no url for free gifts
-                        GetPickupStore(orderItem)
+                        GetPickupStore(orderItem),
+                        -1
                     ));
                 }
 

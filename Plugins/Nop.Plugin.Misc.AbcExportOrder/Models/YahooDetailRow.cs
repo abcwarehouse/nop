@@ -25,20 +25,23 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
             decimal unitPrice,
             string description,
             string url,
-            string pickupBranchId
+            string pickupBranchId,
+            int? quantity = null
         )
         {
             Id = $"{prefix}{orderItem.OrderId}+{(orderItem.IsPickup() ? 'p' : 's')}";
             LineNumber = itemLine;
             ItemId = itemId;
             Code = itemCode != null ? itemCode.Substring(0, Math.Min(15, itemCode.Length)) : null;
-            Quantity = orderItem.Quantity;
+            Quantity = quantity != null ? quantity.Value : orderItem.Quantity;
             UnitPrice = orderItem.UnitPriceExclTax;
             Description = description;
             Url = url;
             PickupBranchId = pickupBranchId;
             UnitPrice = unitPrice;
         }
+
+
         public List<string> ToStringValues()
         {
             return new List<string>()
