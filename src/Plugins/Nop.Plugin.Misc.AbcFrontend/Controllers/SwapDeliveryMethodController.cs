@@ -70,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (csm == null)
             {
                 // kick back to product page
-                var product = _productService.GetProductById(item.ProductId);
+                var product = await _productService.GetProductByIdAsync(item.ProductId);
                 var seName = _urlRecordService.GetSeName<Product>(product);
                 string url = Url.RouteUrl("Product", new { SeName = seName });
                 url += "?updatecartitemid=" + item.Id;
@@ -97,8 +97,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 if (isHomeDeliveryProduct)
                 {
                     // replace pickup with home delivery if the item is a home delivery product
-                    var product = _productService.GetProductById(item.ProductId);
-                    attributes = _attributeUtilities.InsertHomeDeliveryAttribute(product, attributes);
+                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    attributes = await _attributeUtilities.InsertHomeDeliveryAttributeAsync(product, attributes);
                 }
                 else
                 {
@@ -110,15 +110,15 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             else
             {
                 // check if this item can be picked up at the current store
-                StockResponse response = _backendStockService.GetApiStock(item.ProductId);
+                StockResponse response = await _backendStockService.GetApiStockAsync(item.ProductId);
                 bool itemAvailableAtStore = response.ProductStocks
                     .Where(p => p.Shop.Id == csm.ShopId && p.Available).Any();
 
                 if (itemAvailableAtStore)
                 {
                     // replace home delivery/shipping with pickup
-                    var product = _productService.GetProductById(item.ProductId);
-                    attributes = _attributeUtilities.InsertPickupAttribute(product, response, attributes);
+                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    attributes = await _attributeUtilities.InsertPickupAttributeAsync(product, response, attributes);
                 }
                 else
                 {
@@ -140,11 +140,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 .Select(sci => sci).FirstOrDefault();
             if (sameCartItem == null)
             {
-                await _shoppingCartService.UpdateShoppingCartItem(await _workContext.GetCurrentCustomerAsync(), item.Id, attributes, item.CustomerEnteredPrice, null, null, item.Quantity, true);
+                await _shoppingCartService.UpdateShoppingCartItemAsync(await _workContext.GetCurrentCustomerAsync(), item.Id, attributes, item.CustomerEnteredPrice, null, null, item.Quantity, true);
             }
             else
             {
-                await _shoppingCartService.UpdateShoppingCartItem(await _workContext.GetCurrentCustomerAsync(), sameCartItem.Id,
+                await _shoppingCartService.UpdateShoppingCartItemAsync(await _workContext.GetCurrentCustomerAsync(), sameCartItem.Id,
                     sameCartItem.AttributesXml, sameCartItem.CustomerEnteredPrice, null, null, item.Quantity + sameCartItem.Quantity, true);
                 await _shoppingCartService.DeleteShoppingCartItemAsync(item);
             }

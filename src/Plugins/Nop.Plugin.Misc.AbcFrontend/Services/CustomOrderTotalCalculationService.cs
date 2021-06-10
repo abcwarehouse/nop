@@ -147,7 +147,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             foreach (var shoppingCartItem in cart)
             {
                 decimal sciSubTotal = _shoppingCartService.GetSubTotal(shoppingCartItem);
-                var product = _productService.GetProductById(shoppingCartItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
                 decimal taxRate;
                 decimal sciExclTax = _taxService.GetProductPrice(
@@ -178,7 +178,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             //checkout attributes
             if (customer != null)
             {
-                var checkoutAttributesXml = _genericAttributeService.GetAttribute<string>(customer, NopCustomerDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
+                var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
                 var attributeValues = _checkoutAttributeParser.ParseCheckoutAttributeValues(checkoutAttributesXml);
                 if (attributeValues != null)
                 {

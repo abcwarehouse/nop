@@ -66,7 +66,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             out decimal warrantyUnitPriceExclTax, out decimal warrantyUnitPriceInclTax)
         {
             taxRate = decimal.Zero;
-            var product = _productService.GetProductById(sci.ProductId);
+            var product = await _productService.GetProductByIdAsync(sci.ProductId);
             sciSubTotalInclTax = _taxService.GetProductPrice(product, sciSubTotalExclTax, true, customer, out taxRate);
             sciUnitPriceInclTax = _taxService.GetProductPrice(product, sciUnitPriceExclTax, true, customer, out taxRate);
             warrantyUnitPriceExclTax = decimal.Zero;

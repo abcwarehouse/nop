@@ -29,7 +29,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         [IgnoreAntiforgeryToken]
         public virtual async Task<IActionResult> AsyncUpload()
         {
-            //if (!await _permissionService.Authorize(StandardPermissionProvider.UploadPictures))
+            //if (!await await _permissionService.AuthorizeAsync(StandardPermissionProvider.UploadPictures))
             //    return Json(new { success = false, error = "You do not have required permissions" }, "text/plain");
 
             var httpPostedFile = Request.Form.Files.FirstOrDefault();

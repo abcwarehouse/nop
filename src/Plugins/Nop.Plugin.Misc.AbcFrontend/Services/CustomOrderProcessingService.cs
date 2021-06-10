@@ -139,7 +139,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             //move shopping cart items to order items
             foreach (var sc in details.Cart)
             {
-                var product = _productService.GetProductById(sc.ProductId);
+                var product = await _productService.GetProductByIdAsync(sc.ProductId);
 
                 //prices
                 var scUnitPrice = await _shoppingCartService.GetUnitPriceAsync(sc);

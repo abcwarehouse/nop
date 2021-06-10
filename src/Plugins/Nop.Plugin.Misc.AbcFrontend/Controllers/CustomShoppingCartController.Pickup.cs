@@ -18,13 +18,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         //currently we use this method on the product details pages
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public IActionResult AddProductToCart_Pickup(
+        public async Task<IActionResult> AddProductToCart_Pickup(
             int productId,
             int shoppingCartTypeId,
             IFormCollection form
         )
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null)
             {
                 return Json(new
@@ -45,8 +45,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //-------------------------------------CUSTOM CODE------------------------------------------
             // force customer to select a store if store not already selected
             //TODO: This could be cached, would have to be cleared when the order is complete
+            var customerId = (await _workContext.GetCurrentCustomerAsync()).Id;
             CustomerShopMapping csm = _customerShopMappingRepository.Table
-                .Where(c => c.CustomerId == await _workContext.GetCurrentCustomerAsync().Id)
+                .Where(c => c.CustomerId == customerId)
                 .Select(c => c).FirstOrDefault();
             if (csm == null)
             {
@@ -59,7 +60,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             }
 
             // check if item is available
-            StockResponse stockResponse = _backendStockService.GetApiStock(product.Id);
+            StockResponse stockResponse = await _backendStockService.GetApiStockAsync(product.Id);
             if (stockResponse == null)
             {
                 bool availableAtStore = stockResponse.ProductStocks
@@ -117,18 +118,18 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var addToCartWarnings = new List<string>();
 
             //customer entered price
-            var customerEnteredPriceConverted = _productAttributeParser.ParseCustomerEnteredPrice(product, form);
+            var customerEnteredPriceConverted = await _productAttributeParser.ParseCustomerEnteredPriceAsync(product, form);
 
             //entered quantity
             var quantity = _productAttributeParser.ParseEnteredQuantity(product, form);
 
             //product and gift card attributes
-            var attributes = _productAttributeParser.ParseProductAttributes(product, form, addToCartWarnings);
+            var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
 
             //---------------------------------------------START CUSTOM CODE-----------------------------------------------------
             if (stockResponse != null)
             {
-                attributes = _attributeUtilities.InsertPickupAttribute(product, stockResponse, attributes);
+                attributes = await _attributeUtilities.InsertPickupAttributeAsync(product, stockResponse, attributes);
             }
             //----------------------------------------------END CUSTOM CODE------------------------------------------------------
 
@@ -142,7 +143,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             SaveItem(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
 
             //return result
-            return GetProductToCartDetails(addToCartWarnings, cartType, product);
+            return await GetProductToCartDetails(addToCartWarnings, cartType, product);
         }
 
         // See if we can just inherit these from the base controller
@@ -153,7 +154,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (updatecartitem == null)
             {
                 //add to the cart
-                addToCartWarnings.AddRange(_shoppingCartService.AddToCart(await _workContext.GetCurrentCustomerAsync(),
+                addToCartWarnings.AddRange(await _shoppingCartService.AddToCartAsync(await _workContext.GetCurrentCustomerAsync(),
                     product, cartType, (await _storeContext.GetCurrentStoreAsync()).Id,
                     attributes, customerEnteredPriceConverted,
                     rentalStartDate, rentalEndDate, quantity, true));
@@ -162,7 +163,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             {
                 var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), updatecartitem.ShoppingCartType, (await _storeContext.GetCurrentStoreAsync()).Id);
 
-                var otherCartItemWithSameParameters = _shoppingCartService.FindShoppingCartItemInTheCart(
+                var otherCartItemWithSameParameters = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(
                     cart, updatecartitem.ShoppingCartType, product, attributes, customerEnteredPriceConverted,
                     rentalStartDate, rentalEndDate);
                 if (otherCartItemWithSameParameters != null &&
@@ -172,7 +173,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     otherCartItemWithSameParameters = null;
                 }
                 //update existing item
-                addToCartWarnings.AddRange(await _shoppingCartService.UpdateShoppingCartItem(await _workContext.GetCurrentCustomerAsync(),
+                addToCartWarnings.AddRange(await _shoppingCartService.UpdateShoppingCartItemAsync(await _workContext.GetCurrentCustomerAsync(),
                     updatecartitem.Id, attributes, customerEnteredPriceConverted,
                     rentalStartDate, rentalEndDate, quantity + (otherCartItemWithSameParameters?.Quantity ?? 0), true));
                 if (otherCartItemWithSameParameters != null && !addToCartWarnings.Any())

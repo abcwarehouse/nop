@@ -38,6 +38,7 @@ using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcExportOrder.Services;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -298,23 +299,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             return warranties;
         }
 
-        [NonAction]
-        protected virtual bool IsMinimumOrderPlacementIntervalValid(Customer customer)
-        {
-            //prevent 2 orders being placed within an X seconds time frame
-            if (_orderSettings.MinimumOrderPlacementInterval == 0)
-                return true;
-
-            var lastOrder = _orderService.SearchOrders(storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
-                customerId: await _workContext.GetCurrentCustomerAsync().Id, pageSize: 1)
-                .FirstOrDefault();
-            if (lastOrder == null)
-                return true;
-
-            var interval = DateTime.UtcNow - lastOrder.CreatedOnUtc;
-            return interval.TotalSeconds > _orderSettings.MinimumOrderPlacementInterval;
-        }
-
         #endregion
 
         // Makes an external request
@@ -334,7 +318,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (_orderSettings.OnePageCheckoutEnabled)
                 return RedirectToRoute("CheckoutOnePage");
 
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
             if (!_shoppingCartService.ShoppingCartRequiresShipping(cart))
@@ -371,7 +355,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
             //find it
             //performance optimization. try cache first
-            var shippingOptions = _genericAttributeService.GetAttribute<List<ShippingOption>>(await _workContext.GetCurrentCustomerAsync(),
+            var shippingOptions = await _genericAttributeService.GetAttributeAsync<List<ShippingOption>>(await _workContext.GetCurrentCustomerAsync(),
                 NopCustomerDefaults.OfferedShippingOptionsAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
             if (shippingOptions == null || !shippingOptions.Any())
             {
@@ -417,7 +401,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (_orderSettings.OnePageCheckoutEnabled)
                 return RedirectToRoute("CheckoutOnePage");
 
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
             return View(GetWarranties(cart));
@@ -456,7 +440,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 {
                     var pam =
                         _productAttributeService.GetProductAttributeMappingsByProductId(
-                            _productService.GetProductById(sci.ProductId).Id)
+                            await _productService.GetProductByIdAsync(sci.ProductId).Id)
                         .Where(map => _productAttributeService.GetProductAttributeById(map.ProductAttributeId).Name == "Warranty").Single();
 
                     sci.AttributesXml =
@@ -476,14 +460,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 // hold OfferedShippingOptions
                 var shippingOptions =
-                    _genericAttributeService.GetAttribute<List<ShippingOption>>(
+                    await _genericAttributeService.GetAttributeAsync<List<ShippingOption>>(
                         await _workContext.GetCurrentCustomerAsync(),
                         NopCustomerDefaults.OfferedShippingOptionsAttribute,
                         (await _storeContext.GetCurrentStoreAsync()).Id);
 
                 // hold selected shipping option
                 var selectedShippingOption =
-                    _genericAttributeService.GetAttribute<ShippingOption>(
+                    await _genericAttributeService.GetAttributeAsync<ShippingOption>(
                         await _workContext.GetCurrentCustomerAsync(),
                         NopCustomerDefaults.SelectedShippingOptionAttribute,
                         (await _storeContext.GetCurrentStoreAsync()).Id);
@@ -491,13 +475,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 // hold SelectedPaymentMethod
                 //find a selected (previously) payment method
                 var selectedPaymentMethodSystemName =
-                    _genericAttributeService.GetAttribute<string>(
+                    await _genericAttributeService.GetAttributeAsync<string>(
                         await _workContext.GetCurrentCustomerAsync(),
                         NopCustomerDefaults.SelectedPaymentMethodAttribute,
                         (await _storeContext.GetCurrentStoreAsync()).Id);
 
                 // updating shopping cart resets the order state, so we are going to save the state, and re-initialize it after the reset
-                await _shoppingCartService.UpdateShoppingCartItem(
+                await _shoppingCartService.UpdateShoppingCartItemAsync(
                     _customerService.GetCustomerById(sci.CustomerId),
                     sci.Id,
                     sci.AttributesXml,
@@ -547,7 +531,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (_orderSettings.OnePageCheckoutEnabled)
                 return RedirectToRoute("CheckoutOnePage");
 
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
             ValidateGiftCardAmounts();
@@ -565,7 +549,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 if (processPaymentRequest == null)
                 {
                     //Check whether payment workflow is required
-                    if (_orderProcessingService.IsPaymentWorkflowRequired(cart))
+                    if (await _orderProcessingService.IsPaymentWorkflowRequiredAsync(cart))
                         return RedirectToRoute("CheckoutPaymentInfo");
 
                     processPaymentRequest = new ProcessPaymentRequest();
@@ -574,7 +558,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 _paymentService.GenerateOrderGuid(processPaymentRequest);
                 processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                 processPaymentRequest.CustomerId = await _workContext.GetCurrentCustomerAsync().Id;
-                processPaymentRequest.PaymentMethodSystemName = _genericAttributeService.GetAttribute<string>(await _workContext.GetCurrentCustomerAsync(),
+                processPaymentRequest.PaymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentCustomerAsync(),
                     NopCustomerDefaults.SelectedPaymentMethodAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
                 HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
 
@@ -628,7 +612,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         // Custom, allows for AJAX calls
         [HttpPost, ActionName("PaymentInfo")]
         [FormValueRequired("nextstep")]
-        public IActionResult EnterPaymentInfo(IFormCollection form)
+        public async Task<IActionResult> EnterPaymentInfo(IFormCollection form)
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -645,25 +629,25 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (_orderSettings.OnePageCheckoutEnabled)
                 return RedirectToRoute("CheckoutOnePage");
 
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
             //Check whether payment workflow is required
-            var isPaymentWorkflowRequired = _orderProcessingService.IsPaymentWorkflowRequired(cart);
+            var isPaymentWorkflowRequired = await _orderProcessingService.IsPaymentWorkflowRequiredAsync(cart);
             if (!isPaymentWorkflowRequired)
             {
                 return RedirectToRoute("CheckoutConfirm");
             }
 
             //load payment method
-            var paymentMethodSystemName = _genericAttributeService.GetAttribute<string>(await _workContext.GetCurrentCustomerAsync(),
+            var paymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentCustomerAsync(),
                 NopCustomerDefaults.SelectedPaymentMethodAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
-            var paymentMethod = _paymentPluginManager
-                .LoadPluginBySystemName(paymentMethodSystemName, await _workContext.GetCurrentCustomerAsync(), (await _storeContext.GetCurrentStoreAsync()).Id);
+            var paymentMethod = await _paymentPluginManager
+                .LoadPluginBySystemNameAsync(paymentMethodSystemName, await _workContext.GetCurrentCustomerAsync(), (await _storeContext.GetCurrentStoreAsync()).Id);
             if (paymentMethod == null)
                 return RedirectToRoute("CheckoutPaymentMethod");
 
-            var warnings = paymentMethod.ValidatePaymentForm(form);
+            var warnings = await paymentMethod.ValidatePaymentFormAsync(form);
             foreach (var warning in warnings)
                 ModelState.AddModelError("", warning);
 
@@ -675,7 +659,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (ModelState.IsValid)
             {
                 //get payment info
-                var paymentInfo = paymentMethod.GetPaymentInfo(form);
+                var paymentInfo = await paymentMethod.GetPaymentInfoAsync(form);
                 //set previous order GUID (if exists)
                 _paymentService.GenerateOrderGuid(paymentInfo);
 
@@ -704,45 +688,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
             //If we got this far, something failed, redisplay form
             //model
-            var model = _checkoutModelFactory.PreparePaymentInfoModel(paymentMethod);
+            var model = await _checkoutModelFactory.PreparePaymentInfoModelAsync(paymentMethod);
             return View(model);
-        }
-
-        protected virtual bool ParsePickupInStore(IFormCollection form)
-        {
-            var pickupInStore = false;
-
-            var pickupInStoreParameter = form["PickupInStore"].FirstOrDefault();
-            if (!string.IsNullOrWhiteSpace(pickupInStoreParameter))
-                bool.TryParse(pickupInStoreParameter, out pickupInStore);
-
-            return pickupInStore;
-        }
-
-
-        protected virtual PickupPoint ParsePickupOption(IFormCollection form)
-        {
-            var pickupPoint = form["pickup-points-id"].ToString().Split(new[] { "___" }, StringSplitOptions.None);
-            var pickupPoints = _shippingService.GetPickupPoints(await _workContext.GetCurrentCustomerAsync().BillingAddressId ?? 0,
-                await _workContext.GetCurrentCustomerAsync(), pickupPoint[1], (await _storeContext.GetCurrentStoreAsync()).Id).PickupPoints.ToList();
-            var selectedPoint = pickupPoints.FirstOrDefault(x => x.Id.Equals(pickupPoint[0]));
-            if (selectedPoint == null)
-                throw new Exception("Pickup point is not allowed");
-
-            return selectedPoint;
-        }
-        protected virtual void SavePickupOption(PickupPoint pickupPoint)
-        {
-            var pickUpInStoreShippingOption = new ShippingOption
-            {
-                Name = string.Format(await _localizationService.GetResourceAsync( "Checkout.PickupPoints.Name"), pickupPoint.Name),
-                Rate = pickupPoint.PickupFee,
-                Description = pickupPoint.Description,
-                ShippingRateComputationMethodSystemName = pickupPoint.ProviderSystemName,
-                IsPickupInStore = true
-            };
-            _genericAttributeService.SaveAttribute(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, pickUpInStoreShippingOption, (await _storeContext.GetCurrentStoreAsync()).Id);
-            _genericAttributeService.SaveAttribute(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedPickupPointAttribute, pickupPoint, (await _storeContext.GetCurrentStoreAsync()).Id);
         }
     }
 }

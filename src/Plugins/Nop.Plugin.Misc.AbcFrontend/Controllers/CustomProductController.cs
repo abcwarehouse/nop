@@ -36,6 +36,7 @@ using Nop.Web.Framework.Mvc;
 using Nop.Core.Rss;
 using Nop.Web.Framework;
 using Nop.Core.Events;
+using System.Threading.Tasks;
 
 namespace Nop.Web.Controllers
 {
@@ -128,7 +129,7 @@ namespace Nop.Web.Controllers
 
         public virtual IActionResult ProductDetails(int productId, int updatecartitemid = 0)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted)
                 return InvokeHttp404();
 
@@ -143,7 +144,7 @@ namespace Nop.Web.Controllers
                 !_productService.ProductIsAvailable(product);
             //Check whether the current user has a "Manage products" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = _permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageProducts);
+            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts);
             if (notAvailable && !hasAdminAccess)
                 return InvokeHttp404();
 
@@ -151,7 +152,7 @@ namespace Nop.Web.Controllers
             if (!product.VisibleIndividually)
             {
                 //is this one an associated products?
-                var parentGroupedProduct = _productService.GetProductById(product.ParentGroupedProductId);
+                var parentGroupedProduct = await _productService.GetProductByIdAsync(product.ParentGroupedProductId);
                 if (parentGroupedProduct == null)
                     return RedirectToRoute("Homepage");
 
@@ -180,8 +181,8 @@ namespace Nop.Web.Controllers
             _recentlyViewedProductsService.AddProductToRecentlyViewedList(product.Id);
 
             //display "edit" (manage) link
-            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) &&
-                _permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+            if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) &&
+                await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
             {
                 //a vendor should have access only to his products
                 if (_workContext.CurrentVendor == null || _workContext.CurrentVendor.Id == product.VendorId)
@@ -214,7 +215,7 @@ namespace Nop.Web.Controllers
             var products = _recentlyViewedProductsService.GetRecentlyViewedProducts(_catalogSettings.RecentlyViewedProductsNumber);
 
             var model = new List<ProductOverviewModel>();
-            model.AddRange(_productModelFactory.PrepareProductOverviewModels(products));
+            model.AddRange(await _productModelFactory.PrepareProductOverviewModelsAsync(products));
 
             return View(model);
         }
@@ -236,7 +237,7 @@ namespace Nop.Web.Controllers
                 pageSize: _catalogSettings.NewProductsNumber);
 
             var model = new List<ProductOverviewModel>();
-            model.AddRange(_productModelFactory.PrepareProductOverviewModels(products));
+            model.AddRange(await _productModelFactory.PrepareProductOverviewModelsAsync(products));
 
             return View(model);
         }
@@ -286,14 +287,14 @@ namespace Nop.Web.Controllers
 
         public virtual IActionResult ProductReviews(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published || !product.AllowCustomerReviews)
                 return RedirectToRoute("Homepage");
 
             var model = new ProductReviewsModel();
             model = _productModelFactory.PrepareProductReviewsModel(model, product);
             //only registered users can leave reviews
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync( "Reviews.OnlyRegisteredUsersCanWriteReviews"));
 
             if (_catalogSettings.ProductReviewPossibleOnlyAfterPurchasing)
@@ -324,7 +325,7 @@ namespace Nop.Web.Controllers
         [ValidateCaptcha]
         public virtual IActionResult ProductReviewsAdd(int productId, ProductReviewsModel model, bool captchaValid)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published || !product.AllowCustomerReviews)
                 return RedirectToRoute("Homepage");
 
@@ -334,7 +335,7 @@ namespace Nop.Web.Controllers
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync( "Common.WrongCaptchaMessage"));
             }
 
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
             {
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync( "Reviews.OnlyRegisteredUsersCanWriteReviews"));
             }
@@ -427,7 +428,7 @@ namespace Nop.Web.Controllers
             if (productReview == null)
                 throw new ArgumentException("No product review found with the specified id");
 
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
             {
                 return Json(new
                 {
@@ -463,7 +464,7 @@ namespace Nop.Web.Controllers
 
         public virtual IActionResult CustomerProductReviews(int? pageNumber)
         {
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()))
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()))
                 return Challenge();
 
             if (!_catalogSettings.ShowProductReviewsTabOnAccountPage)
@@ -481,7 +482,7 @@ namespace Nop.Web.Controllers
 
         public virtual IActionResult ProductEmailAFriend(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published || !_catalogSettings.EmailAFriendEnabled)
                 return RedirectToRoute("Homepage");
 
@@ -495,7 +496,7 @@ namespace Nop.Web.Controllers
         [ValidateCaptcha]
         public virtual IActionResult ProductEmailAFriendSend(ProductEmailAFriendModel model, bool captchaValid)
         {
-            var product = _productService.GetProductById(model.ProductId);
+            var product = await _productService.GetProductByIdAsync(model.ProductId);
             if (product == null || product.Deleted || !product.Published || !_catalogSettings.EmailAFriendEnabled)
                 return RedirectToRoute("Homepage");
 
@@ -506,7 +507,7 @@ namespace Nop.Web.Controllers
             }
 
             //check whether the current customer is guest and ia allowed to email a friend
-            if (_customerService.IsGuest(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToEmailAFriend)
+            if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_catalogSettings.AllowAnonymousUsersToEmailAFriend)
             {
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync( "Products.EmailAFriend.OnlyRegisteredUsers"));
             }
@@ -515,7 +516,7 @@ namespace Nop.Web.Controllers
             {
                 //email
                 _workflowMessageService.SendProductEmailAFriendMessage(await _workContext.GetCurrentCustomerAsync(),
-                        _workContext.WorkingLanguage.Id, product,
+                        await _workContext.GetWorkingLanguageAsync().Id, product,
                         model.YourEmailAddress, model.FriendEmail,
                         Core.Html.HtmlHelper.FormatText(model.PersonalMessage, false, true, false, false, false, false));
 
@@ -539,7 +540,7 @@ namespace Nop.Web.Controllers
         [IgnoreAntiforgeryToken]
         public virtual IActionResult AddProductToCompareList(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published)
                 return Json(new
                 {
@@ -571,7 +572,7 @@ namespace Nop.Web.Controllers
 
         public virtual IActionResult RemoveProductFromCompareList(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null)
                 return RedirectToRoute("Homepage");
 
@@ -583,7 +584,7 @@ namespace Nop.Web.Controllers
             return RedirectToRoute("CompareProducts");
         }
 
-        public virtual IActionResult CompareProducts()
+        public virtual async Task<IActionResult> CompareProducts()
         {
             if (!_catalogSettings.CompareProductsEnabled)
                 return RedirectToRoute("Homepage");
@@ -602,7 +603,7 @@ namespace Nop.Web.Controllers
             products = products.Where(p => _productService.ProductIsAvailable(p)).ToList();
 
             //prepare model
-            _productModelFactory.PrepareProductOverviewModels(products, prepareSpecificationAttributes: true)
+            await _productModelFactory.PrepareProductOverviewModelsAsync(products, prepareSpecificationAttributes: true)
                 .ToList()
                 .ForEach(model.Products.Add);
             return View(model);

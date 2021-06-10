@@ -536,7 +536,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             //do not make any permission validation here 
             //because this method could be used on some other pages (such as product editing)
-            //if (!await _permissionService.Authorize(StandardPermissionProvider.ManageAttributes))
+            //if (!await await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
             //    return AccessDeniedView();
 
             //this action method gets called via an ajax request

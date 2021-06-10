@@ -51,7 +51,7 @@ namespace Nop.Plugin.Misc.AbcFrontend
             var prodCartPrice = _productCartPriceRepository.Table.Where(pcp => pcp.Product_Id == sci.ProductId).FirstOrDefault();
             if (prodCartPrice != null)
             {
-                var product = _productService.GetProductById(sci.ProductId);
+                var product = await _productService.GetProductByIdAsync(sci.ProductId);
                 var priceAdjustment = prodCartPrice.CartPrice - product.Price;
 
                 // calculate from special price if it is being used instead of price
