@@ -139,4 +139,8 @@
   <WidgetZone>vendordetails_top</WidgetZone>
   <WidgetZone>right_side_column_after</WidgetZone>
   <WidgetZone>right_side_column_before</WidgetZone>
+  <!-- Additional widgets -->
+  <WidgetZone>cart</WidgetZone>
+  <WidgetZone>topic_page_before_body</WidgetZone>
+  <WidgetZone>topic_page_after_body</WidgetZone>
 </SupportedWidgetZones>
