@@ -47,38 +47,33 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _productAttributeService = productAttributeService;
         }
 
-        public void CalculateWarrantyTax(ShoppingCartItem sci, Customer customer,
-            decimal sciSubTotalExclTax,
-            out decimal taxRate,
-            out decimal sciSubTotalInclTax)
+        public async Task<(decimal taxRate, decimal sciSubTotalInclTax)> CalculateWarrantyTaxAsync(
+            ShoppingCartItem sci,
+            Customer customer,
+            decimal sciSubTotalExclTax)
         {
-            decimal sciUnitPriceInclTax;
-            decimal warrantyUnitPriceExclTax;
-            decimal warrantyUnitPriceInclTax;
-            CalculateWarrantyTax(sci, customer, sciSubTotalExclTax, sciSubTotalExclTax / sci.Quantity,
-                out taxRate, out sciSubTotalInclTax,
-                out sciUnitPriceInclTax, out warrantyUnitPriceExclTax, out warrantyUnitPriceInclTax);
+            var result = await CalculateWarrantyTaxAsync(sci, customer, sciSubTotalExclTax, sciSubTotalExclTax / sci.Quantity);
+            return (result.taxRate, result.sciSubTotalInclTax);
         }
 
-        public void CalculateWarrantyTax(ShoppingCartItem sci, Customer customer,
-            decimal sciSubTotalExclTax, decimal sciUnitPriceExclTax,
-            out decimal taxRate,
-            out decimal sciSubTotalInclTax, out decimal sciUnitPriceInclTax,
-            out decimal warrantyUnitPriceExclTax, out decimal warrantyUnitPriceInclTax)
+        public async Task<(decimal taxRate, decimal sciSubTotalInclTax, decimal sciUnitPriceInclTax, decimal warrantyUnitPriceExclTax, decimal warrantyUnitPriceInclTax)> CalculateWarrantyTaxAsync(ShoppingCartItem sci, Customer customer,
+            decimal sciSubTotalExclTax, decimal sciUnitPriceExclTax)
         {
-            taxRate = decimal.Zero;
-            warrantyUnitPriceExclTax = decimal.Zero;
-            warrantyUnitPriceInclTax = decimal.Zero;
+            var taxRate = decimal.Zero;
+            var warrantyUnitPriceExclTax = decimal.Zero;
+            (decimal price, decimal taxRate) warrantyUnitPriceInclTax;
+            warrantyUnitPriceInclTax.price = decimal.Zero;
+            warrantyUnitPriceInclTax.taxRate = decimal.Zero;
             var product = await _productService.GetProductByIdAsync(sci.ProductId);
-            sciSubTotalInclTax = await _taxService.GetProductPriceAsync(product, sciSubTotalExclTax, true, customer, out taxRate);
-            sciUnitPriceInclTax = await _taxService.GetProductPriceAsync(product, sciUnitPriceExclTax, true, customer, out taxRate);
+            var sciSubTotalInclTax = await _taxService.GetProductPriceAsync(product, sciSubTotalExclTax, true, customer);
+            var sciUnitPriceInclTax = await _taxService.GetProductPriceAsync(product, sciUnitPriceExclTax, true, customer);
             
             // warranty item handling
-            ProductAttributeMapping warrantyPam = _attributeUtilities.GetWarrantyAttributeMapping(sci.AttributesXml);
+            ProductAttributeMapping warrantyPam = await _attributeUtilities.GetWarrantyAttributeMappingAsync(sci.AttributesXml);
             if (warrantyPam != null)
             {
                 warrantyUnitPriceExclTax =
-                    await _productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml)
+                    (await _productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml))
                     .Where(pav => pav.ProductAttributeMappingId == warrantyPam.Id)
                     .Select(pav => pav.PriceAdjustment)
                     .FirstOrDefault();
@@ -88,25 +83,25 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
                 //true if customer lives in a state where warranty can be taxed
                 bool isCustomerInTaxableState = false;
-                var taxCategory = _taxCategoryService.GetAllTaxCategories().FirstOrDefault(x => x.Name == "Warranties");
-                isCustomerInTaxableState = _taxService.IsCustomerInTaxableState(taxCategory?.Id ?? 0, customer);
+                var taxCategory = (await _taxCategoryService.GetAllTaxCategoriesAsync()).FirstOrDefault(x => x.Name == "Warranties");
+                isCustomerInTaxableState = await _taxService.IsCustomerInTaxableStateAsync(taxCategory?.Id ?? 0, customer);
 
-                if (warrProduct == null)
-                {
-                    // taxed warranty price
-                    warrantyUnitPriceInclTax = await _taxService.GetProductPriceAsync(product, warrantyUnitPriceExclTax, false, customer, out taxRate);
-                }
-                else
-                {
-                    warrantyUnitPriceInclTax = await _taxService.GetProductPriceAsync(warrProduct, warrantyUnitPriceExclTax, isCustomerInTaxableState, customer, out taxRate);
-                }
+                // custom
+                warrantyUnitPriceInclTax = await _taxService.GetProductPriceAsync(
+                    product,
+                    warrantyUnitPriceExclTax,
+                    warrProduct == null ? false : isCustomerInTaxableState,
+                    customer
+                );
 
-                decimal productUnitPriceInclTax
-                    = await _taxService.GetProductPriceAsync(product, sciUnitPriceExclTax - warrantyUnitPriceExclTax, true, customer, out taxRate);
+                var productUnitPriceInclTax
+                    = await _taxService.GetProductPriceAsync(product, sciUnitPriceExclTax - warrantyUnitPriceExclTax, true, customer);
 
-                sciUnitPriceInclTax = productUnitPriceInclTax + warrantyUnitPriceInclTax;
-                sciSubTotalInclTax = sciUnitPriceInclTax * sci.Quantity;
+                sciUnitPriceInclTax.price = productUnitPriceInclTax.price + warrantyUnitPriceInclTax.price;
+                sciSubTotalInclTax.price = sciUnitPriceInclTax.price * sci.Quantity;
             }
+
+            return (taxRate, sciSubTotalInclTax.price, sciUnitPriceInclTax.price, warrantyUnitPriceExclTax, warrantyUnitPriceInclTax.price);
         }
 
         public async Task<bool> CartContainsWarrantiesAsync(IList<ShoppingCartItem> cart)

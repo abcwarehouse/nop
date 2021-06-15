@@ -90,7 +90,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             string attributes = item.AttributesXml;
 
             // get xml and check if it's home delivery or pickup in store
-            var pickupAttributeMapping = _attributeUtilities.GetPickupAttributeMapping(attributes);
+            var pickupAttributeMapping = _attributeUtilities.GetPickupAttributeMappingAsync(attributes);
 
             // is currently pickup in store 
             if (pickupAttributeMapping != null)

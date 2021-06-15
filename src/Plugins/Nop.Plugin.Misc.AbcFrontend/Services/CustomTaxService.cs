@@ -18,6 +18,7 @@ using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Tax;
 using Nop.Core.Events;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
@@ -93,14 +94,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _taxService = taxService;
         }
 
-        public bool IsCustomerInTaxableState(int taxCategoryId, Customer customer)
+        public async Task<bool> IsCustomerInTaxableStateAsync(int taxCategoryId, Customer customer)
         {
             //active tax provider
             var activeTaxProvider =
-                _taxPluginManager.LoadPrimaryPlugin(customer, (await _storeContext.GetCurrentStoreAsync()).Id);
+                await _taxPluginManager.LoadPrimaryPluginAsync(customer, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             var shippingAddress = customer.ShippingAddressId.HasValue ?
-                _addressService.GetAddressById(customer.ShippingAddressId.Value) :
+                await _addressService.GetAddressByIdAsync(customer.ShippingAddressId.Value) :
                 null;
             if (activeTaxProvider != null && shippingAddress != null)
             {
@@ -121,7 +122,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     _orderTotalCalculationService, _taxSettings, _genericAttributeService,
                     _paymentService, _taxService
                 );
-                return tp.GetCustomerInTaxableState(taxCategoryId, countryId, stateProvinceId, zip);
+                return await tp.GetCustomerInTaxableStateAsync(taxCategoryId, countryId, stateProvinceId, zip);
             }
 
             return false;

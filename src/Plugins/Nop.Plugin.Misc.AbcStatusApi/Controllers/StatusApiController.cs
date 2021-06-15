@@ -167,7 +167,7 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
                 var sku = (await _productService.GetProductByIdAsync(o.ProductId)).Sku;
                 if (sku != orderItemSku) { continue; }
 
-                if (_attributeUtilities.GetPickupAttributeMapping(o.AttributesXml) == null)
+                if (_attributeUtilities.GetPickupAttributeMappingAsync(o.AttributesXml) == null)
                 {
                     shippedOrderItem = o;
                 }

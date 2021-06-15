@@ -38,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcFrontend
             if (addToCartforPriceAttr == null)
             {
                 addToCartforPriceAttr = new HiddenAttribute { Name = addToCartForPriceName };
-                hiddenAttributeRepository.Insert(addToCartforPriceAttr);
+                hiddenAttributeRepository.InsertAsync(addToCartforPriceAttr);
             }
 
             addToCartForPriceAttrId = addToCartforPriceAttr.Id;
@@ -55,8 +55,8 @@ namespace Nop.Plugin.Misc.AbcFrontend
                 var priceAdjustment = prodCartPrice.CartPrice - product.Price;
 
                 // calculate from special price if it is being used instead of price
-                var specialPriceEndDate = product.GetSpecialPriceEndDate();
-                var specialPrice = product.GetSpecialPriceAsync();
+                var specialPriceEndDate = await product.GetSpecialPriceEndDateAsync();
+                var specialPrice = await product.GetSpecialPriceAsync();
                 if (specialPriceEndDate != null && specialPrice != 0.0M && specialPriceEndDate > DateTime.UtcNow)
                 {
                     priceAdjustment = prodCartPrice.CartPrice - specialPrice;

@@ -8,8 +8,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
     public interface IWarrantyService
     {
-        void CalculateWarrantyTax(ShoppingCartItem sci, Customer customer, decimal sciSubTotalExclTax, out decimal taxRate, out decimal sciSubTotalInclTax);
-        void CalculateWarrantyTax(ShoppingCartItem sci, Customer customer, decimal sciSubTotalExclTax, decimal sciUnitPriceExclTax, out decimal taxRate, out decimal sciSubTotalInclTax, out decimal sciUnitPriceInclTax, out decimal warrantyUnitPriceExclTax, out decimal warrantyUnitPriceInclTax);
+        Task<(decimal taxRate, decimal sciSubTotalInclTax)> CalculateWarrantyTaxAsync(ShoppingCartItem sci, Customer customer, decimal sciSubTotalExclTax);
+        Task<(decimal taxRate, decimal sciSubTotalInclTax, decimal sciUnitPriceInclTax, decimal warrantyUnitPriceExclTax, decimal warrantyUnitPriceInclTax)> CalculateWarrantyTaxAsync(ShoppingCartItem sci, Customer customer, decimal sciSubTotalExclTax, decimal sciUnitPriceExclTax);
         Task<bool> CartContainsWarrantiesAsync(IList<ShoppingCartItem> cart);
         string GetWarrantySkuByName(string name);
     }

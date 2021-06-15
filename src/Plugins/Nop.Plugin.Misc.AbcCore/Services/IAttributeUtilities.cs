@@ -9,9 +9,9 @@ namespace Nop.Plugin.Misc.AbcCore.Services
     {
         Task<string> InsertHomeDeliveryAttributeAsync(Product product, string attributes);
         Task<string> InsertPickupAttributeAsync(Product product, StockResponse stockResponse, string attributes, Shop currentCsm = null);
-        Task<ProductAttributeMapping> GetPickupAttributeMapping(string attributesXml);
-        Task<ProductAttributeMapping> GetHomeDeliveryAttributeMapping(string attributesXml);
-        Task<ProductAttributeMapping> GetWarrantyAttributeMapping(string attributesXml);
+        Task<ProductAttributeMapping> GetPickupAttributeMappingAsync(string attributesXml);
+        Task<ProductAttributeMapping> GetHomeDeliveryAttributeMappingAsync(string attributesXml);
+        Task<ProductAttributeMapping> GetWarrantyAttributeMappingAsync(string attributesXml);
         Task<string> RemovePickupAttributesAsync(string attributes);
         Task<ProductAttributeMapping> GetAttributeMappingByNameAsync(string attributesXml, string name);
     }

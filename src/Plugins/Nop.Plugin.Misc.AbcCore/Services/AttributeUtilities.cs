@@ -80,7 +80,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 attributes = _productAttributeParser.AddProductAttribute(attributes, pickupAttributeMapping, shop.Name + "\nAvailable: " + pickupMsg);
 
                 // remove home delivery attributes
-                var homeDeliveryAttributeMapping = await GetHomeDeliveryAttributeMapping(attributes);
+                var homeDeliveryAttributeMapping = await GetHomeDeliveryAttributeMappingAsync(attributes);
 
                 if (homeDeliveryAttributeMapping != null)
                 {
@@ -116,7 +116,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             return attributes;
         }
 
-        public async Task<ProductAttributeMapping> GetPickupAttributeMapping(string attributesXml)
+        public async Task<ProductAttributeMapping> GetPickupAttributeMappingAsync(string attributesXml)
         {
             return await GetAttributeMappingByNameAsync(attributesXml, PICKUP_ATTRIBUTE_NAME);
         }
@@ -126,19 +126,19 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             return await GetAttributeMappingByNameAsync(attributesXml, PICKUP_MSG_ATTRIBUTE_NAME);
         }
 
-        public async Task<ProductAttributeMapping> GetHomeDeliveryAttributeMapping(string attributesXml)
+        public async Task<ProductAttributeMapping> GetHomeDeliveryAttributeMappingAsync(string attributesXml)
         {
             return await GetAttributeMappingByNameAsync(attributesXml, HOME_DELIVERY_ATTRIBUTE_NAME);
         }
 
-        public async Task<ProductAttributeMapping> GetWarrantyAttributeMapping(string attributesXml)
+        public async Task<ProductAttributeMapping> GetWarrantyAttributeMappingAsync(string attributesXml)
         {
             return await GetAttributeMappingByNameAsync(attributesXml, WARRANTY_ATTRIBUTE_NAME);
         }
 
         public async Task<string> RemovePickupAttributesAsync(string attributes)
         {
-            var pickupAttributeMapping = await GetPickupAttributeMapping(attributes);
+            var pickupAttributeMapping = await GetPickupAttributeMappingAsync(attributes);
 
             if (pickupAttributeMapping != null)
             {

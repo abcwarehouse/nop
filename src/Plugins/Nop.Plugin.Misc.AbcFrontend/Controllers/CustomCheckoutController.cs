@@ -80,7 +80,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly IWarrantyService _warrantyService;
         private readonly ITermLookupService _termLookupService;
         private readonly ICardCheckService _cardCheckService;
-        private readonly string DefaultTransPromo;
 
         public CustomCheckoutController(
             AddressSettings addressSettings,
@@ -116,7 +115,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IWarrantyService warrantyService,
             ITermLookupService termLookupService,
             ICardCheckService cardCheckService
-        )
+        ) : base(addressSettings, customerSettings, addressAttributeParser, 
+            addressService, checkoutModelFactory, countryService, customerService,
+            genericAttributeService, localizationService, logger, orderProcessingService,
+            orderService, paymentPluginManager, paymentService, productService,
+            shippingService, shoppingCartService, storeContext, webHelper,
+            workContext, orderSettings, paymentSettings, rewardPointsSettings,
+            shippingSettings)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -152,18 +157,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _warrantyService = warrantyService;
             _termLookupService = termLookupService;
             _cardCheckService = cardCheckService;
-
-            DefaultTransPromo = await _settingService.GetSettingAsync("ordersettings.defaulttranspromo")?.Value;
-            if (string.IsNullOrWhiteSpace(DefaultTransPromo))
-            {
-                throw new ConfigurationErrorsException("'ordersettings.defaulttranspromo' setting is required for CustomCheckoutController.");
-            }
         }
 
         #region Methods (one page checkout)
-        private string SendExternalShippingMethodRequest()
+        private async Task<string> SendExternalShippingMethodRequestAsync()
         {
-            if (DefaultTransPromo == "101")
+            var defaultTransPromo = (await _settingService.GetSettingAsync("ordersettings.defaulttranspromo"))?.Value;
+            if (defaultTransPromo == "101")
             {
                 await _logger.WarningAsync("DefaultTransPromo is 101, term lookup skipped");
                 return string.Empty;
@@ -178,15 +178,15 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 if (cart.Any())
                 {
-                    var termLookup = _termLookupService.GetTerm(cart);
-                    HttpContext.Session.Set("TransPromo", termLookup.termNo ?? DefaultTransPromo);
+                    var termLookup = await _termLookupService.GetTermAsync(cart);
+                    HttpContext.Session.Set("TransPromo", termLookup.termNo ?? defaultTransPromo);
                     HttpContext.Session.SetString("TransDescription", $"{termLookup.description} {termLookup.link}");
                 }
             }
             catch (IsamException e)
             {
                 await _logger.ErrorAsync("Failure occurred during ISAM Term Lookup", e);
-                HttpContext.Session.SetString("TransPromo", DefaultTransPromo);
+                HttpContext.Session.SetString("TransPromo", defaultTransPromo);
             }
             return "";
         }
@@ -203,7 +203,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var customer = await _customerService.GetCustomerByIdAsync(
                 cart.FirstOrDefault().CustomerId
             );
-            var billingAddress = _customerService.GetCustomerBillingAddress(
+            var billingAddress = await _customerService.GetCustomerBillingAddressAsync(
                 customer
             );
             var domain = (await _storeContext.GetCurrentStoreAsync()).Url;
@@ -314,7 +314,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         // Makes an external request
         [HttpPost, ActionName("ShippingMethod")]
         [FormValueRequired("nextstep")]
-        public async Task<IActionResult> SelectShippingMethod(string shippingoption, IFormCollection form)
+        public override async Task<IActionResult> SelectShippingMethod(string shippingoption, IFormCollection form)
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -388,7 +388,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //save
             await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, shippingOption, (await _storeContext.GetCurrentStoreAsync()).Id);
 
-            SendExternalShippingMethodRequest();
+            await SendExternalShippingMethodRequestAsync();
 
             if (await _warrantyService.CartContainsWarrantiesAsync(cart))
             {
@@ -543,7 +543,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         // Custom - uses CC_REF_NO and AUTH_CODE
         [HttpPost, ActionName("Confirm")]
-        public async Task<IActionResult> ConfirmOrder()
+        public override async Task<IActionResult> ConfirmOrder()
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -641,7 +641,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         // Custom, allows for AJAX calls
         [HttpPost, ActionName("PaymentInfo")]
         [FormValueRequired("nextstep")]
-        public async Task<IActionResult> EnterPaymentInfo(IFormCollection form)
+        public override async Task<IActionResult> EnterPaymentInfo(IFormCollection form)
         {
             //validation
             if (_orderSettings.CheckoutDisabled)

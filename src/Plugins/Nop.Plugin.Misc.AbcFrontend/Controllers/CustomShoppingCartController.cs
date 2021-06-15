@@ -527,7 +527,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //if the item to update is found, then we ignore the specified "shoppingCartTypeId" parameter
                 updatecartitem.ShoppingCartType;
 
-            SaveItem(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
+            await SaveItem(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
 
             //return result
             return await GetProductToCartDetails(addToCartWarnings, cartType, product);

@@ -85,19 +85,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 urlHelperFactory, urlRecordService, workContext, orderSettings,
                 shoppingCartSettings)
         {
-            // I think we should put this in the constructor, then project won't
-            // compile without it
-            try
-            {
-                _hiddenAttributeValueRepository =
+            _hiddenAttributeValueRepository =
                     EngineContext.Current.Resolve<IRepository<HiddenAttributeValue>>();
-            }
-            catch (Exception ex)
-            {
-                EngineContext.Current.Resolve<ILogger>().Error(
-                    "Could not resolve the HiddenAttributeValue table " +
-                    " (is Misc.AbcSync Installed?)", ex);
-            }
 
             _productAttributeParser = productAttributeParser;
             _attributeUtilities = attributeUtilities;
@@ -121,32 +110,35 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
 
-            discountAmount = decimal.Zero;
-            appliedDiscounts = new List<Discount>();
+            var discountAmount = decimal.Zero;
+            var appliedDiscounts = new List<Discount>();
 
             decimal finalPrice;
 
-            var combination = _productAttributeParser.FindProductAttributeCombination(product, attributesXml);
+            var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
             if (combination?.OverriddenPrice.HasValue ?? false)
             {
-                finalPrice = _priceCalculationService.GetFinalPrice(product,
+                (_, finalPrice, discountAmount, appliedDiscounts) =  await _priceCalculationService.GetFinalPriceAsync(product,
                         customer,
                         combination.OverriddenPrice.Value,
                         decimal.Zero,
                         includeDiscounts,
                         quantity,
                         product.IsRental ? rentalStartDate : null,
-                        product.IsRental ? rentalEndDate : null,
-                        out discountAmount, out appliedDiscounts);
+                        product.IsRental ? rentalEndDate : null);
             }
             else
             {
-                //summarize price of all attributes except warranties (warranties processed separately)
+                // custom
+                // summarize price of all attributes except warranties (warranties processed separately)
                 decimal warrantyPrice = decimal.Zero;
-                ProductAttributeMapping warrantyPam = _attributeUtilities.GetWarrantyAttributeMapping(attributesXml);
+                ProductAttributeMapping warrantyPam = await _attributeUtilities.GetWarrantyAttributeMappingAsync(attributesXml);
 
-                decimal attributesTotalPrice = decimal.Zero;
+                //summarize price of all attributes
+                var attributesTotalPrice = decimal.Zero;
                 var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml);
+
+                // custom - considers warranties
                 if (attributeValues != null)
                 {
                     foreach (var attributeValue in attributeValues)
@@ -154,16 +146,21 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                         if (warrantyPam != null && attributeValue.ProductAttributeMappingId == warrantyPam.Id)
                         {
                             warrantyPrice =
-                                _priceCalculationService.GetProductAttributeValuePriceAdjustment(
-                                    product, attributeValue, customer, product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
+                                await _priceCalculationService.GetProductAttributeValuePriceAdjustmentAsync(
+                                    product,
+                                    attributeValue,
+                                    customer,
+                                    product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
                                 );
                         }
                         else
                         {
-                            attributesTotalPrice +=
-                                _priceCalculationService.GetProductAttributeValuePriceAdjustment(
-                                    product, attributeValue, customer, product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
-                                );
+                            attributesTotalPrice += await _priceCalculationService.GetProductAttributeValuePriceAdjustmentAsync(
+                                product,
+                                attributeValue,
+                                customer,
+                                product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
+                            );
                         }
                     }
                 }
@@ -179,12 +176,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     if (_shoppingCartSettings.GroupTierPricesForDistinctShoppingCartItems)
                     {
                         //the same products with distinct product attributes could be stored as distinct "ShoppingCartItem" records
-                        //so let's find how many of the current products are in the cart
-                        qty = GetShoppingCart(
-                            customer,
-                            shoppingCartType: shoppingCartType,
-                            productId: product.Id)
+                        //so let's find how many of the current products are in the cart                        
+                        qty = (await GetShoppingCartAsync(customer, shoppingCartType: shoppingCartType, productId: product.Id))
                             .Sum(x => x.Quantity);
+
                         if (qty == 0)
                         {
                             qty = quantity;
@@ -194,16 +189,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                     {
                         qty = quantity;
                     }
-                    finalPrice = _priceCalculationService.GetFinalPrice(
-                        product,
+
+                    (_, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(product,
                         customer,
                         attributesTotalPrice,
                         includeDiscounts,
                         qty,
                         product.IsRental ? rentalStartDate : null,
-                        product.IsRental ? rentalEndDate : null,
-                        out discountAmount, out appliedDiscounts);
-                    finalPrice += warrantyPrice;
+                        product.IsRental ? rentalEndDate : null);
                 }
             }
 
@@ -211,20 +204,18 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
                 finalPrice = await _priceCalculationService.RoundPriceAsync(finalPrice);
 
-            return finalPrice;
+            return (finalPrice, discountAmount, appliedDiscounts);
         }
 
         public async override Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(
             ShoppingCartItem shoppingCartItem,
             bool includeDiscounts)
         {
-            var discountAmount = decimal.Zero;
             var appliedDiscounts = new List<Discount>();
-            (decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts) baseResult = base.GetUnitPriceAsync(
+            var baseResult = await base.GetUnitPriceAsync(
                 shoppingCartItem,
-                includeDiscounts,
-                out discountAmount,
-                out appliedDiscounts);
+                includeDiscounts
+            );
 
             if (_hiddenAttributeValueRepository == null)
             {
