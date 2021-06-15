@@ -9,10 +9,12 @@
 @using Nop.Plugin.Misc.AbcCore.Services
 
 @inject FrontEndService frontEndService
+@* custom *@
+@inject IStoreContext storeContext
 
 @{
-    bool isClearanceStore = frontEndService.StoreIsClearance(EngineContext.Current.Resolve<IStoreContext>().CurrentStore);
-    bool isHawthorne = frontEndService.StoreIsHawthorne(EngineContext.Current.Resolve<IStoreContext>().CurrentStore);
+    bool isClearanceStore = frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync());
+    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
 
     string url = isHawthorne ?
                 "https://appliances.hawthorneonline.com/search?w=" :

@@ -21,7 +21,7 @@
 
     Html.AddCssFileParts($"~/Plugins/SevenSpikes.Nop.Plugins.NopQuickTabs/Themes/Pavilion/Content/QuickTabs.css");
 
-    var supportRtl = workContext.WorkingLanguage.Rtl;
+    var supportRtl = await workContext.GetWorkingLanguageAsync().Rtl;
     if (supportRtl)
     {
         Html.AddCssFileParts($"~/Plugins/SevenSpikes.Nop.Plugins.NopQuickTabs/Themes/Pavilion/Content/QuickTabs.rtl.css");

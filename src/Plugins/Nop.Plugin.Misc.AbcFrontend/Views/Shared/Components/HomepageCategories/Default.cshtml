@@ -8,7 +8,7 @@
 @using Nop.Plugin.Misc.AbcCore
 
 @{
-    var primaryColor = HtmlHelpers.GetPavilionPrimaryColor();
+    var primaryColor = await HtmlHelpers.GetPavilionPrimaryColorAsync();
 }
 
 <style>

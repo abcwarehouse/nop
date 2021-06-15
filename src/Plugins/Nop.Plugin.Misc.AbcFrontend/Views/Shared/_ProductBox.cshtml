@@ -29,7 +29,7 @@
     var itemNumberDisplay = "";
     ProductFlag productFlag = frontEndService.GetProductFlag(Model.Id);
     bool isOpenBox = productFlag != null &&
-                     !(frontEndService.StoreIsClearance(storeContext.CurrentStore) || frontEndService.StoreIsHawthorneClearance(storeContext.CurrentStore)) ?
+                     !(frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync()) || frontEndService.StoreIsHawthorneClearance(await storeContext.GetCurrentStoreAsync())) ?
                         productFlag.IsOpenBox() : false;
     decimal openBoxPrice = 0.0M;
     if (isOpenBox)
@@ -37,7 +37,7 @@
         openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.ProductPrice.PriceValue);
     }
 
-    bool isHawthorne = frontEndService.StoreIsHawthorne(storeContext.CurrentStore);
+    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
     string equalPaymentsModalStoreName = isHawthorne ? "Hawthorne" : "ABC Warehouse";
 
     if (frontEndService.ProductIsAbc(Model.Id))
@@ -368,11 +368,11 @@
                     }
                     @if (Model.ProductPrice.DisplayTaxShippingInfo)
                     {
-                        var inclTax = workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
+                        var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
                         //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
                         //of course, you can modify appropriate locales to include VAT info there
                         <span class="tax-shipping-info">
-                            @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = Html.GetTopicSeName("shippinginfo") }))
+                            @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
                         </span>
                     }
                     @if (!String.IsNullOrEmpty(Model.ProductPrice.BasePricePAngV))

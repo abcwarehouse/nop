@@ -16,7 +16,7 @@ namespace Nop.Plugin.Misc.AbcCore
         private const string BREADCRUMBDELIMITER_KEY = "Nop.settings.breadcrumbdelimiter";
         private const string GIFTCARDURL_KEY = "Nop.settings.giftcardurl";
 
-        public static async Task<string> GetPavilionPrimaryColor()
+        public static async Task<string> GetPavilionPrimaryColorAsync()
         {
             var staticCacheManager = EngineContext.Current.Resolve<IStaticCacheManager>();
             return await staticCacheManager.Get(new CacheKey(PAVILIONPRIMARYCOLOR_KEY, "Abc."), async () =>
@@ -29,7 +29,7 @@ namespace Nop.Plugin.Misc.AbcCore
 
         }
 
-        public static async Task<string> GetPavilionAccentColor()
+        public static async Task<string> GetPavilionAccentColorAsync()
         {
             var staticCacheManager = EngineContext.Current.Resolve<IStaticCacheManager>();
             return await staticCacheManager.Get(new CacheKey(PAVILIONACCENTCOLOR_KEY, "Abc."), async () =>

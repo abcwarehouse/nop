@@ -13,9 +13,9 @@
 @model FooterModel
 
 @{
-    var storeId = storeContext.CurrentStore.Id;
-    var removeCopyright = settingService.GetSettingByKey("pavilionthemesettings.removecopyright", false, storeId, true);
-    var removeDesignedBy = settingService.GetSettingByKey("pavilionthemesettings.removedesignedby", false, storeId, true);
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var removeCopyright = await settingService.GetSettingByKeyAsync("pavilionthemesettings.removecopyright", false, storeId, true);
+    var removeDesignedBy = await settingService.GetSettingByKeyAsync("pavilionthemesettings.removedesignedby", false, storeId, true);
 }
 
 @* custom styles *@
@@ -173,9 +173,9 @@
 
             @if (Model.DisplayTaxShippingInfoFooter)
             {
-                var inclTax = workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
                 <div class="footer-tax-shipping">
-                    @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = Html.GetTopicSeName("shippinginfo") }))
+                    @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
                 </div>
             }
             <div class="footer-store-theme">

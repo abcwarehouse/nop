@@ -77,7 +77,7 @@
 @{
     // this part is for adding class if it is clearance store
     Product currentProduct = productService.GetProductById(Model.Id);
-    bool isClearanceStore = frontEndService.StoreIsClearance(storeContext.CurrentStore);
+    bool isClearanceStore = frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync());
     string clearanceClass = isClearanceStore ? "abc-clearance" : "";
 
     string displayIdStr = "";
@@ -124,7 +124,7 @@
                     @{
                         var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom" });
                     }
-                    @if (!String.IsNullOrEmpty(cloudZoom.ToHtmlString()))
+                    @if (!String.IsNullOrEmpty(cloudZoom.RenderHtmlContentAsync()))
                     {
                         @cloudZoom
                     }
@@ -273,11 +273,11 @@
                     var nopQuickTabsHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_before_collateral", additionalData = Model.Id });
                 }
 
-                @if (!String.IsNullOrEmpty(nopQuickTabsHtml.ToHtmlString()))
+                @if (!String.IsNullOrEmpty(nopQuickTabsHtml.RenderHtmlContentAsync()))
                 {
                     var productsCarouselHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productpage_after_collateral", additionalData = Model.Id });
                     var carouselQuickTabsWrapperClass = "one-column-wrapper";
-                    if (!String.IsNullOrEmpty(productsCarouselHtml.ToHtmlString()))
+                    if (!String.IsNullOrEmpty(productsCarouselHtml.RenderHtmlContentAsync()))
                     {
                         carouselQuickTabsWrapperClass = "two-column-wrapper";
                     }

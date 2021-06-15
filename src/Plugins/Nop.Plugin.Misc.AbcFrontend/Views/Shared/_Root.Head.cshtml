@@ -1,21 +1,23 @@
 ﻿﻿@using Nop.Core
-@using Nop.Core.Domain
+@using Nop.Core.Configuration
+@using Nop.Core.Events
 @using StackExchange.Profiling
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
 @using Nop.Services.Events
 @using Nop.Services.Security
 @using Nop.Web.Framework.Events
+@* custom *@
 @using Nop.Plugin.Misc.AbcFrontend.Services
 @using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Services
-@using Nop.Web.Framework.Infrastructure
+
 @inject CommonSettings commonSettings
 @inject IEventPublisher eventPublisher
 @inject IPermissionService permissionService
 @inject IWorkContext workContext
 @inject SeoSettings seoSettings
-@inject StoreInformationSettings storeInformationSettings
+@inject AppSettings appSettings
 @inject Nop.Services.Localization.ILanguageService languageService
 @* Custom injects *@
 @inject FrontEndService frontEndService
@@ -65,8 +67,7 @@
         Html.AppendHeadCustomParts(seoSettings.CustomHeadTags);
     }
 
-    var displayMiniProfiler = storeInformationSettings.DisplayMiniProfilerInPublicStore
-        && (!storeInformationSettings.DisplayMiniProfilerForAdminOnly || permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel));
+    var displayMiniProfiler = appSettings.CommonConfig.MiniProfilerEnabled && await permissionService.AuthorizeAsync(StandardPermissionProvider.AccessProfiling);
 
     var isAndroid23Class = "notAndroid23";
     var userAgent = Url.ActionContext.HttpContext.Request.Headers["User-Agent"];
@@ -75,34 +76,34 @@
         isAndroid23Class = "android23";
     }
 
-    var currentPageClass = (await Html.PartialAsync("_CurrentPageClass")).ToHtmlString().Trim();
+    var currentPageClass = (await (await Html.PartialAsync("_CurrentPageClass")).RenderHtmlContentAsync()).Trim();
 
-    var supportRtl = this.ShouldUseRtlTheme();
+    var supportRtl = await this.ShouldUseRtlThemeAsync();
     
     //event    
-    eventPublisher.Publish(new PageRenderingEvent(this.Html));
+    await eventPublisher.PublishAsync(new PageRenderingEvent(this.Html));
 
     // ABC: custom stuff
-    bool isClearanceStore = frontEndService.StoreIsClearance(storeContext.CurrentStore);
+    bool isClearanceStore = frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync());
     string clearanceClass = isClearanceStore ? "abc-clearance" : "";
 
     Url.ActionContext.HttpContext.Response.Cookies.Append("AbcClearanceStore", isClearanceStore.ToString());
 
-    bool isHawthorne = frontEndService.StoreIsHawthorne(storeContext.CurrentStore);
+    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
     string sliRacConfig = isHawthorne ?
                         "https://hawthorneonline.resultspage.com/autocomplete/custom/sli-rac.config.js" :
                         "https://abcwarehouse.resultspage.com/autocomplete/sli-rac.config.js";
 
     string equalPaymentModalTextColor = isHawthorne ?
         "gray" :
-        HtmlHelpers.GetPavilionPrimaryColor();
+        await HtmlHelpers.GetPavilionPrimaryColorAsync();
 
     @* ABC: Custom CSS *@
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/custom_front_product.css");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/pavilion-styles.css");
 }
 <!DOCTYPE html>
-<html lang="@languageService.GetTwoLetterIsoLanguageName(workContext.WorkingLanguage)" @(this.ShouldUseRtlTheme() ? Html.Raw(" dir=\"rtl\"") : null) @Html.NopPageCssClasses()>
+<html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(await this.ShouldUseRtlThemeAsync() ? Html.Raw(" dir=\"rtl\"") : null) @Html.NopPageCssClasses()>
 <head>
     <title>@Html.NopTitle()</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
@@ -191,7 +192,7 @@
             background-color: #fefefe;
             margin: auto;
             padding: 20px;
-            border: 2px solid #@HtmlHelpers.GetPavilionPrimaryColor();
+            border: 2px solid #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
             width: 300px;
         }
         #dbuymodel2 .modal-content {

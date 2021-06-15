@@ -29,10 +29,10 @@
 @inject IGenericAttributeService genericAttributeService
 
 @{
-    bool isHawthorne = frontEndService.StoreIsHawthorne(storeContext.CurrentStore);
+    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
     string changeDeliveryMethodButtonColor = isHawthorne ?
-                                                HtmlHelpers.GetPavilionPrimaryColor() :
-                                                HtmlHelpers.GetPavilionAccentColor();
+                                                await HtmlHelpers.GetPavilionPrimaryColorAsync() :
+                                                await HtmlHelpers.GetPavilionAccentColorAsync();
 
     bool hasOutOfStockItemsInCart = Model.Items.FirstOrDefault(i => i.Warnings.Contains("Out of stock")) != null ||
                                     Model.Items.FirstOrDefault(i => i.Warnings.Contains("Please remove item from cart to continue.")) != null;
@@ -44,7 +44,7 @@
 }
 <style>
    .spinner > div {
-    	background-color: #@HtmlHelpers.GetPavilionPrimaryColor();
+    	background-color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
     }
 </style>
 <script>
@@ -179,7 +179,7 @@
 		text-decoration: underline;
 		font-size: 0.7rem;
 		display: block;
-		color: #@HtmlHelpers.GetPavilionPrimaryColor();
+		color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
 		background-color: transparent;
 		border: 0;
 		margin: 1rem auto 0 auto;
@@ -476,11 +476,11 @@
             </div>
             @if (Model.IsEditable && Model.Items.Count > 0 && Model.DisplayTaxShippingInfo)
             {
-                var inclTax = workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
                 //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
                 //of course, you can modify appropriate locales to include VAT info there
                 <div class="tax-shipping-info">
-                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = Html.GetTopicSeName("shippinginfo") }))
+                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
                 </div>
             }
 
@@ -490,7 +490,7 @@
                 {
                     <div class="cart-collaterals">                        
                         @{ 
-                            var estimateShipping = (await Component.InvokeAsync("ShoppingCartEstimateShipping")).ToHtmlString();
+                            var estimateShipping = (await Component.InvokeAsync("ShoppingCartEstimateShipping")).RenderHtmlContentAsync();
                         }
 
                         @if (!String.IsNullOrEmpty(estimateShipping))
@@ -570,7 +570,7 @@
 	                                }
 	                                else
 	                                {
-	                                    <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new {SeName = Html.GetTopicSeName("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+	                                    <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new {SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
 	                                }
                                 </div>
                             </div>
