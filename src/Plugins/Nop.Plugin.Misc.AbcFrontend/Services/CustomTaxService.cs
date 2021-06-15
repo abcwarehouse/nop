@@ -24,22 +24,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
     public class CustomTaxService : TaxService, ICustomTaxService
     {
-        private readonly ITaxPluginManager _taxPluginManager;
-        private readonly IAddressService _addressService;
-
         // Used for janky solution below
         private readonly ITaxRateService _taxRateService;
-        private readonly IStoreContext _storeContext;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly AbcCountyStateZipSettings _settings;
-        private readonly ILogger _logger;
         private readonly ILocalizationService _localizationService;
-        private readonly IWebHelper _webHelper;
-        private readonly ICountryService _countryService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
-        private readonly TaxSettings _taxSettings;
-        private readonly IGenericAttributeService _genericAttributeService;
         private readonly IPaymentService _paymentService;
         private readonly ITaxService _taxService;
 
@@ -74,22 +65,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             eventPublisher, genericAttributeService, geoLookupService, logger, stateProvinceService,
             storeContext, taxPluginManager, webHelper, workContext, shippingSettings, taxSettings)
         {
-            _taxPluginManager = taxPluginManager;
-            _addressService = addressService;
-
             // for janky
             _taxRateService = taxRateService;
-            _storeContext = storeContext;
             _staticCacheManager = staticCacheManager;
             _settings = settings;
-            _logger = logger;
             _localizationService = localizationService;
-            _webHelper = webHelper;
-            _countryService = countryService;
             _httpContextAccessor = httpContextAccessor;
             _orderTotalCalculationService = orderTotalCalculationService;
-            _taxSettings = taxSettings;
-            _genericAttributeService = genericAttributeService;
             _paymentService = paymentService;
             _taxService = taxService;
         }
