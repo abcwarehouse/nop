@@ -11,6 +11,7 @@
 @using Nop.Plugin.Misc.AbcFrontend.Services
 @using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Services
+@using Nop.Web.Framework.Infrastructure
 
 @inject CommonSettings commonSettings
 @inject IEventPublisher eventPublisher
@@ -42,24 +43,24 @@
     var iosFixFilePath = "~/Plugins/SevenSpikes.Core/Scripts/iOS-12-array-reverse-fix.min.js";
     var iosFixContentFilePath = CommonHelper.DefaultFileProvider.MapPath(iosFixFilePath);
 
-    if(System.IO.File.Exists(iosFixContentFilePath))
-    {        
-	    Html.AppendScriptParts(ResourceLocation.Footer, iosFixFilePath);
+    if (System.IO.File.Exists(iosFixContentFilePath))
+    {
+        Html.AppendScriptParts(ResourceLocation.Footer, iosFixFilePath);
     }
 
     if (commonSettings.JqueryMigrateScriptLoggingActive)
     {
-        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-migrate/jquery-migrate-3.1.0.js");
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.js");
     }
     else
     {
-        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-migrate/jquery-migrate-3.1.0.min.js");
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
     }
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-ui/jquery-ui-1.12.1.custom/jquery-ui.min.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-validate/jquery.validate.unobtrusive-v3.2.11/jquery.validate.unobtrusive.min.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-validate/jquery.validate-v1.19.1/jquery.validate.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
     // ABC: changed to head to work with SLI
-    Html.AppendScriptParts(ResourceLocation.Head, "~/lib/jquery/jquery-3.4.1.min.js");
+    Html.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
 
     //custom tag(s);
     if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))

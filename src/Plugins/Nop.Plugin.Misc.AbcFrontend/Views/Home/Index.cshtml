@@ -1,14 +1,34 @@
-﻿@using Nop.Web.Framework.Infrastructure;
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Core.Domain.Seo
+@* custom *@
+@using Nop.Web.Framework.Infrastructure;
 @using Nop.Plugin.Misc.AbcCore.Infrastructure;
+
+@inject SeoSettings seoSettings
+@inject IStoreContext storeContext
+@inject ISettingService settingService
 
 @{
     Layout = "_ColumnsOne";
 
-    Html.AppendCssFileParts("~/Themes/Pavilion/Content/css/owl.carousel.css");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/owl.carousel.min.js");
-	
+    //title
+    if (!string.IsNullOrEmpty(seoSettings.HomepageTitle))
+    {
+        Html.AddTitleParts(seoSettings.HomepageTitle);
+    }
+
+    //meta
+    if (!string.IsNullOrEmpty(seoSettings.HomepageDescription))
+    {
+        Html.AddMetaDescriptionParts(seoSettings.HomepageDescription);
+    }
+
     //page class
     Html.AppendPageCssClassParts("html-home-page");
+
+    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
 }
 
 <div class="page home-page">
