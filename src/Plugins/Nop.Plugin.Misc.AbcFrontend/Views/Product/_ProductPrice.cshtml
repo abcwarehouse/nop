@@ -49,7 +49,7 @@
         }
     }
 
-    var product = productService.GetProductById(Model.ProductId);
+    var product = await productService.GetProductByIdAsync(Model.ProductId);
     bool usesCartPricing = product.IsAddToCart() || product.IsAddToCartWithUserInfo();
 
     // get price bucket code

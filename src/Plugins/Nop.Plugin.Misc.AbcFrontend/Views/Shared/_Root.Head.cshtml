@@ -24,17 +24,6 @@
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
 @{
-    // ABC: Add the store locator CSS changes if we're on the store locator page.
-    var controllerName = @ViewContext.RouteData.Values["controller"].ToString();
-    var actionName = @ViewContext.RouteData.Values["action"].ToString();
-    var isStoreLocatorPage =
-                controllerName.Equals("StoreLocator", StringComparison.InvariantCultureIgnoreCase) &&
-                actionName.Equals("AllShops", StringComparison.InvariantCultureIgnoreCase);
-    if (isStoreLocatorPage)
-    {
-        Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/store-locator.css");
-    }
-
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.ajaxcart.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");

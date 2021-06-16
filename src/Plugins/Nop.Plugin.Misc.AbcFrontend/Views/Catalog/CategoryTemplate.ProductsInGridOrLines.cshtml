@@ -2,6 +2,7 @@
 
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
+@* custom *@
 @using Nop.Plugin.Misc.AbcCore.Services
 @using Microsoft.AspNetCore.Mvc.ViewComponents
 @using Nop.Web.Framework.Infrastructure
@@ -28,7 +29,7 @@
 
 	if (seoSettings.CanonicalUrlsEnabled)
     {
-        var categoryUrl = Url.RouteUrl("Category", new { SeName = Model.SeName }, webHelper.CurrentRequestProtocol).ToLowerInvariant();
+        var categoryUrl = Url.RouteUrl("Category", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
         Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
@@ -176,6 +177,12 @@
 		@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterBreadcrumb, additionalData = Model })
 	}
 }
+
+@section CatalogFilters {
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
+    @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
+}
+
 <div class="page category-page">
 	@if (hasChildCategories)
 	{
@@ -193,15 +200,14 @@
 		{
 			<h1 class="leaf-category-title">@Model.Name</h1>
 		}
-		@if (Model.Products.Count > 0)
+        @* Section for Catalog Filters?? *@
+		@* @if (Model.Products.Count > 0)
 		{
 			<div class="product-selectors">
-				@*DFar: open filters for mobile*@
 				<div id="mobile-filters-wrapper">
 					<button id="mobile-filters" onclick="toggleMobileFilters()"><i class="fas fa-filter"></i>Filters</button>
 				</div>
 
-				@*sorting*@
 				@if (Model.PagingFilteringContext.AllowProductSorting)
 				{
 					<div class="product-sorting">
@@ -210,7 +216,7 @@
 					</div>
 				}
 			</div>
-		}
+		}*@
 		@*description*@
 		@if (!String.IsNullOrWhiteSpace(Model.Description))
 		{
@@ -270,7 +276,7 @@
 		@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedProducts, additionalData = Model })
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBeforeProductList, additionalData = Model })
-		@if (Model.Products.Count > 0)
+		@* @if (Model.Products.Count > 0)
 		{
 			<div class="@(Model.PagingFilteringContext.ViewMode == "list" ? "product-list" : "product-grid")">
 				<div class="item-grid">
@@ -295,13 +301,18 @@
 					}
 				</div>
 			</div>
-		}
-		@{
+		} *@
+        @{ 
+            var catalogProductsViewData = new ViewDataDictionary(ViewData);
+            catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("GetCategoryProducts", "Catalog", new { categoryId = Model.Id }));
+        }
+        @await Html.PartialAsync("_CatalogProducts", Model.CatalogProductsModel, catalogProductsViewData)
+        @* @{
             var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
         }
-        @if (!pager.IsEmpty())
+        @if (!(await pager.IsEmpty()))
         {
-			// CUSTOM: view all button
+            // CUSTOM: view all button
 			if (!hasChildCategories)
 			{
 				<div><a onclick="viewAll();">View All</a></div>
@@ -309,7 +320,7 @@
             <div class="pager">
                 @pager
             </div>
-        }
+        } *@
 		@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBottomBelow480px, additionalData = Model })
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBottomMin480px, additionalData = Model })
@@ -317,32 +328,6 @@
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBottomAbove1000px, additionalData = Model })
 	</div>
 </div>
-<script>
-	function viewAll() {
-        var url=window.location.href;
-        var hasFilters = url.indexOf("#")!==-1;
-
-        if (hasFilters){
-            var newUrl=url.replace("pageSize=20","pageSize=1000");
-
-            var pageNumIdxStart = newUrl.indexOf("pageNumber=");
-            var pageNumIdxEnd = newUrl.indexOf("&", pageNumIdxStart);
-            if (pageNumIdxEnd === -1){
-                pageNumIdxEnd = newUrl.length;
-            }
-            newUrl = newUrl.replace(newUrl.substring(pageNumIdxStart,pageNumIdxEnd), "pageNumber=1");
-            window.location.href =newUrl;
-        }
-        else{
-            var separator = (url.indexOf("?")===-1)?"?":"&";
-            var newParam=separator + "pagesize=1000";
-            var newUrl2=url.replace(newParam,"");
-            newUrl2+=newParam;
-
-            window.location.href =newUrl2;
-        }
-    }
-</script>
 @section AsidePageTitle
 {
 	@*only use side title if category is non-leaf*@

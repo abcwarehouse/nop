@@ -37,7 +37,7 @@
                         string noWarranty = "No Additional Warranty ($0)";
                         string baseId = "WarrantyOption_";
                         int option = 1;
-                        var product = productService.GetProductById(@keyValue.Key.ProductId);
+                        var product = await productService.GetProductByIdAsync(@keyValue.Key.ProductId);
                         var productName = product.Name;
 
                         string radioId = baseId + option + "_" + warrGroupIdentifier;
