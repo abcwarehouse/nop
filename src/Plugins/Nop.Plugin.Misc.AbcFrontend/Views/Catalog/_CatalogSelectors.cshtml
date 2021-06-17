@@ -1,3 +1,6 @@
+@* custom *@
+@using Nop.Web.Models.Catalog;
+
 @model CatalogProductsModel
 
 @if (Model.Products.Count <= 0 &&
@@ -44,6 +47,11 @@
             });
         </script>
     }
+
+    @* custom *@
+    <div id="mobile-filters-wrapper">
+	    <button id="mobile-filters" onclick="toggleMobileFilters()"><i class="fas fa-filter"></i>Filters</button>
+	</div>
 
     @if (Model.AllowProductSorting)
     {

@@ -177,23 +177,6 @@
 		{
 			<h1 class="leaf-category-title">@Model.Name</h1>
 		}
-        @* Section for Catalog Filters?? *@
-		@* @if (Model.Products.Count > 0)
-		{
-			<div class="product-selectors">
-				<div id="mobile-filters-wrapper">
-					<button id="mobile-filters" onclick="toggleMobileFilters()"><i class="fas fa-filter"></i>Filters</button>
-				</div>
-
-				@if (Model.PagingFilteringContext.AllowProductSorting)
-				{
-					<div class="product-sorting">
-						<span>@T("Catalog.OrderBy")</span>
-						@Html.DropDownList("products-orderby", Model.PagingFilteringContext.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
-					</div>
-				}
-			</div>
-		}*@
 		@*description*@
 		@if (!String.IsNullOrWhiteSpace(Model.Description))
 		{
