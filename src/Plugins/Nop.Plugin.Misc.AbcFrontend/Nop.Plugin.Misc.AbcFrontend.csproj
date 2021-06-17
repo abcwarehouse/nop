@@ -20,6 +20,9 @@
     <None Remove="plugin.json" />
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Shared\Components\HomepageCategories\Default.cshtml" />
+    <None Remove="Views\Catalog\_CatalogFilters.cshtml" />
+    <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
+    <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\ManufacturerAll.cshtml" />
     <None Remove="Views\Catalog\ManufacturerTemplate.ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Shared\Components\SearchBox\Default.cshtml" />
@@ -104,6 +107,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\Components\HomepageCategories\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\_CatalogFilters.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\_CatalogSelectors.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\_ProductsInGridOrLines.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Catalog\ManufacturerAll.cshtml">
