@@ -21,26 +21,20 @@
 @{
     Layout = "_ColumnsOne";
 
-    // custom: add mattress change
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/mattress.js");
-
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-details-template.css");
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-box.css");
     //title
-    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
     Html.AddMetaDescriptionParts(Model.MetaDescription);
     Html.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
     Html.AppendPageCssClassParts("html-product-details-page");
 
-    var seoSettings = frontEndService.GetSeoSettings();
     var showShareButton = catalogSettings.ShowShareButton;
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, webHelper.CurrentRequestProtocol).ToLowerInvariant();
+        var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
         Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
@@ -66,15 +60,21 @@
         Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
         Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
+
+    // custom
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/mattress.js");
+    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-details-template.css");
+    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-box.css");
 }
-<link href="~/Plugins/Misc.AbcFrontend/styles/product-box.css" rel="stylesheet" type="text/css" />
 
 <!--product breadcrumb-->
 @section Breadcrumb
             {
     @Html.Partial("_ProductBreadcrumb", Model.Breadcrumb)
 }
+
 @{
+    // custom
     // this part is for adding class if it is clearance store
     Product currentProduct = await productService.GetProductByIdAsync(Model.Id);
     bool isClearanceStore = frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync());
@@ -124,7 +124,7 @@
                     @{
                         var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom" });
                     }
-                    @if (!String.IsNullOrEmpty(cloudZoom.RenderHtmlContentAsync()))
+                    @if (!String.IsNullOrEmpty(await cloudZoom.RenderHtmlContentAsync()))
                     {
                         @cloudZoom
                     }
