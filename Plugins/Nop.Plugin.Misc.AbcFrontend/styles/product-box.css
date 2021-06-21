@@ -173,13 +173,13 @@ span.price.you-save {
 
 @media (min-width: 1001px) {
 	.product-item.product-item:not(.buttons-upper) {
-		height: 39rem;
+		height: 38.5rem;
 	}
 }
 
 @media (min-width: 1281px) {
 	.product-item.product-item:not(.buttons-upper) {
-		height: 39.5rem;
+		height: 37.5rem;
 	}
 }
 
