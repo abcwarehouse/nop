@@ -1,6 +1,10 @@
+@using Nop.Plugin.Widgets.PowerReviews
+
+@model PowerReviewsSettings
+
 @{
     Html.AddHeadCustomParts("<script src='//ui.powerreviews.com/stable/4.0/ui.js'></script>");
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-listing.css");    
+    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-listing.css");
 }
 
 <script>
@@ -25,90 +29,13 @@
 		var powerReviewsRenderConfigs = [];
 		itemBoxes.each(function(index, item){
 			var sku = $(item).find('.product-box-sku').text().replace(/[^0-9a-zA-Z-]/gi,'');
-			
-			$(prSnippets[index]).bind("DOMNodeInserted", function (event) {				
-				var brand = $(item).find('.product-title span:first-child').text();
-				var name = $(item).find('.product-title span').text();
-				var description = $(item).find('.product-box-description').text();
-				var price = parseFloat($(item).find('.actual-price').text().replace(/[^0-9.-]+/g, ''));
-				var image_src = $(item).find('.picture a img').attr('src');
-				var offer_url = $(item).find('.product-title a').attr('href');
-				var deferred_pricing_detail = $(item).find('.deferred-pricing-detail');
-				deferred_pricing_detail = 0;
-				if (deferred_pricing_detail) {
-					deferred_pricing_detail = deferred_pricing_detail.innerText;
-					if (deferred_pricing_detail) {
-						deferred_pricing_detail = parseInt(deferred_pricing_detail.replace(/[a-z A-Z/]/gi, ''));
-					}
-				}
-				deferred_pricing_detail = isNaN(deferred_pricing_detail) ? 0 : deferred_pricing_detail;
-				var tmp_date = new Date();
-				tmp_date.setMonth(tmp_date.getMonth() + deferred_pricing_detail);
-				var price_valid_until = tmp_date.toDateString();
-
-				var el = document.createElement('script');
-				el.type = 'application/ld+json';
-				el.id = 'product-json-ld';
-
-				var productJsonLd = {
-					"@@context": "https://schema.org/",
-					"@@type": "Product",
-					"brand": {
-						"@@type": "Thing",
-						"name": brand
-					},
-					"@@id": sku,
-					"name": name,
-					"sku": sku,
-					"mpn": sku,
-					"description": description,
-					"image": [
-						image_src
-					],
-					"offers": {
-						"@@type": "Offer",
-						"price": isNaN(price) ? "0.00" : price.toFixed(2),
-						"priceCurrency": "USD",
-						"priceValidUntil": price_valid_until,
-						"url": offer_url,
-						"availability": "https://schema.org/InStock"
-					}
-				};
-				var productJsonLdScript = prSnippets[index].querySelector('script');
-				if (productJsonLdScript) {
-					var prResult = JSON.parse(productJsonLdScript.textContent);
-					productJsonLd.review = {}
-					productJsonLd.review["@@type"] = "Review";
-					productJsonLd.review.reviewRating = {}
-					productJsonLd.review.reviewRating.ratingValue = prResult.ratingValue;
-					productJsonLd.review.reviewRating.bestRating = "5";
-					productJsonLd.review.reviewRating.worstRating = "0";
-					productJsonLd.review.author = {};
-					productJsonLd.review.author["@@type"] = "Person";
-
-					productJsonLd.aggregateRating = {};
-					productJsonLd.aggregateRating["@@type"] = "AggregateRating";
-					productJsonLd.aggregateRating.ratingValue = prResult.ratingValue;
-					productJsonLd.aggregateRating.reviewCount = prResult.reviewCount;
-				};
-
-				el.text = JSON.stringify(productJsonLd);
-				var productJsonLdTag = $(item).find('#product-json-ld');
-				
-				if (productJsonLdTag.length == 0) {
-					$(item).append(el);
-				} else {
-					$(productJsonLdTag).replaceWith(el);
-				};		
-			});
 
 			powerReviewsRenderConfigs.push({
 				page_id: sku,
-				api_key: "551eca6e-39f4-4e1e-9c13-8ca6a4bc53bb",
+				api_key: "@Model.APIKey",
 				locale: "en_US",
-				merchant_group_id: "49328",
-				merchant_id: "74516",
-				//ENABLE_CLIENT_SIDE_STRUCTURED_DATA: false,
+				merchant_group_id: "@Model.MerchantGroupId",
+				merchant_id: "@Model.MerchantId",
 				review_wrapper_url: `/write-a-review?pr_page_id={sku}`,
 				structured_data_product_id: sku,
 				components: {

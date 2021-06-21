@@ -2,7 +2,7 @@
   "Group": "Widgets",
   "FriendlyName": "PowerReviews",
   "SystemName": "Widgets.PowerReviews",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "SupportedVersions": [ "4.30" ],
   "Author": "Dave Farinelli",
   "DisplayOrder": 1,

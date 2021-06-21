@@ -18,6 +18,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
     public class WidgetsPowerReviewsViewComponent : NopViewComponent
     {
         private readonly ILogger _logger;
+        private readonly PowerReviewsSettings _settings;
 
         private readonly FrontEndService _frontEndService;
         private readonly IGenericAttributeService _genericAttributeService;
@@ -25,12 +26,14 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
 
         public WidgetsPowerReviewsViewComponent(
             ILogger logger,
+            PowerReviewsSettings settings,
             FrontEndService frontEndService,
             IGenericAttributeService genericAttributeService,
             IProductService productService
         )
         {
             _logger = logger;
+            _settings = settings;
             _frontEndService = frontEndService;
             _genericAttributeService = genericAttributeService;
             _productService = productService;
@@ -38,6 +41,14 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
 
         public IViewComponentResult Invoke(string widgetZone, object additionalData = null)
         {
+            if (!_settings.IsValid())
+            {
+                _logger.Error("PowerReviews settings are required to have " +
+                              "reviews display for products, add the correct " +
+                              "settings in configuration.");
+                return Content("");
+            }
+
             if (widgetZone == CustomPublicWidgetZones.ProductBoxAddinfoReviews &&
                 additionalData is ProductOverviewModel)
             {
@@ -59,7 +70,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             if (widgetZone == PublicWidgetZones.CategoryDetailsBottom ||
                 widgetZone == PublicWidgetZones.ManufacturerDetailsBottom)
             {
-                return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml");
+                return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml", _settings);
             }
 
             _logger.Error($"Widgets.PowerReviews: No view provided for widget zone {widgetZone}");
@@ -71,7 +82,8 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var model = new ListingModel()
             {
                 ProductId = productOverviewModel.Id,
-                ProductSku = GetPowerReviewsSku(productOverviewModel.Sku, productOverviewModel.Id)
+                ProductSku = GetPowerReviewsSku(productOverviewModel.Sku, productOverviewModel.Id),
+                Settings = _settings
             };
 
             return View(
@@ -107,7 +119,8 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 ProductImageUrl = productDetailsModel.DefaultPictureModel.ImageUrl,
                 ProductGtin = productDetailsModel.Gtin,
                 ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
-                ProductId = productDetailsModel.Id
+                ProductId = productDetailsModel.Id,
+                Settings = _settings
             };
 
             return View(

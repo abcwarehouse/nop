@@ -13,5 +13,6 @@ namespace Nop.Plugin.Widgets.PowerReviews.Models
         public string ProductGtin { get; set; }
         public string ProductPrice { get; set; }
         public int ProductId { get; set; }
+        public PowerReviewsSettings Settings { get; set; }
     }
 }
