@@ -12,31 +12,41 @@ using Nop.Plugin.Misc.AbcFrontend.Extensions;
 using Nop.Plugin.Misc.AbcCore.Infrastructure;
 using Nop.Services.Common;
 using Nop.Web.Models.Catalog;
+using Nop.Core;
 
 namespace Nop.Plugin.Widgets.PowerReviews.Components
 {
     public class WidgetsPowerReviewsViewComponent : NopViewComponent
     {
         private readonly ILogger _logger;
+        private readonly IWebHelper _webHelper;
         private readonly PowerReviewsSettings _settings;
 
         private readonly FrontEndService _frontEndService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IProductService _productService;
+        private readonly IProductAbcDescriptionService _productAbcDescriptionService;
+        private readonly ICategoryService _categoryService;
 
         public WidgetsPowerReviewsViewComponent(
             ILogger logger,
+            IWebHelper webHelper,
             PowerReviewsSettings settings,
             FrontEndService frontEndService,
             IGenericAttributeService genericAttributeService,
-            IProductService productService
+            IProductService productService,
+            IProductAbcDescriptionService productAbcDescriptionService,
+            ICategoryService categoryService
         )
         {
             _logger = logger;
+            _webHelper = webHelper;
             _settings = settings;
             _frontEndService = frontEndService;
             _genericAttributeService = genericAttributeService;
             _productService = productService;
+            _productAbcDescriptionService = productAbcDescriptionService;
+            _categoryService = categoryService;
         }
 
         public IViewComponentResult Invoke(string widgetZone, object additionalData = null)
@@ -102,25 +112,30 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             }
 
             var product = _productService.GetProductById(productDetailsModel.Id);
-            var priceEndDate = DateTime.Now;
-            var specialPriceEndDate = product.GetSpecialPriceEndDate();
-            if (specialPriceEndDate.HasValue && !product.IsAbcGiftCard())
+            var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
+            var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id).FirstOrDefault();
+            var category = _categoryService.GetCategoryById(productCategory.CategoryId);
+
+            var feedlessModel = new FeedlessProductModel()
             {
-                priceEndDate = specialPriceEndDate.Value.ToLocalTime();
-            }
+                Name = product.Name,
+                Url = _webHelper.GetThisPageUrl(true),
+                ImageUrl = productDetailsModel.DefaultPictureModel.ImageUrl,
+                Description = productAbcDescription?.AbcDescription ?? product.ShortDescription,
+                CategoryName = category.Name,
+                ManufacturerId = manufacturerModel.Id,
+                Upc = product.Gtin,
+                BrandName = manufacturerName,
+                InStock = !product.DisableBuyButton
+            };
 
             var model = new DetailModel()
             {
-                ManufacturerName = manufacturerName,
                 ProductSku = GetPowerReviewsSku(productDetailsModel.Sku, productDetailsModel.Id),
-                PriceValidUntil = priceEndDate,
-                ProductName = productDetailsModel.Name,
-                MetaDescription = productDetailsModel.MetaDescription,
-                ProductImageUrl = productDetailsModel.DefaultPictureModel.ImageUrl,
-                ProductGtin = productDetailsModel.Gtin,
-                ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
                 ProductId = productDetailsModel.Id,
-                Settings = _settings
+                ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                Settings = _settings,
+                FeedlessProduct = feedlessModel
             };
 
             return View(

@@ -8,7 +8,7 @@
 @model DetailModel
 
 @{
-    Html.AddHeadCustomParts("<script src='//ui.powerreviews.com/stable/4.0/ui.js'></script>");
+    Html.AddHeadCustomParts("<script src='//ui.powerreviews.com/stable/4.1/ui.js'></script>");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-detail.css");
 
 	var mattressListingPrice =
@@ -34,9 +34,20 @@
 		merchant_group_id: '@Model.Settings.MerchantGroupId',
 		merchant_id: '@Model.Settings.MerchantId',
 		page_id: "@Model.ProductSku",
-		name: "@Model.ProductName",
 		review_wrapper_url: '/write-a-review?pr_page_id=@Model.ProductSku',
 		structured_data_product_id: "@Model.ProductSku",
+		product:{
+            name: '@Model.FeedlessProduct.Name',
+            url: '@Model.FeedlessProduct.Url',
+            image_url: '@Model.FeedlessProduct.ImageUrl',
+            description: '@Model.FeedlessProduct.Description',
+            category_name: '@Model.FeedlessProduct.CategoryName',
+            manufacturer_id: '@Model.FeedlessProduct.ManufacturerId',
+            upc: '@Model.FeedlessProduct.Upc',
+            brand_name: '@Model.FeedlessProduct.BrandName',
+            price: @price,
+            in_stock: @Model.FeedlessProduct.InStock
+   		},
 		components: {
 			ReviewSnippet: 'pr-reviewsnippet',
 			ReviewDisplay: 'pr-reviewdisplay'
