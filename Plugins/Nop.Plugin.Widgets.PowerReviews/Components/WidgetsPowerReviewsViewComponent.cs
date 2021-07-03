@@ -119,6 +119,10 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
             var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id).FirstOrDefault();
             var category = _categoryService.GetCategoryById(productCategory.CategoryId);
+            var specialPriceEndDate = product.GetSpecialPriceEndDate();
+            var priceEndDate = specialPriceEndDate.HasValue ?
+                specialPriceEndDate.Value.ToLocalTime() :
+                DateTime.Now;
 
             var feedlessModel = new FeedlessProductModel()
             {
@@ -138,6 +142,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 ProductSku = GetPowerReviewsSku(productDetailsModel.Sku, productDetailsModel.Id),
                 ProductId = productDetailsModel.Id,
                 ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                PriceValidUntil = priceEndDate,
                 Settings = _settings,
                 FeedlessProduct = feedlessModel
             };

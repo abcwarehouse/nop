@@ -49,6 +49,24 @@
             price: @price,
             in_stock: '@Model.FeedlessProduct.InStock'
    		},
+		subject: {
+			"@@context": "https://schema.org",
+			"@@type": "Product",
+			name: "@Model.FeedlessProduct.Name",
+			description: "@Model.FeedlessProduct.Description",
+			url: "@Model.FeedlessProduct.Url",
+			image: "@Model.FeedlessProduct.ImageUrl",
+			sku: "@Model.ProductSku",
+			brand: "@Model.FeedlessProduct.BrandName",
+			offers: {
+				"@@type": "Offer",
+				priceCurrency: "USD",
+				url: "@this.Request.Url.AbsoluteUri",
+				price: "@price",
+				priceValidUntil: "@Model.PriceValidUntil.ToShortDateString()",
+				availability: "https://schema.org/InStock"
+			}
+		},	
 		components: {
 			ReviewSnippet: 'pr-reviewsnippet',
 			ReviewDisplay: 'pr-reviewdisplay'
