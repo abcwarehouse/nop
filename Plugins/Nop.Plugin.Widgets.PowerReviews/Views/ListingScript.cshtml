@@ -3,7 +3,7 @@
 @model PowerReviewsSettings
 
 @{
-    Html.AddHeadCustomParts("<script src='//ui.powerreviews.com/stable/4.1/ui.js'></script>");
+    Html.AddHeadCustomParts("<script src=\"https://ui.powerreviews.com/stable/4.1/ui.js\" async></script>");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-listing.css");
 }
 
@@ -37,14 +37,17 @@
 				merchant_group_id: "@Model.MerchantGroupId",
 				merchant_id: "@Model.MerchantId",
 				review_wrapper_url: `/write-a-review?pr_page_id={sku}`,
-				structured_data_product_id: sku,
 				components: {
 					CategorySnippet: prSnippets[index].id
 				}
 			});
 		});		
 
-		POWERREVIEWS.display.render(powerReviewsRenderConfigs);
+		window.pwr = window.pwr || function () {
+			(pwr.q = pwr.q || []).push(arguments); 
+		};
+		pwr("render", powerReviewsRenderConfigs);
+		//POWERREVIEWS.display.render(powerReviewsRenderConfigs);
 	}
 
     function areArraysEqual(a1, a2) {
