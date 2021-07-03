@@ -17,6 +17,8 @@
 	var price = mattressListingPrice != null ?
 		mattressListingPrice.ToString() :
 		Model.ProductPrice;
+
+	var url = this.Request.Url.AbsoluteUri;
 }
 
 @*Script to open reviews when clicking read link*@
@@ -61,7 +63,7 @@
 			offers: {
 				"@@type": "Offer",
 				priceCurrency: "USD",
-				url: "@this.Request.Url.AbsoluteUri",
+				url: "@Model.FeedlessProduct.Url",
 				price: "@price",
 				priceValidUntil: "@Model.PriceValidUntil.ToShortDateString()",
 				availability: "https://schema.org/InStock"
