@@ -47,9 +47,10 @@ namespace Nop.Plugin.Widgets.PowerReviews
                 CustomPublicWidgetZones.ProductDetailsReviewsTab,
                 CustomPublicWidgetZones.ProductDetailsReviewsTabContent,
 
-                // standard - used for listing script
+                // standard - used for scripts
                 PublicWidgetZones.CategoryDetailsBottom,
-                PublicWidgetZones.ManufacturerDetailsBottom
+                PublicWidgetZones.ManufacturerDetailsBottom,
+                PublicWidgetZones.ProductDetailsBottom
             };
         }
 

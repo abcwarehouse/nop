@@ -67,7 +67,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             if (widgetZone == CustomPublicWidgetZones.ProductDetailsReviews &&
                 additionalData is ProductDetailsModel)
             {
-                return Detail(additionalData as ProductDetailsModel);
+                return View("~/Plugins/Widgets.PowerReviews/Views/Detail.cshtml");
             }
             if (widgetZone == CustomPublicWidgetZones.ProductDetailsReviewsTab)
             {
@@ -81,6 +81,10 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 widgetZone == PublicWidgetZones.ManufacturerDetailsBottom)
             {
                 return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml", _settings);
+            }
+            if (widgetZone == PublicWidgetZones.ProductDetailsBottom)
+            {
+                return Detail(additionalData as ProductDetailsModel);
             }
 
             _logger.Error($"Widgets.PowerReviews: No view provided for widget zone {widgetZone}");
@@ -139,7 +143,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             };
 
             return View(
-                "~/Plugins/Widgets.PowerReviews/Views/Detail.cshtml",
+                "~/Plugins/Widgets.PowerReviews/Views/DetailScript.cshtml",
                 model
             );
         }

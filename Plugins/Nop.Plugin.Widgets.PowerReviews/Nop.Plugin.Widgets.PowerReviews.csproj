@@ -19,6 +19,7 @@
     <None Remove="Views\Listing.cshtml" />
     <None Remove="Views\ListingScript.cshtml" />
     <None Remove="Views\Detail.cshtml" />
+    <None Remove="Views\DetailScript.cshtml" />
     <None Remove="Views\DetailTab.cshtml" />
     <None Remove="Views\DetailTabContent.cshtml" />
     <None Remove="Views\Configure.cshtml" />
@@ -39,6 +40,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Detail.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\DetailScript.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\DetailTab.cshtml">
