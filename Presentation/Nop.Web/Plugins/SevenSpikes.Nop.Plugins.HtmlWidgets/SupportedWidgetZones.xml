@@ -184,4 +184,5 @@
 	  <!-- additional -->
 	  <WidgetZone>mega_menu_categories_before_dropdown_end_furniture</WidgetZone>
 	  <WidgetZone>mega_menu_categories_before_dropdown_end_mattresses</WidgetZone>
+	  <WidgetZone>topic_page_before_body</WidgetZone>
 	</SupportedWidgetZones>
