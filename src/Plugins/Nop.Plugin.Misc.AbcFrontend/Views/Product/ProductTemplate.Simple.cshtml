@@ -122,7 +122,7 @@
                     <span class="corner-picture"><img src="~/Plugins/Misc.AbcFrontend/Images/clearance_banner.png" /></span>
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
                     @{
-                        var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom" });
+                        var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom", additionalData = Model });
                     }
                     @if (!String.IsNullOrEmpty(await cloudZoom.RenderHtmlContentAsync()))
                     {
@@ -273,11 +273,11 @@
                     var nopQuickTabsHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_before_collateral", additionalData = Model.Id });
                 }
 
-                @if (!String.IsNullOrEmpty(nopQuickTabsHtml.RenderHtmlContentAsync()))
+                @if (!String.IsNullOrEmpty(await nopQuickTabsHtml.RenderHtmlContentAsync()))
                 {
                     var productsCarouselHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productpage_after_collateral", additionalData = Model.Id });
                     var carouselQuickTabsWrapperClass = "one-column-wrapper";
-                    if (!String.IsNullOrEmpty(productsCarouselHtml.RenderHtmlContentAsync()))
+                    if (!String.IsNullOrEmpty(await productsCarouselHtml.RenderHtmlContentAsync()))
                     {
                         carouselQuickTabsWrapperClass = "two-column-wrapper";
                     }
@@ -297,7 +297,7 @@
                         </div>
                     }
                     @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
-                    @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecifications)
+                    @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
                     @await Html.PartialAsync("_ProductTags", Model.ProductTags)
                 </div>
                 @await Component.InvokeAsync("ProductsAlsoPurchased", new { productId = Model.Id })

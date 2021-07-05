@@ -50,7 +50,7 @@
     }
 
     var product = await productService.GetProductByIdAsync(Model.ProductId);
-    bool usesCartPricing = product.IsAddToCart() || product.IsAddToCartWithUserInfo();
+    bool usesCartPricing = await product.IsAddToCartAsync() || await product.IsAddToCartWithUserInfoAsync();
 
     // get price bucket code
     ProductFlag productFlag = frontEndService.GetProductFlag(Model.ProductId);
@@ -69,7 +69,7 @@
 
     // get mattress price for schema
 	var mattressListingPrice =
-		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.ProductId);
+		await abcMattressListingPriceService.GetListingPriceForMattressProductAsync(Model.ProductId);
 
 	var price = mattressListingPrice != null ?
 		mattressListingPrice.ToString() :
