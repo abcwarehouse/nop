@@ -173,7 +173,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                 if (returnCode.Value.Equals(1))
                     return true;
                 else
-                    response.AddError("Home Delivery Shipping is not available for the given address");
+                    response.AddError("Home Delivery Shipping is not available for the given zip code.");
             }
             else
             {

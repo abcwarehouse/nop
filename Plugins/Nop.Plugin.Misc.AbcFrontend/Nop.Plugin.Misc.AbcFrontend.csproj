@@ -38,6 +38,7 @@
     <None Remove="Views\Shared\_ProductBox.cshtml" />
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\_Header.cshtml" />
+    <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />
     <None Remove="Views\ShoppingCart\OrderSummary.cshtml" />
     <None Remove="Views\ShoppingCart\Cart.cshtml" />
     <None Remove="Views\Order\Details.cshtml" />
@@ -90,6 +91,7 @@
     <None Remove="scripts\mobileMenu.js" />
     <None Remove="scripts\mobileFilters.js" />
     <None Remove="scripts\mattress.js" />
+    <None Remove="scripts\public.estimateshipping.popup.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -160,6 +162,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\_Header.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_EstimateShippingPopUp.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\ShoppingCart\OrderSummary.cshtml">
@@ -319,6 +324,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="scripts\mattress.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scripts\public.estimateshipping.popup.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
