@@ -20,8 +20,8 @@
     var cart = await shoppingCartService.GetShoppingCartAsync(
                 await workContext.GetCurrentCustomerAsync(),
                 ShoppingCartType.ShoppingCart,
-                await storeContext.GetCurrentStoreAsync().Id);
-    var hasWarranties = warrantyService.await CartContainsWarrantiesAsync(cart);
+                (await storeContext.GetCurrentStoreAsync()).Id);
+    var hasWarranties = await warrantyService.CartContainsWarrantiesAsync(cart);
 }
 
 <div class="order-progress">

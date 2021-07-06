@@ -1,33 +1,38 @@
+@* ABC: needs customizations still *@
+
 @model ShoppingCartModel
 
 @using Nop.Core
 @using Nop.Core.Domain.Orders
 @using Nop.Core.Domain.Tax
-@using Nop.Web.Models.ShoppingCart
-@using Nop.Plugin.Misc.AbcCore.Services
+@* ABC: custom *@
 @using Microsoft.AspNetCore.Mvc.ViewComponents
-@using Nop.Plugin.Misc.AbcCore
-@using Nop.Data
 @using Nop.Core.Domain.Catalog
+@using Nop.Data
+@using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Domain
-@using Nop.Web.Framework.Infrastructure
-@using Nop.Services.Catalog
 @using Nop.Plugin.Misc.AbcCore.Extensions
-@using Nop.Web.Extensions
-@using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Plugin.Misc.AbcCore.Services
+@using Nop.Services.Catalog
 @using Nop.Services.Common
+@using Nop.Web.Extensions
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Web.Models.ShoppingCart
 
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
 @inject OrderSettings orderSettings
 @inject IViewComponentSelector viewComponentSelector
+@* ABC: custom *@
 @inject FrontEndService frontEndService
-@inject IStoreContext storeContext
-@inject IRepository<ProductAbcDescription> productAbcDescriptionRepository
-@inject IRepository<Product> productRepository
-@inject IProductService productService
 @inject IGenericAttributeService genericAttributeService
+@inject IProductService productService
+@inject IRepository<Product> productRepository
+@inject IRepository<ProductAbcDescription> productAbcDescriptionRepository
+@inject IStoreContext storeContext
 
+
+@* ABC: custom *@
 @{
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
     string changeDeliveryMethodButtonColor = isHawthorne ?
@@ -36,8 +41,7 @@
 
     bool hasOutOfStockItemsInCart = Model.Items.FirstOrDefault(i => i.Warnings.Contains("Out of stock")) != null ||
                                     Model.Items.FirstOrDefault(i => i.Warnings.Contains("Please remove item from cart to continue.")) != null;
-}
-@{
+
     Html.AddCssFileParts("~/Plugins/AbcWarehouse.HomeDeliveryStatusWidget/Content/loading.css");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-price.css");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-box.css");
@@ -46,62 +50,7 @@
    .spinner > div {
     	background-color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
     }
-</style>
-<script>
-    $(document).on('click', '.change-delivery-method', function () {
-            $('.change-delivery-method').attr('disabled', 'disabled');
-            $('.spinner').show();
-            $.ajax({
-                cache: false,
-                url: '/SwapDeliveryMethod/Change',
-                data: { 'shoppingCartItemId': $(this).val() },
-                type: 'post',
-                success: success,
-                error: error
-            });
-            return false;
-        });
 
-		$(document).on('click', '.remove-link', function () {
-            $('.remove-link').attr('disabled', 'disabled');
-            $('.spinner').show();
-            $.ajax({
-                cache: false,
-                url: '/ShoppingCart/RemoveItem',
-                data: { 'shoppingCartItemId': $(this).val() },
-                type: 'post',
-                success: success,
-                error: error
-            });
-            return false;
-        });
-
-        function success(data) {
-            $('.spinner').hide();
-            if (data.RedirectUrl) {
-                location.href = data.RedirectUrl;
-            }
-            else if (data.ErrorMessage) {
-                $(data.ErrorMessageRecipient).show();
-                $(data.ErrorMessageRecipient).empty();
-                $(data.ErrorMessageRecipient).append(data.ErrorMessage);
-                $('.change-delivery-method').removeAttr('disabled');
-                return false;
-            }
-            else {
-                location.href = "/cart";
-            }
-        }
-
-        function error() {
-            $('.spinner').hide();
-            $('.change-delivery-method').removeAttr('disabled');
-            alert('error');
-        }
-</script>
-
-
-<style>
     .product-mini-description {
         font-size: 9pt;
         display: block;
@@ -202,7 +151,61 @@
 		}
 	}
 </style>
+<script>
+    $(document).on('click', '.change-delivery-method', function () {
+            $('.change-delivery-method').attr('disabled', 'disabled');
+            $('.spinner').show();
+            $.ajax({
+                cache: false,
+                url: '/SwapDeliveryMethod/Change',
+                data: { 'shoppingCartItemId': $(this).val() },
+                type: 'post',
+                success: success,
+                error: error
+            });
+            return false;
+        });
+
+		$(document).on('click', '.remove-link', function () {
+            $('.remove-link').attr('disabled', 'disabled');
+            $('.spinner').show();
+            $.ajax({
+                cache: false,
+                url: '/ShoppingCart/RemoveItem',
+                data: { 'shoppingCartItemId': $(this).val() },
+                type: 'post',
+                success: success,
+                error: error
+            });
+            return false;
+        });
+
+        function success(data) {
+            $('.spinner').hide();
+            if (data.RedirectUrl) {
+                location.href = data.RedirectUrl;
+            }
+            else if (data.ErrorMessage) {
+                $(data.ErrorMessageRecipient).show();
+                $(data.ErrorMessageRecipient).empty();
+                $(data.ErrorMessageRecipient).append(data.ErrorMessage);
+                $('.change-delivery-method').removeAttr('disabled');
+                return false;
+            }
+            else {
+                location.href = "/cart";
+            }
+        }
+
+        function error() {
+            $('.spinner').hide();
+            $('.change-delivery-method').removeAttr('disabled');
+            alert('error');
+        }
+</script>
+
 <div class="order-summary-content">
+    <!-- ABC: custom -->
     <div class="spinner hidden-loading">
         <div class="rect1"></div>
         <div class="rect2"></div>
@@ -210,8 +213,9 @@
         <div class="rect4"></div>
         <div class="rect5"></div>
     </div>
+    
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
-    @Html.Partial("_OrderReviewData", Model.OrderReviewData)
+    @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
     @if (Model.Items.Count > 0)
     {
         if (Model.Warnings.Count > 0)
@@ -225,25 +229,29 @@
                 </ul>
             </div>
         }
+        @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
         <form asp-route="ShoppingCart" method="post" enctype="multipart/form-data" id="shopping-cart-form">
-            @Html.AntiForgeryToken()
             <div class="table-wrapper">
                 <table class="cart">
                     <colgroup>
                         <col width="1" />
                         @if (Model.IsEditable)
-                    {
+                        {
                             <col width="1" />
                         }
                         @if (Model.ShowSku)
-                    {
+                        {
                             <col width="1" />
                         }
                         @if (Model.ShowProductImages)
-                    {
+                        {
                             <col width="1" />
                         }
                         <col />
+                        @if (Model.ShowVendorName)
+                        {
+                            <col />
+                        }
                         <col width="1" />
                         <col width="1" />
                         <col width="1" />
@@ -251,8 +259,14 @@
                     <thead>
                         <tr class="cart-header-row">
                             <th>
-                                <span class="item-count">#</span>
-                            </th>
+			                    <span class="item-count">#</span>
+			                </th>
+                            @if (Model.IsEditable)
+                            {
+                                <th class="remove-from-cart" data-hide="w410, w480, w580">
+                                    @T("ShoppingCart.Remove")
+                                </th>
+                            }
                             @if (Model.ShowSku)
                             {
                                 <th class="sku" data-hide="w410, w480, w580, w768, w980">
@@ -268,6 +282,12 @@
                             <th class="product" data-hide="w410, w480">
                                 @T("ShoppingCart.Product(s)")
                             </th>
+                            @if (Model.ShowVendorName)
+                            {
+                                <th class="vendor" data-hide="w410, w480, w580, w768, w980">
+                                    @T("ShoppingCart.VendorName")
+                                </th>
+                            }
                             <th class="unit-price" data-hide="w410, w480, w580, w768">
                                 @T("ShoppingCart.UnitPrice")
                             </th>
@@ -283,7 +303,7 @@
                         @{var counter = 0;}
                         @foreach (var item in Model.Items)
                         {
-
+                            // ABC: custom
                             var miniDesc = "";
                             var pad = productAbcDescriptionRepository.Table.Where(p => p.Product_Id == item.ProductId).FirstOrDefault();
                             var product = await productService.GetProductByIdAsync(item.ProductId);
@@ -319,30 +339,57 @@
                             counter++;
                             <tr class="cart-item-row">
                                 <td>
-                                    <span class="item-count">@counter</span>
-                                </td>
+		                            <span class="item-count">@counter</span>
+		                        </td>
+                                @if (Model.IsEditable)
+                                {
+                                    <td class="remove-from-cart">
+                                        @if (item.DisableRemoval)
+                                        {
+                                            <text>&nbsp;</text>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
+											<button name="updatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true);"></button>
+                                        }
+                                    </td>
+                                }
                                 @if (Model.ShowSku)
                                 {
                                     <td class="sku">
-                                        @item.Sku
+                                        <span>@item.Sku</span>
                                     </td>
                                 }
                                 @if (Model.ShowProductImages)
                                 {
                                     <td class="product-picture">
-                                        <a href="@Url.RouteUrl("Product", new { SeName = item.ProductSeName })"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                        <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})">
+                                            @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                                            {
+                                                @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                                                {
+                                                    ("src", item.Picture.ImageUrl),
+                                                    ("alt", item.Picture.AlternateText),
+                                                    ("title", item.Picture.Title)
+                                                })
+                                            }
+                                            else
+                                            {
+                                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
+                                            }
+                                        </a>
                                     </td>
                                 }
                                 <td class="product">
-                                    <a href="@Url.RouteUrl("Product", new { SeName = item.ProductSeName })" class="product-name">@item.ProductName</a>
-                                    <div class="product-mini-description">@Html.Raw(miniDesc)</div>
-                                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.OrderSummaryAfterProductMiniDescription, additionalData = item.ProductId })
-                                    @if (!string.IsNullOrEmpty(attributeInfo))
+                                    <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                    @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
-                                            @Html.Raw(@attributeInfo)
+                                            @Html.Raw(item.AttributeInfo)
                                         </div>
                                     }
+                                    <!-- ABC: custom -->
                                     @if (!string.IsNullOrEmpty(stockMessage))
                                     {
                                         <div class="prices-bottom-message">@stockMessage</div>
@@ -351,6 +398,7 @@
                                     {
                                         <div style="font-size: 80%">Hold your place in line by purchasing now.  Deliveries are first come, first served.  There is potential for longer wait times due to manufacturer delays.</div>
                                     }
+                                    <!-- ABC: end custom -->
                                     @if (!string.IsNullOrEmpty(item.RecurringInfo))
                                     {
                                         <div class="recurring-info">
@@ -363,18 +411,16 @@
                                             @Html.Raw(item.RentalInfo)
                                         </div>
                                     }
-                                    @if (Model.IsEditable)
+                                    @if (Model.IsEditable && item.AllowItemEditing)
                                     {
-                                        var editCartItemUrl = Url.RouteUrl("Product", new { SeName = item.ProductSeName }, webHelper.CurrentRequestProtocol);
+                                        var editCartItemUrl = Url.RouteUrl("Product", new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
                                         editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
-
-                                        @* removed
-                                        <div class="edit-item">
+                                        @* <div class="edit-item">
                                             <a href="@editCartItemUrl">@T("Common.Edit")</a>
-                                        </div>
-                                        *@
-                                        
-                                        if (!isOnlineOnly)
+                                        </div> *@
+
+                                        // ABC: custom - I'm not sure if we're even using this
+                                        @* if (!isOnlineOnly)
                                         {
                                             if (product.IsPickup())
                                             {
@@ -391,7 +437,7 @@
                                                     <span id="change_method_error_@item.Id" class="delivery-method-error"></span>
                                                 </div>
                                             }
-                                        }
+                                        } *@
                                     }
                                     @if (item.Warnings.Count > 0)
                                     {
@@ -399,12 +445,18 @@
                                             <ul>
                                                 @foreach (var warning in item.Warnings)
                                                 {
-                                                    <li>@warning</li>
+                                                    <li>@Html.Raw(warning)</li>
                                                 }
                                             </ul>
                                         </div>
                                     }
                                 </td>
+                                @if (Model.ShowVendorName)
+                                {
+                                    <td class="vendor">
+                                        <span class="vendor-name">@item.VendorName</span>
+                                    </td>
+                                }
                                 <td class="unit-price">
                                     <span class="product-unit-price">@item.UnitPrice</span>
                                 </td>
@@ -413,7 +465,7 @@
                                     {
                                         if (item.AllowedQuantities.Count > 0)
                                         {
-                                            <select name="itemquantity@(item.Id)" class="qty-dropdown">
+                                            <select name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" class="qty-dropdown">
                                                 @foreach (var qty in item.AllowedQuantities)
                                                 {
                                                     <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
@@ -422,7 +474,7 @@
                                         }
                                         else
                                         {
-                                            <input name="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" class="qty-input" />
+                                            <input name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" class="qty-input" aria-label="@T("ShoppingCart.Quantity")" />
                                         }
                                     }
                                     else
@@ -432,41 +484,49 @@
                                 </td>
                                 <td class="subtotal">
                                     <span class="product-subtotal">@item.SubTotal</span>
-                                    @if (!String.IsNullOrEmpty(item.Discount))
+                                    @if (!string.IsNullOrEmpty(item.Discount))
                                     {
                                         <div class="discount">
-                                            @T("ShoppingCart.ItemYouSave"): @item.Discount
+                                            @T("ShoppingCart.ItemYouSave", item.Discount)
                                         </div>
+                                        // ABC: custom
+                                        @if (!string.IsNullOrEmpty(stockMessage))
+                                        {
+                                            <div class="prices-bottom-message prices-bottom-message-mobile">@stockMessage</div>
+                                        }
+                                        @if (item.Warnings.Count > 0)
+                                        {
+                                            <div class="message-error message-error-mobile">
+                                                <ul>
+                                                    @foreach (var warning in item.Warnings)
+                                                    {
+                                                        <li>@warning</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        <button value="@item.Id" class="remove-link">Remove</button>
+                                        // ABC: end custom
+                                        if (item.MaximumDiscountedQty.HasValue)
+                                        {
+                                            <div class="discount-additional-info">
+                                                @T("ShoppingCart.MaximumDiscountedQty", item.MaximumDiscountedQty.Value)
+                                            </div>
+                                        }
                                     }
-                                    @if (!string.IsNullOrEmpty(stockMessage))
-                                    {
-                                        <div class="prices-bottom-message prices-bottom-message-mobile">@stockMessage</div>
-                                    }
-                                    @if (item.Warnings.Count > 0)
-                                    {
-                                        <div class="message-error message-error-mobile">
-                                            <ul>
-                                                @foreach (var warning in item.Warnings)
-                                                {
-                                                    <li>@warning</li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    }
-                                    <button value="@item.Id" class="remove-link">Remove</button>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
-
+        
             <div class="cart-options">
                 @if (Model.IsEditable)
                 {
                     <div class="common-buttons">
-                        <input type="submit" name="updatecart" value="@T("ShoppingCart.UpdateCart")" class="button-2 update-cart-button" />
-                        <input type="submit" name="continueshopping" value="@T("ShoppingCart.ContinueShopping")" class="button-2 continue-shopping-button" />
+                        <button type="submit" name="updatecart" class="button-2 update-cart-button">@T("ShoppingCart.UpdateCart")</button>
+                        <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
                     </div>
                 }
                 @if (Model.CheckoutAttributes.Count > 0)
@@ -474,6 +534,7 @@
                     @await Component.InvokeAsync("SelectedCheckoutAttributes")
                 }
             </div>
+        
             @if (Model.IsEditable && Model.Items.Count > 0 && Model.DisplayTaxShippingInfo)
             {
                 var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
@@ -483,14 +544,14 @@
                     @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
                 </div>
             }
-
+        
             <div class="cart-footer">
                 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
                 @if (Model.IsEditable)
                 {
                     <div class="cart-collaterals">                        
                         @{ 
-                            var estimateShipping = (await Component.InvokeAsync("ShoppingCartEstimateShipping")).RenderHtmlContentAsync();
+                            var estimateShipping = await (await Component.InvokeAsync("ShoppingCartEstimateShipping")).RenderHtmlContentAsync();
                         }
 
                         @if (!String.IsNullOrEmpty(estimateShipping))
@@ -639,3 +700,32 @@
     }
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
 </div>
+
+@* ABC: expands products on mobile... can we move this and remove the need for
+    the custom Cart.cshtml? *@
+<script>
+    $(document).ready(function() {
+        const isMobile = window.innerWidth <= 1000;
+        const hasCartItems = document.getElementsByClassName("cart-item-row");
+        if (!isMobile || !hasCartItems) {
+            return;
+        }
+
+        var i = 1;
+        function expandCartItems() {
+            setTimeout(function() {
+                for (button of document.getElementsByClassName("footable-toggle")) {
+                    button.click();
+                    i = 20;
+                }
+                i++;
+                // will attempt for 10 seconds
+                if (i < 10) {
+                    expandCartItems();
+                }
+            }, 1000)
+        }
+
+        expandCartItems();
+    });
+</script>
