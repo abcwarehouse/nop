@@ -2,6 +2,18 @@
     Overwrites styles.css for the Pavilion theme.
 */
 
+/******************************************************************************/
+/* _ProductBox.cshtml */
+/******************************************************************************/
+
+div.item-box div.product-item {
+  text-align: left;
+}
+
+div.buttons-upper {
+  text-align: center;
+}
+
 /* fixes issues relating to space for logged in users */
 
 .admin-header-links {
