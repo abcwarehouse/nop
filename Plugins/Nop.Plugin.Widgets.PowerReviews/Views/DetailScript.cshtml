@@ -21,11 +21,6 @@
 
 @*Script to open reviews when clicking read link*@
 <script type="text/javascript">
-    $(window).on("load", function () {
-        var openReviews = function () { $("[href=#quickTab-Reviews]").click(); }
-        $("[class^=pr-snippet-review-count]").click(openReviews);
-    });
-
 	window.pwr = window.pwr || function () {
   		(pwr.q = pwr.q || []).push(arguments);
 	}; 
@@ -37,6 +32,9 @@
 		merchant_id: '@Model.Settings.MerchantId',
 		page_id: "@Model.ProductSku",
 		review_wrapper_url: '/write-a-review?pr_page_id=@Model.ProductSku',
+		on_read_reviews_click: function () {
+        	document.getElementById("pr-reviewdisplay").scrollIntoView({block: 'start', behavior: 'smooth'})
+		},
 		product:{
             name: '@Model.FeedlessProduct.Name',
             url: '@Model.FeedlessProduct.Url',
