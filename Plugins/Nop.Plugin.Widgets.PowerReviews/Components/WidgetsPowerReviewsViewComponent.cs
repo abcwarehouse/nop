@@ -117,7 +117,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
 
             var product = _productService.GetProductById(productDetailsModel.Id);
             var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
-            var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id).FirstOrDefault();
+            var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id, true).FirstOrDefault();
             var category = _categoryService.GetCategoryById(productCategory.CategoryId);
             var specialPriceEndDate = product.GetSpecialPriceEndDate();
             var priceEndDate = specialPriceEndDate.HasValue ?
