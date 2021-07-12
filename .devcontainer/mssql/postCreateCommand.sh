@@ -62,6 +62,3 @@ then
         fi
     done
 fi
-
-# now add dotnet tools
-dotnet tool restore
