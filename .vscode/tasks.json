@@ -6,10 +6,7 @@
             "command": "dotnet",
             "type": "process",
             "args": [
-                "clean",
-                "${workspaceFolder}/Presentation/Nop.Web/Nop.Web.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "clean"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -18,10 +15,7 @@
             "command": "dotnet",
             "type": "process",
             "args": [
-                "build",
-                "${workspaceFolder}/Presentation/Nop.Web/Nop.Web.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "build"
             ],
             "problemMatcher": "$msCompile",
             "dependsOn": [

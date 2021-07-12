@@ -19,6 +19,7 @@ docker cp NOPCommerce.bak nop_devcontainer_db_1:/var/opt/mssql/backup/NOPCommerc
 chmod u+x .devcontainer/restore-scripts/restore.sh
 .devcontainer/restore-scripts/restore.sh
 ```
+6. Copy `plugins.json` (this could be moved into a copy step)
 
 
 ## Software Required

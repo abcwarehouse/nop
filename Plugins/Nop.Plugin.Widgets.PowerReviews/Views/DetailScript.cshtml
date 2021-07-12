@@ -33,7 +33,8 @@
 		page_id: "@Model.ProductSku",
 		review_wrapper_url: '/write-a-review?pr_page_id=@Model.ProductSku',
 		on_read_reviews_click: function () {
-        	document.getElementById("pr-reviewdisplay").scrollIntoView({block: 'start', behavior: 'smooth'})
+			document.getElementById("quickTab-reviews").click();
+        	document.getElementById("pr-reviewdisplay").scrollIntoView({block: 'start', behavior: 'smooth'});
 		},
 		product:{
             name: '@Model.FeedlessProduct.Name',
