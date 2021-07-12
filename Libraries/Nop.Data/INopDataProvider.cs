@@ -182,6 +182,7 @@ namespace Nop.Data
         /// <param name="dataParameters">Command parameters</param>
         /// <returns>Number of records, affected by command execution.</returns>
         // CUSTOM: added timeout
+        int ExecuteNonQuery(string sqlStatement, params DataParameter[] dataParameters);
         int ExecuteNonQuery(string sqlStatement, int timeout = 0, params DataParameter[] dataParameters);
 
         /// <summary>

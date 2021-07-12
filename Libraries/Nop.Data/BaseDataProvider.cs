@@ -225,6 +225,10 @@ namespace Nop.Data
         /// <param name="dataParameters">Command parameters</param>
         /// <returns>Number of records, affected by command execution.</returns>
         // CUSTOM: added timeout
+        public int ExecuteNonQuery(string sqlStatement, params DataParameter[] dataParameters)
+        {
+            return ExecuteNonQuery(sqlStatement, 0, dataParameters);
+        }
         public int ExecuteNonQuery(string sqlStatement, int timeout = 0, params DataParameter[] dataParameters)
         {
             using var dataContext = CreateDataConnection(timeout);
