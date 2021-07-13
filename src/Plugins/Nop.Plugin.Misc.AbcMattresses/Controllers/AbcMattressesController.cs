@@ -7,6 +7,7 @@ using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Plugin.Misc.AbcMattresses.Models;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Controllers
 {
@@ -40,17 +41,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Controllers
         }
 
         [HttpPost]
-        public ActionResult Configure(AbcMattressesConfigModel model)
+        public async Task<ActionResult> Configure(AbcMattressesConfigModel model)
         {
             if (!ModelState.IsValid)
             {
                 return Configure();
             }
 
-            _settingService.SaveSetting(AbcMattressesSettings.FromModel(model));
+            await _settingService.SaveSettingAsync(AbcMattressesSettings.FromModel(model));
 
             _notificationService.SuccessNotification(
-                _localizationService.GetResource("Admin.Plugins.Saved"));
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
             return Configure();
         }

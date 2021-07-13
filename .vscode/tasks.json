@@ -6,7 +6,8 @@
             "command": "dotnet",
             "type": "process",
             "args": [
-                "clean"
+                "clean",
+                "${workspaceFolder}/src/NopCommerce.sln",
             ],
             "problemMatcher": "$msCompile"
         },
@@ -15,7 +16,8 @@
             "command": "dotnet",
             "type": "process",
             "args": [
-                "build"
+                "build",
+                "${workspaceFolder}/src/NopCommerce.sln",
             ],
             "problemMatcher": "$msCompile",
             "dependsOn": [
