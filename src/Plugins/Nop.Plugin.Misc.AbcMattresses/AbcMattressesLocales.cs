@@ -9,4 +9,4 @@ namespace Nop.Plugin.Misc.AbcMattresses
         public const string ShouldSyncRibbonsHint =
             ShouldSyncRibbons + ".Hint";
     }
-} 
+}

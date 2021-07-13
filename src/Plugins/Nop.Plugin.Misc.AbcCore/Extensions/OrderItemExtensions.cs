@@ -70,8 +70,7 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
             return freeGiftString.Replace("&quot;", "\"")
                                  .Replace("&amp;", "&")
                                  .Replace("&gt;", ">")
-                                 .Replace("&lt;", "<")
-                                 .Trim();
+                                 .Replace("&lt;", "<").Trim();
         }
 
         public static string GetMattressProtector(this OrderItem oi)

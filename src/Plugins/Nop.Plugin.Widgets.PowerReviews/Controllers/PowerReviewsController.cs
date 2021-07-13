@@ -1,26 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Nop.Plugin.Misc.AbcCore.Models;
+using Nop.Plugin.Widgets.PowerReviews.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
-using Nop.Plugin.Misc.AbcMattresses.Models;
 
-namespace Nop.Plugin.Misc.AbcMattresses.Controllers
+namespace Nop.Plugin.Widgets.PowerReviews.Controllers
 {
     [AuthorizeAdmin]
     [Area(AreaNames.Admin)]
     [AutoValidateAntiforgeryToken]
-    public class AbcMattressesController : BasePluginController
+    public class PowerReviewsController : BasePluginController
     {
-        private readonly AbcMattressesSettings _settings;
+        private readonly PowerReviewsSettings _settings;
         private readonly ISettingService _settingService;
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
 
-        public AbcMattressesController(AbcMattressesSettings settings,
+        public PowerReviewsController(PowerReviewsSettings settings,
             ISettingService settingService,
             ILocalizationService localizationService,
             INotificationService notificationService
@@ -35,24 +35,25 @@ namespace Nop.Plugin.Misc.AbcMattresses.Controllers
         public ActionResult Configure()
         {
             return View(
-                "~/Plugins/Misc.AbcMattresses/Views/Configure.cshtml",
+                "~/Plugins/Widgets.PowerReviews/Views/Configure.cshtml",
                 _settings.ToModel());
         }
 
         [HttpPost]
-        public ActionResult Configure(AbcMattressesConfigModel model)
+        public ActionResult Configure(PowerReviewsConfigModel model)
         {
             if (!ModelState.IsValid)
             {
                 return Configure();
             }
 
-            _settingService.SaveSetting(AbcMattressesSettings.FromModel(model));
+            _settingService.SaveSetting(PowerReviewsSettings.FromModel(model));
 
             _notificationService.SuccessNotification(
                 _localizationService.GetResource("Admin.Plugins.Saved"));
 
             return Configure();
         }
+
     }
 }

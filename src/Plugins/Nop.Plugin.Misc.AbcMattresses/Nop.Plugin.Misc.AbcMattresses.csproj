@@ -13,8 +13,13 @@
 	<ItemGroup>
 		<None Remove="plugin.json" />
 		<None Remove="logo.png" />
+<<<<<<< HEAD:src/Plugins/Nop.Plugin.Misc.AbcMattresses/Nop.Plugin.Misc.AbcMattresses.csproj
     <None Remove="Views\Configure.cshtml" />
     <None Remove="Views\_ViewImports.cshtml" />
+=======
+		<None Remove="Views\Configure.cshtml" />
+    	<None Remove="Views\_ViewImports.cshtml" />
+>>>>>>> origin/main:Plugins/Nop.Plugin.Misc.AbcMattresses/Nop.Plugin.Misc.AbcMattresses.csproj
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,7 +29,11 @@
 		<Content Include="logo.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+<<<<<<< HEAD:src/Plugins/Nop.Plugin.Misc.AbcMattresses/Nop.Plugin.Misc.AbcMattresses.csproj
     <Content Include="Views\Configure.cshtml">
+=======
+		<Content Include="Views\Configure.cshtml">
+>>>>>>> origin/main:Plugins/Nop.Plugin.Misc.AbcMattresses/Nop.Plugin.Misc.AbcMattresses.csproj
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Views\_ViewImports.cshtml">

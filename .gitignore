@@ -24,7 +24,8 @@ x64/
 [Oo]ut/
 
 # Visual Studio Code files
-.vscode/
+# I think we should keep these?
+# .vscode/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

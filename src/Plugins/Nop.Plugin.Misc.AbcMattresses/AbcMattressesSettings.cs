@@ -26,4 +26,4 @@ namespace Nop.Plugin.Misc.AbcMattresses
             };
         }
     }
-} 
+}
