@@ -1,5 +1,6 @@
 # restore DB
 sqlcmd -S localhost -U sa -P P@ssw0rd -i .devcontainer/restore-scripts/restoreDb.sql
+sqlcmd -S localhost -U sa -P P@ssw0rd -i .devcontainer/restore-scripts/configureDb.sql
 
 # add dataSettings.json
 cat << 'EOF' > Presentation/Nop.Web/App_Data/dataSettings.json
