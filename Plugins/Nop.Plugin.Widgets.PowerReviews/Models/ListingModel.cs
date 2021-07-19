@@ -4,6 +4,5 @@ namespace Nop.Plugin.Widgets.PowerReviews.Models
     {
         public int ProductId { get; set; }
         public string ProductSku { get; set; }
-        public PowerReviewsSettings Settings { get; set; }
     }
 }

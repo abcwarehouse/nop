@@ -13,6 +13,9 @@ using Nop.Plugin.Misc.AbcCore.Infrastructure;
 using Nop.Services.Common;
 using Nop.Web.Models.Catalog;
 using Nop.Core;
+using System.Collections.Generic;
+using Nop.Core.Domain.Catalog;
+using Nop.Plugin.Misc.AbcMattresses.Services;
 
 namespace Nop.Plugin.Widgets.PowerReviews.Components
 {
@@ -23,7 +26,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
         private readonly PowerReviewsSettings _settings;
 
         private readonly FrontEndService _frontEndService;
+        private readonly IAbcMattressListingPriceService _abcMattressListingPriceService;
         private readonly IGenericAttributeService _genericAttributeService;
+        private readonly IManufacturerService _manufacturerService;
         private readonly IProductService _productService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly ICategoryService _categoryService;
@@ -33,7 +38,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             IWebHelper webHelper,
             PowerReviewsSettings settings,
             FrontEndService frontEndService,
+            IAbcMattressListingPriceService abcMattressListingPriceService,
             IGenericAttributeService genericAttributeService,
+            IManufacturerService manufacturerService,
             IProductService productService,
             IProductAbcDescriptionService productAbcDescriptionService,
             ICategoryService categoryService
@@ -43,7 +50,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             _webHelper = webHelper;
             _settings = settings;
             _frontEndService = frontEndService;
+            _abcMattressListingPriceService = abcMattressListingPriceService;
             _genericAttributeService = genericAttributeService;
+            _manufacturerService = manufacturerService;
             _productService = productService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _categoryService = categoryService;
@@ -77,10 +86,12 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             {
                 return View("~/Plugins/Widgets.PowerReviews/Views/DetailTabContent.cshtml");
             }
-            if (widgetZone == PublicWidgetZones.CategoryDetailsBottom ||
-                widgetZone == PublicWidgetZones.ManufacturerDetailsBottom)
+            if ((widgetZone == PublicWidgetZones.CategoryDetailsBottom ||
+                widgetZone == PublicWidgetZones.ManufacturerDetailsBottom) &&
+                (additionalData is CategoryModel || additionalData is ManufacturerModel))
             {
-                return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml", _settings);
+                if (additionalData is CategoryModel) return ListingScript(additionalData as CategoryModel);
+                return ListingScript(additionalData as ManufacturerModel);
             }
             if (widgetZone == PublicWidgetZones.ProductDetailsBottom)
             {
@@ -91,13 +102,48 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             return Content("");
         }
 
+        private IViewComponentResult ListingScript(CategoryModel model) {
+            return ProcessListingScript(model.Products);
+        }
+
+        private IViewComponentResult ListingScript(ManufacturerModel model) {
+            return ProcessListingScript(model.Products);
+        }
+
+        private IViewComponentResult ProcessListingScript(IList<ProductOverviewModel> productOverviewModels)
+        {
+            var prProducts = new List<(int productId, string Sku, FeedlessProductModel FeedlessProduct)>();
+
+            foreach (var productOverviewModel in productOverviewModels)
+            {
+                var product = _productService.GetProductBySku(productOverviewModel.Sku);
+                prProducts.Add(
+                    (
+                        product.Id,
+                        GetPowerReviewsSku(product.Sku, product.Id),
+                        GetFeedlessProduct(
+                            product,
+                            productOverviewModel.DefaultPictureModel.ImageUrl
+                        )
+                    )
+                );
+            }
+
+            var model = new ListingScriptModel()
+            {
+                Settings = _settings,
+                FeedlessProducts = prProducts
+            };
+
+            return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml", model);
+        }
+
         private IViewComponentResult Listing(ProductOverviewModel productOverviewModel)
         {
             var model = new ListingModel()
             {
                 ProductId = productOverviewModel.Id,
-                ProductSku = GetPowerReviewsSku(productOverviewModel.Sku, productOverviewModel.Id),
-                Settings = _settings
+                ProductSku = GetPowerReviewsSku(productOverviewModel.Sku, productOverviewModel.Id)
             };
 
             return View(
@@ -108,39 +154,22 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
 
         private IViewComponentResult Detail(ProductDetailsModel productDetailsModel)
         {
-            var manufacturerName = "";
-            var manufacturerModel = productDetailsModel.ProductManufacturers.FirstOrDefault();
-            if (manufacturerModel != null)
-            {
-                manufacturerName = manufacturerModel.Name;
-            }
-
-            var product = _productService.GetProductById(productDetailsModel.Id);
-            var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
-            var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id, true).FirstOrDefault();
-            var category = _categoryService.GetCategoryById(productCategory.CategoryId);
+            var productId = productDetailsModel.Breadcrumb.ProductId;
+            var product = _productService.GetProductById(productId);
             var specialPriceEndDate = product.GetSpecialPriceEndDate();
             var priceEndDate = specialPriceEndDate.HasValue ?
                 specialPriceEndDate.Value.ToLocalTime() :
                 DateTime.Now;
 
-            var feedlessModel = new FeedlessProductModel()
-            {
-                Name = product.Name,
-                Url = _webHelper.GetThisPageUrl(true),
-                ImageUrl = productDetailsModel.DefaultPictureModel.ImageUrl,
-                Description = productAbcDescription?.AbcDescription ?? product.ShortDescription,
-                CategoryName = category.Name,
-                ManufacturerId = manufacturerModel != null ? manufacturerModel.Id : 0,
-                Upc = product.Gtin,
-                BrandName = manufacturerName,
-                InStock = !product.DisableBuyButton
-            };
+            var feedlessModel = GetFeedlessProduct(
+                product,
+                productDetailsModel.DefaultPictureModel.ImageUrl
+            );
 
             var model = new DetailModel()
             {
-                ProductSku = GetPowerReviewsSku(productDetailsModel.Sku, productDetailsModel.Id),
-                ProductId = productDetailsModel.Id,
+                ProductSku = GetPowerReviewsSku(productDetailsModel.Sku, productId),
+                ProductId = productId,
                 ProductPrice = productDetailsModel.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
                 PriceValidUntil = priceEndDate,
                 Settings = _settings,
@@ -175,6 +204,38 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             conversionString = Array.FindAll<char>(conversionString, (c => (char.IsLetterOrDigit(c)
                                     || c == '-')));
             return new string(conversionString);
+        }
+
+        private FeedlessProductModel GetFeedlessProduct(
+            Product product,
+            string imageUrl
+        ) {
+            var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
+            var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id, true).FirstOrDefault();
+            var category = _categoryService.GetCategoryById(productCategory.CategoryId);
+            var productManufacturer = _manufacturerService.GetProductManufacturersByProductId(product.Id, true).FirstOrDefault();
+            var manufacturer = _manufacturerService.GetManufacturerById(productManufacturer.ManufacturerId);
+
+            var mattressListingPrice =
+				_abcMattressListingPriceService.GetListingPriceForMattressProduct(product.Id);
+
+			var price = mattressListingPrice != null ?
+				mattressListingPrice.ToString() :
+				product.Price.ToString();
+
+            return new FeedlessProductModel()
+            {
+                Name = product.Name,
+                Url = _webHelper.GetThisPageUrl(true),
+                ImageUrl = imageUrl,
+                Description = productAbcDescription?.AbcDescription ?? product.ShortDescription,
+                CategoryName = category.Name,
+                ManufacturerId = manufacturer.Id,
+                Upc = product.Gtin,
+                BrandName = manufacturer.Name,
+                InStock = !product.DisableBuyButton,
+                Price = price
+            };
         }
     }
 }

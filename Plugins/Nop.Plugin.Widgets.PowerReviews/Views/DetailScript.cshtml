@@ -1,8 +1,7 @@
-@using Nop.Plugin.Misc.AbcMattresses.Services
-@using Nop.Plugin.Widgets.PowerReviews.Models
-@using Nop.Core
+@using Nop.Plugin.Misc.AbcMattresses.Services;
+@using Nop.Plugin.Widgets.PowerReviews.Models;
+@using Nop.Core;
 
-@inject IAbcMattressListingPriceService abcMattressListingPriceService
 @inject IWebHelper webHelper
 
 @model DetailModel
@@ -10,13 +9,6 @@
 @{
     Html.AddHeadCustomParts("<script src=\"https://ui.powerreviews.com/stable/4.1/ui.js\" async></script>");
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-detail.css");
-
-	var mattressListingPrice =
-		abcMattressListingPriceService.GetListingPriceForMattressProduct(Model.ProductId);
-
-	var price = mattressListingPrice != null ?
-		mattressListingPrice.ToString() :
-		Model.ProductPrice;
 }
 
 @*Script to open reviews when clicking read link*@
@@ -45,7 +37,7 @@
             manufacturer_id: '@Model.FeedlessProduct.ManufacturerId',
             upc: '@Model.FeedlessProduct.Upc',
             brand_name: '@Model.FeedlessProduct.BrandName',
-            price: @price,
+            price: '@Model.FeedlessProduct.Price',
             in_stock: '@Model.FeedlessProduct.InStock'
    		},
 		subject: {
