@@ -1,8 +1,6 @@
-@using Nop.Plugin.Widgets.PowerReviews;
-@using Nop.Plugin.Widgets.PowerReviews.Models;
-@using Nop.Core;
+@using Nop.Plugin.Widgets.PowerReviews
 
-@model ListingScriptModel
+@model PowerReviewsSettings
 
 @{
     Html.AddHeadCustomParts("<script src=\"https://ui.powerreviews.com/stable/4.1/ui.js\" async></script>");
@@ -29,35 +27,22 @@
 		currentlyDisplayedPrSnippets = prSnippets;
 
 		var powerReviewsRenderConfigs = [];
-		@foreach(var product in Model.FeedlessProducts)
-		{
-			<text>
-				powerReviewsRenderConfigs.push({
-					page_id: '@product.Sku',
-					api_key: "@Model.Settings.APIKey",
-					locale: "en_US",
-					merchant_group_id: "@Model.Settings.MerchantGroupId",
-					merchant_id: "@Model.Settings.MerchantId",
-					review_wrapper_url: `/write-a-review?pr_page_id={sku}`,
-					ENABLE_CLIENT_SIDE_STRUCTURED_DATA: false,
-					product:{
-						name: '@product.feedlessProduct.Name',
-						url: '@product.feedlessProduct.Url',
-						image_url: '@product.feedlessProduct.ImageUrl',
-						description: '@product.feedlessProduct.Description',
-						category_name: '@product.feedlessProduct.CategoryName',
-						manufacturer_id: '@product.feedlessProduct.ManufacturerId',
-						upc: '@product.feedlessProduct.Upc',
-						brand_name: '@product.feedlessProduct.BrandName',
-						price: '@product.feedlessProduct.Price',
-						in_stock: '@product.feedlessProduct.InStock'
-					},
-					components: {
-						CategorySnippet: 'pr_snippet_product_@product.Id'
-					}
-				});
-			</text>
-		}	
+		itemBoxes.each(function(index, item){
+			var sku = $(item).find('.product-box-sku').text().replace(/[^0-9a-zA-Z-]/gi,'');
+
+			powerReviewsRenderConfigs.push({
+				page_id: sku,
+				api_key: "@Model.APIKey",
+				locale: "en_US",
+				merchant_group_id: "@Model.MerchantGroupId",
+				merchant_id: "@Model.MerchantId",
+				review_wrapper_url: `/write-a-review?pr_page_id={sku}`,
+				ENABLE_CLIENT_SIDE_STRUCTURED_DATA: false,
+				components: {
+					CategorySnippet: prSnippets[index].id
+				}
+			});
+		});		
 
 		window.pwr = window.pwr || function () {
 			(pwr.q = pwr.q || []).push(arguments); 

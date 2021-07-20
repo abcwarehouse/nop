@@ -86,12 +86,10 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             {
                 return View("~/Plugins/Widgets.PowerReviews/Views/DetailTabContent.cshtml");
             }
-            if ((widgetZone == PublicWidgetZones.CategoryDetailsBottom ||
-                widgetZone == PublicWidgetZones.ManufacturerDetailsBottom) &&
-                (additionalData is CategoryModel || additionalData is ManufacturerModel))
+            if (widgetZone == PublicWidgetZones.CategoryDetailsBottom ||
+                widgetZone == PublicWidgetZones.ManufacturerDetailsBottom)
             {
-                if (additionalData is CategoryModel) return ListingScript(additionalData as CategoryModel);
-                return ListingScript(additionalData as ManufacturerModel);
+                return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml", _settings);
             }
             if (widgetZone == PublicWidgetZones.ProductDetailsBottom)
             {
@@ -100,42 +98,6 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
 
             _logger.Error($"Widgets.PowerReviews: No view provided for widget zone {widgetZone}");
             return Content("");
-        }
-
-        private IViewComponentResult ListingScript(CategoryModel model) {
-            return ProcessListingScript(model.Products);
-        }
-
-        private IViewComponentResult ListingScript(ManufacturerModel model) {
-            return ProcessListingScript(model.Products);
-        }
-
-        private IViewComponentResult ProcessListingScript(IList<ProductOverviewModel> productOverviewModels)
-        {
-            var prProducts = new List<(int productId, string Sku, FeedlessProductModel FeedlessProduct)>();
-
-            foreach (var productOverviewModel in productOverviewModels)
-            {
-                var product = _productService.GetProductBySku(productOverviewModel.Sku);
-                prProducts.Add(
-                    (
-                        product.Id,
-                        GetPowerReviewsSku(product.Sku, product.Id),
-                        GetFeedlessProduct(
-                            product,
-                            productOverviewModel.DefaultPictureModel.ImageUrl
-                        )
-                    )
-                );
-            }
-
-            var model = new ListingScriptModel()
-            {
-                Settings = _settings,
-                FeedlessProducts = prProducts
-            };
-
-            return View("~/Plugins/Widgets.PowerReviews/Views/ListingScript.cshtml", model);
         }
 
         private IViewComponentResult Listing(ProductOverviewModel productOverviewModel)
