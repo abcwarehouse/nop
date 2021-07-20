@@ -1,0 +1,8 @@
+{
+    "RoslynExtensionsOptions": {
+      "enableAnalyzersSupport": true
+    },
+    "MsBuild": {
+      "UseLegacySdkResolver": true
+    }
+  }
