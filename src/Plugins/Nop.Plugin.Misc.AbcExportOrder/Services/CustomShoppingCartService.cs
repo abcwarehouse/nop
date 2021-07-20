@@ -71,12 +71,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             ShoppingCartSettings shoppingCartSettings,
             // custom
             IShoppingCartService shoppingCartService
-        ) : base(catalogSettings, aclService, actionContextAccessor, cacheKeyService, checkoutAttributeParser,
-                 checkoutAttributeService, currencyService, customerService, dateRangeService, dateTimeHelper,
-                 eventPublisher, genericAttributeService, localizationService, permissionService, priceCalculationService,
-                 priceFormatter, productAttributeParser, productAttributeService, productService, sciRepository,
-                 shippingService, staticCacheManager, storeContext, storeMappingService, urlHelperFactory,
-                 urlRecordService, workContext, orderSettings, shoppingCartSettings)
+        ) : base(catalogSettings, aclService, actionContextAccessor, checkoutAttributeParser,
+            checkoutAttributeService, currencyService, customerService, dateRangeService,
+            dateTimeHelper, genericAttributeService, localizationService, permissionService,
+            priceCalculationService, priceFormatter, productAttributeParser,
+            productAttributeService, productService, sciRepository, shippingService,
+            staticCacheManager, storeContext, storeMappingService, urlHelperFactory,
+            urlRecordService, workContext, orderSettings, shoppingCartSettings)
         {
             _customerShopService = EngineContext.Current.Resolve<ICustomerShopService>();
             _attributeUtilities = EngineContext.Current.Resolve<IAttributeUtilities>();
@@ -89,7 +90,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
 
         public override async Task MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes)
         {
-            base.MigrateShoppingCartAsync(fromCustomer, toCustomer, includeCouponCodes);
+            await base.MigrateShoppingCartAsync(fromCustomer, toCustomer, includeCouponCodes);
 
             if (fromCustomer.Id == toCustomer.Id)
                 return;
@@ -105,7 +106,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             //update tocustomer's shop mapping
             _customerShopService.InsertOrUpdateCustomerShop(toCustomer.Id, fromCsm.ShopId);
             var csm = _customerShopService.GetCurrentCustomerShopMapping(toCustomer.Id);
-            Shop shop = _shopService.GetShopById(csm.ShopId);
+            Shop shop = await _shopService.GetShopByIdAsync(csm.ShopId);
 
             //used to merge together products that will now have the same attributes
             Dictionary<int, ShoppingCartItem> productIdToPickupSci = new Dictionary<int, ShoppingCartItem>();
@@ -114,10 +115,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             List<ShoppingCartItem> toDelete = new List<ShoppingCartItem>();
 
             //update all pickup items in the cart to current availability status
-            foreach (ShoppingCartItem sci in _shoppingCartService.GetShoppingCart(toCustomer).Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart))
+            foreach (ShoppingCartItem sci in (await _shoppingCartService.GetShoppingCartAsync(toCustomer)).Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart))
             {
 
-                ProductAttributeMapping pickupAttribute = _attributeUtilities.GetPickupAttributeMapping(sci.AttributesXml);
+                ProductAttributeMapping pickupAttribute = await _attributeUtilities.GetPickupAttributeMappingAsync(sci.AttributesXml);
 
                 if (pickupAttribute != null)
                 {
@@ -125,14 +126,14 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     if (productIdToPickupSci.ContainsKey(sci.ProductId))
                     {
                         var existingSci = productIdToPickupSci[sci.ProductId];
-                        base.UpdateShoppingCartItem(toCustomer, existingSci.Id,
+                        await base.UpdateShoppingCartItemAsync(toCustomer, existingSci.Id,
                             existingSci.AttributesXml, existingSci.CustomerEnteredPrice, null, null, existingSci.Quantity + sci.Quantity, false);
                         toDelete.Add(sci);
                     }
                     else
                     {
                         // check if product is available at the selected store
-                        StockResponse stockResponse = _backendStockService.GetApiStock(sci.ProductId);
+                        StockResponse stockResponse = await _backendStockService.GetApiStockAsync(sci.ProductId);
                         bool available = false;
                         if (stockResponse != null)
                         {
@@ -144,7 +145,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         {
                             string removedAttr = _productAttributeParser.RemoveProductAttribute(sci.AttributesXml, pickupAttribute);
 
-                            sci.AttributesXml = _attributeUtilities.InsertPickupAttribute(await _productService.GetProductByIdAsync(sci.ProductId), stockResponse, removedAttr, shop);
+                            sci.AttributesXml = await _attributeUtilities.InsertPickupAttributeAsync(await _productService.GetProductByIdAsync(sci.ProductId), stockResponse, removedAttr, shop);
                             productIdToPickupSci[sci.ProductId] = sci;
                         }
                         else
@@ -154,7 +155,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                             if (productIdToDeliverySci.ContainsKey(sci.ProductId))
                             {
                                 var existingSci = productIdToDeliverySci[sci.ProductId];
-                                base.UpdateShoppingCartItem(toCustomer, existingSci.Id,
+                                await base.UpdateShoppingCartItemAsync(toCustomer, existingSci.Id,
                                     existingSci.AttributesXml, existingSci.CustomerEnteredPrice, null, null, existingSci.Quantity + sci.Quantity, false);
                                 toDelete.Add(sci);
                                 continue;

@@ -13,6 +13,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     {
         IList<Order> GetUnsubmittedOrders();
 
-        Task<ProductAttributeValue> GetOrderItemWarranty(OrderItem orderItem);
+        Task<ProductAttributeValue> GetOrderItemWarrantyAsync(OrderItem orderItem);
     }
 }

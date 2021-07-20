@@ -64,7 +64,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder
         {
             if (!_settings.IsValid)
             {
-                _logger.Warning("ExportOrder plugin settings invalid, order will not be exported to Yahoo tables.");
+                await _logger.WarningAsync("ExportOrder plugin settings invalid, order will not be exported to Yahoo tables.");
                 return;
             }
 
@@ -72,32 +72,27 @@ namespace Nop.Plugin.Misc.AbcExportOrder
 
             try
             {
-                order.SubmitToISAM();
+                await order.SubmitToISAMAsync();
             }
             catch (Exception e)
             {
-                _logger.Error($"Failure when submitting order #{order.Id} to ISAM", e);
-                SendAlertEmail(order.Id, e.Message);
+                await _logger.ErrorAsync($"Failure when submitting order #{order.Id} to ISAM", e);
+                await SendAlertEmailAsync(order.Id, e.Message);
             }
-        }
-
-        public override async System.Threading.Tasks.Task UpdateAsync(string currentVersion, string targetVersion)
-        {
-            base.Update(currentVersion, targetVersion);
         }
 
         public override async System.Threading.Tasks.Task InstallAsync()
         {
-            RemoveTask();
-            AddTask();
-            UpdateLocalizations();
+            await RemoveTaskAsync();
+            await AddTaskAsync();
+            await UpdateLocalizationsAsync();
 
-            base.Install();
+            await base.InstallAsync();
         }
 
-        private void UpdateLocalizations()
+        private async System.Threading.Tasks.Task UpdateLocalizationsAsync()
         {
-            _localizationService.AddPluginLocaleResource(new Dictionary<string, string>
+            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
             {
                 [ExportOrderLocaleKeys.OrderIdPrefix] = "Order ID Prefix",
                 [ExportOrderLocaleKeys.OrderIdPrefixHint] = "The order ID prefix to use when sending orders to ISAM.",
@@ -110,16 +105,16 @@ namespace Nop.Plugin.Misc.AbcExportOrder
 
         public override async System.Threading.Tasks.Task UninstallAsync()
         {
-            RemoveTask();
+            await RemoveTaskAsync();
 
-            _localizationService.DeletePluginLocaleResources(ExportOrderLocaleKeys.Base);
+            await _localizationService.DeleteLocaleResourcesAsync(ExportOrderLocaleKeys.Base);
 
-            _settingService.DeleteSetting<ExportOrderSettings>();
+            await _settingService.DeleteSettingAsync<ExportOrderSettings>();
 
-            base.Uninstall();
+            await base.UninstallAsync();
         }
 
-        private void AddTask()
+        private async System.Threading.Tasks.Task AddTaskAsync()
         {
             ScheduleTask task = new ScheduleTask
             {
@@ -130,24 +125,24 @@ namespace Nop.Plugin.Misc.AbcExportOrder
                 StopOnError = false
             };
 
-            _scheduleTaskService.InsertTask(task);
+            await _scheduleTaskService.InsertTaskAsync(task);
         }
 
-        private void RemoveTask()
+        private async System.Threading.Tasks.Task RemoveTaskAsync()
         {
-            var task = _scheduleTaskService.GetTaskByType(TaskType);
+            var task = await _scheduleTaskService.GetTaskByTypeAsync(TaskType);
             if (task != null)
             {
-                _scheduleTaskService.DeleteTask(task);
+                await _scheduleTaskService.DeleteTaskAsync(task);
             }
         }
 
-        private void SendAlertEmail(int orderId, string exceptionMessage)
+        private async System.Threading.Tasks.Task SendAlertEmailAsync(int orderId, string exceptionMessage)
         {
             var failureEmail = _settings.FailureAlertEmail;
             if (!string.IsNullOrEmpty(failureEmail))
             {
-                var defaultEmailAddress = _emailAccountService.GetEmailAccountById(
+                var defaultEmailAddress = await _emailAccountService.GetEmailAccountByIdAsync(
                     _emailAccountSettings.DefaultEmailAccountId
                 );
 
@@ -164,11 +159,11 @@ namespace Nop.Plugin.Misc.AbcExportOrder
                     DontSendBeforeDateUtc = null
                 };
 
-                _queuedEmailService.InsertQueuedEmail(email);
+                await _queuedEmailService.InsertQueuedEmailAsync(email);
             }
             else
             {
-                _logger.Warning("No failure alert email provided, will not provide alert notification.");
+                await _logger.WarningAsync("No failure alert email provided, will not provide alert notification.");
             }
         }
     }

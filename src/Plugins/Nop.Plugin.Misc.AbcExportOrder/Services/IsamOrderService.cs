@@ -264,7 +264,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 );
             }
 
-            var detailRows = _yahooService.GetYahooDetailRows(order);
+            var detailRows = await _yahooService.GetYahooDetailRowsAsync(order);
             foreach (var row in detailRows)
             {
                 InsertUsingService(

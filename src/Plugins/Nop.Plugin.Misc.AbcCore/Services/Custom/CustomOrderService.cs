@@ -49,7 +49,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _productAttributeService = productAttributeService;
         }
 
-        public async Task<ProductAttributeValue> GetOrderItemWarranty(OrderItem orderItem)
+        public async Task<ProductAttributeValue> GetOrderItemWarrantyAsync(OrderItem orderItem)
         {
             if (!orderItem.HasWarranty()) { return null; }
 

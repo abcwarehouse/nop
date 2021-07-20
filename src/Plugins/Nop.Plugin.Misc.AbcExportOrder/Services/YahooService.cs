@@ -112,7 +112,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             _paymentService = paymentService;
         }
 
-        public IList<YahooDetailRow> GetYahooDetailRows(Order order)
+        public async Task<IList<YahooDetailRow>> GetYahooDetailRowsAsync(Order order)
         {
             var result = new List<YahooDetailRow>();
             var pickupLineNumber = 0;
@@ -127,8 +127,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(
                     orderItem.ProductId
                 );
-                var storeUrl = _storeService.GetStoreById(order.StoreId)?.Url;
-                var warranty = _customOrderService.GetOrderItemWarranty(orderItem);
+                var storeUrl = (await _storeService.GetStoreByIdAsync(order.StoreId))?.Url;
+                var warranty = await _customOrderService.GetOrderItemWarrantyAsync(orderItem);
                 if (warranty != null)
                 {
                     // adjust price for item
@@ -146,8 +146,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     standardItemCodeAndPrice.code,
                     standardItemCodeAndPrice.price,
                     product.Name,
-                    $"{storeUrl}{_urlRecordService.GetSeName(product)}",
-                    GetPickupStoreAsync(orderItem)
+                    $"{storeUrl}{await _urlRecordService.GetSeNameAsync(product)}",
+                    await GetPickupStoreAsync(orderItem)
                 ));
 
                 if (warranty != null)
@@ -162,7 +162,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         warranty.PriceAdjustment,
                         warranty.Name,
                         "", // no url for warranty line items
-                        GetPickupStoreAsync(orderItem)
+                        await GetPickupStoreAsync(orderItem)
                     ));
                 }
 
@@ -185,7 +185,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         0.00M, // free item
                         freeGift,
                         "", // no url for free gifts
-                        GetPickupStoreAsync(orderItem),
+                        await GetPickupStoreAsync(orderItem),
                         -1
                     ));
                 }
@@ -212,11 +212,11 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         amp.Price,
                         mattressProtector,
                         "", // no url
-                        GetPickupStoreAsync(orderItem)
+                        await GetPickupStoreAsync(orderItem)
                     ));
                 }
 
-                ProcessFrame(orderItem, lineNumber, result);
+                await ProcessFrameAsync(orderItem, lineNumber, result);
 
                 SetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem, lineNumber);
             }
@@ -224,7 +224,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             return result;
         }
 
-        private void ProcessFrame(OrderItem orderItem, int lineNumber, List<YahooDetailRow> result)
+        private async Task ProcessFrameAsync(OrderItem orderItem, int lineNumber, List<YahooDetailRow> result)
         {
             var frame = orderItem.GetFrame();
             if (frame != null)
@@ -243,7 +243,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     amf.Price,
                     frame,
                     "", // no url
-                    GetPickupStoreAsync(orderItem)
+                    await GetPickupStoreAsync(orderItem)
                 ));
             }
         }
@@ -362,8 +362,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 decimal backendOrderTax, backendOrderTotal;
                 CalculateValues(pickupItems, out backendOrderTax, out backendOrderTotal);
 
-                string giftCardCode;
-                decimal giftCardUsed;
                 var giftCard = await CalculateGiftCardAsync(order, backendOrderTotal);
 
                 result.Add(new YahooHeaderRow(
@@ -401,8 +399,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 backendOrderTax += shippingTax;
                 backendOrderTotal += order.OrderShippingInclTax;
 
-                string giftCardCode;
-                decimal giftCardUsed;
                 var giftCard = await CalculateGiftCardAsync(order, backendOrderTotal);
 
                 result.Add(new YahooHeaderRowShipping(

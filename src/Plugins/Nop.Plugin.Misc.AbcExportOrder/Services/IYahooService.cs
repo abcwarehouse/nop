@@ -9,6 +9,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
     {
         Task<IList<YahooShipToRow>> GetYahooShipToRowsAsync(Order order);
         Task<IList<YahooHeaderRow>> GetYahooHeaderRowsAsync(Order order);
-        IList<YahooDetailRow> GetYahooDetailRows(Order order);
+        Task<IList<YahooDetailRow>> GetYahooDetailRowsAsync(Order order);
     }
 }

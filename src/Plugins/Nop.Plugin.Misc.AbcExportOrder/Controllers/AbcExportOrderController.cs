@@ -6,6 +6,7 @@ using Nop.Services.Messages;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Controllers
 {
@@ -38,16 +39,16 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Controllers
         }
 
         [HttpPost]
-        public IActionResult Configure(ConfigModel model)
+        public async Task<IActionResult> Configure(ConfigModel model)
         {
             if (!ModelState.IsValid)
             {
                 return Configure();
             }
 
-            _settingService.SaveSetting(ExportOrderSettings.FromModel(model));
+            await _settingService.SaveSettingAsync(ExportOrderSettings.FromModel(model));
 
-            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
             return Configure();
         }

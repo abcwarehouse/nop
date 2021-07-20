@@ -46,11 +46,11 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tasks
             {
                 try
                 {
-                    order.SubmitToISAM();
+                    await order.SubmitToISAMAsync();
                 }
                 catch (Exception e)
                 {
-                    _logger.Error($"Failure when resubmitting order #{order.Id}", e);
+                    await _logger.ErrorAsync($"Failure when resubmitting order #{order.Id}", e);
                     throw;
                 }
             }

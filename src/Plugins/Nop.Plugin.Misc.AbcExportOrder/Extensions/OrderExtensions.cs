@@ -4,6 +4,7 @@ using Nop.Plugin.Misc.AbcExportOrder.Services;
 using Nop.Services.Common;
 using Nop.Services.Orders;
 using System;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
 {
@@ -16,10 +17,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
                    order.CardName == null;
         }
 
-        public static void SubmitToISAM(this Order order)
+        public static async Task SubmitToISAMAsync(this Order order)
         {
             var isamOrderService = EngineContext.Current.Resolve<IIsamOrderService>();
-            isamOrderService.InsertOrderAsync(order);
+            await isamOrderService.InsertOrderAsync(order);
 
             order.CardNumber = null;
             order.CardCvv2 = null;
@@ -33,8 +34,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Extensions
                 Note = "Submitted to ISAM",
                 CreatedOnUtc = DateTime.UtcNow,
             };
-            orderService.InsertOrderNote(orderNote);
-            orderService.UpdateOrder(order);
+            await orderService.InsertOrderNoteAsync(orderNote);
+            await orderService.UpdateOrderAsync(order);
         }
     }
 }
