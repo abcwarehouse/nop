@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Payment methods",
+  "FriendlyName": "AbcWarehouse Card",
+  "SystemName": "Payments.AbcCard",
+  "Version": "4.40.0",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "X By 2",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Payments.AbcCard.dll",
+  "Description": "This plugin enables check and money order payments"
+}
