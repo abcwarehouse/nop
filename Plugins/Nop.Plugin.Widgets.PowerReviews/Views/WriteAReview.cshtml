@@ -1,6 +1,8 @@
+@using Nop.Core
 @using Nop.Plugin.Widgets.PowerReviews
 
 @inject PowerReviewsSettings powerReviewsSettings
+@inject IWebHelper webHelper
 
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
@@ -18,6 +20,7 @@
       locale: 'en_US',
       merchant_group_id: '@powerReviewsSettings.MerchantGroupId',
       merchant_id: '@powerReviewsSettings.MerchantId',
+      style_sheet: '@webHelper.GetStoreLocation()Plugins/Widgets.PowerReviews/styles/pr-war-styles.css',
       on_submit: function(config, data){
         window.scrollTo(0,0); 
       },
