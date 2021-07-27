@@ -11,5 +11,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Models
         public string Upc { get; set; }
         public string BrandName { get; set; }
         public bool InStock { get; set; }
+        public string Sku { get; set; }
+        public string Price { get; set; }
     }
 }

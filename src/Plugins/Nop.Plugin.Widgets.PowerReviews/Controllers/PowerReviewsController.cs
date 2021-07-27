@@ -10,9 +10,6 @@ using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Plugin.Widgets.PowerReviews.Controllers
 {
-    [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
-    [AutoValidateAntiforgeryToken]
     public class PowerReviewsController : BasePluginController
     {
         private readonly PowerReviewsSettings _settings;
@@ -32,6 +29,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Controllers
             _notificationService = notificationService;
         }
 
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        [AutoValidateAntiforgeryToken]
         public ActionResult Configure()
         {
             return View(
@@ -40,6 +40,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Controllers
         }
 
         [HttpPost]
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        [AutoValidateAntiforgeryToken]
         public ActionResult Configure(PowerReviewsConfigModel model)
         {
             if (!ModelState.IsValid)
@@ -55,5 +58,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Controllers
             return Configure();
         }
 
+        public IActionResult WriteAReview()
+        {
+            return View("~/Plugins/Widgets.PowerReviews/Views/WriteAReview.cshtml");
+        }
     }
 }
