@@ -62,7 +62,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
         {
             if (!_settings.IsValid())
             {
-                _logger.Error("PowerReviews settings are required to have " +
+                await _logger.ErrorAsync("PowerReviews settings are required to have " +
                               "reviews display for products, add the correct " +
                               "settings in configuration.");
                 return Content("");
@@ -96,7 +96,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 return Detail(additionalData as ProductDetailsModel);
             }
 
-            _logger.Error($"Widgets.PowerReviews: No view provided for widget zone {widgetZone}");
+            await _logger.ErrorAsync($"Widgets.PowerReviews: No view provided for widget zone {widgetZone}");
             return Content("");
         }
 

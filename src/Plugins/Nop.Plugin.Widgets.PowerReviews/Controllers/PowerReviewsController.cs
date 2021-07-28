@@ -50,10 +50,10 @@ namespace Nop.Plugin.Widgets.PowerReviews.Controllers
                 return Configure();
             }
 
-            _settingService.SaveSetting(PowerReviewsSettings.FromModel(model));
+            await _settingService.SaveSettingAsync(PowerReviewsSettings.FromModel(model));
 
             _notificationService.SuccessNotification(
-                _localizationService.GetResource("Admin.Plugins.Saved"));
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
             return Configure();
         }
