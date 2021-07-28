@@ -117,7 +117,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
         private IViewComponentResult Detail(ProductDetailsModel productDetailsModel)
         {
             var productId = productDetailsModel.Breadcrumb.ProductId;
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             var specialPriceEndDate = product.GetSpecialPriceEndDate();
             var priceEndDate = specialPriceEndDate.HasValue ?
                 specialPriceEndDate.Value.ToLocalTime() :
