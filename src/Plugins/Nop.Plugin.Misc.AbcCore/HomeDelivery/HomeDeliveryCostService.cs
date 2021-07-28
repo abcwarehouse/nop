@@ -58,9 +58,9 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
             var skipMattress = false;
 
             // sort the package items
-            packageItems = packageItems.OrderByDescending(
-                pi => GetMattressItemCostAsync(pi.Product.Id, pi.ShoppingCartItem.AttributesXml)
-            ).ToList();
+            packageItems = await packageItems.OrderByDescendingAwait(
+                async pi => await GetMattressItemCostAsync(pi.Product.Id, pi.ShoppingCartItem.AttributesXml)
+            ).ToListAsync();
 
             foreach (var packageItem in packageItems)
             {
