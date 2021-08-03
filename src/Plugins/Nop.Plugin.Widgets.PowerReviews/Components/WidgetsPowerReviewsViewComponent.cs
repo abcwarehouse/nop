@@ -176,7 +176,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id, true).FirstOrDefault();
             var category = _categoryService.GetCategoryById(productCategory.CategoryId);
             var productManufacturer = _manufacturerService.GetProductManufacturersByProductId(product.Id, true).FirstOrDefault();
-            var manufacturer = _manufacturerService.GetManufacturerById(productManufacturer.ManufacturerId);
+            var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(productManufacturer.ManufacturerId);
 
             var mattressListingPrice =
 				_abcMattressListingPriceService.GetListingPriceForMattressProduct(product.Id);

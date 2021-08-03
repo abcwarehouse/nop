@@ -42,7 +42,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
             return $"javascript:win = window.open('{GetPdfPath()}', 'Promo', 'height=500,width=750,top=25,left=25,resizable=yes'); win.focus()";
         }
 
-        public async Task<string> GetPromoBannerUrl()
+        public async Task<string> GetPromoBannerUrlAsync()
         {
             var bannerToFind = Name;
             var imageUrls = Directory.GetFiles($"{CoreUtilities.WebRootPath()}/promo_banners", $"{bannerToFind}.*");
