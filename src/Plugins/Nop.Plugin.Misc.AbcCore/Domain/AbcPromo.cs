@@ -45,7 +45,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
         public async Task<string> GetPromoBannerUrlAsync()
         {
             var bannerToFind = Name;
-            var imageUrls = Directory.GetFiles($"{CoreUtilities.WebRootPath()}/promo_banners", $"{bannerToFind}.*");
+            var imageUrls = Directory.GetFiles(AbcPromosHelpers.GetPromoBannersFolder(), $"{bannerToFind}.*");
 
             if (!imageUrls.Any()) { return null; }
             if (imageUrls.Length > 1)

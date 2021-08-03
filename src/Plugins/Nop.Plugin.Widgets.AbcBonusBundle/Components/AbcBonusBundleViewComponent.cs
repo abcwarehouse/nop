@@ -28,9 +28,6 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Components
         private readonly IProductAbcBundleService _productAbcBundleService;
         private readonly IProductService _productService;
 
-        private readonly string DirectoryName = "bundle_images";
-        private readonly string DirectoryPath;
-
         public AbcBonusBundleViewComponent(
             AbcBonusBundleSettings abcBonusBundleSettings,
             ILogger logger,
@@ -42,8 +39,6 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Components
             _logger = logger;
             _productAbcBundleService = productAbcBundleService;
             _productService = productService;
-
-            DirectoryPath = $"{CoreUtilities.WebRootPath()}/{DirectoryName}";
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, ProductDetailsModel additionalData = null)
@@ -61,7 +56,6 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Components
             var bundles = _productAbcBundleService.GetBundles(product.Sku);
             if (!bundles.Any()) { return Content(""); }
 
-            await InitializeBonusBundlesImageFolderAsync();
             var modelList = new List<AbcBonusBundleModel>();
             foreach (var bundle in bundles)
             {
@@ -86,7 +80,7 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Components
 
         private async Task<string> FindBundleImageAsync(string memoNumber)
         {
-            var imageUrls = Directory.GetFiles(DirectoryPath, $"{memoNumber}.*");
+            var imageUrls = Directory.GetFiles(GetBonusBundlesImageFolder(), $"{memoNumber}.*");
 
             if (!imageUrls.Any()) { return null; }
             if (imageUrls.Length > 1)
@@ -97,13 +91,15 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Components
             return $"/{imageUrls[0].Split('/').Last().Replace("\\", "/")}";
         }
 
-        private async Task InitializeBonusBundlesImageFolderAsync()
+        public static string GetBonusBundlesImageFolder()
         {
-            if (!Directory.Exists(DirectoryPath))
+            var directoryPath = $"{CoreUtilities.WebRootPath()}/bundle_images";
+            if (!Directory.Exists(directoryPath))
             {
-                await _logger.InformationAsync($"ABCWarehouse Bonus Bundles: \"{DirectoryName}\" directory created, as it did not exist.");
-                Directory.CreateDirectory(DirectoryPath);
+                Directory.CreateDirectory(directoryPath);
             }
+
+            return directoryPath;
         }
     }
 }

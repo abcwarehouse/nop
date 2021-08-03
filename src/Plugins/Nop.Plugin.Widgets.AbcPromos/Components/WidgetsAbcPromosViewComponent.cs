@@ -37,7 +37,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Components
             DirectoryPath = $"{CoreUtilities.WebRootPath()}/{DirectoryName}";
         }
 
-        public async Task<IViewComponentResult> Invoke(string widgetZone, object additionalData = null)
+        public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData = null)
         {
             if (widgetZone == CustomPublicWidgetZones.ProductBoxAddinfoReviews)
             {
@@ -98,8 +98,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Components
             var promos = await _abcPromoService.GetActivePromosByProductIdAsync(productId);
             if (!promos.Any()) { return Content(""); }
 
-            await InitializePromoBannersFolderAsync();
-
             var banners = new List<BannerModel>();
             foreach (var promo in promos)
             {
@@ -118,15 +116,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Components
             }
 
             return View("~/Plugins/Widgets.AbcPromos/Views/DisplayBanner.cshtml", banners);
-        }
-
-        private async Task InitializePromoBannersFolderAsync()
-        {
-            if (!Directory.Exists(DirectoryPath))
-            {
-                await _logger.InformationAsync("Widgets.AbcPromos: \"promo_banners\" directory created, as it did not exist.");
-                Directory.CreateDirectory(DirectoryPath);
-            }
         }
     }
 }

@@ -54,11 +54,11 @@
 				</div>
 
 				@*sorting*@
-				@if (Model.PagingFilteringContext.AllowProductSorting)
+				@if (Model.AllowProductSorting)
 				{
 					<div class="product-sorting">
 						<span>@T("Catalog.OrderBy")</span>
-						@Html.DropDownList("products-orderby", Model.PagingFilteringContext.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
+						@Html.DropDownList("products-orderby", Model.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
 					</div>
 				}
 			</div>
@@ -90,9 +90,9 @@
 			</div>
 		}
 		@{
-            var pager = Html.Pager(Model.PagingFilteringContext).QueryParam("pagenumber");
+            var pager = Html.Pager(Model).QueryParam("pagenumber");
         }
-        @if (!pager.IsEmpty())
+        @if (!(await pager.IsEmpty()))
         {
             <div class="pager">
                 @pager
