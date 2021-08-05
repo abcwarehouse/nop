@@ -1641,7 +1641,7 @@ namespace Nop.Services.Common
                         //}
 
                         //uncomment to render associated product picture
-                        //var apPicture = _pictureService.GetPicturesByProductId(associatedProduct.Id).FirstOrDefault();
+                        //var apPicture = _await pictureService.GetPicturesByProductIdAsync(associatedProduct.Id).FirstOrDefault();
                         //if (apPicture != null)
                         //{
                         //    var picBinary = _pictureService.LoadPictureBinary(apPicture);

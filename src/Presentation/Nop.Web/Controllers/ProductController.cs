@@ -366,10 +366,10 @@ namespace Nop.Web.Controllers
                 var item = new RssItem(productName, productDescription, new Uri(productUrl), $"urn:store:{(await _storeContext.GetCurrentStoreAsync()).Id}:newProducts:product:{product.Id}", product.CreatedOnUtc);
                 items.Add(item);
                 //uncomment below if you want to add RSS enclosure for pictures
-                //var picture = _pictureService.GetPicturesByProductId(product.Id, 1).FirstOrDefault();
+                //var picture = _await pictureService.GetPicturesByProductIdAsync(product.Id, 1).FirstOrDefault();
                 //if (picture != null)
                 //{
-                //    var imageUrl = _pictureService.GetPictureUrl(picture, _mediaSettings.ProductDetailsPictureSize);
+                //    var imageUrl = _await pictureService.GetPictureUrlAsync(picture, _mediaSettings.ProductDetailsPictureSize);
                 //    item.ElementExtensions.Add(new XElement("enclosure", new XAttribute("type", "image/jpeg"), new XAttribute("url", imageUrl), new XAttribute("length", picture.PictureBinary.Length)));
                 //}
 
