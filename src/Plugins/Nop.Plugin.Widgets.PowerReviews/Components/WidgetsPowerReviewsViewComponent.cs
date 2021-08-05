@@ -155,7 +155,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                                         packageProduct.Sku :
                                         sku;
 
-            var mattressSku = _genericAttributeService.GetAttributesForEntity(productId, "Product")
+            var mattressSku = await _genericAttributeService.GetAttributesForEntityAsync(productId, "Product")
                                                       .FirstOrDefault(a => a.Key == "MattressSku");
             if (!string.IsNullOrWhiteSpace(mattressSku?.Value))
             {
@@ -179,7 +179,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(productManufacturer.ManufacturerId);
 
             var mattressListingPrice =
-				_abcMattressListingPriceService.GetListingPriceForMattressProduct(product.Id);
+				await _abcMattressListingPriceService.GetListingPriceForMattressProductAsync(product.Id);
 
 			var price = mattressListingPrice != null ?
 				mattressListingPrice.ToString() :

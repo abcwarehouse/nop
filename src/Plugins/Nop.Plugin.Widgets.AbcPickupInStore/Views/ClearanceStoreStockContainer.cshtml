@@ -34,12 +34,12 @@
         font-weight: bold;
         margin: 30px 0;
 		padding: 0.25rem 2em;
-		background-color: #@HtmlHelpers.GetPavilionPrimaryColor();
+		background-color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
 		color: #fff;
     }
 
     .shops-spinner > div {
-        background-color: #@HtmlHelpers.GetPavilionPrimaryColor();
+        background-color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
     }
 </style>
 <div id="clearance_stock_widget">
