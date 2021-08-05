@@ -6,6 +6,10 @@ using Nop.Services.Catalog;
 using Nop.Core;
 using Nop.Plugin.Misc.AbcCore.Services;
 using System;
+using Nop.Services.Seo;
+using Nop.Services.Media;
+using Nop.Core.Domain.Catalog;
+using System.Linq;
 
 namespace Nop.Plugin.Widgets.Bronto.Services
 {
@@ -13,19 +17,25 @@ namespace Nop.Plugin.Widgets.Bronto.Services
     {
         private readonly FrontEndService _frontendService;
         private readonly ICategoryService _categoryService;
+        private readonly IPictureService _pictureService;
         private readonly IProductService _productService;
         private readonly IStoreContext _storeContext;
+        private readonly IUrlRecordService _urlRecordService;
 
         public BrontoLineItemService(
             FrontEndService frontendService,
             ICategoryService categoryService,
+            IPictureService pictureService,
             IProductService productService,
-            IStoreContext storeContext
+            IStoreContext storeContext,
+            IUrlRecordService urlRecordService
         ) {
             _frontendService = frontendService;
             _categoryService = categoryService;
+            _pictureService = pictureService;
             _productService = productService;
             _storeContext = storeContext;
+            _urlRecordService = urlRecordService;
         }
 
         public async Task<IList<BrontoLineItem>> GetBrontoLineItemsAsync(IList<ShoppingCartItem> cart)
@@ -57,7 +67,7 @@ namespace Nop.Plugin.Widgets.Bronto.Services
         private async Task<BrontoLineItem> GetBrontoLineItemAsync(int productId, int quantity)
         {
             var product = await _productService.GetProductByIdAsync(productId);
-            var productUrl = await _storeContext.GetCurrentStoreAsync().Url +
+            var productUrl = (await _storeContext.GetCurrentStoreAsync()).Url +
                              await _urlRecordService.GetSeNameAsync<Product>(product);
             var unitPrice = product.OldPrice != 0.0M ?
                                 product.OldPrice :
@@ -65,7 +75,7 @@ namespace Nop.Plugin.Widgets.Bronto.Services
 
             // so this really should just read from ShortDescription
             // but with ABC we need to consider the ABC description
-            var productAbcDescription = frontEndService.GetProductAbcDescriptionByProductId(product.Id);
+            var productAbcDescription = _frontendService.GetProductAbcDescriptionByProductId(product.Id);
             var shortDescription = productAbcDescription != null ?
                                     productAbcDescription.AbcDescription :
                                     product.ShortDescription;
@@ -74,29 +84,28 @@ namespace Nop.Plugin.Widgets.Bronto.Services
             var productPictureUrl = productPictures.Any() ?
                                         await _pictureService.GetPictureUrlAsync(productPictures[0].Id) :
                                         "";
-            return new BrontoLineItem()
-            {
-                Sku = product.Sku;
-                Name = product.Name;
-                Description = shortDescription;
-                Category = GetProductCategoryBreadcrumb(product);
-                //Other = "", - not currently in use
-                UnitPrice = unitPrice;
-                SalePrice = product.Price;
-                Quantity = quantity;
-                TotalPrice = product.Price * quantity;
-                ImageUrl = productPictureUrl;
-                ProductUrl = productUrl;
-            };
+            return new BrontoLineItem(
+                Sku: product.Sku,
+                Name: product.Name,
+                Description: shortDescription,
+                Category: await GetProductCategoryBreadcrumbAsync(product),
+                Other: "", //not currently in use
+                UnitPrice: unitPrice,
+                SalePrice: product.Price,
+                Quantity: quantity,
+                TotalPrice: product.Price * quantity,
+                ImageUrl: productPictureUrl,
+                ProductUrl: productUrl
+            );
         }
 
-        private Task<string> GetProductCategoryBreadcrumbAsync(Product product)
+        private async Task<string> GetProductCategoryBreadcrumbAsync(Product product)
         {
-            var productCategory = _categoryService.GetProductCategoriesByProductId(product.Id).FirstOrDefault();
+            var productCategory = (await _categoryService.GetProductCategoriesByProductIdAsync(product.Id)).FirstOrDefault();
             if (productCategory == null) return "";
 
-            var category = _categoryService.GetCategoryById(productCategory.CategoryId);
-            var categoryBreadcrumb = _categoryService.GetFormattedBreadCrumb(category, null, ">");
+            var category = await _categoryService.GetCategoryByIdAsync(productCategory.CategoryId);
+            var categoryBreadcrumb = await _categoryService.GetFormattedBreadCrumbAsync(category, null, ">");
             return categoryBreadcrumb;
         }
     }
