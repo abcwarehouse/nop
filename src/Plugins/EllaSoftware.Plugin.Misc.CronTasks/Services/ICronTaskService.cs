@@ -14,7 +14,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
         Task DeleteCronTaskAsync(int scheduleTaskId);
         Task ExecuteCronTaskAsync(ScheduleTask scheduleTask);
 
-        System.Threading.Tasks.Task RescheduleQuartzJob(int scheduleTaskId, string cronExpression);
+        Task RescheduleQuartzJobAsync(int scheduleTaskId, string cronExpression);
         DateTime? GetQuartzJobNextOccurrence(int scheduleTaskId);
         CronTaskExecutionStatus GetQuartzJobExecutionStatus(int scheduleTaskId);
     }

@@ -31,7 +31,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.EventConsumers
             if (!(eventMessage?.Model is ScheduleTaskModel scheduleTaskModel))
                 return;
 
-            var cronTasks = _cronTaskService.GetCronTasks();
+            var cronTasks = await _cronTaskService.GetCronTasksAsync();
             if (!cronTasks.ContainsKey(scheduleTaskModel.Id))
                 return;
 

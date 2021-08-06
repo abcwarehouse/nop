@@ -44,11 +44,11 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Infrastructure
             await scheduler.Start();
 
             //add jobs
-            foreach (var cronTask in cronTaskService.GetCronTasks())
+            foreach (var cronTask in await cronTaskService.GetCronTasksAsync())
             {
                 try
                 {
-                    await cronTaskService.RescheduleQuartzJob(cronTask.Key, cronTask.Value);
+                    await cronTaskService.RescheduleQuartzJobAsync(cronTask.Key, cronTask.Value);
                 }
                 catch(Exception ex)
                 {

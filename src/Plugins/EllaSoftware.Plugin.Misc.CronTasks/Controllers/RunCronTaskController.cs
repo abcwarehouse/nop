@@ -32,7 +32,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
             if (scheduleTask == null)
                 return NoContent();
 
-            _cronTaskService.ExecuteCronTask(scheduleTask);
+            await _cronTaskService.ExecuteCronTaskAsync(scheduleTask);
 
             return NoContent();
         }

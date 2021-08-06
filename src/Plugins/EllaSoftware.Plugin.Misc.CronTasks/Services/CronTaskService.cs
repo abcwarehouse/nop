@@ -12,6 +12,7 @@ using Nop.Services.Common;
 using Nop.Services.Logging;
 using Nop.Services.Tasks;
 using Quartz;
+using Task = System.Threading.Tasks.Task;
 
 namespace EllaSoftware.Plugin.Misc.CronTasks.Services
 {
@@ -42,7 +43,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
 
         public async System.Threading.Tasks.Task<IDictionary<int, string>> GetCronTasksAsync()
         {
-            return _staticCacheManager.Get(new CacheKey(CronTasksCacheKey.CRON_TASKS_ALL_KEY), () =>
+            return await _staticCacheManager.GetAsync(new CacheKey(CronTasksCacheKey.CRON_TASKS_ALL_KEY), async () =>
             {
                 var result = new Dictionary<int, string>();
 
@@ -50,7 +51,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
                         .Where(ga => ga.KeyGroup == nameof(ScheduleTask) && !string.IsNullOrEmpty(ga.Value) && ga.Key == CronTasksDefaults.CronExpressionGenericAttributeKey)
                         .ToList();
 
-                var scheduleTasks = await _scheduleTaskService.GetAllTasksAsync(true).Where(t => cronExpressionGas.Select(ga => ga.EntityId).Contains(t.Id)).ToList();
+                var scheduleTasks = (await _scheduleTaskService.GetAllTasksAsync(true)).Where(t => cronExpressionGas.Select(ga => ga.EntityId).Contains(t.Id)).ToList();
                 foreach (var scheduleTask in scheduleTasks)
                 {
                     string cronExpression = cronExpressionGas.First(ga => ga.EntityId == scheduleTask.Id).Value;
@@ -64,7 +65,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
         public async Task InsertCronTaskAsync(int scheduleTaskId, string cronExpression)
         {
             var ga = _genericAttributeRepository.Table
-                .FirstOrDefault(gar => gar.KeyGroup == nameof(ScheduleTask) && gar.Key == CronTasksDefaults.CronExpressionGenericAttributeKey && gar.EntityId == scheduleTaskId);
+                    .FirstOrDefault(gar => gar.KeyGroup == nameof(ScheduleTask) && gar.Key == CronTasksDefaults.CronExpressionGenericAttributeKey && gar.EntityId == scheduleTaskId);
 
             if (ga == null)
             {
@@ -91,10 +92,10 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
                 await _scheduleTaskService.UpdateTaskAsync(scheduledTask);
             }
 
-            RescheduleQuartzJob(scheduleTaskId, cronExpression).Wait();
+            await RescheduleQuartzJobAsync(scheduleTaskId, cronExpression);
         }
 
-        public async Task UpdateCronTaskAsync(int scheduleTaskId, string cronExpression)
+        public async System.Threading.Tasks.Task UpdateCronTaskAsync(int scheduleTaskId, string cronExpression)
         {
             var ga = _genericAttributeRepository.Table
                 .FirstOrDefault(gar => gar.KeyGroup == nameof(ScheduleTask) && gar.Key == CronTasksDefaults.CronExpressionGenericAttributeKey && gar.EntityId == scheduleTaskId);
@@ -105,10 +106,10 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
             ga.Value = cronExpression;
             await _genericAttributeService.UpdateAttributeAsync(ga);
 
-            RescheduleQuartzJob(scheduleTaskId, cronExpression).Wait();
+            await RescheduleQuartzJobAsync(scheduleTaskId, cronExpression);
         }
 
-        public async Task DeleteCronTaskAsync(int scheduleTaskId)
+        public async System.Threading.Tasks.Task DeleteCronTaskAsync(int scheduleTaskId)
         {
             var ga = _genericAttributeRepository.Table
                 .FirstOrDefault(gar => gar.KeyGroup == nameof(ScheduleTask) && gar.Key == CronTasksDefaults.CronExpressionGenericAttributeKey && gar.EntityId == scheduleTaskId);
@@ -118,10 +119,10 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
 
             await _genericAttributeService.DeleteAttributeAsync(ga);
 
-            RescheduleQuartzJob(scheduleTaskId, null).Wait();
+            await RescheduleQuartzJobAsync(scheduleTaskId, null);
         }
 
-        public async Task ExecuteCronTaskAsync(ScheduleTask scheduleTask)
+        public async System.Threading.Tasks.Task ExecuteCronTaskAsync(ScheduleTask scheduleTask)
         {
             try
             {
@@ -172,7 +173,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Services
             }
         }
 
-        public async System.Threading.Tasks.Task RescheduleQuartzJob(int scheduleTaskId, string cronExpression)
+        public async System.Threading.Tasks.Task RescheduleQuartzJobAsync(int scheduleTaskId, string cronExpression)
         {
             if (!_scheduler.IsStarted)
                 return;

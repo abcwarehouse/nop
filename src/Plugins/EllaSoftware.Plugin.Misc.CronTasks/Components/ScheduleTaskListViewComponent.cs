@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using EllaSoftware.Plugin.Misc.CronTasks.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +16,9 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Components
             _cronTaskService = cronTaskService;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var cronTaskScheduleTaskIds = _cronTaskService.GetCronTasks().Select(t => t.Key).ToArray();
+            var cronTaskScheduleTaskIds = (await _cronTaskService.GetCronTasksAsync()).Select(t => t.Key).ToArray();
 
             return View("~/Plugins/EllaSoftware.CronTasks/Views/Shared/Components/ScheduleTaskList.cshtml", cronTaskScheduleTaskIds);
         }

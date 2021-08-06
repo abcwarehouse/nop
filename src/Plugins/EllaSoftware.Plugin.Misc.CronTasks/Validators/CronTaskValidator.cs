@@ -12,16 +12,16 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Validators
         {
             //if validation without this set rule is applied, in this case nothing will be validated
             //it's used to prevent auto-validation of child models
-            RuleSet(NopValidatorDefaults.ValidationRuleSet, () =>
+            RuleSet(NopValidationDefaults.ValidationRuleSet, () =>
             {
                 RuleFor(x => x.ScheduleTaskId)
                     .GreaterThan(0)
-                        .WithMessage(localizationService.GetResource("EllaSoftware.Plugin.Misc.CronTasks.CronTask.ScheduleTaskId.Required"));
+                        .WithMessageAwait(localizationService.GetResourceAsync("EllaSoftware.Plugin.Misc.CronTasks.CronTask.ScheduleTaskId.Required"));
                 RuleFor(x => x.CronExpression)
                     .NotEmpty()
-                        .WithMessage(localizationService.GetResource("EllaSoftware.Plugin.Misc.CronTasks.CronTask.CronExpression.Required"))
+                        .WithMessageAwait(localizationService.GetResourceAsync("EllaSoftware.Plugin.Misc.CronTasks.CronTask.CronExpression.Required"))
                     .Must(ex => CronExpression.IsValidExpression(ex))
-                        .WithMessage(localizationService.GetResource("EllaSoftware.Plugin.Misc.CronTasks.CronTask.CronExpression.Invalid"));
+                        .WithMessageAwait(localizationService.GetResourceAsync("EllaSoftware.Plugin.Misc.CronTasks.CronTask.CronExpression.Invalid"));
             });
         }
     }
