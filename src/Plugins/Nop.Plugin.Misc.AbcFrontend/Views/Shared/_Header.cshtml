@@ -194,7 +194,7 @@
         }
 
         <div class="center">
-            <div class="two-colums-area-left">
+            <div class="two-columns-area-left">
                 @if (showCategoriesInSideMenu && !isHomeSliderFullWidth)
                 {
                     <div class="category-navigation-list-wrapper">
@@ -203,7 +203,7 @@
                 }
                 @await Component.InvokeAsync("HomepageProducts")
             </div>
-            <div class="two-colums-area-right">
+            <div class="two-columns-area-right">
                 @if (!isHomeSliderFullWidth)
                 {
                     @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_main_slider" });
