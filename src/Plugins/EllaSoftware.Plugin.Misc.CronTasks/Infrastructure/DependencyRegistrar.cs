@@ -12,17 +12,6 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Infrastructure
 {
     public class DependencyRegistrar : IDependencyRegistrar
     {
-        // public void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
-        // {
-        //     builder.RegisterType<CronTaskService>().As<ICronTaskService>().InstancePerLifetimeScope();
-
-        //     //quartz
-        //     builder.RegisterType<StdSchedulerFactory>().SingleInstance();
-        //     builder.Register(context => context.Resolve<StdSchedulerFactory>().GetScheduler().Result)
-        //         .As<IScheduler>()
-        //         .SingleInstance();
-        // }
-
         public void Register(
                IServiceCollection services,
                ITypeFinder typeFinder,
@@ -32,8 +21,8 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Infrastructure
 
             // quartz
             services.AddSingleton<StdSchedulerFactory>();
-            throw new Exception("need to fix issue with singletons first");
-            // services.AddSingleton<StdSchedulerFactory, (context => context.Resolve<StdSchedulerFactory>().GetScheduler().Result)>();
+            var scheduler = StdSchedulerFactory.GetDefaultScheduler().GetAwaiter().GetResult();
+            services.AddSingleton<IScheduler>(scheduler);
         }
 
         public int Order

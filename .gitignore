@@ -225,7 +225,6 @@ src/Presentation/Nop.Web/NopCommerceSliExport.xml
 src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
 
 ## Saved plugins
-!src/Presentation/Nop.Web/Plugins/EllaSoftware.CronTasks/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Core/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/
