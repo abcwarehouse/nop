@@ -107,7 +107,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
         [HttpPost]
         public async Task<IActionResult> CronTaskList(CronTaskSearchModel searchModel)
         {
-            var cronTasks = _cronTaskService.GetCronTasks();
+            var cronTasks = await _cronTaskService.GetCronTasksAsync();
 
             var model = new CronTaskListModel
             {
@@ -168,7 +168,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
             var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(model.ScheduleTaskId)
                 ?? throw new ArgumentException("No schedule task found with the specified id");
 
-            _cronTaskService.InsertCronTask(scheduleTask.Id, model.CronExpression);
+            await _cronTaskService.InsertCronTaskAsync(scheduleTask.Id, model.CronExpression);
 
             return Json(new { Result = true });
         }
@@ -182,7 +182,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
             var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(model.ScheduleTaskId)
                 ?? throw new ArgumentException("No schedule task found with the specified id");
 
-            _cronTaskService.UpdateCronTask(scheduleTask.Id, model.CronExpression);
+            await _cronTaskService.UpdateCronTaskAsync(scheduleTask.Id, model.CronExpression);
 
             return new NullJsonResult();
         }
@@ -193,7 +193,7 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
             var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(id)
                 ?? throw new ArgumentException("No schedule task found with the specified id");
 
-            _cronTaskService.DeleteCronTask(id);
+            await _cronTaskService.DeleteCronTaskAsync(id);
 
             return new NullJsonResult();
         }
