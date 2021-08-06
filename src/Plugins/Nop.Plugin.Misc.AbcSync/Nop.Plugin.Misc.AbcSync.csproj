@@ -1,0 +1,111 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <!-- warns against potential bugs, updates to latest possible -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Authors>Dave Farinelli</Authors>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <RepositoryType>Git</RepositoryType>
+    <OutputPath>..\..\Presentation\Nop.Web\Plugins\Misc.AbcSync</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your project.
+    You need to set this parameter to true if your plugin has a nuget package 
+    to ensure that the dlls copied from the NuGet cache to the output of your project-->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="logo.png" />
+    <None Remove="Nopcommerce_Migrate_Primary_Content.sql" />
+    <None Remove="plugin.json" />
+    <None Remove="Views\Configure.cshtml" />
+    <None Remove="Views\_ViewImports.cshtml" />
+    <None Remove="Nopcommerce_Create_IXs.sql" />
+    <None Remove="Nopcommerce_Drop_IXs.sql" />
+    <None Remove="Clean_Duplicate_Images.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Nopcommerce_Migrate_Primary_Content.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Configure.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\_ViewImports.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Nopcommerce_Create_IXs.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Nopcommerce_Drop_IXs.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Clean_Duplicate_Images.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+    <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcMattresses\Nop.Plugin.Misc.AbcMattresses.csproj" />
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SevenSpikes.Nop.Plugins.HtmlWidgets">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Nop.Plugins.HtmlWidgets\SevenSpikes.Nop.Plugins.HtmlWidgets.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.Plugins.NopQuickTabs">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Nop.Plugins.NopQuickTabs\SevenSpikes.Nop.Plugins.NopQuickTabs.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.Plugins.StoreLocator">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Nop.Plugins.StoreLocator\SevenSpikes.Nop.Plugins.StoreLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.Conditions">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Core\SevenSpikes.Nop.Conditions.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.Scheduling">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Core\SevenSpikes.Nop.Scheduling.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.Mappings">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Core\SevenSpikes.Nop.Mappings.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.Framework">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Core\SevenSpikes.Nop.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenSpikes.Nop.EntitySettings">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Core\SevenSpikes.Nop.EntitySettings.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.35" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+  </ItemGroup>
+
+  <!-- This target execute after "Build" target -->
+  <Target Name="NopTarget" AfterTargets="Build">
+    <!-- Delete unnecessary libraries from plugins path -->
+    <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+  </Target>
+
+</Project>

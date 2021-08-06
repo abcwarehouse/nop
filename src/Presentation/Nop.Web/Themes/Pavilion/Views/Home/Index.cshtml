@@ -1,0 +1,55 @@
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Core.Domain.Seo
+
+@inject SeoSettings seoSettings
+@inject IStoreContext storeContext
+@inject ISettingService settingService
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    if (!string.IsNullOrEmpty(seoSettings.HomepageTitle))
+    {
+        Html.AddTitleParts(seoSettings.HomepageTitle);
+    }
+
+    //meta
+    if (!string.IsNullOrEmpty(seoSettings.HomepageDescription))
+    {
+        Html.AddMetaDescriptionParts(seoSettings.HomepageDescription);
+    }
+
+    //page class
+    Html.AppendPageCssClassParts("html-home-page");
+
+    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
+}
+
+<div class="page home-page">
+    <div class="page-body">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
+        @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
+        @await Component.InvokeAsync("HomepageCategories")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeProducts })
+        @if (defaultFeaturedProductsEnabled)
+        {
+            @await Component.InvokeAsync("HomepageProducts")
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeBestSellers })
+        <div class="homepage-middle-wrapper">
+		    @await Component.InvokeAsync("HomepageBestSellers")
+		    @await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_home_page_richblog" })
+        </div>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeNews })
+        @await Component.InvokeAsync("HomepageNews")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforePoll })
+        @await Component.InvokeAsync("HomepagePolls")
+        <div class="homepage-bottom-wrapper">
+        	@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBottom })
+        </div>
+    </div>
+</div>

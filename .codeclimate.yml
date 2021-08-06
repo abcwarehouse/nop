@@ -1,0 +1,10 @@
+exclude_patterns:
+  - "src/Build/**"
+  - "src/Libraries/**"
+  - "src/Presentation/**"
+  - "src/Tests/**"
+  - "src/Plugins/**/obj/**"
+  # specifically don't check nop-provided plugins:
+  - "src/Plugins/Nop.Plugin.Widgets.GoogleAnalytics/**"
+  - "src/Plugins/Nop.Plugin.Tax.FixedOrByCountryStateZip/**"
+  - "src/Plugins/Nop.Plugin.Payments.Manual/**"

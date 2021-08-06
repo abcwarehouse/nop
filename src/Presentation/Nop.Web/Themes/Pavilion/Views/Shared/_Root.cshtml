@@ -1,0 +1,72 @@
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+
+@inject IStoreContext storeContext
+@inject ISettingService settingService
+@{
+    Layout = "_Root.Head";
+
+    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
+    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
+    var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) && actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    bool isLogoStickyOnMobileDevice = await settingService.GetSettingByKeyAsync("pavilionthemesettings.islogostickyonmobiledevice", false, storeId, true);
+    string stickyLogoClass = isLogoStickyOnMobileDevice ? "mobile-sticky-logo" : string.Empty;
+}
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })
+@await Html.PartialAsync("_Notifications")
+@await Html.PartialAsync("_JavaScriptDisabledWarning")
+@await Html.PartialAsync("_OldInternetExplorerWarning")
+
+<div class="master-wrapper-page @stickyLogoClass">
+    @await Html.PartialAsync("_Header")
+    <script asp-location="Footer">
+        var localized_data = {
+            AjaxCartFailure: "@T("AjaxCart.Failure")"
+        };
+        AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
+    </script>
+    <div class="overlayOffCanvas"></div>
+    <div class="responsive-nav-wrapper-parent">
+        <div class="responsive-nav-wrapper">
+            <div class="menu-title">
+                <span>@T("SevenSpikes.Themes.Common.MenuTitle")</span>
+            </div>
+            <div class="shopping-cart-link">
+                <span>@T("ShoppingCart")</span>
+            </div>
+            <div class="filters-button">
+                <span>@T("SevenSpikes.Themes.Common.Filters")</span>
+            </div>
+            <div class="personal-button" id="header-links-opener">
+                <span>@T("SevenSpikes.Themes.Common.Personal")</span>
+            </div>
+            <div class="preferences-button" id="header-selectors-opener">
+                <span>@T("SevenSpikes.Themes.Pavilion.Header.Preferences")</span>
+            </div>
+            <div class="search-wrap">
+                <span>@T("Search")</span>
+            </div>
+        </div>
+    </div>
+    <div class="master-wrapper-content">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
+		@await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })
+
+        <div class="master-column-wrapper">
+            @RenderBody()
+        </div>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentAfter })
+    </div>
+    @if (isHomePage)
+    {
+		@await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })
+    }
+
+    @await Component.InvokeAsync("Footer")
+</div>
+
+@await Component.InvokeAsync("EuCookieLaw")
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })

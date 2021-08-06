@@ -1,1 +1,0 @@
-<script>ga('set', 'userId', '{CUSTOMERGUID}');</script>
