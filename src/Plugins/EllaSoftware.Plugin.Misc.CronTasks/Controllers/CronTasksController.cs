@@ -19,6 +19,7 @@ using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Framework.Validators;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
 {
@@ -109,50 +110,10 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
         {
             var cronTasks = await _cronTaskService.GetCronTasksAsync();
 
-            var model = new CronTaskListModel
-            {
-                Data = cronTasks.Select(async q =>
-                    {
-                        var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(q.Key);
-                        if (scheduleTask == null)
-                            return null;
+            var model = new CronTaskListModel();
 
-                        var scheduleTaskModel = scheduleTask.ToModel<ScheduleTaskModel>();
-
-                        //convert dates to the user time
-                        if (scheduleTask.LastStartUtc.HasValue)
-                        {
-                            scheduleTaskModel.LastStartUtc = (await _dateTimeHelper
-                                .ConvertToUserTimeAsync(scheduleTask.LastStartUtc.Value, DateTimeKind.Utc)).ToString("G");
-                        }
-
-                        if (scheduleTask.LastEndUtc.HasValue)
-                        {
-                            scheduleTaskModel.LastEndUtc = (await _dateTimeHelper
-                                .ConvertToUserTimeAsync(scheduleTask.LastEndUtc.Value, DateTimeKind.Utc)).ToString("G");
-                        }
-
-                        if (scheduleTask.LastSuccessUtc.HasValue)
-                        {
-                            scheduleTaskModel.LastSuccessUtc = (await _dateTimeHelper
-                                .ConvertToUserTimeAsync(scheduleTask.LastSuccessUtc.Value, DateTimeKind.Utc)).ToString("G");
-                        }
-
-                        var cronNextOccurence = _cronTaskService.GetQuartzJobNextOccurrence(scheduleTask.Id);
-
-                        return new CronTaskModel()
-                        {
-                            ScheduleTaskId = scheduleTask.Id,
-                            ScheduleTaskModel = scheduleTaskModel,
-                            CronExpression = q.Value,
-                            ExecutionStatus = _cronTaskService.GetQuartzJobExecutionStatus(scheduleTask.Id),
-                            CronNextOccurrence = cronNextOccurence.HasValue ?
-                                (await _dateTimeHelper.ConvertToUserTimeAsync(cronNextOccurence.Value, DateTimeKind.Utc)).ToString("G") :
-                                string.Empty
-                        };
-                    }).Where(ct => ct != null)
-            };
-
+            model.Data = await GetCronTaskModelsAsync(cronTasks);
+            model.Draw = searchModel.Draw;
             model.RecordsFiltered = model.Data.Count();
             model.RecordsTotal = model.Data.Count();
 
@@ -202,5 +163,54 @@ namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
 
         #endregion
 
+        private async Task<IEnumerable<CronTaskModel>> GetCronTaskModelsAsync(IDictionary<int, string> cronTasks)
+        {
+            var result = new List<CronTaskModel>();
+
+            foreach (var ct in cronTasks)
+            {
+                var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(ct.Key);
+                if (scheduleTask == null)
+                    continue;
+
+                var scheduleTaskModel = scheduleTask.ToModel<ScheduleTaskModel>();
+
+                //convert dates to the user time
+                if (scheduleTask.LastStartUtc.HasValue)
+                {
+                    scheduleTaskModel.LastStartUtc = (await _dateTimeHelper
+                        .ConvertToUserTimeAsync(scheduleTask.LastStartUtc.Value, DateTimeKind.Utc)).ToString("G");
+                }
+
+                if (scheduleTask.LastEndUtc.HasValue)
+                {
+                    scheduleTaskModel.LastEndUtc = (await _dateTimeHelper
+                        .ConvertToUserTimeAsync(scheduleTask.LastEndUtc.Value, DateTimeKind.Utc)).ToString("G");
+                }
+                
+                if (scheduleTask.LastSuccessUtc.HasValue)
+                {
+                    scheduleTaskModel.LastSuccessUtc = (await _dateTimeHelper
+                        .ConvertToUserTimeAsync(scheduleTask.LastSuccessUtc.Value, DateTimeKind.Utc)).ToString("G");
+                }
+
+                var cronNextOccurence = _cronTaskService.GetQuartzJobNextOccurrence(scheduleTask.Id);
+
+                var model = new CronTaskModel()
+                {
+                    ScheduleTaskId = scheduleTask.Id,
+                    ScheduleTaskModel = scheduleTaskModel,
+                    CronExpression = ct.Value,
+                    ExecutionStatus = _cronTaskService.GetQuartzJobExecutionStatus(scheduleTask.Id),
+                    CronNextOccurrence = cronNextOccurence.HasValue ?
+                        (await _dateTimeHelper.ConvertToUserTimeAsync(cronNextOccurence.Value, DateTimeKind.Utc)).ToString("G") :
+                        string.Empty
+                };
+
+                result.Add(model);
+            }
+
+            return result;
+        }
     }
 }
