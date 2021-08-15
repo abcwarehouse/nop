@@ -18,7 +18,6 @@ namespace Nop.Plugin.Misc.AbcExportOrder
                ITypeFinder typeFinder,
                AppSettings appSettings
         ) {
-            services.AddScoped<IShoppingCartService, CustomShoppingCartService>();
             services.AddScoped<IIsamOrderService, IsamOrderService>();
             services.AddScoped<ICustomOrderService, CustomOrderService>();
             services.AddScoped<IYahooService, YahooService>();
