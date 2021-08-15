@@ -17,3 +17,11 @@ WHERE Name = 'commonsettings.enablehtmlminification'
 UPDATE Setting
 SET Value = 'False'
 WHERE Name = 'commonsettings.minificationenabled'
+
+UPDATE Setting
+SET Value = 'True'
+WHERE Name = 'coresettings.areexternalcallsskipped'
+
+UPDATE Setting
+SET Value = ''
+WHERE Name = 'synchronypaymentsettings.merchantpassword'

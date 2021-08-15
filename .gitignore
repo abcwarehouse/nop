@@ -239,3 +239,6 @@ src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Theme.Pavilion/
 !src/Presentation/Nop.Web/Plugins/Shipping.Fedex/
+
+## Playwright testing
+tests/node_modules

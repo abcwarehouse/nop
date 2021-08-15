@@ -136,7 +136,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                 if (homeDeliveryList.Count > 0)
                 {
                     var zip = getShippingOptionRequest.ShippingAddress.ZipPostalCode;
-                    CheckZipcode(zip, response);
+                    await CheckZipcodeAsync(zip, response);
                     foreach (var shippingOption in response.ShippingOptions)
                     {
                         shippingOption.Name += " and Home Delivery";
@@ -147,7 +147,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             else if (homeDeliveryList.Count > 0)
             {
                 var zip = getShippingOptionRequest.ShippingAddress.ZipPostalCode;
-                CheckZipcode(zip, response);
+                await CheckZipcodeAsync(zip, response);
                 response.ShippingOptions.Add(new ShippingOption { Name = "Home Delivery", Rate = homeDeliveryCharge });
             }//else the cart contains only pickup in store
             else
@@ -157,7 +157,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             return response;
         }
 
-        private bool CheckZipcode(string zip, GetShippingOptionResponse response)
+        private async Task<bool> CheckZipcodeAsync(string zip, GetShippingOptionResponse response)
         {
             if (zip.Length < 5)
             {
@@ -171,7 +171,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             {
                 var returnCode = new DataParameter { Name = "ReturnCode", DataType = DataType.Int32, Direction = ParameterDirection.Output };
                 var parameters = new DataParameter[] { returnCode, new DataParameter { Name = "zip", DataType = DataType.Int32, Value = zipNum } };
-                _nopContext.ExecuteNonQueryAsync("EXEC @ReturnCode = ZipIsHomeDelivery @zip", dataParameters: parameters);
+                await _nopContext.ExecuteNonQueryAsync("EXEC @ReturnCode = ZipIsHomeDelivery @zip", dataParameters: parameters);
 
                 if (returnCode.Value.Equals(1))
                     return true;
