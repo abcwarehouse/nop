@@ -96,30 +96,6 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-override-store-checkbox asp-for="authorizationEndPoint_Demo_OverrideForStore"
-                                                     asp-input="authorizationEndPoint_Demo"
-                                                     asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                        <nop-label asp-for="authorizationEndPoint_Demo" />
-                    </div>
-                    <div class="col-md-9">
-                        <nop-editor asp-for="authorizationEndPoint_Demo" />
-                        <span asp-validation-for="authorizationEndPoint_Demo"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-3">
-                        <nop-override-store-checkbox asp-for="authorizationEndPoint_Live_OverrideForStore"
-                                                     asp-input="authorizationEndPoint_Live"
-                                                     asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                        <nop-label asp-for="authorizationEndPoint_Live" />
-                    </div>
-                    <div class="col-md-9">
-                        <nop-editor asp-for="authorizationEndPoint_Live" />
-                        <span asp-validation-for="authorizationEndPoint_Live"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="IsDebugMode_OverrideForStore"
                                                      asp-input="IsDebugMode"
                                                      asp-store-scope="@Model.ActiveStoreScopeConfiguration" />

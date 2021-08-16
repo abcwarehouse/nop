@@ -39,14 +39,6 @@ namespace Nop.Plugin.Payments.Synchrony.Models
         public string ServerURL { get; set; }
         public bool ServerURL_OverrideForStore { get; set; }
 
-        [NopResourceDisplayName("Plugins.Payments.Synchrony.Fields.authorizationEndPoint_Live")]
-        public string authorizationEndPoint_Live { get; set; }
-        public bool authorizationEndPoint_Live_OverrideForStore { get; set; }
-
-        [NopResourceDisplayName("Plugins.Payments.Synchrony.Fields.authorizationEndPoint_Demo")]
-        public string authorizationEndPoint_Demo { get; set; }
-        public bool authorizationEndPoint_Demo_OverrideForStore { get; set; }
-
         [NopResourceDisplayName("Plugins.Payments.Synchrony.Fields.IsDebugMode")]
         public bool IsDebugMode { get; set; }
         public bool IsDebugMode_OverrideForStore { get; set; }

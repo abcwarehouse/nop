@@ -34,6 +34,9 @@ using Nop.Services.Customers;
 using Nop.Core.Domain.Customers;
 using Nop.Plugin.Misc.AbcCore.Services;
 using System.Threading.Tasks;
+using System.Net.Http;
+using Nop.Core.Http;
+using System.Text;
 
 namespace Nop.Plugin.Payments.Synchrony.Controllers
 {
@@ -75,6 +78,8 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
         private readonly IGiftCardService _giftCardService;
         private readonly IIsamGiftCardService _isamGiftCardService;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public SynchronyPaymentController(
             IWorkContext workContext,
             IStoreService storeService,
@@ -106,7 +111,8 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             ICheckoutModelFactory checkoutModelFactory,
             IPaymentPluginManager paymentPluginManager,
             IGiftCardService giftCardService,
-            IIsamGiftCardService isamGiftCardService
+            IIsamGiftCardService isamGiftCardService,
+            IHttpClientFactory httpClientFactory
         )
         {
             _workContext = workContext;
@@ -140,6 +146,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             _paymentPluginManager = paymentPluginManager;
             _giftCardService = giftCardService;
             _isamGiftCardService = isamGiftCardService;
+            _httpClientFactory = httpClientFactory;
         }
 
         #region Methods
@@ -182,8 +189,6 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.DemoEndPoint, model.DemoEndPoint_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.LiveEndPoint, model.LiveEndPoint_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.ServerURL, model.ServerURL_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.authorizationEndPoint_Demo, model.authorizationEndPoint_Demo_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.authorizationEndPoint_Live, model.authorizationEndPoint_Live_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.IsDebugMode, model.IsDebugMode_OverrideForStore, storeScope, false);
 
             //now clear settings cache
@@ -197,108 +202,31 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
         [HttpPost]
         public async Task<IActionResult> PaymentPostInfo()
         {
-            decimal transactionAmount = 0;
-            var cart = await _shoppingCartService.GetShoppingCartAsync(
-                await _workContext.GetCurrentCustomerAsync(),
-                ShoppingCartType.ShoppingCart,
-                (await _storeContext.GetCurrentStoreAsync()).Id);
-
-            var orderTotalsModel = await _shoppingCartModelFactory.PrepareOrderTotalsModelAsync(cart, false);
-            transactionAmount = Convert.ToDecimal(orderTotalsModel.OrderTotal.Replace("$", ""));
-
-            AuthenticationTokenResponse model = new AuthenticationTokenResponse();
-
-            var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
-            var paySynchronyPaymentSettings = await _settingService.LoadSettingAsync<SynchronyPaymentSettings>(storeScope);
-
-            //Stored Merchant Id & Password & TokenId
-            var merchantId = paySynchronyPaymentSettings.MerchantId;
-            var merchantPassword = paySynchronyPaymentSettings.MerchantPassword;
-            var Integration = paySynchronyPaymentSettings.Integration;
-            var token = HttpContext.Session.GetString("token").Replace("\"", "");
-
-            //Find Status Endpoint
-            string authorizationRegionStatusURL = paySynchronyPaymentSettings.Integration == true
-                ? paySynchronyPaymentSettings.DemoEndPoint
-                : paySynchronyPaymentSettings.LiveEndPoint;
-
+            var model = new AuthenticationTokenResponse();
             try
             {
+                model = await FindStatusCallAsync();
 
-                #region Find Status Call
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(authorizationRegionStatusURL);
-                httpWebRequest.ContentType = "application/json";
-                httpWebRequest.Method = "POST";
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                //session save
+                HttpContext.Session.Set("syfPaymentInfo", model);
 
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                if (model.StatusMessage != "Account Authentication Success")
                 {
-                    string json = JsonSerializer.Serialize(new
+                    var errorModel = new ErrorModel()
                     {
-                        merchantNumber = merchantId,
-                        password = merchantPassword,
-                        userToken = token
+                        Message = model.StatusMessage,
+                        isBack = true
+                    };
+                    return Json(new
+                    {
+                        update_section = new UpdateSectionJsonModel
+                        {
+                            name = "Error",
+                            html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
+                        },
+                        goto_section = "Error"
                     });
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
-                    streamWriter.Close();
                 }
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-
-                var customer = await _workContext.GetCurrentCustomerAsync();
-
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-
-                    if (_synchronyPaymentSettings.IsDebugMode)
-                    {
-                        await _logger.InsertLogAsync(Core.Domain.Logging.LogLevel.Debug, $"PaymentPostInfo response - {result}");
-                    }
-
-                    var authResponse = JsonSerializer.Deserialize<AuthenticationTokenResponse>(result);
-                    var billingAddress = await _addressService.GetAddressByIdAsync(customer.BillingAddressId.Value);
-                    model.Integration = Integration;
-                    model.MerchantId = merchantId;
-                    model.clientToken = token;
-                    model.transactionId = authResponse.transactionId;
-                    model.responseCode = authResponse.responseCode;
-                    model.responseDesc = authResponse.responseDesc;
-                    model.ZipCode = billingAddress.ZipPostalCode;
-                    model.State = (await _stateProvinceService.GetStateProvinceByAddressAsync(
-                        billingAddress
-                    )).Abbreviation;
-                    model.FirstName = billingAddress.FirstName;
-                    model.City = billingAddress.City;
-                    model.Address1 = billingAddress.Address1;
-                    model.LastName = billingAddress.LastName;
-                    model.StatusCode = authResponse.StatusCode;
-                    model.AccountNumber = authResponse.AccountNumber;
-                    model.StatusMessage = authResponse.StatusMessage;
-                    model.TransactionAmount = transactionAmount.ToString();
-
-                    //session save
-                    HttpContext.Session.Set("syfPaymentInfo", model);
-
-                    if (model.StatusMessage != "Account Authentication Success")
-                    {
-                        var errorModel = new ErrorModel()
-                        {
-                            Message = model.StatusMessage,
-                            isBack = true
-                        };
-                        return Json(new
-                        {
-                            update_section = new UpdateSectionJsonModel
-                            {
-                                name = "Error",
-                                html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
-                            },
-                            goto_section = "Error"
-                        });
-                    }
-                }
-                #endregion
             }
             catch (Exception ex)
             {
@@ -364,8 +292,6 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
         [HttpPost]
         public async Task<JsonResult> PaymentPostInfoStatus()
         {
-            AuthenticationTokenResponse model = new AuthenticationTokenResponse();
-
             var cart = await _shoppingCartService.GetShoppingCartAsync(
                 await _workContext.GetCurrentCustomerAsync(),
                 ShoppingCartType.ShoppingCart,
@@ -374,89 +300,30 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
             var paySynchronyPaymentSettings = await _settingService.LoadSettingAsync<SynchronyPaymentSettings>(storeScope);
 
-            //Stored Merchant Id & Password & TokenId
-            var merchantId = paySynchronyPaymentSettings.MerchantId;
-            var merchantPassword = paySynchronyPaymentSettings.MerchantPassword;
-            var Integration = paySynchronyPaymentSettings.Integration;
-            var token = HttpContext.Session.GetString("token").Replace("\"", "");
-
-            //Find Status Endpoint
-            string authorizationRegionStatusURL = paySynchronyPaymentSettings.Integration == true
-                ? paySynchronyPaymentSettings.DemoEndPoint
-                : paySynchronyPaymentSettings.LiveEndPoint;
-
             try
             {
+                var model = await FindStatusCallAsync();
 
-                #region Find Status Call
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(authorizationRegionStatusURL);
-                httpWebRequest.ContentType = "application/json";
-                httpWebRequest.Method = "POST";
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                //session save
+                HttpContext.Session.Set("syfPaymentInfo", model);
 
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                if (model.StatusMessage != "Auth Approved")
                 {
-                    string json = JsonSerializer.Serialize(new
+                    var errorModel = new ErrorModel()
                     {
-                        merchantNumber = merchantId,
-                        password = merchantPassword,
-                        userToken = token
+                        Message = model.StatusMessage,
+                        isBack = false
+                    };
+                    return Json(new
+                    {
+                        update_section = new UpdateSectionJsonModel
+                        {
+                            name = "Error",
+                            html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
+                        },
+                        goto_section = "Error"
                     });
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
-                    streamWriter.Close();
                 }
-
-                var customer = await _workContext.GetCurrentCustomerAsync();
-
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-
-                    var authResponse = JsonSerializer.Deserialize<AuthenticationTokenResponse>(result);
-                    var billingAddress = await _addressService.GetAddressByIdAsync(customer.BillingAddressId.Value);
-
-                    model.MerchantId = merchantId;
-                    model.clientToken = authResponse.TokenId;
-                    model.ClientTransactionID = authResponse.ClientTransactionID;
-                    model.FirstName = billingAddress.FirstName;
-                    model.LastName = billingAddress.LastName;
-                    model.responseCode = authResponse.responseCode;
-                    model.responseDesc = authResponse.responseDesc;
-                    model.StatusCode = authResponse.StatusCode;
-                    model.StatusMessage = authResponse.StatusMessage;
-                    model.AccountNumber = authResponse.AccountNumber;
-                    model.transactionId = authResponse.transactionId;
-                    model.TransactionAmount = authResponse.TransactionAmount;
-                    model.TransactionDate = authResponse.TransactionDate;
-                    model.TransactionDescription = authResponse.TransactionDescription;
-                    model.AuthCode = authResponse.AuthCode;
-                    model.PromoCode = authResponse.PromoCode;
-                    model.PostbackId = authResponse.PostbackId;
-
-                    //session save
-                    HttpContext.Session.Set("syfPaymentInfo", model);
-
-                    if (model.StatusMessage != "Auth Approved")
-                    {
-                        var errorModel = new ErrorModel()
-                        {
-                            Message = model.StatusMessage,
-                            isBack = false
-                        };
-                        return Json(new
-                        {
-                            update_section = new UpdateSectionJsonModel
-                            {
-                                name = "Error",
-                                html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
-                            },
-                            goto_section = "Error"
-                        });
-                    }
-                }
-                #endregion
             }
             catch (Exception ex)
             {
@@ -660,6 +527,76 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
 
                 }
             }
+        }
+
+        private async Task<AuthenticationTokenResponse> FindStatusCallAsync()
+        {
+            var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var paySynchronyPaymentSettings = await _settingService.LoadSettingAsync<SynchronyPaymentSettings>(storeScope);
+
+            var cart = await _shoppingCartService.GetShoppingCartAsync(
+                await _workContext.GetCurrentCustomerAsync(),
+                ShoppingCartType.ShoppingCart,
+                (await _storeContext.GetCurrentStoreAsync()).Id);
+
+            var orderTotalsModel = await _shoppingCartModelFactory.PrepareOrderTotalsModelAsync(cart, false);
+            string authorizationRegionStatusURL = paySynchronyPaymentSettings.Integration == true
+                ? paySynchronyPaymentSettings.DemoEndPoint
+                : paySynchronyPaymentSettings.LiveEndPoint;
+            var merchantId = paySynchronyPaymentSettings.MerchantId;
+            var merchantPassword = paySynchronyPaymentSettings.MerchantPassword;
+            var Integration = paySynchronyPaymentSettings.Integration;
+            var token = HttpContext.Session.GetString("token").Replace("\"", "");
+            var transactionAmount = Convert.ToDecimal(orderTotalsModel.OrderTotal.Replace("$", ""));
+            var model = new AuthenticationTokenResponse();
+            var client = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
+            string json = JsonSerializer.Serialize(new
+            {
+                merchantNumber = merchantId,
+                password = merchantPassword,
+                userToken = token
+            });
+            var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(authorizationRegionStatusURL, content);
+
+            var authResponseJsonAsString = await response.Content.ReadAsStringAsync();
+            if (_synchronyPaymentSettings.IsDebugMode)
+            {
+                await _logger.InsertLogAsync(Core.Domain.Logging.LogLevel.Debug, $"PaymentPostInfo response - {authResponseJsonAsString}");
+            }
+
+            if (authResponseJsonAsString.Contains("Unauthorized"))
+            {
+                await _logger.ErrorAsync($"Payments.Synchrony: Failed authenticating - {authResponseJsonAsString}");
+                throw new HttpRequestException("There was an error, please select another payment method.");
+            }
+
+            var authResponse = JsonSerializer.Deserialize<AuthenticationTokenResponse>(
+                authResponseJsonAsString
+            );
+                
+            var customer = await _workContext.GetCurrentCustomerAsync();
+            var billingAddress = await _addressService.GetAddressByIdAsync(customer.BillingAddressId.Value);
+            model.Integration = Integration;
+            model.MerchantId = merchantId;
+            model.clientToken = token;
+            model.transactionId = authResponse.transactionId;
+            model.responseCode = authResponse.responseCode;
+            model.responseDesc = authResponse.responseDesc;
+            model.ZipCode = billingAddress.ZipPostalCode;
+            model.State = (await _stateProvinceService.GetStateProvinceByAddressAsync(
+                billingAddress
+            )).Abbreviation;
+            model.FirstName = billingAddress.FirstName;
+            model.City = billingAddress.City;
+            model.Address1 = billingAddress.Address1;
+            model.LastName = billingAddress.LastName;
+            model.StatusCode = authResponse.StatusCode;
+            model.AccountNumber = authResponse.AccountNumber;
+            model.StatusMessage = authResponse.StatusMessage;
+            model.TransactionAmount = transactionAmount.ToString();
+
+            return model;
         }
     }
 }

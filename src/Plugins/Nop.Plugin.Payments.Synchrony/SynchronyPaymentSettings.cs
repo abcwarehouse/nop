@@ -16,8 +16,6 @@ namespace Nop.Plugin.Payments.Synchrony
         public string DemoEndPoint { get; private set; }
         public string LiveEndPoint { get; private set; }
         public string ServerURL { get; private set; }
-        public string authorizationEndPoint_Live { get; private set; }
-        public string authorizationEndPoint_Demo { get; private set; }
         public bool IsDebugMode { get; private set; }
 
         public static SynchronyPaymentSettings FromModel(ConfigurationModel model)
@@ -32,8 +30,6 @@ namespace Nop.Plugin.Payments.Synchrony
                 DemoEndPoint = model.DemoEndPoint,
                 LiveEndPoint = model.LiveEndPoint,
                 ServerURL = model.ServerURL,
-                authorizationEndPoint_Demo = model.authorizationEndPoint_Demo,
-                authorizationEndPoint_Live = model.authorizationEndPoint_Live,
                 IsDebugMode = model.IsDebugMode
             };
         }
@@ -47,9 +43,7 @@ namespace Nop.Plugin.Payments.Synchrony
                 Integration = true,
                 WhitelistDomain = "",
                 DemoEndPoint = "https://usvcs.syf.com/v1.0/status/inquiry",
-                LiveEndPoint = "https://svcs.syf.com/v1.0/status/inquiry",
-                authorizationEndPoint_Demo = "https://ubuy.syf.com/DigitalBuy/authentication.do",
-                authorizationEndPoint_Live = "https://buy.syf.com/DigitalBuy/authentication.do"
+                LiveEndPoint = "https://svcs.syf.com/v1.0/status/inquiry"
             };
         }
 
@@ -65,8 +59,6 @@ namespace Nop.Plugin.Payments.Synchrony
             model.DemoEndPoint = DemoEndPoint;
             model.LiveEndPoint = LiveEndPoint;
             model.ServerURL = ServerURL;
-            model.authorizationEndPoint_Demo = authorizationEndPoint_Demo;
-            model.authorizationEndPoint_Live = authorizationEndPoint_Live;
             model.IsDebugMode = IsDebugMode;
 
             model.ActiveStoreScopeConfiguration = storeScope;
@@ -82,8 +74,6 @@ namespace Nop.Plugin.Payments.Synchrony
                 model.DemoEndPoint_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.DemoEndPoint, storeScope);
                 model.LiveEndPoint_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.LiveEndPoint, storeScope);
                 model.ServerURL_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.ServerURL, storeScope);
-                model.authorizationEndPoint_Demo_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.authorizationEndPoint_Demo, storeScope);
-                model.authorizationEndPoint_Live_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.authorizationEndPoint_Live, storeScope);
                 model.IsDebugMode = await settingService.SettingExistsAsync(this, x => x.IsDebugMode, storeScope);
             }
 

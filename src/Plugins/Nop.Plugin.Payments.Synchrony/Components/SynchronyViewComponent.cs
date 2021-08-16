@@ -52,8 +52,8 @@ namespace Nop.Plugin.Payments.Synchrony.Components
 
             // get authorization region end point
             string authorizationRegionURL = _settings.Integration == true
-                ? _settings.authorizationEndPoint_Demo
-                : _settings.authorizationEndPoint_Live;
+                ? SynchronyPaymentConstants.DemoAuthEndpoint
+                : SynchronyPaymentConstants.LiveAuthEndpoint;
 
             // take reference from below link - Answer 1  by Seema As
             // https://stackoverflow.com/questions/39190018/how-to-get-object-using-httpclient-with-response-ok-in-web-api

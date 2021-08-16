@@ -51,12 +51,6 @@
   <LocaleResource Name="Plugins.Payments.Synchrony.Fields.authorizationEndPoint_Demo.hint">
     <Value>authorizationEndPoint_Demo URL</Value>
   </LocaleResource>
-  <LocaleResource Name="Plugins.Payments.Synchrony.Fields.authorizationEndPoint_Live">
-    <Value>authorizationEndPoint_Live</Value>
-  </LocaleResource>
-  <LocaleResource Name="Plugins.Payments.Synchrony.Fields.authorizationEndPoint_Live.hint">
-    <Value>authorizationEndPoint_Live URL</Value>
-  </LocaleResource>
   <LocaleResource Name="synchrony.Finalcial.payment.success">
     <Value>Payment Successfully Done.</Value>
   </LocaleResource>
