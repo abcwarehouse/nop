@@ -47,15 +47,6 @@
 	<img id="img-spinner" src="~/Plugins/Payments.Synchrony/Contents/loader.gif" alt="Loading" height="50" width="50" />
 </div>
 <script type="text/javascript">
-	// Let's try intercepting the call and adding the referrer information manually
-	(function(send) {
-		XMLHttpRequest.prototype.send = function(body) {
-			var info="send data\r\n"+body;
-			alert(info);
-			send.call(this, body);
-		};
-	})(XMLHttpRequest.prototype.send);
-
 	$(document).ready(function () {
 		$("#spinner").bind("ajaxSend", function () {
 			$(this).show();
