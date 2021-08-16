@@ -362,7 +362,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> PaymentPostInfoStatusAsync()
+        public async Task<JsonResult> PaymentPostInfoStatus()
         {
             AuthenticationTokenResponse model = new AuthenticationTokenResponse();
 
@@ -480,7 +480,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SavePaymentInfoAsync(IFormCollection form)
+        public async Task<IActionResult> SavePaymentInfo(IFormCollection form)
         {
             try
             {
@@ -661,21 +661,5 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 }
             }
         }
-
-        // protected virtual async Task<bool> IsMinimumOrderPlacementIntervalValid(Customer customer)
-        // {
-        //     //prevent 2 orders being placed within an X seconds time frame
-        //     if (_orderSettings.MinimumOrderPlacementInterval == 0)
-        //         return true;
-
-        //     var lastOrder = await _orderService.SearchOrdersAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
-        //         customerId: (await _workContext.GetCurrentCustomerAsync()).Id, pageSize: 1)
-        //         .FirstOrDefault();
-        //     if (lastOrder == null)
-        //         return true;
-
-        //     var interval = DateTime.UtcNow - lastOrder.CreatedOnUtc;
-        //     return interval.TotalSeconds > _orderSettings.MinimumOrderPlacementInterval;
-        // }
     }
 }

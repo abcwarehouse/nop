@@ -639,6 +639,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         }
 
         // Custom, allows for AJAX calls
+        // This requires ignoring the anti-forgery token since
+        // it is an AJAX method
+        [IgnoreAntiforgeryToken]
         [HttpPost, ActionName("PaymentInfo")]
         [FormValueRequired("nextstep")]
         public override async Task<IActionResult> EnterPaymentInfo(IFormCollection form)
