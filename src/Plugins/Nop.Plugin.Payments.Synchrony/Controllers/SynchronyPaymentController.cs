@@ -557,7 +557,6 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0");
                 ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
 
                 var requestBody = new
                 {
