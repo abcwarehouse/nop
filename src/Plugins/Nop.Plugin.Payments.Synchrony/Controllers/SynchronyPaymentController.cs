@@ -549,17 +549,28 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             var token = HttpContext.Session.GetString("token").Replace("\"", "");
             var transactionAmount = Convert.ToDecimal(orderTotalsModel.OrderTotal.Replace("$", ""));
             var model = new AuthenticationTokenResponse();
-            // Needed to prevent HTTPS issue
+            // take reference from below link - Answer 1  by Seema As
+            // https://stackoverflow.com/questions/39190018/how-to-get-object-using-httpclient-with-response-ok-in-web-api
+            ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            var client = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
-            string json = JsonSerializer.Serialize(new
+
+            var response = new HttpResponseMessage();
+            using (HttpClient client = new HttpClient())
             {
-                merchantNumber = merchantId,
-                password = merchantPassword,
-                userToken = token
-            });
-            var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(authorizationRegionStatusURL, content);
+                client.BaseAddress = new Uri(authorizationRegionStatusURL);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0");
+
+                string json = JsonSerializer.Serialize(new
+                {
+                    merchantNumber = merchantId,
+                    password = merchantPassword,
+                    userToken = token
+                });
+                var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+                response = await client.PostAsync(authorizationRegionStatusURL, content);
+            }
 
             var authResponseJsonAsString = await response.Content.ReadAsStringAsync();
             if (_synchronyPaymentSettings.IsDebugMode)
