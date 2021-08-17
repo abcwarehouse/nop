@@ -35,10 +35,6 @@ namespace Nop.Plugin.Payments.Synchrony.Models
         public string LiveEndPoint { get; set; }
         public bool LiveEndPoint_OverrideForStore { get; set; }
 
-        [NopResourceDisplayName("Plugins.Payments.Synchrony.Fields.ServerURL")]
-        public string ServerURL { get; set; }
-        public bool ServerURL_OverrideForStore { get; set; }
-
         [NopResourceDisplayName("Plugins.Payments.Synchrony.Fields.IsDebugMode")]
         public bool IsDebugMode { get; set; }
         public bool IsDebugMode_OverrideForStore { get; set; }

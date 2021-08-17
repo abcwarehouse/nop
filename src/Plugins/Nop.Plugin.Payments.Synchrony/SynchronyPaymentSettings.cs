@@ -13,9 +13,6 @@ namespace Nop.Plugin.Payments.Synchrony
         public string TokenNumber { get; private set; }
         public bool Integration { get; private set; }
         public string WhitelistDomain { get; private set; }
-        public string DemoEndPoint { get; private set; }
-        public string LiveEndPoint { get; private set; }
-        public string ServerURL { get; private set; }
         public bool IsDebugMode { get; private set; }
 
         public static SynchronyPaymentSettings FromModel(ConfigurationModel model)
@@ -27,9 +24,6 @@ namespace Nop.Plugin.Payments.Synchrony
                 Integration = model.Integration,
                 TokenNumber = model.TokenNumber,
                 WhitelistDomain = model.WhitelistDomain,
-                DemoEndPoint = model.DemoEndPoint,
-                LiveEndPoint = model.LiveEndPoint,
-                ServerURL = model.ServerURL,
                 IsDebugMode = model.IsDebugMode
             };
         }
@@ -38,12 +32,10 @@ namespace Nop.Plugin.Payments.Synchrony
         {
             return new SynchronyPaymentSettings
             {
-                MerchantId = "5348121490000021",
-                MerchantPassword = "vsH+/lMYOOTR9fmWJ4gqLg==",
+                MerchantId = "",
+                MerchantPassword = "",
                 Integration = true,
-                WhitelistDomain = "",
-                DemoEndPoint = "https://usvcs.syf.com/v1.0/status/inquiry",
-                LiveEndPoint = "https://svcs.syf.com/v1.0/status/inquiry"
+                WhitelistDomain = ""
             };
         }
 
@@ -56,9 +48,6 @@ namespace Nop.Plugin.Payments.Synchrony
             model.Integration = Integration;
             model.TokenNumber = TokenNumber;
             model.WhitelistDomain = WhitelistDomain;
-            model.DemoEndPoint = DemoEndPoint;
-            model.LiveEndPoint = LiveEndPoint;
-            model.ServerURL = ServerURL;
             model.IsDebugMode = IsDebugMode;
 
             model.ActiveStoreScopeConfiguration = storeScope;
@@ -71,9 +60,6 @@ namespace Nop.Plugin.Payments.Synchrony
                 model.Integration_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.Integration, storeScope);
                 model.TokenNumber_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.TokenNumber, storeScope);
                 model.WhitelistDomain_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.WhitelistDomain, storeScope);
-                model.DemoEndPoint_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.DemoEndPoint, storeScope);
-                model.LiveEndPoint_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.LiveEndPoint, storeScope);
-                model.ServerURL_OverrideForStore = await settingService.SettingExistsAsync(this, x => x.ServerURL, storeScope);
                 model.IsDebugMode = await settingService.SettingExistsAsync(this, x => x.IsDebugMode, storeScope);
             }
 

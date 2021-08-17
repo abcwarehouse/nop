@@ -186,9 +186,6 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.Integration, model.Integration_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.TokenNumber, model.TokenNumber_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.WhitelistDomain, model.WhitelistDomain_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.DemoEndPoint, model.DemoEndPoint_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.LiveEndPoint, model.LiveEndPoint_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.ServerURL, model.ServerURL_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(paySynchronyPaymentSettings, x => x.IsDebugMode, model.IsDebugMode_OverrideForStore, storeScope, false);
 
             //now clear settings cache
@@ -540,9 +537,9 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 (await _storeContext.GetCurrentStoreAsync()).Id);
 
             var orderTotalsModel = await _shoppingCartModelFactory.PrepareOrderTotalsModelAsync(cart, false);
-            string authorizationRegionStatusURL = paySynchronyPaymentSettings.Integration == true
-                ? paySynchronyPaymentSettings.DemoEndPoint
-                : paySynchronyPaymentSettings.LiveEndPoint;
+            string authorizationRegionStatusURL = paySynchronyPaymentSettings.Integration
+                ? SynchronyPaymentConstants.DemoInquiryEndpoint
+                : SynchronyPaymentConstants.LiveInquiryEndpoint;
             var merchantId = paySynchronyPaymentSettings.MerchantId;
             var merchantPassword = paySynchronyPaymentSettings.MerchantPassword;
             var Integration = paySynchronyPaymentSettings.Integration;
@@ -552,7 +549,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             // take reference from below link - Answer 1  by Seema As
             // https://stackoverflow.com/questions/39190018/how-to-get-object-using-httpclient-with-response-ok-in-web-api
             ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
 
             var response = new HttpResponseMessage();
             using (HttpClient client = new HttpClient())
@@ -562,12 +559,19 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0");
 
-                string json = JsonSerializer.Serialize(new
+                var requestBody = new
                 {
                     merchantNumber = merchantId,
                     password = merchantPassword,
                     userToken = token
-                });
+                };
+                string json = JsonSerializer.Serialize(requestBody);
+
+                if (_synchronyPaymentSettings.IsDebugMode)
+                {
+                    await _logger.InsertLogAsync(Core.Domain.Logging.LogLevel.Debug, $"FindStatusCallAsync request - {requestBody.ToString()}");
+                }
+
                 var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                 response = await client.PostAsync(authorizationRegionStatusURL, content);
             }
@@ -575,7 +579,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             var authResponseJsonAsString = await response.Content.ReadAsStringAsync();
             if (_synchronyPaymentSettings.IsDebugMode)
             {
-                await _logger.InsertLogAsync(Core.Domain.Logging.LogLevel.Debug, $"PaymentPostInfo response - {authResponseJsonAsString}");
+                await _logger.InsertLogAsync(Core.Domain.Logging.LogLevel.Debug, $"FindStatusCallAsync response - {authResponseJsonAsString}");
             }
 
             if (authResponseJsonAsString.Contains("Unauthorized"))

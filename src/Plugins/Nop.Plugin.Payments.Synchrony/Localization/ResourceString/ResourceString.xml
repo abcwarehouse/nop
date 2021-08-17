@@ -39,12 +39,6 @@
   <LocaleResource Name="Plugins.Payments.Synchrony.Fields.EndPoint.hint">
     <Value>EndPoint.</Value>
   </LocaleResource>
-  <LocaleResource Name="Plugins.Payments.Synchrony.Fields.ServerURL">
-    <Value>ServerURL For Term No</Value>
-  </LocaleResource>
-  <LocaleResource Name="Plugins.Payments.Synchrony.Fields.ServerURL.hint">
-    <Value>ServerURL For Term No</Value>
-  </LocaleResource>
   <LocaleResource Name="Plugins.Payments.Synchrony.Fields.authorizationEndPoint_Demo">
     <Value>authorizationEndPoint_Demo</Value>
   </LocaleResource>
