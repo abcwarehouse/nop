@@ -549,6 +549,8 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             var token = HttpContext.Session.GetString("token").Replace("\"", "");
             var transactionAmount = Convert.ToDecimal(orderTotalsModel.OrderTotal.Replace("$", ""));
             var model = new AuthenticationTokenResponse();
+            // Needed to prevent HTTPS issue
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var client = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
             string json = JsonSerializer.Serialize(new
             {
