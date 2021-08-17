@@ -548,9 +548,7 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             var model = new AuthenticationTokenResponse();
             // take reference from below link - Answer 1  by Seema As
             // https://stackoverflow.com/questions/39190018/how-to-get-object-using-httpclient-with-response-ok-in-web-api
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
-
+            
             var response = new HttpResponseMessage();
             using (HttpClient client = new HttpClient())
             {
@@ -558,6 +556,8 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0");
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
 
                 var requestBody = new
                 {
