@@ -27,6 +27,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
         private readonly IManufacturerService _manufacturerService;
         private readonly IUrlRecordService _urlRecordService;
 
+        private readonly GenerateRebatePromoPageTask _generateRebatePromoPageTask;
+
         public UpdatePromosTask(
             CoreSettings coreSettings,
             AbcPromosSettings settings,
@@ -34,7 +36,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             ICustomNopDataProvider nopDataProvider,
             IAbcPromoService abcPromoService,
             IManufacturerService manufacturerService,
-            IUrlRecordService urlRecordService
+            IUrlRecordService urlRecordService,
+            GenerateRebatePromoPageTask generateRebatePromoPageTask
         )
         {
             _coreSettings = coreSettings;
@@ -43,6 +46,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             _abcPromoService = abcPromoService;
             _manufacturerService = manufacturerService;
             _urlRecordService = urlRecordService;
+            _generateRebatePromoPageTask = generateRebatePromoPageTask;
         }
 
         public async Task ExecuteAsync()
@@ -53,14 +57,14 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             }
             else
             {
-                await _nopDataProvider.ExecuteNonQueryAsync("EXEC UpdateAbcPromos", 600);
+                await _nopDataProvider.ExecuteNonQueryAsync("EXEC UpdateAbcPromos", 1200);
             }
 
             var promos = await _abcPromoService.GetAllPromosAsync();
             await SetPromoManufacturersAsync(promos);
             await SetPromoSlugsAsync(promos);
 
-            await EngineContext.Current.Resolve<GenerateRebatePromoPageTask>().ExecuteAsync();
+            await _generateRebatePromoPageTask.ExecuteAsync();
         }
 
         private async Task SetPromoManufacturersAsync(IList<AbcPromo> promos)
