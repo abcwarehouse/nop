@@ -454,6 +454,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                 await UpdateAddToCartInfoAsync(priceBucketCode, product, stagingProduct);
                 await SetFullDescriptionIfEmptyAsync(stagingProduct, product);
+
+                product.Gtin = stagingProduct.Upc;
+                await _productService.UpdateProductAsync(product);
             }
 
             await ImportProductStoreMappingsAsync();

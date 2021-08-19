@@ -193,9 +193,9 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 ImageUrl = imageUrl,
                 Description = productAbcDescription?.AbcDescription ?? product.ShortDescription,
                 CategoryName = category.Name,
-                ManufacturerId = manufacturer.Id,
+                ManufacturerId = manufacturer != null ? manufacturer.Id : 0,
                 Upc = product.Gtin,
-                BrandName = manufacturer.Name,
+                BrandName = manufacturer?.Name,
                 InStock = !product.DisableBuyButton,
                 Price = price
             };
