@@ -56,7 +56,9 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
             //see https://docs.microsoft.com/dotnet/framework/network-programming/tls
             ServicePointManager.SecurityProtocol =
                 SecurityProtocolType.Tls13 |
-                SecurityProtocolType.Tls12;
+                SecurityProtocolType.Tls12 |
+                SecurityProtocolType.Tls11 |
+                SecurityProtocolType.Tls;
 
             //create default file provider
             CommonHelper.DefaultFileProvider = new NopFileProvider(webHostEnvironment);
