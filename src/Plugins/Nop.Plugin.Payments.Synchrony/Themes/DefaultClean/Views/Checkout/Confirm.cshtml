@@ -10,10 +10,6 @@
     //page class
     Html.AppendPageCssClassParts("html-checkout-page");
     Html.AppendPageCssClassParts("html-order-confirm-page");
-
-    // This allows for pop-up to work while not removing the remainder of
-	// NOP's referrer policy
-	Html.AddHeadCustomParts("<meta name=\"referrer\" content=\"strict-origin-when-cross-origin\">");
 }
 <div class="page checkout-page order-confirm-page">
     @Html.Action("CheckoutProgress", "Checkout", new { step = CheckoutProgressStep.Confirm })

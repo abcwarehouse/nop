@@ -28,6 +28,9 @@
 		<script src="https://buy.syf.com/digitalbuy/js/merchant_ff.js"></script>
 	}
 
+	// This allows for pop-up to work while not removing the remainder of
+	// NOP's referrer policy
+	Html.AddHeadCustomParts("<meta name=\"referrer\" content=\"strict-origin-when-cross-origin\">");
 }
 
 <link href="~/Plugins/Payments.Synchrony/Contents/css/Style.css" rel="stylesheet" />
