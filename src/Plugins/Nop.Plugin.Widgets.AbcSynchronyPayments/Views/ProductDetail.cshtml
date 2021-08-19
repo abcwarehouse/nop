@@ -13,7 +13,7 @@
     var storeText = "ABC Warehouse";
 
     // add hawthorne stylesheet if required
-    if (await storeContext.GetCurrentStoreAsync().Url.Contains("hawthorne"))
+    if ((await storeContext.GetCurrentStoreAsync()).Url.Contains("hawthorne"))
     {
         Html.AddCssFileParts("~/Plugins/Widgets.AbcSynchronyPayments/styles/styles-haw.css");
         storeText = "Hawthorne";
