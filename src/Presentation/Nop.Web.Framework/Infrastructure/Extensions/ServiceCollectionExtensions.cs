@@ -54,7 +54,7 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
         {
             //let the operating system decide what TLS protocol version to use
             //see https://docs.microsoft.com/dotnet/framework/network-programming/tls
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
 
             //create default file provider
             CommonHelper.DefaultFileProvider = new NopFileProvider(webHostEnvironment);
