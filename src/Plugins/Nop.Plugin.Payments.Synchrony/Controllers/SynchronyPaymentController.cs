@@ -572,6 +572,11 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                 }
 
                 var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+                ServicePointManager.SecurityProtocol =
+                    SecurityProtocolType.Tls13 |
+                    SecurityProtocolType.Tls12 |
+                    SecurityProtocolType.Tls11 |
+                    SecurityProtocolType.Tls;
                 response = await client.PostAsync(authorizationRegionStatusURL, content);
             }
 
