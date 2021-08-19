@@ -530,7 +530,10 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
             await _nopDbContext.ExecuteNonQueryAsync(
                 $@"INSERT INTO GenericAttribute (EntityId, KeyGroup, [Key], Value, StoreId, CreatedOrUpdatedDateUTC)
-                    SELECT p.Id, 'Product', 'BrontoDescription', sp.ShortDescription, 0, GETUTCDATE() FROM Product p join {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku;"
+                    SELECT p.Id, 'Product', 'BrontoDescription', sp.ShortDescription, 0, GETUTCDATE()
+                    FROM Product p
+                    JOIN {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku
+                    WHERE sp.ShortDescription is not null"
                 );
         }
 
