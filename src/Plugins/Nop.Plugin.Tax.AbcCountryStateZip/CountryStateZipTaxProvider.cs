@@ -172,8 +172,8 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
             // }
 
 
-            var taxJarManager = new TaxJarManager { Api = _settings.TaxJarAPIToken };
-            var taxJarResult = taxJarManager.GetTaxRate(
+            var taxJarManager = new TaxJarManager(_logger) { Api = _settings.TaxJarAPIToken };
+            var taxJarResult = await taxJarManager.GetTaxRateAsync(
                 (await _countryService.GetCountryByIdAsync(calculateTaxRequest.Address.CountryId.Value))?.TwoLetterIsoCode,
                 calculateTaxRequest.Address.City,
                 calculateTaxRequest.Address.Address1,

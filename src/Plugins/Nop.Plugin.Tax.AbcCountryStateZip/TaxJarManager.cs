@@ -2,6 +2,8 @@
 using System.Net;
 using System.Web;
 using Newtonsoft.Json;
+using Nop.Services.Logging;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Tax.AbcCountryStateZip
 {
@@ -12,10 +14,19 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
     {
         private const string API_URL = "https://api.taxjar.com/v2/";
 
+        private readonly ILogger _logger;
+
         /// <summary>
         /// API token
         /// </summary>
         public string Api { get; set; }
+
+        public TaxJarManager(
+            ILogger logger
+        )
+        {
+            _logger = logger;
+        }
 
         /// <summary>
         /// Get tax rate from TaxJar API
@@ -25,7 +36,7 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
         /// <param name="street">Address</param>
         /// <param name="zip">Zip postal code</param>
         /// <returns>Response from API</returns>
-        public TaxJarResponse GetTaxRate(string country, string city, string street, string zip)
+        public async Task<TaxJarResponse> GetTaxRateAsync(string country, string city, string street, string zip)
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);
             parameters.Add("country", country);
@@ -37,20 +48,20 @@ namespace Nop.Plugin.Tax.AbcCountryStateZip
             request.Method = "GET";
             request.UserAgent = "nopCommerce";
 
+            HttpWebResponse httpResponse = null;
+
             try
             {
-                var httpResponse = (HttpWebResponse)request.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    return JsonConvert.DeserializeObject<TaxJarResponse>(streamReader.ReadToEnd());
-                }
+                httpResponse = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException e)
             {
-                using (var streamReader = new StreamReader(e.Response.GetResponseStream()))
-                {
-                    return JsonConvert.DeserializeObject<TaxJarResponse>(streamReader.ReadToEnd());
-                }
+                await _logger.ErrorAsync($"Error when finding TaxJar tax rate: {e.Message}");
+            }
+
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                return JsonConvert.DeserializeObject<TaxJarResponse>(streamReader.ReadToEnd());
             }
         }
     }
