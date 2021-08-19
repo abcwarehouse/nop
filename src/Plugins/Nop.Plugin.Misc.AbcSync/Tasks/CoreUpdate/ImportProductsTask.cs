@@ -519,10 +519,19 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     SELECT p.Id, sp.ShortDescription, sp.ItemNumber, sp.UsePairPricing FROM Product p join {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku;"
                 );
 
-
             await _nopDbContext.ExecuteNonQueryAsync("EXECUTE [dbo].[SanitizeSOTShortDescriptions];");
 
-            
+            // handle Bronto descriptions
+            await _nopDbContext.ExecuteNonQueryAsync(
+                $@"DELETE FROM GenericAttribute
+                    WHERE KeyGroup = 'Product'
+                    AND [Key] = 'BrontoDescription'"
+                );
+
+            await _nopDbContext.ExecuteNonQueryAsync(
+                $@"INSERT INTO GenericAttribute (EntityId, KeyGroup, [Key], Value, StoreId, CreatedOrUpdatedDateUTC)
+                    SELECT p.Id, 'Product', 'BrontoDescription', sp.ShortDescription, 0, GETUTCDATE() FROM Product p join {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku;"
+                );
         }
 
         private async System.Threading.Tasks.Task SetFullDescriptionIfEmptyAsync(StagingProduct stagingProduct, Product product)
