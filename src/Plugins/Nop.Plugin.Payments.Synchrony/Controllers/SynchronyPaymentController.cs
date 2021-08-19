@@ -617,6 +617,13 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             model.StatusMessage = authResponse.StatusMessage;
             model.TransactionAmount = transactionAmount.ToString();
 
+            model.ClientTransactionID = authResponse.ClientTransactionID;
+            model.TransactionDate = authResponse.TransactionDate;
+            model.TransactionDescription = authResponse.TransactionDescription;
+            model.AuthCode = authResponse.AuthCode;
+            model.PromoCode = authResponse.PromoCode;
+            model.PostbackId = authResponse.PostbackId;
+
             return model;
         }
     }
