@@ -14,7 +14,11 @@ namespace Nop.Plugin.Payments.Synchrony.Infrastructure
         )
         {
             // To be able to connect to status call, you need TLS 1.3
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls13;
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls13 |
+                SecurityProtocolType.Tls12 |
+                SecurityProtocolType.Tls11 |
+                System.Net.SecurityProtocolType.Tls |
+                SecurityProtocolType.SystemDefault;
         }
 
         public void Configure(IApplicationBuilder application)
