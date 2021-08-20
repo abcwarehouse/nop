@@ -1076,6 +1076,8 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
+        // Will this fix the 400 error?
+        [IgnoreAntiforgeryToken]
         [HttpPost, ActionName("Confirm")]
         public virtual async Task<IActionResult> ConfirmOrder()
         {
