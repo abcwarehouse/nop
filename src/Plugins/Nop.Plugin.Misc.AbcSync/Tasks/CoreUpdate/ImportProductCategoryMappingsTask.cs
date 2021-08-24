@@ -119,11 +119,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
 
             //5. set the product store mappings recursively based on products
-            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
-                " AND EntityId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
-                "";
             await _nopDbContext.ExecuteNonQueryAsync(
-                $"DELETE FROM StoreMapping where EntityName = 'Category' {mattressItemAddition}; UPDATE Category set LimitedToStores = 1;"
+                $"DELETE FROM StoreMapping where EntityName = 'Category'; UPDATE Category set LimitedToStores = 1;"
             );
 
             var categoryToStores = new Dictionary<int, HashSet<int>>();
