@@ -317,6 +317,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                         qty,
                         product.IsRental ? rentalStartDate : null,
                         product.IsRental ? rentalEndDate : null);
+                    finalPrice += warrantyPrice;
                 }
             }
 

@@ -167,26 +167,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _backendStockService = backendStockService;
         }
 
-        [HttpPost]
-        [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> RemoveItem(int shoppingCartItemId)
-        {
-            var cart = await _shoppingCartService.GetShoppingCartAsync(
-                await _workContext.GetCurrentCustomerAsync(),
-                ShoppingCartType.ShoppingCart,
-                (await _storeContext.GetCurrentStoreAsync()).Id);
-
-            var shoppingCartItem = cart.Where(sci => sci.Id == shoppingCartItemId).FirstOrDefault();
-            if (shoppingCartItem == null)
-            {
-                return new NotFoundResult();
-            }
-
-            await _shoppingCartService.DeleteShoppingCartItemAsync(shoppingCartItem);
-
-            return new EmptyResult();
-        }
-
         #region Shopping cart
 
         //add product to cart using AJAX

@@ -295,7 +295,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 }
 
                 var options = new List<ProductAttributeValue>();
-                foreach (var mapping in mappings)
+                foreach (var mapping in warrantyMappings)
                 {
                     options.AddRange(
                         await _productAttributeService.GetProductAttributeValuesAsync(mapping.Id));
@@ -441,7 +441,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //Remove currently selected warranty
                 var pavs = await _productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml);
                 List<ProductAttributeValue> warranties = new List<ProductAttributeValue>();
-
 
                 foreach (var pav in pavs)
                 {
