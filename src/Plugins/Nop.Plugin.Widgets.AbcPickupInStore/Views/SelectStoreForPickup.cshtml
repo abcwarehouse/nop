@@ -7,12 +7,13 @@
 @using Nop.Web.Framework.UI;
 
 @{
-    string accentColor = "#" + HtmlHelpers.GetPavilionAccentColor();
+    string accentColor = "#" + await HtmlHelpers.GetPavilionAccentColorAsync();
+    string primaryColor = "#" + await HtmlHelpers.GetPavilionPrimaryColorAsync();
 }
 
 <style>
 .pickup-selection-table .accented-text {
-    color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
+    color: @primaryColor;
     font-weight: bold;
 }
 

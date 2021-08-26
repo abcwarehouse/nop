@@ -13,10 +13,7 @@ WHERE Name = 'seosettings.wwwrequirement'
 UPDATE Setting
 SET Value = 'False'
 WHERE Name = 'commonsettings.enablehtmlminification'
-
-UPDATE Setting
-SET Value = 'False'
-WHERE Name = 'commonsettings.minificationenabled'
+    OR Name = 'commonsettings.minificationenabled'
 
 UPDATE Setting
 SET Value = 'True'
@@ -25,3 +22,5 @@ WHERE Name = 'coresettings.areexternalcallsskipped'
 UPDATE Setting
 SET Value = ''
 WHERE Name = 'synchronypaymentsettings.merchantpassword'
+    OR Name = 'storelocatorsettings.googleapikey'
+

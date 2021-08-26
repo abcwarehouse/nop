@@ -18,6 +18,7 @@
 @using Nop.Web.Extensions
 @using Nop.Web.Framework.Infrastructure
 @using Nop.Web.Models.ShoppingCart
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
 
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
@@ -383,6 +384,8 @@
                                 }
                                 <td class="product">
                                     <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                    <div class="product-mini-description">@Html.Raw(miniDesc)</div>
+                                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.OrderSummaryAfterProductMiniDescription, additionalData = item.ProductId })
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
@@ -420,9 +423,9 @@
                                         </div> *@
 
                                         // ABC: custom - I'm not sure if we're even using this
-                                        @* if (!isOnlineOnly)
+                                        if (!isOnlineOnly)
                                         {
-                                            if (product.IsPickup())
+                                            if (await product.IsPickupAsync())
                                             {
                                                 bool isPickup = item.AttributeInfo.Contains("Pickup");
                                                 string buttonMsg = isPickup ? "Change to Delivery" : "Change to Pickup in Store";
@@ -437,7 +440,7 @@
                                                     <span id="change_method_error_@item.Id" class="delivery-method-error"></span>
                                                 </div>
                                             }
-                                        } *@
+                                        }
                                     }
                                     @if (item.Warnings.Count > 0)
                                     {
