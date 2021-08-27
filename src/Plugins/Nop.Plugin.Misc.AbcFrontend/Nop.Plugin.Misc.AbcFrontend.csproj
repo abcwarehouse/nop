@@ -31,7 +31,7 @@
     <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
     <None Remove="Views\CustomCheckout\Warranty.cshtml" />
     <None Remove="Views\CustomCheckout\WarrantySelection.cshtml" />
-    <None Remove="Views\Checkout\PaymentMethod.cshtml" />
+    <None Remove="Views\CustomCheckout\PaymentMethod.cshtml" />
     <None Remove="Views\Home\Index.cshtml" />
     <None Remove="Views\Product\_AddToCart.cshtml" />
     <None Remove="Views\Product\_ProductAttributes.cshtml" />
@@ -145,7 +145,7 @@
     <Content Include="Views\Order\Details.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Checkout\PaymentMethod.cshtml">
+    <Content Include="Views\CustomCheckout\PaymentMethod.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Home\Index.cshtml">

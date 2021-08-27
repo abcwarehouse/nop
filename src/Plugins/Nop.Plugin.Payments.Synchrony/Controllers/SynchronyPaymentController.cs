@@ -209,17 +209,13 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
 
                 if (model.StatusMessage != "Account Authentication Success")
                 {
-                    var errorModel = new ErrorModel()
-                    {
-                        Message = model.StatusMessage,
-                        isBack = true
-                    };
+                    HttpContext.Session.SetString("PaymentMethodError", model.StatusMessage);
                     return Json(new
                     {
                         update_section = new UpdateSectionJsonModel
                         {
                             name = "Error",
-                            html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
+                            html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", null)
                         },
                         goto_section = "Error"
                     });
@@ -228,17 +224,13 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             catch (Exception ex)
             {
                 await _logger.WarningAsync(ex.Message, ex, await _workContext.GetCurrentCustomerAsync());
-                var errorModel = new ErrorModel()
-                {
-                    Message = ex.Message,
-                    isBack = true
-                };
+                HttpContext.Session.SetString("PaymentMethodError", "An error occurred.");
                 return Json(new
                 {
                     update_section = new UpdateSectionJsonModel
                     {
                         name = "Error",
-                        html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
+                        html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", null)
                     },
                     goto_section = "Error"
                 });
@@ -306,17 +298,13 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
 
                 if (model.StatusMessage != "Auth Approved")
                 {
-                    var errorModel = new ErrorModel()
-                    {
-                        Message = model.StatusMessage,
-                        isBack = false
-                    };
+                    HttpContext.Session.SetString("PaymentMethodError", model.StatusMessage);
                     return Json(new
                     {
                         update_section = new UpdateSectionJsonModel
                         {
                             name = "Error",
-                            html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
+                            html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", null)
                         },
                         goto_section = "Error"
                     });
@@ -325,17 +313,13 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
             catch (Exception ex)
             {
                 await _logger.WarningAsync(ex.Message, ex, await _workContext.GetCurrentCustomerAsync());
-                var errorModel = new ErrorModel()
-                {
-                    Message = ex.Message,
-                    isBack = false
-                };
+                HttpContext.Session.SetString("PaymentMethodError", "An error occurred.");
                 return Json(new
                 {
                     update_section = new UpdateSectionJsonModel
                     {
                         name = "Error",
-                        html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", errorModel)
+                        html = await RenderPartialViewToStringAsync("~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", null)
                     },
                     goto_section = "Error"
                 });
@@ -390,19 +374,17 @@ namespace Nop.Plugin.Payments.Synchrony.Controllers
                     }
                     else
                     {
-                        var errorModel = new ErrorModel()
-                        {
-                            Message = await _localizationService.GetResourceAsync("Plugins.Payments.Synchrony.paymentInfonotFound"),
-                            isBack = true
-                        };
+                        HttpContext.Session.SetString(
+                            "PaymentMethodError",
+                            await _localizationService.GetResourceAsync("Plugins.Payments.Synchrony.paymentInfonotFound")
+                        );
                         return Json(new
                         {
                             update_section = new UpdateSectionJsonModel
                             {
                                 name = "Error",
                                 html = await this.RenderPartialViewToStringAsync(
-                                    "~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml",
-                                    errorModel
+                                    "~/Plugins/Payments.Synchrony/Views/ErrorMessagepopup.cshtml", null
                                 )
                             },
                             goto_section = "Error",
