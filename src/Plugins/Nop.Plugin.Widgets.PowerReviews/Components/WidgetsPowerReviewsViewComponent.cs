@@ -175,9 +175,13 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
         ) {
             var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
             var productCategory = (await _categoryService.GetProductCategoriesByProductIdAsync(product.Id, true)).FirstOrDefault();
-            var category = await _categoryService.GetCategoryByIdAsync(productCategory.CategoryId);
+            var category = productCategory != null ?
+                await _categoryService.GetCategoryByIdAsync(productCategory.CategoryId) :
+                null;
             var productManufacturer = (await _manufacturerService.GetProductManufacturersByProductIdAsync(product.Id, true)).FirstOrDefault();
-            var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(productManufacturer.ManufacturerId);
+            var manufacturer = productManufacturer != null ?
+                await _manufacturerService.GetManufacturerByIdAsync(productManufacturer.ManufacturerId) :
+                null;
 
             var mattressListingPrice =
 				await _abcMattressListingPriceService.GetListingPriceForMattressProductAsync(product.Id);
@@ -192,8 +196,8 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
                 Url = _webHelper.GetThisPageUrl(true),
                 ImageUrl = imageUrl,
                 Description = productAbcDescription?.AbcDescription ?? product.ShortDescription,
-                CategoryName = category.Name,
-                ManufacturerId = manufacturer != null ? manufacturer.Id : 0,
+                CategoryName = category?.Name ?? "",
+                ManufacturerId = manufacturer?.Id ?? 0,
                 Upc = product.Gtin,
                 BrandName = manufacturer?.Name,
                 InStock = !product.DisableBuyButton,
