@@ -109,7 +109,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 var publishedPromoProducts = await _abcPromoService.GetPublishedProductsByPromoIdAsync(promo.Id);
                 if (!publishedPromoProducts.Any())
                 {
-                    await _logger.WarningAsync($"Promo {promo.Name} has no associated published products, skipping display on page.");
                     continue;
                 }
 
