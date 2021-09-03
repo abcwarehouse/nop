@@ -39,6 +39,7 @@
     <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
+    <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
     <None Remove="Views\Shared\_ProductBox.cshtml" />
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\_Header.cshtml" />
@@ -167,6 +168,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Components\ProductTabs\ProductTabs.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\_ProductBox.cshtml">
