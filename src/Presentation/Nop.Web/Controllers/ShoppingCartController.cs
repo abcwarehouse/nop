@@ -1233,6 +1233,8 @@ namespace Nop.Web.Controllers
             return RedirectToRoute("Homepage");
         }
 
+        // To prevent 400 errors?
+        [IgnoreAntiforgeryToken]
         [HttpPost, ActionName("Cart")]
         [FormValueRequired("checkout")]
         public virtual async Task<IActionResult> StartCheckout(IFormCollection form)
