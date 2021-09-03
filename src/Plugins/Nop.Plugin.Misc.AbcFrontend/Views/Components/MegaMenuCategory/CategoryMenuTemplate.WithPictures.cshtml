@@ -70,6 +70,10 @@
                     {
                         @await Component.InvokeAsync("Widget", new { widgetZone = $"mega_menu_categories_before_dropdown_end_furniture" })
                     }
+                    if (Model.Item.Title == "Mattresses")
+                    {
+                        @await Component.InvokeAsync("Widget", new { widgetZone = $"mega_menu_categories_before_dropdown_end_mattresses" })
+                    }
                 }
             </div>
         </div>
