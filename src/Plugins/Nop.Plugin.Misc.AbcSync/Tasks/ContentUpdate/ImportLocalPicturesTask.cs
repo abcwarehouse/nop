@@ -176,7 +176,6 @@ namespace Nop.Plugin.Misc.AbcSync
                     pictureBytes = File.ReadAllBytes(pictureFileUrl);
                     // insert the picture if no file errors
                     pictureInsertManager.Insert(pictureBytes, seoName, pictureFileUrl, nopProduct);
-                    await _logger.InformationAsync($"Product #{itemNum} local image added.");
                 }
 
                 if (isExistingImage)
@@ -193,7 +192,6 @@ namespace Nop.Plugin.Misc.AbcSync
                     if (matchingPicture == null || !existingPictureBytes.SequenceEqual(pictureBytes))
                     {
                         pictureInsertManager.Update(pictureBytes, seoName, pictureFileUrl);
-                        await _logger.InformationAsync($"Product #{itemNum} local image updated.");
                     }
                 }
             }
