@@ -44,14 +44,11 @@ namespace Nop.Plugin.Misc.AbcSync
             
             try
             {
-                await _emailSender.SendEmailAsync(account, "Secondary Catalog Update: Store Closing", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
                 indexesDropped = true;
                 await EngineContext.Current.Resolve<CoreUpdateTask>().ExecuteAsync();
                 await EngineContext.Current.Resolve<MigrateAbcWarehouseContentTask>().ExecuteAsync();
                 indexesDropped = false;
-                await _emailSender.SendEmailAsync(account, "Secondary Catalog Update: Store Open", $"More information can be found in the Admin Panel under System>Log ", account.Email, account.DisplayName, "support@abcwarehouse.com", "");
                 await EngineContext.Current.Resolve<ContentUpdateTask>().ExecuteAsync();
-                await EngineContext.Current.Resolve<ClearCacheTask>().ExecuteAsync();
             }
             catch
             {
@@ -70,8 +67,6 @@ namespace Nop.Plugin.Misc.AbcSync
                     ImportTaskExtensions.CreateIndexes();
                 }
             }
-
-            
         }
     }
 }
