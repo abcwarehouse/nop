@@ -56,6 +56,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            await _logger.InformationAsync("Starting full sync process.");
             var account = await _emailAccountService.GetEmailAccountByIdAsync(_emailAccountSettings.DefaultEmailAccountId);
             bool indexesDropped = false;
             

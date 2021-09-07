@@ -29,11 +29,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            
-            await _logger.InformationAsync($"Begin Task: ImportSOTSpecs");
             await _import.ImportSiteOnTimeSpecsAsync();
-            await _logger.InformationAsync($"End Task: ImportSOTSpecs");
-            
         }
     }
 }
