@@ -73,7 +73,7 @@ namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components
                 return View(productListingCshtml, model);
             }
 
-            var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(productId);
+            var productAbcDescription = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(productId);
             var abcItemNumber = productAbcDescription?.AbcItemNumber;
 
             // also allow getting info from generic attribute

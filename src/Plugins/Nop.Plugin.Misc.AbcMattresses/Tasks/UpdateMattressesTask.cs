@@ -94,7 +94,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
         private async System.Threading.Tasks.Task ProcessItemNoAsync(string itemNo)
         {
-            var pad = _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumber(
+            var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByAbcItemNumberAsync(
                 itemNo
             );
             if (pad == null) { return; }

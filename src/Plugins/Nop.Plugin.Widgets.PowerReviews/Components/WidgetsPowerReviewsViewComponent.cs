@@ -173,7 +173,7 @@ namespace Nop.Plugin.Widgets.PowerReviews.Components
             Product product,
             string imageUrl
         ) {
-            var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
+            var productAbcDescription = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(product.Id);
             var productCategory = (await _categoryService.GetProductCategoriesByProductIdAsync(product.Id, true)).FirstOrDefault();
             var category = productCategory != null ?
                 await _categoryService.GetCategoryByIdAsync(productCategory.CategoryId) :

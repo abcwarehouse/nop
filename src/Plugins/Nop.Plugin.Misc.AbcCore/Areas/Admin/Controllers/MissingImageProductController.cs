@@ -38,14 +38,14 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
         [HttpPost]
         public virtual async Task<IActionResult> List(MissingImageProductSearchModel searchModel)
         {
-            var productsWithOutImages = await _customProductService.GetProductsWithoutImagesAsync();
-            var pagedList = productsWithOutImages.ToPagedList(searchModel);
-            var model = new MissingImageProductListModel().PrepareToGrid(searchModel, pagedList, () =>
+            var productsWithoutImages = await _customProductService.GetProductsWithoutImagesAsync();
+            var pagedList = productsWithoutImages.ToPagedList(searchModel);
+            var model = await new MissingImageProductListModel().PrepareToGridAsync(searchModel, pagedList, () =>
             {
                 //fill in model values from the entity
-                return pagedList.Select(product =>
+                return pagedList.SelectAwait(async product =>
                 {
-                    var pad = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
+                    var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(product.Id);
                     var itemNo = pad?.AbcItemNumber;
 
                     var missingImageProductModel = new MissingImageProductModel()

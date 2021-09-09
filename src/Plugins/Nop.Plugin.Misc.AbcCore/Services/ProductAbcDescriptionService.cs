@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Domain;
 
@@ -15,18 +16,20 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             _productAbcDescriptionRepository = productAbcDescriptionRepository;
         }
 
-        public ProductAbcDescription GetProductAbcDescriptionByProductId(int productId)
+        public async Task<ProductAbcDescription> GetProductAbcDescriptionByProductIdAsync(int productId)
         {
-            return _productAbcDescriptionRepository.Table
-                                                   .Where(pad => pad.Product_Id == productId)
-                                                   .FirstOrDefault();
+            var query = from pad in _productAbcDescriptionRepository.Table
+                        where pad.Product_Id == productId
+                        select pad;
+            return await query.FirstOrDefaultAsync();
         }
 
-        public ProductAbcDescription GetProductAbcDescriptionByAbcItemNumber(string abcitemNumber)
+        public async Task<ProductAbcDescription> GetProductAbcDescriptionByAbcItemNumberAsync(string abcitemNumber)
         {
-            return _productAbcDescriptionRepository.Table
-                                                   .Where(pad => pad.AbcItemNumber == abcitemNumber)
-                                                   .FirstOrDefault();
+            var query = from pad in _productAbcDescriptionRepository.Table
+                        where pad.AbcItemNumber == abcitemNumber
+                        select pad;
+            return await query.FirstOrDefaultAsync();
         }
     }
 }

@@ -103,12 +103,12 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             var products = await _abcPromoService.GetProductsByPromoIdAsync(searchModel.AbcPromoId);
             var productsPaged = products.ToPagedList(searchModel);
 
-            var model = new AbcPromoProductListModel().PrepareToGrid(searchModel, productsPaged, () =>
+            var model = await new AbcPromoProductListModel().PrepareToGridAsync(searchModel, productsPaged, () =>
             {
-                return products.Select(product =>
+                return products.SelectAwait(async product =>
                 {
                     var productAbcDescription =
-                        _productAbcDescriptionService.GetProductAbcDescriptionByProductId(product.Id);
+                        await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(product.Id);
                     var abcItemNumber = productAbcDescription?.AbcItemNumber;
 
                     var abcPromoProductModel = new AbcPromoProductModel()

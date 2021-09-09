@@ -124,7 +124,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                 int lineNumber = GetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem);
 
                 var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
-                var productAbcDescription = _productAbcDescriptionService.GetProductAbcDescriptionByProductId(
+                var productAbcDescription = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(
                     orderItem.ProductId
                 );
                 var storeUrl = (await _storeService.GetStoreByIdAsync(order.StoreId))?.Url;

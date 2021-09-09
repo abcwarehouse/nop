@@ -84,22 +84,15 @@ namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 
         public async Task<IList<Product>> GetProductsWithoutImagesAsync()
         {
-            var publishedProducts =
+            var publishedProductIds =
                 _productRepository.Table.Where(
                     p => !p.Deleted &&
-                          p.Published).ToList();
-            var publishedProductsWithNoPictures = new List<Product>();
+                          p.Published).ToList()
+                .Select(p => p.Id);
 
-            foreach (var product in publishedProducts)
-            {
-                var productPicture = await _pictureService.GetPicturesByProductIdAsync(product.Id, 1);
-                if (productPicture == null)
-                {
-                    publishedProductsWithNoPictures.Add(product);
-                }
-            }
+            var productIdsWithPicture = (await GetProductsImagesIdsAsync(publishedProductIds.ToArray())).Select(p => p.Key);
 
-            return publishedProductsWithNoPictures;
+            return await GetProductsByIdsAsync(publishedProductIds.Except(productIdsWithPicture).ToArray());
         }
     }
 }
