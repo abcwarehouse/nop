@@ -53,13 +53,7 @@
             </li>
         }
         <!-- custom: reviews quicktab -->
-        @await Component.InvokeAsync(
-            "Widget",
-            new {
-                widgetZone = CustomPublicWidgetZones.ProductDetailsReviewsTab,
-                additionalData = Model
-            }
-        )
+        <li><a id="quickTab-reviews" href="#quickTab-Reviews">Reviews</a></li>
         @if (!string.IsNullOrEmpty(addnlDocumentContent))
         {
             <li><a href="#quickTab-AdditionalDocuments">Additional Documents</a> </li>
@@ -113,13 +107,15 @@
         </div>
     }
     <!-- custom: reviews quicktab -->
-    @await Component.InvokeAsync(
-        "Widget",
-        new {
-            widgetZone = CustomPublicWidgetZones.ProductDetailsReviewsTabContent,
-            additionalData = Model
-        }
-    )
+    <div id="quickTab-Reviews">
+        @await Component.InvokeAsync(
+            "Widget",
+            new {
+                widgetZone = CustomPublicWidgetZones.ProductDetailsReviewsTabContent,
+                additionalData = Model
+            }
+        )
+    </div>
     @if (!string.IsNullOrEmpty(addnlDocumentContent))
     {
         <div id="quickTab-AdditionalDocuments">

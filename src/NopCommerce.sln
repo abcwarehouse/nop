@@ -69,8 +69,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Widgets.AbcPromo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Widgets.AbcSynchronyPayments", "Plugins\Nop.Plugin.Widgets.AbcSynchronyPayments\Nop.Plugin.Widgets.AbcSynchronyPayments.csproj", "{78417B94-6FCE-4133-897F-1CEE1908BBA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Widgets.PowerReviews", "Plugins\Nop.Plugin.Widgets.PowerReviews\Nop.Plugin.Widgets.PowerReviews.csproj", "{E43C495F-91C0-4160-A9DD-4D713E3BCF27}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EllaSoftware.Plugin.Misc.CronTasks", "Plugins\EllaSoftware.Plugin.Misc.CronTasks\EllaSoftware.Plugin.Misc.CronTasks.csproj", "{BFF9EC61-C22D-4ACF-8F73-F5232DD47372}"
 EndProject
 Global
@@ -419,18 +417,6 @@ Global
 		{78417B94-6FCE-4133-897F-1CEE1908BBA0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{78417B94-6FCE-4133-897F-1CEE1908BBA0}.Release|x86.ActiveCfg = Release|Any CPU
 		{78417B94-6FCE-4133-897F-1CEE1908BBA0}.Release|x86.Build.0 = Release|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Debug|x86.Build.0 = Debug|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Release|x86.ActiveCfg = Release|Any CPU
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27}.Release|x86.Build.0 = Release|Any CPU
 		{BFF9EC61-C22D-4ACF-8F73-F5232DD47372}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BFF9EC61-C22D-4ACF-8F73-F5232DD47372}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFF9EC61-C22D-4ACF-8F73-F5232DD47372}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -477,7 +463,6 @@ Global
 		{00F0629A-0571-4829-8403-8B0B01FF9630} = {7881B112-7843-4542-B1F7-F99553FB9BB7}
 		{E247372E-6952-4A1D-B9F1-DD16570DD5B5} = {7881B112-7843-4542-B1F7-F99553FB9BB7}
 		{78417B94-6FCE-4133-897F-1CEE1908BBA0} = {7881B112-7843-4542-B1F7-F99553FB9BB7}
-		{E43C495F-91C0-4160-A9DD-4D713E3BCF27} = {7881B112-7843-4542-B1F7-F99553FB9BB7}
 		{BFF9EC61-C22D-4ACF-8F73-F5232DD47372} = {7881B112-7843-4542-B1F7-F99553FB9BB7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -50,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly IPrFileDiscountService _prFileDiscountService;
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
         private readonly IAbcMattressProductService _abcMattressProductService;
+        private readonly FrontendService _frontendService;
 
         private readonly StagingDb _stagingDb;
 
@@ -73,7 +74,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             StagingDb stagingDb,
             IPrFileDiscountService prFileDiscountService,
             IRepository<ProductManufacturer> productManufacturerRepository,
-            IAbcMattressProductService abcMattressProductService
+            IAbcMattressProductService abcMattressProductService,
+            FrontendService frontendService
         )
         {
             _importSettings = importSettings;
@@ -96,6 +98,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _prFileDiscountService = prFileDiscountService;
             _productManufacturerRepository = productManufacturerRepository;
             _abcMattressProductService = abcMattressProductService;
+            _frontendService = frontendService;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -249,7 +252,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
 
                 product.Sku = stagingProduct.Sku;
-                product.Gtin = stagingProduct.Upc;
                 product.UpdatedOnUtc = DateTime.UtcNow;
                 product.Weight = (stagingProduct.Weight <= 0) ? 1 : stagingProduct.Weight;
                 product.Width = (stagingProduct.Width <= 0) ? 1 : stagingProduct.Width;
@@ -455,8 +457,15 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 await UpdateAddToCartInfoAsync(priceBucketCode, product, stagingProduct);
                 await SetFullDescriptionIfEmptyAsync(stagingProduct, product);
 
-                product.Gtin = stagingProduct.Upc;
-                await _productService.UpdateProductAsync(product);
+                if (!string.IsNullOrWhiteSpace(stagingProduct.Upc))
+                {
+                    product.Gtin = stagingProduct.Upc;
+                    await _productService.UpdateProductAsync(product);
+                }
+
+                // get package product
+                var sku = _frontendService.GetProductIdInPackage(product.Sku) ?? product.Sku;
+                await _genericAttributeService.SaveAttributeAsync(product, "PowerReviewsSku", sku);
             }
 
             await ImportProductStoreMappingsAsync();
@@ -531,6 +540,21 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             await _nopDbContext.ExecuteNonQueryAsync(
                 $@"INSERT INTO GenericAttribute (EntityId, KeyGroup, [Key], Value, StoreId, CreatedOrUpdatedDateUTC)
                     SELECT p.Id, 'Product', 'BrontoDescription', sp.ShortDescription, 0, GETUTCDATE()
+                    FROM Product p
+                    JOIN {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku
+                    WHERE sp.ShortDescription is not null"
+                );
+
+            // handle PowerReviews descriptions
+            await _nopDbContext.ExecuteNonQueryAsync(
+                $@"DELETE FROM GenericAttribute
+                    WHERE KeyGroup = 'Product'
+                    AND [Key] = 'PowerReviewsDescription'"
+                );
+
+            await _nopDbContext.ExecuteNonQueryAsync(
+                $@"INSERT INTO GenericAttribute (EntityId, KeyGroup, [Key], Value, StoreId, CreatedOrUpdatedDateUTC)
+                    SELECT p.Id, 'Product', 'PowerReviewsDescription', sp.ShortDescription, 0, GETUTCDATE()
                     FROM Product p
                     JOIN {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku
                     WHERE sp.ShortDescription is not null"

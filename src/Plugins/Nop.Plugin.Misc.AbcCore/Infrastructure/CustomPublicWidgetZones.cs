@@ -83,7 +83,6 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string ProductDetailsBeforeAddToCart => "productdetails_before_addtocart";
         public static string ProductDetailsBeforeTabs => "productdetails_before_tabs";
         public static string ProductDetailsReviews => "productdetails_reviews";
-        public static string ProductDetailsReviewsTab => "productdetails_reviews_tab";
         public static string ProductDetailsReviewsTabContent => "productdetails_reviews_tab_content";
         public const string ProductDetailsAfterPrice = "productdetails_after_price";
 

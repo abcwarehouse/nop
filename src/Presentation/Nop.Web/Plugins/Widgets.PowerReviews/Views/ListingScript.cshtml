@@ -3,31 +3,32 @@
 @model PowerReviewsSettings
 
 @{
+	Html.AppendScriptParts("~/lib_npm/jquery/jquery.min.js");
     Html.AddHeadCustomParts("<script src=\"https://ui.powerreviews.com/stable/4.1/ui.js\" async></script>");
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-listing.css");
 }
 
 <script>
 	var currentlyDisplayedPrSnippets = [];
 
-	$(document).ajaxComplete(function () {
+	$(document).ready(function () {
 		updatePowerReviewsCategorySnippets()
+
+		$(document).ajaxComplete(function( event,request, settings ) {
+			updatePowerReviewsCategorySnippets()
+		});
 	});
 
 	function updatePowerReviewsCategorySnippets() {
 		var productGrid = $('.product-grid');
 		if (productGrid.length == 0 || productGrid.is(":hidden")) {	return;	}
 
-		var itemBoxes = productGrid.find('.item-box');
-		if (itemBoxes.length == 0) { return; }
-
-		var prSnippets = itemBoxes.find("[id^='pr_snippet_product_']");
+		var prSnippets = productGrid.find("[id^='pr_snippet_product_']");
 		if (areArraysEqual(prSnippets, currentlyDisplayedPrSnippets)) {	return;	}
 
 		currentlyDisplayedPrSnippets = prSnippets;
 
 		var powerReviewsRenderConfigs = [];
-		itemBoxes.each(function(index, item){
+		prSnippets.each(function(index, item){
 			var sku = $(item).find('.product-box-sku').text().replace(/[^0-9a-zA-Z-]/gi,'');
 
 			powerReviewsRenderConfigs.push({
@@ -62,3 +63,7 @@
 		return true;
 	}
 </script>
+
+<style>
+	@Html.Raw(Model.CustomStyles)
+</style>

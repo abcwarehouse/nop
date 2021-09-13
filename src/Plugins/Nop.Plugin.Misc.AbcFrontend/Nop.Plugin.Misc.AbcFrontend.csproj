@@ -52,8 +52,6 @@
     <None Remove="styles\mobile-header-haw.css" />
     <None Remove="styles\pavilion-styles.css" />
     <None Remove="styles\pavilion-styles-haw.css" />
-    <None Remove="styles\power-reviews-detail.css" />
-    <None Remove="styles\power-reviews-listing.css" />
     <None Remove="styles\product-box.css" />
     <None Remove="styles\product-details-template.css" />
     <None Remove="styles\product-listings.css" />
@@ -207,12 +205,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="styles\pavilion-styles-haw.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\power-reviews-detail.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\power-reviews-listing.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="styles\product-box.css">

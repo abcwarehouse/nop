@@ -203,10 +203,27 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
                     "MattressSku",
                     abcMattressModel.Sku
                 );
+                await _genericAttributeService.SaveAttributeAsync<string>(
+                    product,
+                    "PowerReviewsSku",
+                    abcMattressModel.Sku
+                );
             }
 
             // add information relating to Synchrony payments
             await SyncSynchronyPaymentsDataAsync(product, abcMattressModel);
+
+
+            var plpDescription = _genericAttributeService.GetAttributeAsync<string>(
+                product,
+                "PLPDescription"
+            )
+            // Add description for PowerReviews
+            await _genericAttributeService.SaveAttributeAsync<string>(
+                product,
+                "PowerReviewsDescription",
+                plpDescription
+            );
 
             return product;
         }

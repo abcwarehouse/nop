@@ -1,4 +1,3 @@
-@using Nop.Plugin.Misc.AbcMattresses.Services;
 @using Nop.Plugin.Widgets.PowerReviews.Models;
 @using Nop.Core;
 
@@ -8,10 +7,8 @@
 
 @{
     Html.AddHeadCustomParts("<script src=\"https://ui.powerreviews.com/stable/4.1/ui.js\" async></script>");
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/power-reviews-detail.css");
 }
 
-@*Script to open reviews when clicking read link*@
 <script type="text/javascript">
 	window.pwr = window.pwr || function () {
   		(pwr.q = pwr.q || []).push(arguments);
@@ -25,8 +22,7 @@
 		page_id: "@Model.ProductSku",
 		review_wrapper_url: '/write-a-review?pr_page_id=@Model.ProductSku',
 		on_read_reviews_click: function () {
-			document.getElementById("quickTab-reviews").click();
-        	document.getElementById("pr-reviewdisplay").scrollIntoView({block: 'start', behavior: 'smooth'});
+			@Html.Raw(Model.Settings.OnReadReviewsClickCode)
 		},
 		product:{
             name: '@Model.FeedlessProduct.Name',
@@ -65,3 +61,7 @@
 		}
 	});
 </script>
+
+<style>
+	@Html.Raw(Model.Settings.CustomStyles)
+</style>
