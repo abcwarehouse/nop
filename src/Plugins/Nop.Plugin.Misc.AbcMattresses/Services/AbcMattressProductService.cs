@@ -214,10 +214,10 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
             await SyncSynchronyPaymentsDataAsync(product, abcMattressModel);
 
 
-            var plpDescription = _genericAttributeService.GetAttributeAsync<string>(
+            var plpDescription = await _genericAttributeService.GetAttributeAsync<string>(
                 product,
                 "PLPDescription"
-            )
+            );
             // Add description for PowerReviews
             await _genericAttributeService.SaveAttributeAsync<string>(
                 product,

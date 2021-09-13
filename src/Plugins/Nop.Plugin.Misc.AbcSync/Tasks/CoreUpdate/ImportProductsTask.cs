@@ -50,7 +50,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly IPrFileDiscountService _prFileDiscountService;
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
         private readonly IAbcMattressProductService _abcMattressProductService;
-        private readonly FrontendService _frontendService;
+        private readonly FrontEndService _frontendService;
 
         private readonly StagingDb _stagingDb;
 
@@ -75,7 +75,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             IPrFileDiscountService prFileDiscountService,
             IRepository<ProductManufacturer> productManufacturerRepository,
             IAbcMattressProductService abcMattressProductService,
-            FrontendService frontendService
+            FrontEndService frontendService
         )
         {
             _importSettings = importSettings;
@@ -464,7 +464,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
 
                 // get package product
-                var sku = _frontendService.GetProductIdInPackage(product.Sku) ?? product.Sku;
+                var sku = _frontendService.GetProductIdInPackage(product.Sku)?.Sku ?? product.Sku;
                 await _genericAttributeService.SaveAttributeAsync(product, "PowerReviewsSku", sku);
             }
 
