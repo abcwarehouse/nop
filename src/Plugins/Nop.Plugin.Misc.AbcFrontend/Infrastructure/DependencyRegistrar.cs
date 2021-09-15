@@ -19,7 +19,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
                ITypeFinder typeFinder,
                AppSettings appSettings
         ) {
-            services.AddScoped<ICustomTaxService, CustomTaxService>();
             services.AddScoped<IWarrantyService, WarrantyService>();
             services.AddScoped<IOrderProcessingService, CustomOrderProcessingService>();
             services.AddScoped<IShoppingCartService, CustomShoppingCartService>();

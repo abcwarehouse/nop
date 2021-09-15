@@ -1,9 +1,0 @@
-﻿Group: Tax providers
-FriendlyName: Tax By Country & State & Zip
-SystemName: Tax.AbcCountryStateZip
-Version: 1.42
-SupportedVersions: 3.80, 3.90
-Author: nopCommerce team
-DisplayOrder: 1
-FileName: Nop.Plugin.Tax.AbcCountryStateZip.dll
-Description: This plugin allow to configure taxe rates by coutries, states and zip codes
