@@ -4,6 +4,6 @@ namespace Nop.Plugin.Tax.AbcTax
 {
     public class AbcTaxSettings : ISettings
     {
-        public string TaxJarAPIKey { get; set; }
+        public string TaxJarAPIToken { get; set; }
     }
 }

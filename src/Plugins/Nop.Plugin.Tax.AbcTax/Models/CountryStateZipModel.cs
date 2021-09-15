@@ -30,5 +30,8 @@ namespace Nop.Plugin.Tax.AbcTax.Models
 
         [NopResourceDisplayName("Plugins.Tax.AbcTax.Fields.Percentage")]
         public decimal Percentage { get; set; }
+
+        [NopResourceDisplayName("Plugins.Tax.AbcTax.Fields.IsTaxJarEnabled")]
+        public bool IsTaxJarEnabled { get; set; }
     }
 }

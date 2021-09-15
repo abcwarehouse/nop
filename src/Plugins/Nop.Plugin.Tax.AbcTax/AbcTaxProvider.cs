@@ -17,6 +17,7 @@ using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Plugins;
 using Nop.Services.Tax;
+using Nop.Data;
 
 namespace Nop.Plugin.Tax.AbcTax
 {
@@ -27,11 +28,13 @@ namespace Nop.Plugin.Tax.AbcTax
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILocalizationService _localizationService;
+        private readonly INopDataProvider _nopDataProvider;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly IPaymentService _paymentService;
         private readonly ISettingService _settingService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly ITaxCategoryService _taxCategoryService;
+        private readonly ITaxJarService _taxJarService;
         private readonly ITaxService _taxService;
         private readonly IWebHelper _webHelper;
         private readonly TaxSettings _taxSettings;
@@ -41,11 +44,13 @@ namespace Nop.Plugin.Tax.AbcTax
             IGenericAttributeService genericAttributeService,
             IHttpContextAccessor httpContextAccessor,
             ILocalizationService localizationService,
+            INopDataProvider nopDataProvider,
             IOrderTotalCalculationService orderTotalCalculationService,
             IPaymentService paymentService,
             ISettingService settingService,
             IStaticCacheManager staticCacheManager,
             ITaxCategoryService taxCategoryService,
+            ITaxJarservice taxJarService,
             ITaxService taxService,
             IWebHelper webHelper,
             TaxSettings taxSettings)
@@ -55,11 +60,13 @@ namespace Nop.Plugin.Tax.AbcTax
             _genericAttributeService = genericAttributeService;
             _httpContextAccessor = httpContextAccessor;
             _localizationService = localizationService;
+            _nopDataProvider = nopDataProvider;
             _orderTotalCalculationService = orderTotalCalculationService;
             _paymentService = paymentService;
             _settingService = settingService;
             _staticCacheManager = staticCacheManager;
             _taxCategoryService = taxCategoryService;
+            _taxJarService = taxJarService;
             _taxService = taxService;
             _webHelper = webHelper;
             _taxSettings = taxSettings;
@@ -111,9 +118,23 @@ namespace Nop.Plugin.Tax.AbcTax
 
             var foundRecord = foundRecords.FirstOrDefault();
 
-            if (foundRecord != null)
-                result.TaxRate = foundRecord.Percentage;
+            if (foundRecord == null) return result;
 
+            // get TaxJar rate if appropriate
+            if (foundRecord.IsTaxJarEnabled)
+            {
+                var taxJarRateResponse = await _taxJarService.GetTaxJarRateAsync(
+                    new TaxJarRequest()
+                    {
+                        Country = (await _countryService.GetCountryByIdAsync(calculateTaxRequest.Address.CountryId.Value))?.TwoLetterIsoCode,
+                        City = taxRateRequest.Address.City,
+                        State = taxRateRequest.Address.Address1,
+                        Zip = zip
+                    }
+                );
+            }
+            
+            result.TaxRate = foundRecord.Percentage;
             return result;
         }
 
@@ -256,9 +277,28 @@ namespace Nop.Plugin.Tax.AbcTax
                 ["Plugins.Tax.AbcTax.Fields.TaxCategory.Hint"] = "The tax category.",
                 ["Plugins.Tax.AbcTax.Fields.Percentage"] = "Percentage",
                 ["Plugins.Tax.AbcTax.Fields.Percentage.Hint"] = "The tax rate.",
+                ["Plugins.Tax.AbcTax.Fields.IsTaxJarEnabled"] = "Is TaxJar enabled",
+                ["Plugins.Tax.AbcTax.Fields.IsTaxJarEnabled.Hint"] = "Whether the rate is enabled.",
+                ["Plugins.Tax.AbcTax.Fields.TaxJarAPIToken"] = "TaxJar API Token",
+                ["Plugins.Tax.AbcTax.Fields.TaxJarAPIToken.Hint"] = "Whether the rate is enabled.",
                 ["Plugins.Tax.AbcTax.AddRecord"] = "Add tax rate",
                 ["Plugins.Tax.AbcTax.AddRecordTitle"] = "New tax rate"
             });
+
+            // If possible, import data from old Tax plugin
+            await _nopDataProvider.ExecuteNonQueryAsync($@"
+                INSERT INTO AbcTaxRate (StoreId, TaxCategoryId, CountryId, StateProvinceId, Zip, Percentage, IsTaxJarEnabled)
+                SELECT
+                    StoreId,
+                    TaxCategoryId,
+                    CountryId,
+                    StateProvinceId,
+                    Zip,
+                    Percentage,
+                    EnableTaxState
+                FROM
+                    TaxRate
+            ");
 
             await base.InstallAsync();
         }

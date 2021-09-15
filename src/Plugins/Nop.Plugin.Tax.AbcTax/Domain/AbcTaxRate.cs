@@ -10,6 +10,6 @@ namespace Nop.Plugin.Tax.AbcTax.Domain
         public int StateProvinceId { get; set; }
         public string Zip { get; set; }
         public decimal Percentage { get; set; }
-        public bool IsEnabled { get; set; }
+        public bool IsTaxJarEnabled { get; set; }
     }
 }

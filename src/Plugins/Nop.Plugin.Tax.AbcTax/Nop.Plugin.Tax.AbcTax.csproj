@@ -19,7 +19,6 @@
     <None Remove="plugin.json" />
     <None Remove="Views\Configure.cshtml" />
     <None Remove="Views\_CountryStateZip.cshtml" />
-    <None Remove="Views\_FixedRate.cshtml" />
     <None Remove="Views\_ViewImports.cshtml" />
   </ItemGroup>
 
@@ -34,9 +33,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\_CountryStateZip.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\_FixedRate.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\_ViewImports.cshtml">

@@ -10,21 +10,37 @@
 
 @await Html.PartialAsync("_AdminTour")
 
+<form asp-controller="AbcTax" asp-action="Configure" method="post">
+    <section class="content">
+		<div class="container-fluid">			
+				<div class="card card-default">
+					<div class="card-body">
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <nop-label asp-for="TaxJarAPIToken" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="TaxJarAPIToken" />
+                                <span asp-validation-for="TaxJarAPIToken"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                &nbsp;
+                            </div>
+                            <div class="col-md-9">
+                                <input type="submit" name="save" class="btn bg-blue" value="@T("Admin.Common.Save")" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </section>
+</form>
 @if (Model.AvailableTaxCategories.Any())
 {
     <div class="form-group row">
-        <div class="col-md-3">
-            <div class="onoffswitch">
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="advanced-settings-mode" checked="@Model.CountryStateZipEnabled">
-                <label class="onoffswitch-label" for="advanced-settings-mode">
-                    <span class="onoffswitch-inner"
-                          data-locale-basic="@T("Plugins.Tax.AbcTax.Fixed")"
-                          data-locale-advanced="@T("Plugins.Tax.AbcTax.TaxByCountryStateZip")"></span>
-                    <span class="onoffswitch-switch"></span>
-                </label>
-            </div>
-        </div>
-        <div class="col-md-9">
+        <div class="col-md-12">
             <div class="float-right">
                 <a asp-controller="Tax" asp-action="Categories" class="btn btn-primary" id="manage-tax-categories-button">
                     @T("Plugins.Tax.AbcTax.Tax.Categories.Manage")
@@ -32,39 +48,7 @@
             </div>
         </div>
     </div>
-    <script>
-    function checkAdvancedSettingsMode(advanced) {
-        if (advanced) {
-            $("body").addClass("advanced-settings-mode");
-            $("body").removeClass("basic-settings-mode");
-        } else {
-            $("body").removeClass("advanced-settings-mode");
-            $("body").addClass("basic-settings-mode");
-        }
-    }
-    checkAdvancedSettingsMode($("#advanced-settings-mode").is(':checked'));
-    $(document).ready(function() {
-        $("#advanced-settings-mode").click(function() {
-            checkAdvancedSettingsMode($(this).is(':checked'));
-            $.ajax({
-                cache: false,
-                url: "@Url.Action("SaveMode", "AbcTax")",
-                type: "POST",
-                data: {
-                    value: $(this).is(':checked')
-                },
-                dataType: "json",
-                error: function (jqXHR, textStatus, errorThrown) {
-                    $("#saveModeAlert").click();
-                }
-            });
-            ensureDataTablesRendered();
-        });
-    });
-    </script>
-    <nop-alert asp-alert-id="saveModeAlert" asp-alert-message="@T("Admin.Common.Alert.Save.Error")" />
 
-    @await Html.PartialAsync("~/Plugins/Tax.AbcTax/Views/_FixedRate.cshtml")
     @await Html.PartialAsync("~/Plugins/Tax.AbcTax/Views/_CountryStateZip.cshtml", Model)
 }
 else

@@ -27,8 +27,11 @@ namespace Nop.Plugin.Tax.AbcTax.Models
         public int AddTaxCategoryId { get; set; }
         [NopResourceDisplayName("Plugins.Tax.AbcTax.Fields.Percentage")]
         public decimal AddPercentage { get; set; }
+        [NopResourceDisplayName("Plugins.Tax.AbcTax.Fields.IsTaxJarEnabled")]
+        public bool IsTaxJarEnabled { get; set; }
 
-        public string TaxJarAPIKey { get; set; }
+        [NopResourceDisplayName("Plugins.Tax.AbcTax.Fields.TaxJarAPIToken")]
+        public string TaxJarAPIToken { get; set; }
 
         public string TaxCategoriesCanNotLoadedError { get; set; }
 

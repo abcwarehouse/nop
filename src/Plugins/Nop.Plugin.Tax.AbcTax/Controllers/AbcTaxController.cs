@@ -28,8 +28,6 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
     [AutoValidateAntiforgeryToken]
     public class AbcTaxController : BasePluginController
     {
-        #region Fields
-
         private readonly AbcTaxSettings _abcTaxSettings;
         private readonly ICountryService _countryService;
         private readonly IAbcTaxService _abcTaxService;
@@ -41,10 +39,6 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         private readonly ITaxCategoryService _taxCategoryService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IWorkContext _workContext;
-        
-        #endregion
-
-        #region Ctor
 
         public AbcTaxController(AbcTaxSettings abcTaxSettings,
             ICountryService countryService,
@@ -73,10 +67,6 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
 
         }
 
-        #endregion
-
-        #region Methods
-
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> Configure(bool showtour = false)
         {
@@ -98,7 +88,7 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
                 return View("~/Plugins/Tax.AbcTax/Views/Configure.cshtml", errorModel);
             }
 
-            var model = new ConfigurationModel { TaxJarAPIKey = _abcTaxSettings.TaxJarAPIKey };
+            var model = new ConfigurationModel();
             
             //stores
             model.AvailableStores.Add(new SelectListItem { Text = "*", Value = "0" });
@@ -137,23 +127,6 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         }
 
         [HttpPost]
-        [IgnoreAntiforgeryToken]
-        /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task<IActionResult> SaveMode(string value)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return Content("Access denied");
-
-            //save settings
-            _abcTaxSettings.TaxJarAPIKey = value;
-            await _settingService.SaveSettingAsync(_abcTaxSettings);
-
-            return Json(new { Result = true });
-        }
-
-        #region Tax by country/state/zip
-
-        [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> RatesByCountryStateZipList(ConfigurationModel searchModel)
         {
@@ -177,7 +150,8 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
                     StateProvinceName = (await _stateProvinceService.GetStateProvinceByIdAsync(record.StateProvinceId))?.Name ?? "*",
 
                     Zip = !string.IsNullOrEmpty(record.Zip) ? record.Zip : "*",
-                    Percentage = record.Percentage
+                    Percentage = record.Percentage,
+                    IsTaxJarEnabled = record.IsTaxJarEnabled
                 });
             });
 
@@ -198,7 +172,8 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
                 CountryId = model.AddCountryId,
                 StateProvinceId = model.AddStateProvinceId,
                 Zip = model.AddZip,
-                Percentage = model.AddPercentage
+                Percentage = model.AddPercentage,
+                IsTaxJarEnabled = model.IsTaxJarEnabled
             });
 
             return Json(new { Result = true });
@@ -232,9 +207,5 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
 
             return new NullJsonResult();
         }
-
-        #endregion
-
-        #endregion
     }
 }

@@ -21,6 +21,15 @@
                LengthMenu = Model.AvailablePageSizes,
                ColumnCollection = new List<ColumnProperty>
                {
+                   new ColumnProperty(nameof(CountryStateZipModel.IsTaxJarEnabled))
+                   {
+                       Title = T("Plugins.Tax.AbcTax.Fields.IsTaxJarEnabled").Text,
+                       Width = "300",
+                       Editable = true,
+                       EditType = EditType.Checkbox,
+                       ClassName = NopColumnClassDefaults.CenterAll,
+                       Render = new RenderBoolean()
+                   },
                    new ColumnProperty(nameof(CountryStateZipModel.StoreName))
                    {
                        Title = T("Plugins.Tax.AbcTax.Fields.Store").Text,
