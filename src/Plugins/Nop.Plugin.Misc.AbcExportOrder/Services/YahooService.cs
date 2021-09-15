@@ -115,8 +115,8 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         public async Task<IList<YahooDetailRow>> GetYahooDetailRowsAsync(Order order)
         {
             var result = new List<YahooDetailRow>();
-            var pickupLineNumber = 0;
-            var shippingLineNumber = 0;
+            var pickupLineNumber = 1;
+            var shippingLineNumber = 1;
             var orderItems = await _customOrderService.GetOrderItemsAsync(order.Id);
 
             foreach (var orderItem in orderItems)
@@ -149,10 +149,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     $"{storeUrl}{await _urlRecordService.GetSeNameAsync(product)}",
                     await GetPickupStoreAsync(orderItem)
                 ));
+                lineNumber++;
 
                 if (warranty != null)
                 {
-                    lineNumber++;
                     result.Add(new YahooDetailRow(
                         _settings.OrderIdPrefix,
                         orderItem,
@@ -164,12 +164,12 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         "", // no url for warranty line items
                         await GetPickupStoreAsync(orderItem)
                     ));
+                    lineNumber++;
                 }
 
                 var freeGift = orderItem.GetFreeGift();
                 if (freeGift != null)
                 {
-                    lineNumber++;
                     var amg = _abcMattressGiftService.GetAbcMattressGiftByDescription(freeGift);
                     if (amg == null)
                     {
@@ -188,12 +188,12 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         await GetPickupStoreAsync(orderItem),
                         -1
                     ));
+                    lineNumber++;
                 }
 
                 var mattressProtector = orderItem.GetMattressProtector();
                 if (mattressProtector != null)
                 {
-                    lineNumber++;
                     var size = orderItem.GetMattressSize();
                     var amp = _abcMattressProtectorService.GetAbcMattressProtectorsBySize(size)
                                                           .Where(p => p.Name == mattressProtector)
@@ -214,9 +214,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                         "", // no url
                         await GetPickupStoreAsync(orderItem)
                     ));
+                    lineNumber++;
                 }
 
-                await ProcessFrameAsync(orderItem, lineNumber, result);
+                lineNumber = await ProcessFrameAsync(orderItem, lineNumber, result);
 
                 SetLineNumber(ref pickupLineNumber, ref shippingLineNumber, orderItem, lineNumber);
             }
@@ -224,12 +225,12 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             return result;
         }
 
-        private async Task ProcessFrameAsync(OrderItem orderItem, int lineNumber, List<YahooDetailRow> result)
+        private async Task<int> ProcessFrameAsync(OrderItem orderItem, int lineNumber, List<YahooDetailRow> result)
         {
             var frame = orderItem.GetFrame();
             if (frame != null)
             {
-                lineNumber++;
+                
                 var size = orderItem.GetMattressSize();
                 var amf = _abcMattressFrameService.GetAbcMattressFramesBySize(size)
                                                       .Where(p => p.Name == frame)
@@ -245,7 +246,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
                     "", // no url
                     await GetPickupStoreAsync(orderItem)
                 ));
+                lineNumber++;
             }
+
+            return lineNumber;
         }
 
         private (string, decimal) GetCodeAndPrice(
@@ -321,12 +325,10 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             var lineNumber = 0;
             if (orderItem.IsPickup())
             {
-                pickupLineNumber++;
                 lineNumber = pickupLineNumber;
             }
             else
             {
-                shippingLineNumber++;
                 lineNumber = shippingLineNumber;
             }
 

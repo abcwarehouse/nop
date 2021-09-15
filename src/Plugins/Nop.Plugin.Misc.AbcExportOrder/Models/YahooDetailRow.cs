@@ -59,5 +59,20 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Models
                 "" // PICKUP_DROP, unused
             };
         }
+
+        public override string ToString()
+        {
+            return $@"
+                Id: {Id}
+                LineNumber: {LineNumber}
+                ItemId: {ItemId}
+                Code: {Code}
+                Quantity: {Quantity}
+                UnitPrice: {UnitPrice}
+                Description: {Description}
+                Url: {Url}
+                PickupBranchId: {PickupBranchId}
+            ";
+        }
     }
 }
