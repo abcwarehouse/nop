@@ -18,6 +18,8 @@ using Nop.Services.Payments;
 using Nop.Services.Plugins;
 using Nop.Services.Tax;
 using Nop.Data;
+using Nop.Services.Directory;
+using Taxjar;
 
 namespace Nop.Plugin.Tax.AbcTax
 {
@@ -25,6 +27,7 @@ namespace Nop.Plugin.Tax.AbcTax
     {
         private readonly AbcTaxSettings _abcTaxSettings;
         private readonly IAbcTaxService _abcTaxService;
+        private readonly ICountryService _countryService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILocalizationService _localizationService;
@@ -34,13 +37,13 @@ namespace Nop.Plugin.Tax.AbcTax
         private readonly ISettingService _settingService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly ITaxCategoryService _taxCategoryService;
-        private readonly ITaxJarService _taxJarService;
         private readonly ITaxService _taxService;
         private readonly IWebHelper _webHelper;
         private readonly TaxSettings _taxSettings;
 
         public AbcTaxProvider(AbcTaxSettings abcTaxSettings,
             IAbcTaxService abcTaxService,
+            ICountryService countryService,
             IGenericAttributeService genericAttributeService,
             IHttpContextAccessor httpContextAccessor,
             ILocalizationService localizationService,
@@ -50,13 +53,13 @@ namespace Nop.Plugin.Tax.AbcTax
             ISettingService settingService,
             IStaticCacheManager staticCacheManager,
             ITaxCategoryService taxCategoryService,
-            ITaxJarservice taxJarService,
             ITaxService taxService,
             IWebHelper webHelper,
             TaxSettings taxSettings)
         {
             _abcTaxSettings = abcTaxSettings;
             _abcTaxService = abcTaxService;
+            _countryService = countryService;
             _genericAttributeService = genericAttributeService;
             _httpContextAccessor = httpContextAccessor;
             _localizationService = localizationService;
@@ -66,7 +69,6 @@ namespace Nop.Plugin.Tax.AbcTax
             _settingService = settingService;
             _staticCacheManager = staticCacheManager;
             _taxCategoryService = taxCategoryService;
-            _taxJarService = taxJarService;
             _taxService = taxService;
             _webHelper = webHelper;
             _taxSettings = taxSettings;
@@ -123,18 +125,18 @@ namespace Nop.Plugin.Tax.AbcTax
             // get TaxJar rate if appropriate
             if (foundRecord.IsTaxJarEnabled)
             {
-                var taxJarRateResponse = await _taxJarService.GetTaxJarRateAsync(
-                    new TaxJarRequest()
-                    {
-                        Country = (await _countryService.GetCountryByIdAsync(calculateTaxRequest.Address.CountryId.Value))?.TwoLetterIsoCode,
-                        City = taxRateRequest.Address.City,
-                        State = taxRateRequest.Address.Address1,
-                        Zip = zip
-                    }
-                );
+                var taxJarApi = new TaxjarApi(_abcTaxSettings.TaxJarAPIToken);
+                var rates = taxJarApi.RatesForLocation(taxRateRequest.Address.Address1, new {
+                    street = "312 Hurricane Lane",
+                    city = taxRateRequest.Address.City,
+                    country = (await _countryService.GetCountryByIdAsync(taxRateRequest.Address.CountryId.Value))?.TwoLetterIsoCode
+                });
+            }
+            else
+            {
+                result.TaxRate = foundRecord.Percentage;
             }
             
-            result.TaxRate = foundRecord.Percentage;
             return result;
         }
 
