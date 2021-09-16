@@ -37,6 +37,7 @@ namespace Nop.Plugin.Tax.AbcTax
         private readonly ISettingService _settingService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly ITaxCategoryService _taxCategoryService;
+        private readonly ITaxjarRateService _taxjarRateService;
         private readonly ITaxService _taxService;
         private readonly IWebHelper _webHelper;
         private readonly TaxSettings _taxSettings;
@@ -53,6 +54,7 @@ namespace Nop.Plugin.Tax.AbcTax
             ISettingService settingService,
             IStaticCacheManager staticCacheManager,
             ITaxCategoryService taxCategoryService,
+            ITaxjarRateService taxjarRateService,
             ITaxService taxService,
             IWebHelper webHelper,
             TaxSettings taxSettings)
@@ -69,6 +71,7 @@ namespace Nop.Plugin.Tax.AbcTax
             _settingService = settingService;
             _staticCacheManager = staticCacheManager;
             _taxCategoryService = taxCategoryService;
+            _taxjarRateService = taxjarRateService;
             _taxService = taxService;
             _webHelper = webHelper;
             _taxSettings = taxSettings;
@@ -124,21 +127,9 @@ namespace Nop.Plugin.Tax.AbcTax
             if (foundRecord == null) return result;
 
             // get TaxJar rate if appropriate
-            if (foundRecord.IsTaxJarEnabled)
-            {
-                var taxJarApi = new TaxjarApi(_abcTaxSettings.TaxJarAPIToken);
-                var rates = taxJarApi.RatesForLocation(taxRateRequest.Address.Address1, new {
-                    street = "312 Hurricane Lane",
-                    city = taxRateRequest.Address.City,
-                    country = (await _countryService.GetCountryByIdAsync(taxRateRequest.Address.CountryId.Value))?.TwoLetterIsoCode
-                });
-
-                result.TaxRate = rates.StateRate;
-            }
-            else
-            {
-                result.TaxRate = foundRecord.Percentage;
-            }
+            result.TaxRate = foundRecord.IsTaxJarEnabled ?
+                await _taxjarRateService.GetTaxJarRateAsync(taxRateRequest.Address) :
+                foundRecord.Percentage;
             
             return result;
         }
