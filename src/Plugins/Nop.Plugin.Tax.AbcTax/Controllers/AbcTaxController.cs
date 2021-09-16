@@ -12,6 +12,7 @@ using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
+using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
@@ -32,6 +33,7 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         private readonly ICountryService _countryService;
         private readonly IAbcTaxService _abcTaxService;
         private readonly ILocalizationService _localizationService;
+        private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
         private readonly ISettingService _settingService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -44,6 +46,7 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
             ICountryService countryService,
             IAbcTaxService abcTaxService,
             ILocalizationService localizationService,
+            INotificationService notificationService,
             IPermissionService permissionService,
             ISettingService settingService,
             IStateProvinceService stateProvinceService,
@@ -58,6 +61,7 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
             _abcTaxService = abcTaxService;
             _permissionService = permissionService;
             _localizationService = localizationService;
+            _notificationService = notificationService;
             _settingService = settingService;
             _stateProvinceService = stateProvinceService;
             _storeService = storeService;
@@ -124,6 +128,24 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
             }
 
             return View("~/Plugins/Tax.AbcTax/Views/Configure.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Configure(ConfigurationModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return await Configure();
+            }
+
+            _abcTaxSettings.TaxJarAPIToken = model.TaxJarAPIToken;
+            await _settingService.SaveSettingAsync(_abcTaxSettings);
+
+            _notificationService.SuccessNotification(
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved")
+            );
+
+            return await Configure();
         }
 
         [HttpPost]

@@ -95,7 +95,8 @@ namespace Nop.Plugin.Tax.AbcTax
                 CountryId = taxRate.CountryId,
                 StateProvinceId = taxRate.StateProvinceId,
                 Zip = taxRate.Zip,
-                Percentage = taxRate.Percentage
+                Percentage = taxRate.Percentage,
+                IsTaxJarEnabled = taxRate.IsTaxJarEnabled
             }).ToList());
 
             var storeId = taxRateRequest.CurrentStoreId;
@@ -131,6 +132,8 @@ namespace Nop.Plugin.Tax.AbcTax
                     city = taxRateRequest.Address.City,
                     country = (await _countryService.GetCountryByIdAsync(taxRateRequest.Address.CountryId.Value))?.TwoLetterIsoCode
                 });
+
+                result.TaxRate = rates.StateRate;
             }
             else
             {
