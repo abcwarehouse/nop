@@ -8,8 +8,6 @@ namespace Nop.Plugin.Tax.AbcTax.Services
 {
     public class TaxjarRateService : ITaxjarRateService
     {
-        private readonly TaxjarApi _taxjarApi;
-
         private readonly AbcTaxSettings _abcTaxSettings;
         private readonly ICountryService _countryService;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -29,8 +27,6 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             _abcTaxSettings = abcTaxSettings;
             _countryService = countryService;
             _staticCacheManager = staticCacheManager;
-
-            _taxjarApi = new TaxjarApi(_abcTaxSettings.TaxJarAPIToken);
         }
 
         public async Task<decimal> GetTaxJarRateAsync(Address address)
@@ -50,7 +46,8 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             
             return await _staticCacheManager.GetAsync(cacheKey, () =>
             {
-                var rates = _taxjarApi.RatesForLocation(zip, new {
+                var taxjarApi = new TaxjarApi(_abcTaxSettings.TaxJarAPIToken);
+                var rates = taxjarApi.RatesForLocation(zip, new {
                     street = street,
                     city = city,
                     country = country
