@@ -130,12 +130,8 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
                 var (sciExclTax, taxRate) = await _taxService.GetProductPriceAsync(product, sciSubTotal, false, customer);
-                var (sciInclTax, _) = await _taxService.GetProductPriceAsync(product, sciSubTotal, true, customer);
-                subTotalExclTaxWithoutDiscount += sciExclTax;
-                subTotalInclTaxWithoutDiscount += sciInclTax;
-
-                var (sciExclTax, taxRate) = await _taxService.GetProductPriceAsync(product, sciSubTotal, false, customer);
-                var (sciInclTax, _) = await _warrantyTaxService.CalculateWarrantyTaxAsync(shoppingCartItem, customer, sciExclTax);
+                // custom
+                var (_, sciInclTax) = await _warrantyTaxService.CalculateWarrantyTaxAsync(shoppingCartItem, customer, sciExclTax);
 
                 subTotalExclTaxWithoutDiscount += sciExclTax;
                 subTotalInclTaxWithoutDiscount += sciInclTax;

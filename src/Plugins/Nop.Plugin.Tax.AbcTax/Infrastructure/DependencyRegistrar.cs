@@ -26,6 +26,7 @@ namespace Nop.Plugin.Tax.AbcTax.Infrastructure
             services.AddScoped<ITaxjarRateService, TaxjarRateService>();
             services.AddScoped<IWarrantyTaxService, WarrantyTaxService>();
             services.AddScoped<IOrderProcessingService, CustomOrderProcessingService>();
+            services.AddScoped<IOrderTotalCalculationService, CustomOrderTotalCalculationService>();
         }
 
         /// <summary>

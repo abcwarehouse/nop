@@ -143,17 +143,17 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 //prices
                 var scUnitPrice = (await _shoppingCartService.GetUnitPriceAsync(sc, true)).unitPrice;
                 var (scSubTotal, discountAmount, scDiscounts, _) = await _shoppingCartService.GetSubTotalAsync(sc, true);
-                var scUnitPriceInclTax =
-                    await _taxService.GetProductPriceAsync(product, scUnitPrice, true, details.Customer);
+                // var scUnitPriceInclTax =
+                //     await _taxService.GetProductPriceAsync(product, scUnitPrice, true, details.Customer);
                 var scUnitPriceExclTax =
                     await _taxService.GetProductPriceAsync(product, scUnitPrice, false, details.Customer);
-                var scSubTotalInclTax =
-                    await _taxService.GetProductPriceAsync(product, scSubTotal, true, details.Customer);
+                // var scSubTotalInclTax =
+                //     await _taxService.GetProductPriceAsync(product, scSubTotal, true, details.Customer);
                 var scSubTotalExclTax =
                     await _taxService.GetProductPriceAsync(product, scSubTotal, false, details.Customer);
 
                 // custom - getting warranty tax
-                var result = await _warrantyTaxService.CalculateWarrantyTaxAsync(sc, details.Customer, scSubTotalExclTax.price, scUnitPriceExclTax.price);
+                var (_, scSubTotalInclTax, scUnitPriceInclTax, _, _) = await _warrantyTaxService.CalculateWarrantyTaxAsync(sc, details.Customer, scSubTotalExclTax.price, scUnitPriceExclTax.price);
 
                 var discountAmountInclTax =
                     await _taxService.GetProductPriceAsync(product, discountAmount, true, details.Customer);
@@ -177,9 +177,9 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                     OrderItemGuid = Guid.NewGuid(),
                     OrderId = order.Id,
                     ProductId = product.Id,
-                    UnitPriceInclTax = scUnitPriceInclTax.price,
+                    UnitPriceInclTax = scUnitPriceInclTax,
                     UnitPriceExclTax = scUnitPriceExclTax.price,
-                    PriceInclTax = scSubTotalInclTax.price,
+                    PriceInclTax = scSubTotalInclTax,
                     PriceExclTax = scSubTotalExclTax.price,
                     OriginalProductCost = await _priceCalculationService.GetProductCostAsync(product, sc.AttributesXml),
                     AttributeDescription = attributeDescription,

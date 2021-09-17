@@ -88,41 +88,11 @@ namespace Nop.Plugin.Tax.AbcTax
                 return result;
             }
 
-            //first, load all tax rate records (cached) - loaded only once
-            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(ModelCacheEventConsumer.ALL_TAX_RATES_MODEL_KEY);
-            var allTaxRates = await _staticCacheManager.GetAsync(cacheKey, async () => (await _abcTaxService.GetAllTaxRatesAsync()).Select(taxRate => new AbcTaxRate
-            {
-                Id = taxRate.Id,
-                StoreId = taxRate.StoreId,
-                TaxCategoryId = taxRate.TaxCategoryId,
-                CountryId = taxRate.CountryId,
-                StateProvinceId = taxRate.StateProvinceId,
-                Zip = taxRate.Zip,
-                Percentage = taxRate.Percentage,
-                IsTaxJarEnabled = taxRate.IsTaxJarEnabled
-            }).ToList());
-
-            var storeId = taxRateRequest.CurrentStoreId;
-            var taxCategoryId = taxRateRequest.TaxCategoryId;
-            var countryId = taxRateRequest.Address.CountryId;
-            var stateProvinceId = taxRateRequest.Address.StateProvinceId;
-            var zip = taxRateRequest.Address.ZipPostalCode?.Trim() ?? string.Empty;
-
-            var existingRates = allTaxRates.Where(taxRate => taxRate.CountryId == countryId && taxRate.TaxCategoryId == taxCategoryId);
-
-            //filter by store
-            var matchedByStore = existingRates.Where(taxRate => storeId == taxRate.StoreId || taxRate.StoreId == 0);
-
-            //filter by state/province
-            var matchedByStateProvince = matchedByStore.Where(taxRate => stateProvinceId == taxRate.StateProvinceId || taxRate.StateProvinceId == 0);
-
-            //filter by zip
-            var matchedByZip = matchedByStateProvince.Where(taxRate => string.IsNullOrWhiteSpace(taxRate.Zip) || taxRate.Zip.Equals(zip, StringComparison.InvariantCultureIgnoreCase));
-
-            //sort from particular to general, more particular cases will be the first
-            var foundRecords = matchedByZip.OrderBy(r => r.StoreId == 0).ThenBy(r => r.StateProvinceId == 0).ThenBy(r => string.IsNullOrEmpty(r.Zip));
-
-            var foundRecord = foundRecords.FirstOrDefault();
+            var foundRecord = await _abcTaxService.GetAbcTaxRateAsync(
+                taxRateRequest.CurrentStoreId,
+                taxRateRequest.TaxCategoryId,
+                taxRateRequest.Address
+            );
 
             if (foundRecord == null) return result;
 

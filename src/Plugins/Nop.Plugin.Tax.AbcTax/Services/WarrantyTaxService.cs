@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Address = Nop.Core.Domain.Common.Address;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Catalog;
@@ -7,6 +6,7 @@ using Nop.Services.Tax;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Core.Domain.Catalog;
 using System.Linq;
+using Nop.Services.Common;
 
 namespace Nop.Plugin.Tax.AbcTax.Services
 {
@@ -15,23 +15,32 @@ namespace Nop.Plugin.Tax.AbcTax.Services
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly IImportUtilities _importUtilities;
 
+        private readonly IAbcTaxService _abcTaxService;
+        private readonly IAddressService _addressService;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductService _productService;
         private readonly ITaxService _taxService;
+        private readonly ITaxCategoryService _taxCategoryService;
 
         public WarrantyTaxService(
             IAttributeUtilities attributeUtilities,
             IImportUtilities importUtilities,
+            IAbcTaxService abcTaxService,
+            IAddressService addressService,
             IProductAttributeParser productAttributeParser,
             IProductService productService,
-            ITaxService taxService
+            ITaxService taxService,
+            ITaxCategoryService taxCategoryService
         )
         {
             _attributeUtilities = attributeUtilities;
             _importUtilities = importUtilities;
+            _abcTaxService = abcTaxService;
+            _addressService = addressService;
             _productAttributeParser = productAttributeParser;
             _productService = productService;
             _taxService = taxService;
+            _taxCategoryService = taxCategoryService;
         }
 
         public async Task<(decimal taxRate, decimal sciSubTotalInclTax)> CalculateWarrantyTaxAsync(
@@ -76,10 +85,7 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 // get warranty "product" - this is so the warranties have a tax category
                 Product warrProduct = _importUtilities.GetExistingProductBySku("WARRPLACE_SKU");
 
-                //true if customer lives in a state where warranty can be taxed
-                bool isCustomerInTaxableState = false;
-                //var taxCategory = _taxCategoryService.GetAllTaxCategories().FirstOrDefault(x => x.Name == "Warranties");
-                //var isCustomerInTaxableState = _taxService.IsCustomerInTaxableState(taxCategory?.Id ?? 0, customer);
+                var isCustomerInTaxableState = await IsCustomerInTaxableStateAsync(customer);
 
                 if (warrProduct == null)
                 {
@@ -99,6 +105,22 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             }
 
             return (warrantyUnitPriceInclTax.taxRate, sciSubTotalInclTax.price, sciUnitPriceInclTax.price, warrantyUnitPriceExclTax, warrantyUnitPriceInclTax.price);
+        }
+
+        private async Task<bool> IsCustomerInTaxableStateAsync(Customer customer)
+        {
+            var taxCategory = (await _taxCategoryService.GetAllTaxCategoriesAsync()).FirstOrDefault(x => x.Name == "Warranties");
+            var shippingAddress = customer.ShippingAddressId.HasValue ?
+                await _addressService.GetAddressByIdAsync(customer.ShippingAddressId.Value) :
+                null;
+            if (shippingAddress == null) return false;
+
+            return await _abcTaxService.GetAbcTaxRateAsync(
+                // for now this should be fine, since all rates apply to all stores
+                0,
+                taxCategory?.Id ?? 0,
+                shippingAddress
+            ) != null;
         }
     }
 }
