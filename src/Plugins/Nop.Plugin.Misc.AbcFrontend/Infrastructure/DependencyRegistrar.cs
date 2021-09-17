@@ -3,9 +3,9 @@ using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Misc.AbcFrontend.Services;
-using Nop.Services.Orders;
 using Nop.Services.Tax;
 using Microsoft.Extensions.DependencyInjection;
+using Nop.Services.Orders;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
 {
@@ -20,7 +20,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
                AppSettings appSettings
         ) {
             services.AddScoped<IWarrantyService, WarrantyService>();
-            services.AddScoped<IOrderProcessingService, CustomOrderProcessingService>();
             services.AddScoped<IShoppingCartService, CustomShoppingCartService>();
         }
 

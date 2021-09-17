@@ -4,6 +4,7 @@ using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Tax.AbcTax.Services;
 using Nop.Services.Tax;
+using Nop.Services.Orders;
 
 namespace Nop.Plugin.Tax.AbcTax.Infrastructure
 {
@@ -23,6 +24,8 @@ namespace Nop.Plugin.Tax.AbcTax.Infrastructure
             services.AddScoped<ITaxProvider, AbcTaxProvider>();
             services.AddScoped<IAbcTaxService, AbcTaxService>();
             services.AddScoped<ITaxjarRateService, TaxjarRateService>();
+            services.AddScoped<IWarrantyTaxService, WarrantyTaxService>();
+            services.AddScoped<IOrderProcessingService, CustomOrderProcessingService>();
         }
 
         /// <summary>

@@ -29,9 +29,9 @@ using Nop.Core.Domain.Discounts;
 using Nop.Core.Events;
 using System.Threading.Tasks;
 
-namespace Nop.Plugin.Misc.AbcFrontend.Services
+namespace Nop.Plugin.Tax.AbcTax.Services
 {
-    public class CustomOrderProcessingService : OrderProcessingService
+    public class CustomOrderProcessingService : OrderProcessingService, IOrderProcessingService
     {
         private readonly ICustomerActivityService _customerActivityService;
         private readonly ICustomerService _customerService;
@@ -50,7 +50,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         private readonly PaymentSettings _paymentSettings;
 
         // custom
-        private readonly IWarrantyService _warrantyService;
+        private readonly IWarrantyTaxService _warrantyTaxService;
 
         public CustomOrderProcessingService(
             CurrencySettings currencySettings,
@@ -97,7 +97,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             ShippingSettings shippingSettings,
             TaxSettings taxSettings,
             // custom
-            IWarrantyService warrantyService
+            IWarrantyTaxService warrantyTaxService
         ) : base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter,
                    countryService, currencyService, customerActivityService, customerService,
                    customNumberFormatter, discountService, encryptionService,
@@ -128,7 +128,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _paymentSettings = paymentSettings;
 
             // custom
-            _warrantyService = warrantyService;
+            _warrantyTaxService = warrantyTaxService;
         }
 
         protected async override Task MoveShoppingCartItemsToOrderItemsAsync(
@@ -152,8 +152,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 var scSubTotalExclTax =
                     await _taxService.GetProductPriceAsync(product, scSubTotal, false, details.Customer);
 
-                // // custom - getting warranty tax
-                // var result = await _warrantyService.CalculateWarrantyTaxAsync(sc, details.Customer, scSubTotalExclTax.price, scUnitPriceExclTax.price);
+                // custom - getting warranty tax
+                var result = await _warrantyTaxService.CalculateWarrantyTaxAsync(sc, details.Customer, scSubTotalExclTax.price, scUnitPriceExclTax.price);
 
                 var discountAmountInclTax =
                     await _taxService.GetProductPriceAsync(product, discountAmount, true, details.Customer);
