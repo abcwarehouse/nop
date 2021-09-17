@@ -350,7 +350,6 @@
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
     <ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
-    <ProjectReference Include="..\Nop.Plugin.Tax.AbcCountryStateZip\Nop.Plugin.Tax.AbcCountryStateZip.csproj" />
   </ItemGroup>
 
   <ItemGroup>
