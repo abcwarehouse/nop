@@ -276,16 +276,11 @@ namespace Nop.Plugin.Tax.AbcTax
             return paymentMethodAdditionalFeeTax;
         }
 
-        // Our calculation needs to be done here!
         private async Task<decimal> GetSubtotalTaxTotalAsync(
             SortedDictionary<decimal, decimal> taxRates,
             TaxTotalRequest taxTotalRequest
         )
         {
-            // start by stepping through this and figure out best place
-            // to split the warranties and calculate them separately
-            //
-            // might be in taxService or orderTotalCalculationService
             var (_, _, _, _, orderSubTotalTaxRates) = await _orderTotalCalculationService
                 .GetShoppingCartSubTotalAsync(taxTotalRequest.ShoppingCart, false);
             var subTotalTaxTotal = decimal.Zero;
