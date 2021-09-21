@@ -10,6 +10,7 @@ using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate;
 using Nop.Services.Caching;
+using Nop.Plugin.Misc.AbcSync.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
@@ -76,6 +77,8 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<FillStagingProductsTask, FillStagingProductsTask>();
             services.AddScoped<FillStagingScandownEndDatesTask, FillStagingScandownEndDatesTask>();
             services.AddScoped<FillStagingWarrantiesTask, FillStagingWarrantiesTask>();
+
+            services.AddScoped<MigrateAbcWarehouseContentTask, MigrateAbcWarehouseContentTask>();
         }
 
         /// <summary>
