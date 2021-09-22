@@ -60,6 +60,7 @@
     <None Remove="styles\store.css" />
     <None Remove="styles\rebates-promos.css" />
     <None Remove="styles\tooltip.css" />
+    <None Remove="styles\ajax-cart.css" />
     <None Remove="Images\abc\BestDeal.jpg" />
     <None Remove="Images\abc\CallUs.jpg" />
     <None Remove="Images\abc\InStore.jpg" />
@@ -233,6 +234,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="styles\tooltip.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="styles\ajax-cart.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\abc\BestDeal.jpg">
