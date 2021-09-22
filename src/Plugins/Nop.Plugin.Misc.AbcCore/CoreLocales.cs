@@ -23,5 +23,10 @@ namespace Nop.Plugin.Misc.AbcCore
             Base + "FlixId";
         public const string FlixIdHint =
             FlixId + ".Hint";
+
+        public const string PLPDescription =
+            Base + "PLPDescription";
+        public const string PLPDescriptionHint =
+            PLPDescription + ".Hint";
     }
 }

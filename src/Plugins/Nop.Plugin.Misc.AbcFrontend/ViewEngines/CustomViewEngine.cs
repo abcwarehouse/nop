@@ -14,6 +14,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.ViewEngines
                     // used to connect with Nop checkout views and custom controllers
                     "/Views/Checkout/{0}.cshtml"
                 }, true);
+
+            this.AddAdminViewLocationFormats(
+                new List<string> {
+                    "~/Areas/Admin/Views/Product/{0}.cshtml"
+                }, true);
         }
     }
 }

@@ -10,10 +10,12 @@ using Nop.Web.Framework.Menu;
 using Microsoft.AspNetCore.Routing;
 using System.Linq;
 using System.Threading.Tasks;
+using Nop.Services.Cms;
+using Nop.Web.Framework.Infrastructure;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
-    public class CorePlugin : BasePlugin, IMiscPlugin, IAdminMenuPlugin
+    public class CorePlugin : BasePlugin, IMiscPlugin, IAdminMenuPlugin, IWidgetPlugin
     {
         private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
@@ -32,6 +34,18 @@ namespace Nop.Plugin.Misc.AbcCore
             _nopDataProvider = nopDataProvider;
             _webHostEnvironment = webHostEnvironment;
         }
+
+        public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
+        {
+            return Task.FromResult<IList<string>>(new List<string> { AdminWidgetZones.ProductDetailsBlock });
+        }
+
+        public string GetWidgetViewComponentName(string widgetZone)
+        {
+            return "AbcCore";
+        }
+
+        public bool HideInWidgetList => false;
 
         public override string GetConfigurationPageUrl()
         {
@@ -88,7 +102,9 @@ namespace Nop.Plugin.Misc.AbcCore
                     [CoreLocales.AreExternalCallsSkipped] = "Skip External Calls",
                     [CoreLocales.AreExternalCallsSkippedHint] = "Skips calls to ISAM API, useful for local development.",
                     [CoreLocales.FlixId] = "FLIX ID",
-                    [CoreLocales.FlixIdHint] = "The ID to use for Flix calls."
+                    [CoreLocales.FlixIdHint] = "The ID to use for Flix calls.",
+                    [CoreLocales.PLPDescription] = "PLP Description",
+                    [CoreLocales.PLPDescriptionHint] = "Description displayed for PLP (Product Box)."
                 }
             );
         }
