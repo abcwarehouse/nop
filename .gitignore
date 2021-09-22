@@ -226,6 +226,7 @@ src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
 
 ## Saved plugins
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Core/
+!src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AjaxCart/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.CloudZoom/

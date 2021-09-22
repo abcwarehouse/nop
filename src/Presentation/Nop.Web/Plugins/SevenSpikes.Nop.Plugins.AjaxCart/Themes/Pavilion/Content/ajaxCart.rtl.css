@@ -1,0 +1,86 @@
+/*
+* Copyright 2019 Seven Spikes Ltd. All rights reserved. (http://www.nop-templates.com)
+* http://www.nop-templates.com/t/licensinginfo
+*/
+
+.ajax-cart-button-wrapper input,
+.ajax-cart-button-wrapper select {
+	right: 0;
+	left: auto;
+	border-width: 0 0 0 1px;
+}
+.ajax-cart-button-wrapper select {
+	padding: 0 6px 0 2px;
+}
+.ajax-cart-button-wrapper input + button,
+.ajax-cart-button-wrapper select + button {
+	padding: 0 25px 0 0;
+}
+.product-list .ajax-cart-button-wrapper input + button,
+.product-list .ajax-cart-button-wrapper select + button {
+	margin: 0 5px 0 0;
+}
+
+@media all and (min-width: 1025px) {
+	
+.product-grid .item-box:hover .ajax-cart-button-wrapper input + button,
+.product-grid .item-box:hover .ajax-cart-button-wrapper select + button {
+	padding: 0 30px 0 0;
+}
+}
+
+.nopAjaxCartPanelAjaxBusy {
+	right: 0;
+	left: auto;
+}
+.miniProductDetailsPanelAjaxBusy {
+	right: 0;
+	left: auto;
+}
+.nopAjaxCartPanelAjaxBusy:before,
+.miniProductDetailsPanelAjaxBusy:before {
+	right: 50%;
+	left: auto;
+	margin: -25px -25px 0 0;
+}
+.nopAjaxCartPanelAjaxBusy:after,
+.miniProductDetailsPanelAjaxBusy:after {
+	right: 50%;
+	left: auto;
+	margin: 35px -25px 0 0;
+}
+
+.ajaxCart {
+	right: 50% !important;
+	left: auto;
+	margin: 0 -240px 0 0;
+}
+.ajaxCart .k-window-titlebar .k-window-actions {
+	left: -10px;
+	right: auto;
+}
+.productAddedToCartWindowTitle,
+.miniProductDetailsView .product-name {
+	right: 1px;
+	left: auto;
+}
+.productAddedToCartWindowImage {
+	float: right;
+	padding: 20px 20px 20px 10px;
+}
+.productAddedToCartWindowDescription {
+	float: left;
+	padding: 20px 10px 20px 20px;
+}
+.miniProductDetailsView .gallery {
+	float: right;
+	padding: 20px 20px 20px 10px;
+}
+.miniProductDetailsView .overview {
+	float: left;
+	padding: 20px 10px 20px 20px;
+}
+.miniProductDetailsView .add-to-cart > *,
+.miniProductDetailsView .add-button-wrap {
+	float: right;
+}

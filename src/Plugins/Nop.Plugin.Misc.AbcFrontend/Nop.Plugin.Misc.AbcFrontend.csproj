@@ -40,7 +40,7 @@
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
-    <None Remove="Views\Shared\_ProductBox.cshtml" />
+    <!-- <None Remove="Views\Shared\_ProductBox.cshtml" /> -->
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\_Header.cshtml" />
     <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />

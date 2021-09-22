@@ -78,6 +78,9 @@
     <Reference Include="SevenSpikes.Nop.Plugins.StoreLocator">
       <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Nop.Plugins.StoreLocator\SevenSpikes.Nop.Plugins.StoreLocator.dll</HintPath>
     </Reference>
+    <Reference Include="SevenSpikes.Nop.Plugins.AjaxCart">
+      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Nop.Plugins.AjaxCart\SevenSpikes.Nop.Plugins.AjaxCart.dll</HintPath>
+    </Reference>
     <Reference Include="SevenSpikes.Nop.Plugins.HtmlWidgets">
       <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Nop.Plugins.HtmlWidgets\SevenSpikes.Nop.Plugins.HtmlWidgets.dll</HintPath>
     </Reference>
