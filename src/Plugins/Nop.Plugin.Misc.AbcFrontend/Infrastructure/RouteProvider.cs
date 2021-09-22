@@ -48,11 +48,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
                             new { controller = "CustomShoppingCart", action = "AddProductToCart_Pickup" },
                             new { productId = @"\d+", shoppingCartTypeId = @"\d+" });
 
-            endpointRouteBuilder.MapControllerRoute("CustomAddProductToCart-Catalog",
-                            "addproducttocart/catalog/{productId}/{shoppingCartTypeId}/{quantity}",
-                            new { controller = "CustomShoppingCart", action = "AddProductToCart_Catalog" },
-                            new { productId = @"\d+", shoppingCartTypeId = @"\d+", quantity = @"\d+" });
-
             endpointRouteBuilder.MapControllerRoute("CustomAddProductToCart-Details",
                             "addproducttocart/details/{productId}/{shoppingCartTypeId}",
                             new { controller = "CustomShoppingCart", action = "AddProductToCart_Details" },

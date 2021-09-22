@@ -40,11 +40,12 @@
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
-    <!-- <None Remove="Views\Shared\_ProductBox.cshtml" /> -->
+    <None Remove="Views\Shared\_ProductBox.cshtml" />
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\_Header.cshtml" />
     <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />
     <None Remove="Views\Order\Details.cshtml" />
+    <None Remove="Views\NopAjaxCart\AddProductToCartAjaxButton.cshtml" />
     <None Remove="styles\checkout-warranty-selection.css" />
     <None Remove="styles\custom_front_product.css" />
     <None Remove="styles\header-haw.css" />
@@ -184,6 +185,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Topic\TopicDetails.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\NopAjaxCart\AddProductToCartAjaxButton.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="styles\checkout-warranty-selection.css">

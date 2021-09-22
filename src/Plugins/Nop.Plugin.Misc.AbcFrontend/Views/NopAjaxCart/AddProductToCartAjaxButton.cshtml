@@ -1,0 +1,77 @@
+@*
+    ABC Warehouse
+    customizations
+*@
+
+@using SevenSpikes.Nop.Plugins.AjaxCart.Domain;
+@using Nop.Services.Seo;
+
+@inject NopAjaxCartSettings nopAjaxCartSettingsModel
+@inject IUrlRecordService urlRecordService
+
+@model SevenSpikes.Nop.Plugins.AjaxCart.Models.AjaxCartButtonsModel
+
+@if (Model.AddProductToCartAjaxButtonModels.Count > 0)
+{
+    bool isThereAnyProductsWithAllowedQuantities = false;    
+
+    for (var i = 0; i < Model.AddProductToCartAjaxButtonModels.Count; i++)
+    {
+        var button = Model.AddProductToCartAjaxButtonModels[i];
+        // ABC: QUick buy only works for purchasable items
+        var isEligibleForQuickBuy = button.ButtonValue == "Add to cart";        
+
+        <div class="ajax-cart-button-wrapper @(nopAjaxCartSettingsModel.EnableProductQuantityTextBox ? Html.Raw("qty-enabled") : null)" data-productid="@button.ProductId" data-isproductpage="@button.IsProductPage.ToString().ToLowerInvariant()">
+            @if (button.IsProductPage)
+            {
+                <button type="button" id="add-to-cart-button-@button.ProductId" class="button-1 add-to-cart-button nopAjaxCartProductVariantAddToCartButton" data-productid="@button.ProductId">
+                    @button.ButtonValue
+                </button>
+            }
+            else
+            {
+                if (nopAjaxCartSettingsModel.EnableProductQuantityTextBox)
+                {
+                    if (button.AllowedQuantities.Count > 0)
+                    {
+                        isThereAnyProductsWithAllowedQuantities = true;
+
+                        <select data-quantityproductid="@button.ProductId" class="productQuantityDropdown">
+                            @foreach (var allowedQuantity in button.AllowedQuantities)
+                            {
+                                <option value="@allowedQuantity.Value">@allowedQuantity.Text</option>
+                            }
+                        </select>
+
+                        <input class="@string.Concat("productQuantityChanged", button.ProductId)" type="hidden" value="no" />
+                    }
+                    // ABC: only show quantity if not able to purchase
+                    else if (isEligibleForQuickBuy)
+                    {
+                        <input type="text" data-quantityproductid="@button.ProductId" class="productQuantityTextBox" value="@button.DefaultProductMinimumQuantity" />
+                    }
+                }
+
+                // ABC: need to change behavior based on the button text
+                if (!isEligibleForQuickBuy)
+                {
+                    var seName = await urlRecordService.GetSeNameAsync(button.ProductId, "Product");
+                    var productUrl = @Url.RouteUrl("Product", new { SeName = seName });
+                    <form action="@productUrl">
+                        <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@button.ButtonValue</span></button>
+                    </form>
+                }
+                else
+                {
+                    <button type="button" class="button-2 product-box-add-to-cart-button nopAjaxCartProductListAddToCartButton" data-productid="@button.ProductId"><span>@button.ButtonValue</span></button>
+                }
+            }
+                      
+
+            @if (isThereAnyProductsWithAllowedQuantities && i == Model.AddProductToCartAjaxButtonModels.Count - 1)
+            {
+                <input type="hidden" class="ajaxCartAllowedQuantitesHover" data-productItemSelector="nopAjaxCartSettingsModel.ProductBoxProductItemElementSelector" />
+            }
+        </div>
+    }
+}
