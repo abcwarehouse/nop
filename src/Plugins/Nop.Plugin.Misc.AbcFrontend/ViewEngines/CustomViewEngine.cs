@@ -18,7 +18,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.ViewEngines
             this.AddAdminViewLocationFormats(
                 new List<string> {
                     "~/Areas/Admin/Views/Product/{0}.cshtml"
-                }, true);
+                }, false);
         }
     }
 }
