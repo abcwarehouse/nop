@@ -32,7 +32,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
             await _nopDataProvider.ExecuteNonQueryAsync(
                 ImportTaskExtensions.GetSqlScript("Clean_Duplicate_Images"),
-                300
+                600
             );
 
             
