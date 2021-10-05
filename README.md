@@ -1,5 +1,3 @@
-![Build](https://github.com/abcwarehouse/nop/workflows/Build/badge.svg)
-
 # ABCWarehouse
 
 NOPCommerce codebase that runs both abcwarehouse.com and hawthorneonline.com
