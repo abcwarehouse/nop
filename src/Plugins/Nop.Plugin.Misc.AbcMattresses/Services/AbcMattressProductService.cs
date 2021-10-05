@@ -277,17 +277,17 @@ namespace Nop.Plugin.Misc.AbcMattresses.Services
         private async Task MapProductToStoreAsync(Product product)
         {
             // hardcoded to ABC Warehouse currently
-            var abcWarehouseStore = (await _storeService.GetAllStoresAsync())
-                                                   .Where(s => s.Name == "ABC Warehouse")
+            var store = (await _storeService.GetAllStoresAsync())
+                                                   .Where(s => !s.Name.Contains("Clearance"))
                                                    .FirstOrDefault();
-            if (abcWarehouseStore == null)
+            if (store == null)
             {
                 throw new Exception("Unable to find ABC Warehouse store.");
             }
 
             await _productService.UpdateProductStoreMappingsAsync(
                 product,
-                new int[] { abcWarehouseStore.Id }
+                new int[] { store.Id }
             );
         }
 
