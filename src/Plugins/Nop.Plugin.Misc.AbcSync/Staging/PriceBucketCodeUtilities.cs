@@ -126,10 +126,6 @@ namespace Nop.Plugin.Misc.AbcSync.Staging
         public static PriceBucketCode ChangeBucketByDepartment(
             PriceBucketCode priceBucket, string department)
         {
-            if ((department == "I"))
-            {
-                priceBucket = PriceBucketCode.InStoreOnly;
-            }
             return priceBucket;
         }
 
