@@ -6,11 +6,12 @@ join NOPCommerce.dbo.Product ap on ap.Id = aga.EntityId
 join Product hp on ap.Sku = hp.Sku
 where KeyGroup = 'Product' and [Key] = 'PLPDescription' and EntityId in (select ProductId from NOPCommerce.dbo.AbcMattressModel)
 
--- Add Short Description
+-- Update Short Description
 UPDATE 
     Product
 SET 
-    ShortDescription = ap.ShortDescription
+    ShortDescription = ap.ShortDescription,
+    FullDescription = ap.FullDescription
 FROM 
     Product hp
 JOIN NOPCommerce.dbo.Product ap ON ap.Sku = hp.Sku

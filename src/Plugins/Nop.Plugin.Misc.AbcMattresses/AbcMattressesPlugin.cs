@@ -49,22 +49,15 @@ namespace Nop.Plugin.Misc.AbcMattresses
             _webHelper = webHelper;
         }
 
-        public override string GetConfigurationPageUrl()
-        {
-            return $"{_webHelper.GetStoreLocation()}Admin/AbcMattresses/Configure";
-        }
-
         public override async System.Threading.Tasks.Task UpdateAsync(string currentVersion, string targetVersion)
         {
             await AddProductAttributesAsync();
-            await UpdateLocalesAsync();
         }
 
         public override async System.Threading.Tasks.Task InstallAsync()
         {
             await RemoveTasksAsync();
             await AddTaskAsync();
-            await UpdateLocalesAsync();
 
             await AddProductAttributesAsync();
 
@@ -175,17 +168,6 @@ namespace Nop.Plugin.Misc.AbcMattresses
                     await _productAttributeService.InsertProductAttributeAsync(productAttribute);
                 }
             }
-        }
-
-        private async System.Threading.Tasks.Task UpdateLocalesAsync()
-        {
-            await _localizationService.AddLocaleResourceAsync(
-                new Dictionary<string, string>
-                {
-                    [AbcMattressesLocales.ShouldSyncRibbons] = "Sync Product Ribbons?",
-                    [AbcMattressesLocales.ShouldSyncRibbonsHint] = "Turn on/off syncing product ribbons to mattress model products.",
-                }
-            );
         }
     }
 }
