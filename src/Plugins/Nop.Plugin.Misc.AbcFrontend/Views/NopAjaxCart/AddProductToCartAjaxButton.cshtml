@@ -18,7 +18,7 @@
     for (var i = 0; i < Model.AddProductToCartAjaxButtonModels.Count; i++)
     {
         var button = Model.AddProductToCartAjaxButtonModels[i];
-        // ABC: QUick buy only works for purchasable items
+        // ABC: Quick buy only works for purchasable items
         var isEligibleForQuickBuy = button.ButtonValue == "Add to cart";        
 
         <div class="ajax-cart-button-wrapper @(nopAjaxCartSettingsModel.EnableProductQuantityTextBox ? Html.Raw("qty-enabled") : null)" data-productid="@button.ProductId" data-isproductpage="@button.IsProductPage.ToString().ToLowerInvariant()">
@@ -45,7 +45,7 @@
 
                         <input class="@string.Concat("productQuantityChanged", button.ProductId)" type="hidden" value="no" />
                     }
-                    // ABC: only show quantity if not able to purchase
+                    // ABC: only show quantity if able to purchase
                     else if (isEligibleForQuickBuy)
                     {
                         <input type="text" data-quantityproductid="@button.ProductId" class="productQuantityTextBox" value="@button.DefaultProductMinimumQuantity" />

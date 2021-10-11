@@ -51,11 +51,10 @@
         <dl>
             @foreach (var attribute in Model.ProductAttributes)
             {
-                // ABC: hiding home delivery, pickup, and warranty
+                // ABC: hiding home delivery, pickup
                 if ((new string[] {
                     "Home Delivery",
-                    "Pickup",
-                    "Warranty"
+                    "Pickup"
                 }).Contains(attribute.Name)) { continue; }
 
                 string controlId = $"ajaxCart_product_attribute_{attribute.Id}";
