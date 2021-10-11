@@ -1,0 +1,125 @@
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Web.Framework.Infrastructure
+
+@inject IStoreContext storeContext
+@inject ISettingService settingService
+@{
+    Layout = "_Root.Head";
+
+    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
+    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
+    var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) && actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    bool isLogoStickyOnMobileDevice = await settingService.GetSettingByKeyAsync("pavilionthemesettings.islogostickyonmobiledevice", false, storeId, true);
+    string stickyLogoClass = isLogoStickyOnMobileDevice ? "mobile-sticky-logo" : string.Empty;
+}
+
+@* styles to be moved into CSS file *@
+<style>
+    /* removes "fixed" aspect of top menus */
+    .admin-header-links {
+        position: static;
+    }
+    .response-nav-wrapper-parent {
+        position: relative;
+    }
+    .admin-header-links ~ .responsive-nav-wrapper-parent {
+        top: 0;
+    }
+
+    /* sets up flex for centering */
+    .responsive-nav-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 0 0.5rem;
+    }
+
+    .responsive-nav-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 0 0.5rem;
+    }
+
+    /* need to revert Pavilion CSS, used for mobile logo */
+    .responsive-nav-wrapper > div:first-child {
+        border-left: 0;
+        background: transparent;
+    }
+
+    .responsive-nav-wrapper > div > a:first-child {
+        width: auto;
+        height: auto;
+    }
+
+    .responsive-nav-wrapper > div:nth-child(2) {
+        margin-left: auto;
+    }
+
+    .responsive-nav-wrapper > div {
+        border-right: 0;
+    }
+
+    #mobile-header-logo a.logo img {
+        width: 140px;
+    }
+
+    .header-logo {
+        display: none;
+    }
+</style>
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })
+@await Html.PartialAsync("_Notifications")
+@await Html.PartialAsync("_JavaScriptDisabledWarning")
+@await Html.PartialAsync("_OldInternetExplorerWarning")
+
+<div class="master-wrapper-page @stickyLogoClass">
+    @await Html.PartialAsync("_Header")
+    <script asp-location="Footer">
+        var localized_data = {
+            AjaxCartFailure: "@T("AjaxCart.Failure")"
+        };
+        AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
+    </script>
+    <div class="overlayOffCanvas"></div>
+    @* ABC: customizing mobile nav. *@
+    <div class="responsive-nav-wrapper-parent">
+        <div class="responsive-nav-wrapper">
+            @* logo *@
+            <div id="mobile-header-logo">
+                @await Component.InvokeAsync("Logo")
+            </div>
+            @* this isn't showing for some reason? *@
+            @* <div class="phone"><a href="/contact-us">800-981-3866</a></div> *@
+            <div class="personal-button" id="header-links-opener">
+                <span>@T("SevenSpikes.Themes.Common.Personal")</span>
+            </div>
+            <!-- need to replace with custom cart icon -->
+            <div class="shopping-cart-link">
+                <span>@T("ShoppingCart")</span>
+            </div>
+        </div>
+    </div>
+    <div class="master-wrapper-content">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
+		@await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })
+
+        <div class="master-column-wrapper">
+            @RenderBody()
+        </div>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentAfter })
+    </div>
+    @if (isHomePage)
+    {
+		@await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })
+    }
+
+    @await Component.InvokeAsync("Footer")
+</div>
+
+@await Component.InvokeAsync("EuCookieLaw")
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })
