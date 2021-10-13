@@ -1,9 +1,16 @@
 ﻿@using Nop.Core
 @using Nop.Services.Configuration
 @using Nop.Web.Framework.Infrastructure
+@* ABC: for shopping cart item count *@
+@using Nop.Services.Orders
+@using Nop.Core.Domain.Orders
 
 @inject IStoreContext storeContext
 @inject ISettingService settingService
+@* ABC: for shopping cart item count *@
+@inject IWorkContext workContext
+@inject IShoppingCartService shoppingCartService
+
 @{
     Layout = "_Root.Head";
 
@@ -14,19 +21,26 @@
     var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     bool isLogoStickyOnMobileDevice = await settingService.GetSettingByKeyAsync("pavilionthemesettings.islogostickyonmobiledevice", false, storeId, true);
     string stickyLogoClass = isLogoStickyOnMobileDevice ? "mobile-sticky-logo" : string.Empty;
+
+    @* ABC: for shopping cart item count *@
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var shoppingCartItemCount = (await shoppingCartService.GetShoppingCartAsync(
+        customer,
+        ShoppingCartType.ShoppingCart
+    )).Count();
 }
 
 @* styles to be moved into CSS file *@
 <style>
-    /* removes "fixed" aspect of top menus */
+    /* remove admin header */
     .admin-header-links {
-        position: static;
-    }
-    .response-nav-wrapper-parent {
-        position: relative;
+        display: none
     }
     .admin-header-links ~ .responsive-nav-wrapper-parent {
         top: 0;
+    }
+    .admin-header-links ~ .responsive-nav-wrapper-parent .header-links {
+        top: 53px;
     }
 
     /* sets up flex for centering */
@@ -37,11 +51,12 @@
         margin: 0 0.5rem;
     }
 
-    .responsive-nav-wrapper {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin: 0 0.5rem;
+    /* vertically center logo */
+    .responsive-nav-wrapper > div > a.logo {
+        height: auto;
+    }
+    .responsive-nav-wrapper > div > a.logo img {
+        width: 140px;
     }
 
     /* need to revert Pavilion CSS, used for mobile logo */
@@ -49,26 +64,48 @@
         border-left: 0;
         background: transparent;
     }
-
-    .responsive-nav-wrapper > div > a:first-child {
+    .responsive-nav-wrapper > div {
+        border-right: 0;
+        background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png);
+    }
+    
+    /* phone number gets special rules */
+    .responsive-nav-wrapper > div.phone {
+        margin-left: auto;
+        background-image: none;
+        background-color: transparent;
+    }
+    .responsive-nav-wrapper > div.phone > a {
+        font-size: 0.75rem;
         width: auto;
         height: auto;
     }
 
-    .responsive-nav-wrapper > div:nth-child(2) {
-        margin-left: auto;
-    }
-
-    .responsive-nav-wrapper > div {
-        border-right: 0;
-    }
-
-    #mobile-header-logo a.logo img {
-        width: 140px;
-    }
-
+    /* hides provided header logo for mobile */
     .header-logo {
         display: none;
+    }
+    .responsive-nav-wrapper-parent {
+        position: relative;
+    }
+    .master-wrapper-content {
+        margin-top: 0;
+    }
+
+    /* quantity for mobile shopping cart */
+    div.mobile-cart-qty {
+        width: 15px;
+        line-height: 10px;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 10px;
+        border: 2px solid red;
+        background: red;
+        color: #fff;
+        font-weight: bold;
+        position: absolute;
+        right: 5px;
+        top: 10px;
     }
 </style>
 
@@ -89,18 +126,21 @@
     @* ABC: customizing mobile nav. *@
     <div class="responsive-nav-wrapper-parent">
         <div class="responsive-nav-wrapper">
-            @* logo *@
             <div id="mobile-header-logo">
                 @await Component.InvokeAsync("Logo")
             </div>
-            @* this isn't showing for some reason? *@
-            @* <div class="phone"><a href="/contact-us">800-981-3866</a></div> *@
+            <div class="phone"><a href="/contact-us">800-981-3866</a></div>
             <div class="personal-button" id="header-links-opener">
                 <span>@T("SevenSpikes.Themes.Common.Personal")</span>
             </div>
-            <!-- need to replace with custom cart icon -->
             <div class="shopping-cart-link">
-                <span>@T("ShoppingCart")</span>
+                <a href="/cart">
+                    <span>@T("ShoppingCart")</span>
+                    @if (@shoppingCartItemCount > 0)
+                    {
+                        <div class="mobile-cart-qty">@shoppingCartItemCount</div>
+                    }
+                </a>
             </div>
         </div>
     </div>

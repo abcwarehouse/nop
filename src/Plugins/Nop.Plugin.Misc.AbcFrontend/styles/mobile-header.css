@@ -28,15 +28,6 @@
     position: relative; /* used for absolute position of cart qty */
 }
 
-    .header-navbar-mobile div, .header-content-row div {
-        display: inline-block;
-        color: #1f2021;
-        background-color: #1f2021;
-        background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png);
-        background-repeat: no-repeat;
-        vertical-align: middle;
-    }
-
         .header-navbar-mobile div.mobile-cart {
             background-position: -61px center;
         }
@@ -114,20 +105,7 @@
     z-index: 0;
 }
 
-.header-navbar-mobile div.mobile-cart-qty {
-    width: 15px;
-    line-height: 10px;
-    border-radius: 50%;
-    text-align: center;
-    font-size: 10px;
-    border: 2px solid red;
-    background: red;
-    color: #fff;
-    font-weight: bold;
-    position: absolute;
-    right: 5px;
-    top: 10px;
-}
+
 
 @media (min-width: 375px) {
     .header-mobile .header-logo-mobile a img {
