@@ -134,6 +134,10 @@ div.mobile-cart-qty {
 }
 
 @media (min-width: 1025px) {
+    .header {
+        margin: 0 0 25px;
+    }
+
     .header-logo {
         display: block;
     }
