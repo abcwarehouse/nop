@@ -1,8 +1,14 @@
-/* .header-menu .mobile-sidebar-category.first li {
+.header-menu .mobile-sidebar-category.first {
+    position: fixed;
+    display: flex;
+    width: 100%;
+    padding-top: 10px;
+    background-color: #fff;
+}
+.header-menu .mobile-sidebar-category.first li {
     text-align: center;
     display: block;
 }
-
 .header-menu .mobile-sidebar-category.first li > a {
     width: 100%;
     padding-left: 0;
@@ -10,4 +16,8 @@
     background-repeat: no-repeat;
     background-position: center top;
     height: 80px;
-} */
+}
+.header-menu .mobile-sidebar-category.first li > a > span {
+    font-size: 12px;
+    line-height: 110px;
+}

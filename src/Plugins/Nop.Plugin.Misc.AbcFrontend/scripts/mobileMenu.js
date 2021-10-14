@@ -19,7 +19,6 @@ var categoryArray = new Array();
 categoryArray[0] = "SHOP ALL CATEGORIES";
 
 $(document).ready(function () {
-    debugger;
     var el = sidebar.find(".mega-menu-responsive");
     $(el[0]).addClass("mobile-sidebar-category first");
     $(el[1]).addClass("mobile-sidebar-category second");

@@ -118,6 +118,7 @@ div.mobile-cart-qty {
 }
 
 /* fixes margin issue for home page */
+.two-columns-area,
 .admin-header-links ~ .two-columns-area {
     margin: 0;
 }
