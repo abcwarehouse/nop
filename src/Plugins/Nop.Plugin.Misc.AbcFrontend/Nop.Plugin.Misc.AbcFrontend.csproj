@@ -49,6 +49,7 @@
     <None Remove="styles\custom_front_product.css" />
     <None Remove="styles\header-haw.css" />
     <None Remove="styles\mobile-header.css" />
+    <None Remove="styles\mobile-categories.css" />
     <None Remove="styles\mobile-header-haw.css" />
     <None Remove="styles\pavilion-styles.css" />
     <None Remove="styles\pavilion-styles-haw.css" />
@@ -197,6 +198,9 @@
     </Content>
     
     <Content Include="styles\mobile-header.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="styles\mobile-categories.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="styles\mobile-header-haw.css">
