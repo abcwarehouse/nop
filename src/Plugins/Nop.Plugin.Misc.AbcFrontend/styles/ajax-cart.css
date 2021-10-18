@@ -1,5 +1,16 @@
+
+/* shifts pop-up to side */
 .k-widget.k-window.ajaxCart {
     height: 100%;
     right: 0%;
     left: auto !important;
+}
+
+/* changes close button styles */
+.ajaxCart .k-window-titlebar .k-window-actions {
+    top: 0 !important;
+    right: 0 !important;
+}
+.ajaxCart .k-window-titlebar .k-window-actions a {
+    background-color: white !important;
 }
