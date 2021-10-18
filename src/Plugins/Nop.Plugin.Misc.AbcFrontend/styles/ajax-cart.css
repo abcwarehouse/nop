@@ -6,6 +6,11 @@
     left: auto !important;
 }
 
+/* set mobile-friendly size */
+.ajaxCart {
+    width: 360px !important;
+}
+
 /* changes close button styles */
 .ajaxCart .k-window-titlebar .k-window-actions {
     top: 0 !important;
@@ -13,4 +18,9 @@
 }
 .ajaxCart .k-window-titlebar .k-window-actions a {
     background-color: white !important;
+}
+
+/* hides old price */
+.overview .prices > div.old-product-price {
+    display: none;
 }
