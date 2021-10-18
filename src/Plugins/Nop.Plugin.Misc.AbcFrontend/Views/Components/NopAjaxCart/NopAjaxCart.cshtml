@@ -68,3 +68,43 @@
 @Html.Hidden("wishlistMenuLinkSelector", Html.Encode(nopAjaxCartSettings.WishlistMenuLinkSelector))
 
 @await Component.InvokeAsync("NopAjaxCartAdditionalPanelsToUpdate")
+
+@*
+    Listen to class changes in slide-out to prevent Yscrolling
+*@
+<script>
+    $(document).ready(function() {
+        // Check for when ajaxCart appears:
+
+        function callback(mutationList, observer) {
+            mutationList.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    // need to determine if opened or closed, and add/remove  the class appropriately
+                    console.log("attribute changed");
+                    document.body.classList.add("scrollYRemove");
+                }
+            })
+        }
+
+        var observer = new MutationObserver(function (mutations, me) {
+        var ajaxCartSlideOut = document.querySelector('.ajaxCart');
+            if (ajaxCartSlideOut) {
+                me.disconnect(); // stop looking for ajaxCart
+                const options = {
+                    attributes: true
+                }
+
+                const slideoutOpenObserver = new MutationObserver(callback)
+                slideoutOpenObserver.observe(ajaxCartSlideOut, options)
+
+                return;
+            }
+        });
+
+        // observes for finding ajaxCart
+        observer.observe(document, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>

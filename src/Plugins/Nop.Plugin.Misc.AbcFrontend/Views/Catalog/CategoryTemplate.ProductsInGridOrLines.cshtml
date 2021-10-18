@@ -249,26 +249,6 @@
 	</div>
 </div>
 
-@* ABC: listens for modal open and applies scroll turn-off
-    this just needs to be in one place so I'll pull this out once I get it working
-*@
-<script>
-    // add to cart modal
-    var element = document.querySelector('.k-widget.k-window.ajaxCart')
-	if (element === null) return;
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type == "attributes") {
-                console.log("attributes changed")
-            }
-        });
-    });
-
-    observer.observe(element, {
-        attributes: true //configure it to listen to attribute changes
-    });
-</script>
-
 @section AsidePageTitle
 {
 	@*only use side title if category is non-leaf*@
