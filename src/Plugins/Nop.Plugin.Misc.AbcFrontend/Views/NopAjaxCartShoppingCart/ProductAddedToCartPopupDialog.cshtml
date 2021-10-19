@@ -24,7 +24,7 @@
     </div>
     <div class="productAddedToCartWindowSummary">
         @* ABC: change to button *@
-        <a class="button-1 continueShoppingLink" href="#">@T("SevenSpikes.NopAjaxCart.ShoppingCartNotificationBoxContinueShopping")</a>
+        <a class="button-1 continueShoppingLink" href="#" onclick="allowScrolling()">@T("SevenSpikes.NopAjaxCart.ShoppingCartNotificationBoxContinueShopping")</a>
         @if (Model.MiniShoppingCart.DisplayCheckoutButton)
         {
             var checkoutUrl = "";
@@ -60,3 +60,9 @@
         @await Component.InvokeAsync("NopAjaxCartPopupCrossSellProducts", new { productId = shoppingCartItemModel.ProductId });
     }
 </div>
+
+<script>
+    function allowScrolling() {
+        document.body.classList.remove("scrollYRemove");
+    }
+</script>
