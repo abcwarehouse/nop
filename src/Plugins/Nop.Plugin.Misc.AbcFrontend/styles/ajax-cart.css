@@ -24,3 +24,10 @@
 .overview .prices > div.old-product-price {
     display: none;
 }
+
+/* prevents scrolling - this is a dupe of Pavilion but required for desktop */
+.scrollYRemove {
+    overflow: hidden !important;
+    -ms-touch-action: none !important;
+    -webkit-overflow-scrolling: touch !important;
+}

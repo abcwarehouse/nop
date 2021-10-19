@@ -74,14 +74,15 @@
 *@
 <script>
     $(document).ready(function() {
-        // Check for when ajaxCart appears:
-
         function callback(mutationList, observer) {
             mutationList.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    // need to determine if opened or closed, and add/remove  the class appropriately
-                    console.log("attribute changed");
-                    document.body.classList.add("scrollYRemove");
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const overlay = document.querySelector('.k-overlay');
+                    if (overlay === null) {
+                        document.body.classList.remove("scrollYRemove");
+                    } else {
+                        document.body.classList.add("scrollYRemove");
+                    }
                 }
             })
         }
