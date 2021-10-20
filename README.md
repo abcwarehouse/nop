@@ -76,3 +76,7 @@ To run sync tasks, you will need a copy of the Staging database.
 #### FTP Resources
 
 There are a collection of files you may need to store in /wwwroot.
+
+## CSS Breakpoints
+
+With the release of NnopCommerce 4.40, there are a few CSS breakpoints to consider:

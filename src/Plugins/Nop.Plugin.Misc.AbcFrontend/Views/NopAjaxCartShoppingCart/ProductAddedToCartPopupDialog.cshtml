@@ -23,8 +23,8 @@
         </div>
     </div>
     <div class="productAddedToCartWindowSummary">
-        @* ABC: change to button *@
-        <a class="button-1 continueShoppingLink" href="#" onclick="allowScrolling()">@T("SevenSpikes.NopAjaxCart.ShoppingCartNotificationBoxContinueShopping")</a>
+        @* ABC: change to button, allows scrolling *@
+        <a class="button-1 continueShoppingLink" href="#" onclick="document.body.classList.remove('scrollYRemove')">@T("SevenSpikes.NopAjaxCart.ShoppingCartNotificationBoxContinueShopping")</a>
         @if (Model.MiniShoppingCart.DisplayCheckoutButton)
         {
             var checkoutUrl = "";
@@ -60,9 +60,9 @@
         @await Component.InvokeAsync("NopAjaxCartPopupCrossSellProducts", new { productId = shoppingCartItemModel.ProductId });
     }
 </div>
-
+@* 
 <script>
     function allowScrolling() {
         document.body.classList.remove("scrollYRemove");
     }
-</script>
+</script> *@

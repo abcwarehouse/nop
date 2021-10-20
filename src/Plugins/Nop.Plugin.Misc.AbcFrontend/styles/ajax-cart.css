@@ -25,9 +25,20 @@
     display: none;
 }
 
+/* hides quantity for slideout */
+.qty-input {
+    display: none;
+}
+
 /* prevents scrolling - this is a dupe of Pavilion but required for desktop */
 .scrollYRemove {
     overflow: hidden !important;
     -ms-touch-action: none !important;
     -webkit-overflow-scrolling: touch !important;
+}
+
+@media all and (min-width: 481px) {
+    .ajaxCart {
+        width: 480px !important;
+    }
 }
