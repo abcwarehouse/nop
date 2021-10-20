@@ -47,6 +47,7 @@
     <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />
     <None Remove="Views\Order\Details.cshtml" />
     <None Remove="Views\NopAjaxCart\AddProductToCartAjaxButton.cshtml" />
+    <None Remove="Views\NopAjaxCartCatalog\_ProductVariantOverview.cshtml" />
     <None Remove="Views\NopAjaxCartShoppingCart\ProductAddedToCartPopupDialog.cshtml" />
     <None Remove="styles\checkout-warranty-selection.css" />
     <None Remove="styles\custom_front_product.css" />
@@ -194,6 +195,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\NopAjaxCart\AddProductToCartAjaxButton.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\NopAjaxCartCatalog\_ProductVariantOverview.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\NopAjaxCartShoppingCart\ProductAddedToCartPopupDialog.cshtml">

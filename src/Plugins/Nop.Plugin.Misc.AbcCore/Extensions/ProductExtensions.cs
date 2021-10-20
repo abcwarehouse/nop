@@ -1,12 +1,11 @@
 ﻿using Nop.Core.Domain.Catalog;
 using Nop.Core.Infrastructure;
+using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Nop.Plugin.Misc.AbcCore.Extensions
 {
@@ -14,6 +13,21 @@ namespace Nop.Plugin.Misc.AbcCore.Extensions
     {
         public const string IsAddToCartKey = "IsAddToCart";
         public const string IsAddToCartWithUserInfoKey = "IsAddToCartWithUserInfo";
+
+        public static async Task<string> GetMiniDescriptionAsync(this Product product)
+        {
+            var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
+            var plpDescription = await genericAttributeService.GetAttributeAsync<Product, string>(
+                product.Id, "PLPDescription"
+            );
+            if (!string.IsNullOrWhiteSpace(plpDescription)) { return plpDescription; }
+
+            var productAbcDescriptionService = EngineContext.Current.Resolve<IProductAbcDescriptionService>();
+            var pad = await productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(product.Id);
+            if (pad != null) { return pad.AbcDescription; }
+
+            return product.ShortDescription;
+        }
 
         public static async Task<bool> IsCallOnlyAsync(this Product product)
         {
