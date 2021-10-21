@@ -14,15 +14,16 @@ using System.Collections.Generic;
 using Nop.Plugin.Widgets.AbcPromos;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Web.Framework.UI.Paging;
 using Nop.Services.Localization;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Nop.Plugin.Misc.AbcPromos.Controllers
 {
     public class CustomCatalogController : BasePublicController
     {
         private readonly IAbcPromoService _abcPromoService;
+        private readonly ICategoryService _categoryService;
         private readonly ILocalizationService _localizationService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IUrlRecordService _urlRecordService;
@@ -37,6 +38,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
 
         public CustomCatalogController(
             IAbcPromoService abcPromoService,
+            ICategoryService categoryService,
             ILocalizationService localizationService,
             IManufacturerService manufacturerService,
             IUrlRecordService urlRecordService,
@@ -44,10 +46,12 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             ICatalogModelFactory categoryModelFactory,
             ILogger logger,
             AbcPromosSettings settings,
-            CatalogSettings catalogSettings
+            CatalogSettings catalogSettings,
+            IHttpContextAccessor httpContextAccessor
         )
         {
             _abcPromoService = abcPromoService;
+            _categoryService = categoryService;
             _localizationService = localizationService;
             _manufacturerService = manufacturerService;
             _urlRecordService = urlRecordService;
@@ -72,6 +76,24 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             if (!shouldDisplay) return InvokeHttp404();
 
             var promoProducts = await _abcPromoService.GetPublishedProductsByPromoIdAsync(promo.Id);
+
+            // if a category is provided, filter by it
+            var filterCategory = await GetFilterCategoryAsync();
+            if (filterCategory != null) {
+                var categoryFilteredProducts = new List<Product>();
+                foreach (var product in promoProducts)
+                {
+                    var pcs = await _categoryService.GetProductCategoriesByProductIdAsync(product.Id);
+                    var pcsCategoryIds = pcs.Select(pc => pc.CategoryId);
+                    if (pcsCategoryIds.Contains(filterCategory.Id))
+                    {
+                        categoryFilteredProducts.Add(product);
+                    }
+                }
+                
+                promoProducts = categoryFilteredProducts;
+            }
+
             promoProducts = SortPromoProducts(promoProducts, command);
 
             var filteredPromoProducts = promoProducts.Skip(command.PageIndex * 20).Take(20).ToList();
@@ -98,6 +120,17 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             await PrepareSortingOptionsAsync(model, command);
 
             return View("~/Plugins/Widgets.AbcPromos/Views/PromoListing.cshtml", model);
+        }
+
+        private async Task<Category> GetFilterCategoryAsync()
+        {
+            var categorySlug = Request.Query["category"].FirstOrDefault();
+            if (categorySlug == null) { return null; }
+
+            var urlRecord = await _urlRecordService.GetBySlugAsync(categorySlug);
+            if (urlRecord == null || urlRecord.EntityName != "Category") { return null; }
+
+            return await _categoryService.GetCategoryByIdAsync(urlRecord.EntityId);
         }
 
         private List<Product> SortPromoProducts(
