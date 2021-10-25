@@ -1,12 +1,9 @@
-﻿/* remove admin header */
+﻿/* adjust admin header */
 .admin-header-links {
-    display: none
+    position: relative;
 }
 .admin-header-links ~ .responsive-nav-wrapper-parent {
     top: 0;
-}
-.admin-header-links ~ .responsive-nav-wrapper-parent .header-links {
-    top: 53px;
 }
 
 /* sets up flex for centering */
