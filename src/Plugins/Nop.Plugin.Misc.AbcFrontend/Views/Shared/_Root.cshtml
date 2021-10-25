@@ -41,14 +41,6 @@
 @await Html.PartialAsync("_OldInternetExplorerWarning")
 
 <div class="master-wrapper-page @stickyLogoClass">
-    @await Html.PartialAsync("_Header")
-    <script asp-location="Footer">
-        var localized_data = {
-            AjaxCartFailure: "@T("AjaxCart.Failure")"
-        };
-        AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
-    </script>
-    <div class="overlayOffCanvas"></div>
     @* ABC: customizing mobile nav. *@
     <div class="responsive-nav-wrapper-parent">
         <div class="responsive-nav-wrapper">
@@ -93,6 +85,16 @@
             <input type="submit" class="mobile-search-button" value="Search">
         </form>
     </div>
+
+    @await Html.PartialAsync("_Header")
+    <script asp-location="Footer">
+        var localized_data = {
+            AjaxCartFailure: "@T("AjaxCart.Failure")"
+        };
+        AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
+    </script>
+    <div class="overlayOffCanvas"></div>
+    
     <div class="master-wrapper-content">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
 		@await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })
