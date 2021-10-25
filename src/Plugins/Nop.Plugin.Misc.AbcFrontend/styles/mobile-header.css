@@ -125,7 +125,7 @@ div.mobile-cart-qty {
 
 /* SLI search bar */
 div.search-box.store-search-box {
-    width: calc(100% - 245px);
+    width: calc(100% - 290px);
     margin-top: 1.5px;
 }
 div.search-box.store-search-box form#small-search-box-form {
