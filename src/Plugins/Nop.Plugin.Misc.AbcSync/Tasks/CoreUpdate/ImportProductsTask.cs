@@ -462,10 +462,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     product.Gtin = stagingProduct.Upc;
                     await _productService.UpdateProductAsync(product);
                 }
-
-                // get package product
-                var sku = _frontendService.GetProductIdInPackage(product.Sku)?.Sku ?? product.Sku;
-                await _genericAttributeService.SaveAttributeAsync(product, "PowerReviewsSku", sku);
             }
 
             await ImportProductStoreMappingsAsync();

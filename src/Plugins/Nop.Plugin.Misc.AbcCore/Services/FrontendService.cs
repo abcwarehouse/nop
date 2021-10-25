@@ -148,12 +148,6 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 () => { return ProductDocuments.GetByProductIdFunc(EngineContext.Current.Resolve<IRepository<ProductDocuments>>(), productId)() != null; });
         }
 
-        public ProductPackageUpc GetProductIdInPackage(string sku)
-        {
-            return _staticCacheManager.Get(new CacheKey(string.Format(PACKAGE_PRODUCT_KEY, sku), "Abc."),
-                ProductPackageUpc.GetByProductIdFunc(EngineContext.Current.Resolve<IRepository<ProductPackageUpc>>(), sku));
-        }
-
         public Task<string> GetProductSeNameById(int productId)
         {
             return _staticCacheManager.Get(new CacheKey(string.Format(PRODUCT_SE_NAME_KEY, productId), "Abc."), async () =>
