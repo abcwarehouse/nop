@@ -16,10 +16,6 @@ div.buttons-upper {
 
 /* fixes issues relating to space for logged in users */
 
-.admin-header-links {
-    position: relative;
-}
-
 .admin-header-links ~ .master-wrapper-content {
 	margin-top: 0;
 }

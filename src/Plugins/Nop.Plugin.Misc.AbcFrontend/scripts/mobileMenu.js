@@ -1,14 +1,14 @@
 var homePage = document.documentElement;
 var bodyPage = document.getElementsByTagName("body")[0];
 var sidePanel = $(".categories-in-side-panel");
-var sidebar = $(".mobile-sidebar-panel");
+var sidebar = $(".header-menu");
 var header;
 var content;
-var subContent = $(".mobile-sidebar-panel .sublist-wrap");
+var subContent = $(".header-menu .sublist-wrap");
 var selectCategory;
-var nextButton = $(".mobile-sidebar-panel .plus-button");
+var nextButton = $(".header-menu .plus-button");
 var backButton;
-var closeButton = $(".mobile-sidebar-panel .close-menu");
+var closeButton = $(".header-menu .close-menu");
 
 var index = 0;
 var heightArray = new Array();
@@ -25,9 +25,9 @@ $(document).ready(function () {
     var str = '<div class="mobile-sidebar-title"><div class="back-button"> < Back </div><div id="select_category_item">' + categoryArray[0] + '</div></div>';
     sidebar.append(str);
 
-    header = $(".mobile-sidebar-panel .mobile-sidebar-category.first");
-    content = $(".mobile-sidebar-panel .mobile-sidebar-category.second");
-    selectCategory = $(".mobile-sidebar-panel #select_category_item");
+    header = $(".header-menu .mobile-sidebar-category.first");
+    content = $(".header-menu .mobile-sidebar-category.second");
+    selectCategory = $(".header-menu #select_category_item");
     backButton = $(".mobile-sidebar-title .back-button");
 
     effectBack();
