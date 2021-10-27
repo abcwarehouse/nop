@@ -143,6 +143,9 @@ div.search-box.store-search-box form#small-search-box-form input.button-1.search
     background: url(/Plugins/Misc.AbcFrontend/Images/search-button.png) center no-repeat;
     outline: 0;
 }
+input#sli_search_1::-webkit-input-placeholder {
+    color: gray;
+}
 
 @media (min-width: 769px) {
     .responsive-nav-wrapper > div > a.logo img {
