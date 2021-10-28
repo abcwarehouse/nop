@@ -432,12 +432,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 // After collecting all the store IDs to which this product relates,
                 // distinct it and run over each of them to set the store mappings.
                 storeIds = storeIds.Distinct().ToList();
-                foreach (var store in storeIds)
+                foreach (var storeId in storeIds)
                 {
                     // For any manufacturer for the product, set it's mapping.
                     // Should put this into a service (override the capability that pulls by store)
                     var productManufacturers = _productManufacturerRepository.Table.Where(pm => pm.ProductId == product.Id);
-
                     foreach (var prodManMappings in productManufacturers)
                     {
                         var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(prodManMappings.ManufacturerId);
@@ -445,12 +444,12 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                         // If the manufacturer is already mapped to this store, skip it.
                         if ((await _storeMappingService
                             .GetStoresIdsWithAccessAsync(manufacturer))
-                            .Contains(store))
+                            .Contains(storeId))
                         {
                             continue;
                         }
                         await _storeMappingService.InsertStoreMappingAsync(
-                            manufacturer, store);
+                            manufacturer, storeId);
                     }
                 }
 
