@@ -242,6 +242,7 @@ src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
 !src/Presentation/Nop.Web/Plugins/Widgets.Bronto/
 !src/Presentation/Nop.Web/Plugins/Widgets.GoogleAnalytics/
 !src/Presentation/Nop.Web/Plugins/Widgets.PowerReviews/
+!src/Presentation/Nop.Web/Plugins/Widgets.AccessiBe/
 
 ## Playwright testing
 tests/node_modules
