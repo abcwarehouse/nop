@@ -12,27 +12,66 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nop.Services.Cms;
 using Nop.Web.Framework.Infrastructure;
+using Nop.Services.Events;
+using Nop.Core.Events;
+using Nop.Core.Domain.Catalog;
+using Nop.Services.Media;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Core.Infrastructure;
+using Nop.Services.Logging;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
-    public class CorePlugin : BasePlugin, IMiscPlugin, IAdminMenuPlugin, IWidgetPlugin
+    public class CorePlugin : BasePlugin, IMiscPlugin, IAdminMenuPlugin, IWidgetPlugin, IConsumer<EntityDeletedEvent<ProductPicture>>
     {
         private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
+        private readonly ILogger _logger;
         private readonly INopDataProvider _nopDataProvider;
+        private readonly INopFileProvider _nopFileProvider;
+        private readonly IPictureService _pictureService;
+        private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public CorePlugin(
             IWebHelper webHelper,
             ILocalizationService localizationService,
+            ILogger logger,
             INopDataProvider nopDataProvider,
+            INopFileProvider nopFileProvider,
+            IPictureService pictureService,
+            IProductAbcDescriptionService productAbcDescriptionService,
             IWebHostEnvironment webHostEnvironment
         )
         {
             _webHelper = webHelper;
             _localizationService = localizationService;
+            _logger = logger;
             _nopDataProvider = nopDataProvider;
+            _nopFileProvider = nopFileProvider;
+            _pictureService = pictureService;
+            _productAbcDescriptionService = productAbcDescriptionService;
             _webHostEnvironment = webHostEnvironment;
+        }
+
+        public async System.Threading.Tasks.Task HandleEventAsync(EntityDeletedEvent<ProductPicture> eventMessage)
+        {
+            // Is this an ABC product with an ABC Item Number?
+            var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(eventMessage.Entity.ProductId);
+            if (pad == null) { return; }
+
+            // Is there a picture in product_images?
+            var abcProductImagePath = _nopFileProvider.GetFiles("wwwroot/product_images", $"{pad.AbcItemNumber}_large.*").FirstOrDefault();
+            if (abcProductImagePath == null) { return; }
+
+            // Are they the same picture? If so delete.
+            var nopPictureBinary = await _pictureService.GetPictureBinaryByPictureIdAsync(eventMessage.Entity.PictureId);
+            var fileSystemBinary = await _nopFileProvider.ReadAllBytesAsync(abcProductImagePath);
+            if (nopPictureBinary.BinaryData.SequenceEqual(fileSystemBinary))
+            {
+                _nopFileProvider.DeleteFile(abcProductImagePath);
+                await _logger.InformationAsync($"Deleted image `{abcProductImagePath}` (image deleted in NOP)");
+            }
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
