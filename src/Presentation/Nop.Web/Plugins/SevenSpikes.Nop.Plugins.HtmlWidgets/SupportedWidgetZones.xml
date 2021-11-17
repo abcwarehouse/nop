@@ -141,4 +141,42 @@
   <WidgetZone>vendordetails_top</WidgetZone>
   <WidgetZone>right_side_column_after</WidgetZone>
   <WidgetZone>right_side_column_before</WidgetZone>
+  <!-- ABC: custom -->
+  <WidgetZone>categorydetails_before_subcategories_below_480px</WidgetZone>	
+	<WidgetZone>categorydetails_before_subcategories_min_480px</WidgetZone>	
+	<WidgetZone>categorydetails_before_subcategories_min_768px</WidgetZone>	
+	<WidgetZone>categorydetails_before_subcategories_above_1000px</WidgetZone>
+  <WidgetZone>categorydetails_bottom_below_480px</WidgetZone>	
+	<WidgetZone>categorydetails_bottom_min_480px</WidgetZone>	
+	<WidgetZone>categorydetails_bottom_min_768px</WidgetZone>	
+	<WidgetZone>categorydetails_bottom_above_1000px</WidgetZone>	
+  <WidgetZone>categorydetails_top_below_480px</WidgetZone>	
+	<WidgetZone>categorydetails_top_min_480px</WidgetZone>	
+	<WidgetZone>categorydetails_top_min_768px</WidgetZone>	
+	<WidgetZone>categorydetails_top_above_1000px</WidgetZone>
+  <WidgetZone>footer_below_480px</WidgetZone>	
+	<WidgetZone>footer_min_480px</WidgetZone>	
+	<WidgetZone>footer_min_768px</WidgetZone>	
+	<WidgetZone>footer_above_1000px</WidgetZone>
+  <WidgetZone>home_page_before_categories_below_480px</WidgetZone>	
+	<WidgetZone>home_page_before_categories_min_480px</WidgetZone>	
+	<WidgetZone>home_page_before_categories_min_768px</WidgetZone>	
+	<WidgetZone>home_page_before_categories_above_1000px</WidgetZone>
+  <WidgetZone>home_page_bottom_below_480px</WidgetZone>	
+	  <WidgetZone>home_page_bottom_min_480px</WidgetZone>	
+	  <WidgetZone>home_page_bottom_min_768px</WidgetZone>	
+	  <WidgetZone>home_page_bottom_above_1000px</WidgetZone>
+  <WidgetZone>manufacturerdetails_bottom_below_480px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_bottom_min_480px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_bottom_min_768px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_bottom_above_1000px</WidgetZone>
+  <WidgetZone>manufacturerdetails_top_below_480px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_min_480px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_min_768px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_above_1000px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_filtered_below_480px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_filtered_min_480px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_filtered_min_768px</WidgetZone>	
+	  <WidgetZone>manufacturerdetails_top_filtered_above_1000px</WidgetZone>
+  <WidgetZone>promo_products_below_banner</WidgetZone>	
 </SupportedWidgetZones>

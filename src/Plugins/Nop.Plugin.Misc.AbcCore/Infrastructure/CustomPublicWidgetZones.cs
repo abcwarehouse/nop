@@ -89,5 +89,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string OrderSummaryAfterProductMiniDescription => "order_summary_after_product_mini_description";
 
         public static string ProductDetailsDescriptionTabTop => "productdetails_description_tab_top";
+
+        public static string PromoProductsBelowBanner => "promo_products_below_banner";
     }
 }
