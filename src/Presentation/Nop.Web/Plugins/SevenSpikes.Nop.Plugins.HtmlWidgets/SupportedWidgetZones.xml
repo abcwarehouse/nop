@@ -178,5 +178,7 @@
 	  <WidgetZone>manufacturerdetails_top_filtered_min_480px</WidgetZone>	
 	  <WidgetZone>manufacturerdetails_top_filtered_min_768px</WidgetZone>	
 	  <WidgetZone>manufacturerdetails_top_filtered_above_1000px</WidgetZone>
-  <WidgetZone>promo_products_below_banner</WidgetZone>	
+  <WidgetZone>mega_menu_categories_before_dropdown_end_furniture</WidgetZone>
+  <WidgetZone>mega_menu_categories_before_dropdown_end_mattresses</WidgetZone>
+  <WidgetZone>promo_products_below_banner</WidgetZone>
 </SupportedWidgetZones>
