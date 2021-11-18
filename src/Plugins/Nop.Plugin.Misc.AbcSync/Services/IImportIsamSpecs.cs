@@ -8,5 +8,6 @@ namespace Nop.Plugin.Misc.AbcSync
         ///		Begin the import process for product's specifications.
         /// </summary>
         Task ImportSiteOnTimeSpecsAsync();
+        Task ImportColorAsync();
     }
 }

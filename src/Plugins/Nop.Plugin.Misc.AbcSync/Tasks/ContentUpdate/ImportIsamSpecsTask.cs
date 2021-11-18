@@ -29,6 +29,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
+            await _import.ImportColorAsync();
             await _import.ImportSiteOnTimeSpecsAsync();
         }
     }
