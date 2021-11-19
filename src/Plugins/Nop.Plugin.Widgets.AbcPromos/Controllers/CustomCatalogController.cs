@@ -80,12 +80,16 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             // if a category is provided, filter by it
             var filterCategory = await GetFilterCategoryAsync();
             if (filterCategory != null) {
+                var filterCategoryIds = (await _categoryService.GetChildCategoryIdsAsync(filterCategory.Id)).ToList();
+                filterCategoryIds.Add(filterCategory.Id);
                 var categoryFilteredProducts = new List<Product>();
                 foreach (var product in promoProducts)
                 {
                     var pcs = await _categoryService.GetProductCategoriesByProductIdAsync(product.Id);
                     var pcsCategoryIds = pcs.Select(pc => pc.CategoryId);
-                    if (pcsCategoryIds.Contains(filterCategory.Id))
+                    var pcCategoryIdsWithParents = new List<int>();
+
+                    if (pcsCategoryIds.Intersect(filterCategoryIds).Any())
                     {
                         categoryFilteredProducts.Add(product);
                     }
