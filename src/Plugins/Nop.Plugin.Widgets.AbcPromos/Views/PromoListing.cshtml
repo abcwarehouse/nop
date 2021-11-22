@@ -8,6 +8,9 @@
 @using Nop.Web.Extensions
 @using Nop.Plugin.Misc.AbcPromos.Models
 @using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Core.Infrastructure;
+@using Nop.Web.Models.Catalog;
+@using Nop.Services.Catalog;
 
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
@@ -28,16 +31,13 @@
     Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-listings.css");
 
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/mobileFilters.js");
+
+	// ABC: get the URL for widget
+	var path = @Context.Request.Path.Value;
 }
 
-@using Nop.Core.Domain.Common;
-@using Nop.Core.Domain.Seo;
-@using Nop.Core.Infrastructure;
-@using Nop.Web.Models.Catalog;
-@using Nop.Services.Catalog;
-
 <div class="page promo-page">
-	@if (Model.BannerImageUrl != null)
+	@if (path.Contains("cyber-monday"))
 	{
 		<p style="text-align: center">
 			<a href="@Model.PromoFormPopup">
@@ -45,7 +45,10 @@
 			</a>
 		</p>
 	}
-	@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.PromoProductsBelowBanner, additionalData = Model })
+	@if (Model.BannerImageUrl != null)
+	{
+		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.PromoProductsBelowBanner, additionalData = Model })
+	}
 	<div class="page-body">
 		@if (Model.Products.Count > 0)
 		{
