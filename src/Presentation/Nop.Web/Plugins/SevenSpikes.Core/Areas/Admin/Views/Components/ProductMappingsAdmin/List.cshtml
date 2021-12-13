@@ -1,9 +1,16 @@
-﻿@model ProductMappingListModel
+﻿@using Nop.Core
+ 
+@model ProductMappingListModel
+
 @inject AdminAreaSettings adminAreaSettings
+@inject IStoreContext storeContext 
 
 @{
     var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
     var gridPageSizes = adminAreaSettings.GridPageSizes;
+
+	var storeUrl = (await storeContext.GetCurrentStoreAsync()).Url;
+	var productEditUrl = string.Format("{0}Admin/Product/Edit/", storeUrl);
 }
 
 <div class="card-body">
@@ -51,9 +58,7 @@
 
         function renderProductViewLink(data, type, row, meta) {
 
-            console.log(data);
-
-            return '<a class="btn btn-default" href="/Admin/Product/Edit/' + row.ProductId + '" >' + '@T("Admin.Common.View")' + '</a>';
+            return '<a class="btn btn-default" href="@productEditUrl' + row.ProductId + '" >' + '@T("Admin.Common.View")' + '</a>';
         }
 
     </script>

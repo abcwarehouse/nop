@@ -12,7 +12,6 @@ namespace Nop.Plugin.Misc.AbcCore.Mapping
     {
         public Dictionary<Type, string> TableNames => new Dictionary<Type, string>
         {
-            { typeof(ProductPackageUpc), "Product_Package_Upc" },
             { typeof(ProductAbcDescription), "ProductAbcDescriptions" },
             { typeof(AbcPromoProductMapping), "ProductAbcPromo" }
         };
