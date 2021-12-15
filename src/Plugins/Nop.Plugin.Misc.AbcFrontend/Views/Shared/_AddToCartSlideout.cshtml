@@ -1,0 +1,50 @@
+<!--
+    Starting point comes from https://www.w3schools.com/howto/howto_js_sidenav.asp
+-->
+
+@{
+    Html.AddCssFileParts("https://use.fontawesome.com/releases/v5.3.1/css/all.css", "", true);
+}
+
+<div id="addToCartSlideout">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <!-- why are the icons not working? do I need to include fontawesome? -->
+  <i class="fas fa-check-circle"></i> Item Added to Cart
+</div>
+
+<span onclick="openNav()">open</span>
+
+<!-- move this into it's own CSS file -->
+<style>
+    #addToCartSlideout {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 100000;
+        top: 0;
+        right: 0;
+        background-color: #fff;
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 60px;
+        transition: 0.5s;
+    }
+
+    /* Position and style the close button (top right corner) */
+    #addToCartSlideout .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+</style>
+
+<script>
+    function openNav() {
+        document.getElementById("addToCartSlideout").style.width = "320px";
+    }
+
+    function closeNav() {
+        document.getElementById("addToCartSlideout").style.width = "0";
+    } 
+</script>
