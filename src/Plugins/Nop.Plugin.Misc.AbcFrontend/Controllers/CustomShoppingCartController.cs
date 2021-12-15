@@ -86,6 +86,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly IRepository<CustomerShopMapping> _customerShopMappingRepository;
         private readonly IBackendStockService _backendStockService;
+        private readonly IProductAbcDescriptionService _productAbcDescriptionService;
 
         public CustomShoppingCartController(
             CaptchaSettings captchaSettings,
@@ -125,7 +126,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             // custom
             IAttributeUtilities attributeUtilities,
             IRepository<CustomerShopMapping> customerShopMappingRepository,
-            IBackendStockService backendStockService
+            IBackendStockService backendStockService,
+            IProductAbcDescriptionService productAbcDescriptionService
         )
         {
             _captchaSettings = captchaSettings;
@@ -165,6 +167,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _attributeUtilities = attributeUtilities;
             _customerShopMappingRepository = customerShopMappingRepository;
             _backendStockService = backendStockService;
+            _productAbcDescriptionService = productAbcDescriptionService;
         }
 
         #region Shopping cart
@@ -414,6 +417,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                         // Custom code for add to cart slideout
                         var productName = product.Name;
+                        var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(productId);
+                        var productDescription = pad != null ? pad.AbcDescription : product.ShortDescription;
 
                         return Json(new
                         {
@@ -421,7 +426,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             message = string.Format(await _localizationService.GetResourceAsync( "Products.ProductHasBeenAddedToTheCart.Link"), Url.RouteUrl("ShoppingCart")),
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
-                            productName
+                            productName,
+                            productDescription
                         });
                     }
             }

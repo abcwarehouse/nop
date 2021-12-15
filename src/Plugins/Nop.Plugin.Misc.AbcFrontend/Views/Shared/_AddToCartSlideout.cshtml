@@ -7,16 +7,23 @@
 }
 
 <div id="addToCartSlideout">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeSlideout()">&times;</a>
   <div class="wrapper">
     <div class="title">
         <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
     </div>
+    <div id="addToCartSlideout-productInfo">
+        <img style="float: left; padding-right: 0.25rem" src="https://placedog.net/70/70" />
+        <div id="addToCartSlideout-product-name"></div>
+        <div id="addToCartSlideout-product-description"></div>
+    </div>
     <hr />
+    <div id="addToCartSlideout-buttons">
+        <a href="/cart">Go To Cart</button>
+        <a onclick="closeSlideout()">Continue Shopping</button>
+    </div>
   </div>
 </div>
-
-<span onclick="openNav()">open</span>
 
 <!-- move this into it's own CSS file -->
 <style>
@@ -55,14 +62,34 @@
     #addToCartSlideout .title i {
         color: #4bd37b;
     }
+
+    #addToCartSlideout-productInfo {
+        padding: 1rem 0;
+    }
+
+    #addToCartSlideout-product-name {
+        font-size: 0.75rem;
+    }
+
+    #addToCartSlideout-buttons {
+        position: absolute;
+        bottom: 1rem;
+    }
+
+    #addToCartSlideout-buttons a {
+        width: 100%;
+        background-color: white;
+        border: 2px solid #e1e1e1;
+        font-weight: bold;
+        padding: 1rem;
+        margin-top: 0.25rem;
+        display: inline-block;
+        text-align: center;
+    }
 </style>
 
 <script>
-    function openNav() {
-        document.getElementById("addToCartSlideout").style.width = "320px";
-    }
-
-    function closeNav() {
+    function closeSlideout() {
         document.getElementById("addToCartSlideout").style.width = "0";
     } 
 </script>

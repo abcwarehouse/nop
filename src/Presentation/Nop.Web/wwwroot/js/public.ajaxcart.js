@@ -90,14 +90,10 @@ var AjaxCart = {
         if (response.message) {
             //display notification
             if (response.success === true) {
-                //success
-                if (AjaxCart.usepopupnotifications === true) {
-                    displayPopupNotification(response.message, 'success', true);
-                }
-                else {
-                    //specify timeout for success messages
-                    displayBarNotification(response.message, 'success', 3500);
-                }
+                // ABC: customized to use added to cart slideout
+                document.getElementById("addToCartSlideout-product-name").innerText = response.productName;
+                document.getElementById("addToCartSlideout-product-description").innerText = response.productDescription;
+                document.getElementById("addToCartSlideout").style.width = "320px";
             }
             else {
                 //error
