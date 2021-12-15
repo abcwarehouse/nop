@@ -8,8 +8,12 @@
 
 <div id="addToCartSlideout">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <!-- why are the icons not working? do I need to include fontawesome? -->
-  <i class="fas fa-check-circle"></i> Item Added to Cart
+  <div class="wrapper">
+    <div class="title">
+        <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
+    </div>
+    <hr />
+  </div>
 </div>
 
 <span onclick="openNav()">open</span>
@@ -25,7 +29,7 @@
         right: 0;
         background-color: #fff;
         overflow-x: hidden; /* Disable horizontal scroll */
-        padding-top: 60px;
+        padding-top: 1rem;
         transition: 0.5s;
     }
 
@@ -36,6 +40,20 @@
         right: 25px;
         font-size: 36px;
         margin-left: 50px;
+    }
+
+    /* need this to allow for hiding the full slideout and providing spacing */
+    #addToCartSlideout .wrapper {
+        margin: 0 1rem;
+    }
+
+    #addToCartSlideout .title {
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+    #addToCartSlideout .title i {
+        color: #4bd37b;
     }
 </style>
 

@@ -412,12 +412,16 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             ? await RenderViewComponentToStringAsync("FlyoutShoppingCart")
                             : string.Empty;
 
+                        // Custom code for add to cart slideout
+                        var productName = product.Name;
+
                         return Json(new
                         {
                             success = true,
                             message = string.Format(await _localizationService.GetResourceAsync( "Products.ProductHasBeenAddedToTheCart.Link"), Url.RouteUrl("ShoppingCart")),
                             updatetopcartsectionhtml,
-                            updateflyoutcartsectionhtml
+                            updateflyoutcartsectionhtml,
+                            productName
                         });
                     }
             }
