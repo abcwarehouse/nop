@@ -19,6 +19,7 @@ using SevenSpikes.Nop.Plugins.StoreLocator.Domain;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using System.Threading.Tasks;
 using Nop.Plugin.Widgets.AbcPickupInStore.Factories;
+using Nop.Plugin.Misc.AbcCore.Infrastructure;
 
 namespace Nop.Plugin.Widgets.AbcPickupInStore.Components
 {
@@ -26,7 +27,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Components
     public class AbcPickupInStoreViewComponent : NopViewComponent
     {
         private readonly string DELIVERY_SELECTION_WIDGET_ZONE =
-            "productdetails_overview_bottom";
+            CustomPublicWidgetZones.ProductDetailsBeforeAddToCart;
         private readonly string PICKUP_INFO_WIDGET_ZONE =
             "productdetails_before_tabs";
 
@@ -71,13 +72,17 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Components
         }
         public async Task<IViewComponentResult> InvokeAsync(
             string widgetZone,
-            ProductDetailsModel additionalData = null
+            object additionalData = null
         )
         {
             int productId = -1;
-            if (additionalData != null)
+            if (additionalData != null && additionalData is ProductDetailsModel)
             {
-                productId = additionalData.Id;
+                productId = (additionalData as ProductDetailsModel).Id;
+            }
+            else if (additionalData != null && additionalData is int)
+            {
+                productId = (int)additionalData;
             }
 
             // clearance store specific

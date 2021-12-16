@@ -1,4 +1,5 @@
 ﻿using Nop.Core;
+using Nop.Plugin.Misc.AbcCore.Infrastructure;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using System.Collections.Generic;
@@ -28,9 +29,11 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore
         public Task<IList<string>> GetWidgetZonesAsync()
         {
             // productdetails_before_collateral = bottom of page
-            // productdetails_before_tabs is a custom widget spot
 
-            return Task.FromResult<IList<string>>(new List<string> { "productdetails_before_tabs", "productdetails_overview_bottom" });
+            return Task.FromResult<IList<string>>(new List<string> {
+                CustomPublicWidgetZones.ProductDetailsBeforeAddToCart,
+                "productdetails_before_tabs"
+            });
         }
 
         public string GetWidgetViewComponentName(string widgetZone)

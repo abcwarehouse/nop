@@ -33,7 +33,7 @@
 <style>
 		/*general styles*/
 		.delivery-method-selection {
-			margin-top: 5px;
+			margin: 1rem 0;
 		}
 
 		#store_selector_widget {
@@ -164,17 +164,12 @@
             <label class="radio-label" for="pickup-radio">
                 <span id="display_store_pretext">@Model.PickupInStoreText</span><span id="display_store_text">@storeText</span>
             </label>
+			<div id="zipcode-input-container">
+				<span class="title-subtext">Zipcode:&nbsp; </span>
+				<input id="zipcode_input" type="text">
+				<button id="zipcode_submit_btn" class="">Go</button>
+			</div>
         </div>
     }
 
 </div>
-
-@if (!isOnlineOnly)
-{
-    <div id="zipcode-input-container">
-        <span class="title-subtext">Zipcode:&nbsp; </span>
-        <input id="zipcode_input" type="text">
-        <button id="zipcode_submit_btn" class="">Go</button>
-    </div>
-}
-
