@@ -84,11 +84,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
                     }
                 }
 
-                if (manufacturerIds.Count == 1)
-                {
-                    promo.ManufacturerId = manufacturerIds.FirstOrDefault();
-                    _abcPromoService.UpdatePromo(promo);
-                }
+                promo.ManufacturerId = manufacturerIds.Count == 1 ? manufacturerIds.FirstOrDefault() : null;
+                _abcPromoService.UpdatePromo(promo);
             }
         }
 
