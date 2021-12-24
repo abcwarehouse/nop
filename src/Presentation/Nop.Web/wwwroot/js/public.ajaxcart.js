@@ -91,9 +91,7 @@ var AjaxCart = {
             //display notification
             if (response.success === true) {
                 // ABC: customized to use added to cart slideout
-                document.getElementById("addToCartSlideout-product-name").innerText = response.productName;
-                document.getElementById("addToCartSlideout-product-description").innerText = response.productDescription;
-                document.getElementById("addToCartSlideout").style.width = "320px";
+                displayAddToCartSlideout(response);
             }
             else {
                 //error
@@ -122,3 +120,11 @@ var AjaxCart = {
         alert(this.localized_data.AjaxCartFailure);
     }
 };
+
+function displayAddToCartSlideout(response) {
+    document.body.classList.add("scrollYRemove");
+    document.getElementById("add-to-cart-slideout__product-name").innerText = response.productName;
+    document.getElementById("add-to-cart-slideout__product-description").innerText = response.productDescription;
+    document.getElementById("add-to-cart-slideout__overlay").style.display = "block";
+    document.getElementById("add-to-cart-slideout").style.width = "320px";
+}

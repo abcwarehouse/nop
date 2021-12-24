@@ -1,0 +1,77 @@
+#add-to-cart-slideout__overlay {
+    height: 100%;
+    width: 100%;
+    z-index: 100000;
+    position: fixed;
+    background-color: black;
+    opacity: 0.9;
+    display: none;
+}
+
+#add-to-cart-slideout {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 100000;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 1rem;
+    transition: 0.5s;
+}
+
+/* Position and style the close button (top right corner) */
+#add-to-cart-slideout .add-to-cart-slideout__closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* need this to allow for hiding the full slideout and providing spacing */
+#add-to-cart-slideout .add-to-cart-slideout__wrapper {
+    margin: 0 1rem;
+}
+
+#add-to-cart-slideout .add-to-cart-slideout__title {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+#add-to-cart-slideout .add-to-cart-slideout__title i {
+    color: #4bd37b;
+}
+
+#add-to-cart-slideout__product-info {
+    padding: 1rem 0;
+}
+
+#add-to-cart-slideout__product-name {
+    font-size: 0.75rem;
+}
+
+#add-to-cart-slideout__buttons {
+    position: absolute;
+    bottom: 1rem;
+}
+
+#add-to-cart-slideout__buttons a {
+    width: 100%;
+    background-color: white;
+    border: 2px solid #e1e1e1;
+    font-weight: bold;
+    padding: 1rem;
+    margin-top: 0.25rem;
+    display: inline-block;
+    text-align: center;
+}
+
+/* copied over from Pavilion theme to allow consistency */
+.scrollYRemove {
+    overflow: hidden !important;
+    -ms-touch-action: none !important;
+    touch-action: none !important;
+    -webkit-overflow-scrolling: touch !important;
+}

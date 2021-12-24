@@ -46,6 +46,7 @@
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />
     <None Remove="Views\Order\Details.cshtml" />
+    <None Remove="styles\add-to-cart-slideout.css" />
     <None Remove="styles\checkout-warranty-selection.css" />
     <None Remove="styles\custom_front_product.css" />
     <None Remove="styles\mobile-header.css" />
@@ -89,6 +90,7 @@
     <None Remove="Images\mobile-sprite.png" />
     <None Remove="Images\SaleAdButton.png" />
     <None Remove="Images\search-button.png" />
+    <None Remove="scripts\add-to-cart-slideout.js" />
     <None Remove="scripts\mobileMenu.js" />
     <None Remove="scripts\mobileFilters.js" />
     <None Remove="scripts\mattress.js" />
@@ -187,6 +189,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Topic\TopicDetails.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="styles\add-to-cart-slideout.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="styles\checkout-warranty-selection.css">
@@ -319,6 +324,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\search-button.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scripts\add-to-cart-slideout.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="scripts\mobileMenu.js">
