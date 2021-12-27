@@ -239,10 +239,11 @@ src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Theme.Pavilion/
 !src/Presentation/Nop.Web/Plugins/Shipping.Fedex/
+!src/Presentation/Nop.Web/Plugins/Widgets.AccessiBe/
 !src/Presentation/Nop.Web/Plugins/Widgets.Bronto/
+!src/Presentation/Nop.Web/Plugins/Widgets.Flixmedia/
 !src/Presentation/Nop.Web/Plugins/Widgets.GoogleAnalytics/
 !src/Presentation/Nop.Web/Plugins/Widgets.PowerReviews/
-!src/Presentation/Nop.Web/Plugins/Widgets.AccessiBe/
 
 ## Playwright testing
 tests/node_modules

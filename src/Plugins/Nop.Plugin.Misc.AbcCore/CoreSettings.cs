@@ -10,7 +10,6 @@ namespace Nop.Plugin.Misc.AbcCore
         public string BackendDbConnectionString { get; private set; }
         public bool AreExternalCallsSkipped { get; private set; }
         public bool IsDebugMode { get; private set; }
-        public string FlixId { get; private set; }
 
         public static CoreSettings FromModel(ConfigurationModel model)
         {
@@ -18,8 +17,7 @@ namespace Nop.Plugin.Misc.AbcCore
             {
                 BackendDbConnectionString = model.BackendDbConnectionString,
                 AreExternalCallsSkipped = model.AreExternalCallsSkipped,
-                IsDebugMode = model.IsDebugMode,
-                FlixId = model.FlixId
+                IsDebugMode = model.IsDebugMode
             };
         }
 
@@ -29,8 +27,7 @@ namespace Nop.Plugin.Misc.AbcCore
             {
                 BackendDbConnectionString = BackendDbConnectionString,
                 AreExternalCallsSkipped = AreExternalCallsSkipped,
-                IsDebugMode = IsDebugMode,
-                FlixId = FlixId
+                IsDebugMode = IsDebugMode
             };
         }
         public OdbcConnection GetBackendDbConnection()

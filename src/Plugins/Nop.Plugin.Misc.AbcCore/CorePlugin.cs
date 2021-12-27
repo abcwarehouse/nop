@@ -140,8 +140,6 @@ namespace Nop.Plugin.Misc.AbcCore
                     [CoreLocales.IsDebugModeHint] = "Logs detailed information, useful for debugging issues.",
                     [CoreLocales.AreExternalCallsSkipped] = "Skip External Calls",
                     [CoreLocales.AreExternalCallsSkippedHint] = "Skips calls to ISAM API, useful for local development.",
-                    [CoreLocales.FlixId] = "FLIX ID",
-                    [CoreLocales.FlixIdHint] = "The ID to use for Flix calls.",
                     [CoreLocales.PLPDescription] = "PLP Description",
                     [CoreLocales.PLPDescriptionHint] = "Description displayed for PLP (Product Box)."
                 }

@@ -19,11 +19,6 @@ namespace Nop.Plugin.Misc.AbcCore
         public const string IsDebugModeHint =
             IsDebugMode + ".Hint";
 
-        public const string FlixId =
-            Base + "FlixId";
-        public const string FlixIdHint =
-            FlixId + ".Hint";
-
         public const string PLPDescription =
             Base + "PLPDescription";
         public const string PLPDescriptionHint =

@@ -33,15 +33,6 @@
     {
         itemNumber = frontEndService.GetProductAbcDescriptionByProductId(productId).AbcItemNumber;
     }
-
-    var manufacturer = Model.ProductModel.ProductManufacturers.FirstOrDefault();
-    var flixBrand = "";
-    if (manufacturer != null)
-    {
-        flixBrand = manufacturer.Name;
-    }
-
-    var flixId = coreSettings.FlixId;
 }
 
 <div class="productTabs-header">
@@ -96,7 +87,6 @@
                             additionalData = Model
                         }
                     )
-                    <div id="flix-inpage"></div>
                     <div id="wc-power-page"></div>
                     <div id="ccs-inline-content" style="position: relative; top: 69px;"></div>
                     <div id="sp_inline"></div>
@@ -126,7 +116,6 @@
 
 <script src="//scontent.webcollage.net/api/v2/product-content"></script>
 <script>Webcollage.loadContent('abcw', '@Model.ProductModel.Sku', { autoPlayAndStop: true });</script>
-<script type="text/javascript" src="//media.flixfacts.com/js/loader.js" data-flix-distributor="@flixId" data-flix-language="us" data-flix-brand="@flixBrand" data-flix-mpn="@Model.ProductModel.Sku" data-flix-inpage="flix-inpage" async></script>
 
 <!-- OmniTag -->
 <script type="text/javascript">
