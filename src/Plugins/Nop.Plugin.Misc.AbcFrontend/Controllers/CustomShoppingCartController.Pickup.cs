@@ -260,10 +260,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             ? await RenderViewComponentToStringAsync("FlyoutShoppingCart")
                             : string.Empty;
 
-                        // Custom code for add to cart slideout
-                        var productName = product.Name;
-                        var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(product.Id);
-                        var productDescription = pad != null ? pad.AbcDescription : product.ShortDescription;
+                        // ABC: Custom code for add to cart slideout
+                        var addToCartSlideoutInfo = await _addToCartSlideoutService.GetAddToCartSlideoutInfoAsync(product);
 
                         return Json(new
                         {
@@ -272,8 +270,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                                 Url.RouteUrl("ShoppingCart")),
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
-                            productName,
-                            productDescription
+                            // ABC: custom response values
+                            addToCartSlideoutInfo.ProductName,
+                            addToCartSlideoutInfo.ProductDescription,
+                            addToCartSlideoutInfo.ProductPictureUrl
                         });
                     }
             }

@@ -43,6 +43,7 @@ using Microsoft.Extensions.Primitives;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Events;
 using System.Threading.Tasks;
+using Nop.Plugin.Misc.AbcFrontend.Services;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -83,6 +84,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
         // custom
+        private readonly IAddToCartSlideoutService _addToCartSlideoutService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly IRepository<CustomerShopMapping> _customerShopMappingRepository;
         private readonly IBackendStockService _backendStockService;
@@ -124,6 +126,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             ShoppingCartSettings shoppingCartSettings,
             ShippingSettings shippingSettings,
             // custom
+            IAddToCartSlideoutService addToCartSlideoutService,
             IAttributeUtilities attributeUtilities,
             IRepository<CustomerShopMapping> customerShopMappingRepository,
             IBackendStockService backendStockService,
@@ -164,6 +167,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _orderSettings = orderSettings;
             _shoppingCartSettings = shoppingCartSettings;
 
+            _addToCartSlideoutService = addToCartSlideoutService;
             _attributeUtilities = attributeUtilities;
             _customerShopMappingRepository = customerShopMappingRepository;
             _backendStockService = backendStockService;
@@ -415,10 +419,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             ? await RenderViewComponentToStringAsync("FlyoutShoppingCart")
                             : string.Empty;
 
-                        // Custom code for add to cart slideout
-                        var productName = product.Name;
-                        var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(productId);
-                        var productDescription = pad != null ? pad.AbcDescription : product.ShortDescription;
+                        // ABC: Custom code for add to cart slideout
+                        var addToCartSlideoutInfo = await _addToCartSlideoutService.GetAddToCartSlideoutInfoAsync(product);
 
                         return Json(new
                         {
@@ -426,8 +428,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             message = string.Format(await _localizationService.GetResourceAsync( "Products.ProductHasBeenAddedToTheCart.Link"), Url.RouteUrl("ShoppingCart")),
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
-                            productName,
-                            productDescription
+                            // ABC: custom response values
+                            addToCartSlideoutInfo.ProductName,
+                            addToCartSlideoutInfo.ProductDescription,
+                            addToCartSlideoutInfo.ProductPictureUrl
                         });
                     }
             }
