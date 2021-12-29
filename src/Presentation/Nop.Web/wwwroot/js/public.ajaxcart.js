@@ -127,5 +127,6 @@ function displayAddToCartSlideout(response) {
     document.getElementById("add-to-cart-slideout__product-description").innerText = response.ProductDescription;
     document.getElementById("add-to-cart-slideout__product-image").src = response.ProductPictureUrl;
     document.getElementById("add-to-cart-slideout__overlay").style.display = "block";
+    document.getElementById("add-to-cart-slideout__delivery-input").style.display = response.IsAbcDeliveryItem ? "block" : "none";
     document.getElementById("add-to-cart-slideout").style.width = "320px";
 }

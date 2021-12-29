@@ -273,7 +273,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             // ABC: custom response values
                             addToCartSlideoutInfo.ProductName,
                             addToCartSlideoutInfo.ProductDescription,
-                            addToCartSlideoutInfo.ProductPictureUrl
+                            addToCartSlideoutInfo.ProductPictureUrl,
+                            addToCartSlideoutInfo.IsAbcDeliveryItem
                         });
                     }
             }

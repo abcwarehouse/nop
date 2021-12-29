@@ -12,15 +12,18 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
     {
         private readonly IPictureService _pictureService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
+        private readonly IProductAttributeService _productAttributeService;
         private readonly IProductService _productService;
 
         public AddToCartSlideoutService(
             IPictureService pictureService,
             IProductAbcDescriptionService productAbcDescriptionService,
+            IProductAttributeService productAttributeService,
             IProductService productService
         ) {
             _pictureService = pictureService;
             _productAbcDescriptionService = productAbcDescriptionService;
+            _productAttributeService = productAttributeService;
             _productService = productService;
         }
 
@@ -34,11 +37,17 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
                 await _pictureService.GetPictureUrlAsync(productPicture.PictureId) :
                 "";
 
+            var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+            var productAttributes = await productAttributeMappings.SelectAwait(async pam => await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId))
+                                                                  .ToListAsync();
+            var isAbcDeliveryItem = productAttributes.Any(pa => pa.Name == "Home Delivery");
+
             return new AddToCartSlideoutInfo()
             {
                 ProductName = productName,
                 ProductDescription = productDescription,
-                ProductPictureUrl = pictureUrl
+                ProductPictureUrl = pictureUrl,
+                IsAbcDeliveryItem = isAbcDeliveryItem
             };
         }
     }
