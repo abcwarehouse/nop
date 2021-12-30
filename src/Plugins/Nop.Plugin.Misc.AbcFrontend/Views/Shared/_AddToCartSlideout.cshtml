@@ -16,17 +16,29 @@
       <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
   </div>
   <div id="add-to-cart-slideout__product-info">
-      <img id="add-to-cart-slideout__product-image" style="float: left; padding-right: 0.25rem; width: 50px" />
+      <img id="add-to-cart-slideout__product-image" style="float: left; padding-right: 0.25rem; width: 65px" />
       <div id="add-to-cart-slideout__product-name"></div>
       <div id="add-to-cart-slideout__product-description"></div>
   </div>
-  <hr style="clear: both" />
+  <hr style="clear: both; margin-bottom: 1rem" />
   <div id="add-to-cart-slideout__delivery-input">
       <div id="add-to-cart-slideout__delivery-zip-code">
           <label for="add-to-cart-slideout__delivery-zip-code">Enter Zip Code:</label>
           <input id="add-to-cart-slideout__delivery-zip-code-input" />
       </div>
-      <button class="add-to-cart-slideout-btn" onclick="checkDeliveryShippingAvailability()" disabled>Check Delivery/Shipping Availability</button>
+      <button id="add-to-cart-slideout__check-delivery-options"
+              class="add-to-cart-slideout-btn"
+              onclick="checkDeliveryShippingAvailabilityAsync()"
+              disabled>
+            Check Delivery/Shipping Availability
+      </button>
+  </div>
+  <div id="add-to-cart-slideout__delivery-options">
+      <h3>Delivery/Pickup Options</h3>
+      <input type="radio" id="pick-up-in-store" name="delivery-option" value="PickUpInStore">
+      <label for="pick-up-in-store">Pickup In-Store or Curbside</label><br>
+      <input type="radio" id="home-delivery" name="delivery-option" value="HomeDelivery" checked>
+      <label for="home-delivery">Home Delivery ($14.75, FREE with Mail-In Rebate)</label><br>
   </div>
   <div id="add-to-cart-slideout__buttons">
       <div id="add-to-cart-slideout__subtotal">Subtotal: <span id="add-to-cart-slideout__subtotal-value"></span></div>

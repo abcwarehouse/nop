@@ -40,7 +40,7 @@
 }
 
 #add-to-cart-slideout__product-info {
-    padding: 1rem 0;
+    padding: 1rem 0 3rem 0;
 }
 
 #add-to-cart-slideout__product-name {
@@ -95,6 +95,11 @@
 .add-to-cart-slideout-btn:disabled {
     opacity: 0.25;
     cursor: not-allowed;
+}
+
+/* Delivery Options */
+#add-to-cart-slideout__delivery-options {
+    display: none;
 }
 
 /* copied over from Pavilion theme to allow consistency */
