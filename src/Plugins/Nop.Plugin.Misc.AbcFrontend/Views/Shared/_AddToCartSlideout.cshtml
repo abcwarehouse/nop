@@ -9,29 +9,28 @@
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/add-to-cart-slideout.js");
 }
 
-<div id="add-to-cart-slideout__overlay"></div>
+<div id="add-to-cart-slideout-overlay"></div>
 <div id="add-to-cart-slideout">
-  <a href="javascript:void(0)" class="add-to-cart-slideout__closebtn" onclick="closeAddToCartSlideout()">&times;</a>
-  <div class="add-to-cart-slideout__wrapper">
-    <div class="add-to-cart-slideout__title">
-        <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
-    </div>
-    <div id="add-to-cart-slideout__product-info">
-        <img id="add-to-cart-slideout__product-image" style="float: left; padding-right: 0.25rem; width: 50px" />
-        <div id="add-to-cart-slideout__product-name"></div>
-        <div id="add-to-cart-slideout__product-description"></div>
-    </div>
-    <hr style="clear: both" />
-    <div id="add-to-cart-slideout__delivery-input">
-        <div id="add-to-cart-slideout__delivery-zip-code">
-            <label for="add-to-cart-slideout__delivery-zip-code">Enter Zip Code:</label>
-            <input id="add-to-cart-slideout__delivery-zip-code__input" />
-        </div>
-        <button class="add-to-cart-slideout-info__button" onclick="checkDeliveryShippingAvailability()">Check Delivery/Shipping Availability</button>
-    </div>
-    <div id="add-to-cart-slideout__buttons">
-        <a href="/cart">Go To Cart</a>
-        <a onclick="closeAddToCartSlideout()">Continue Shopping</a>
-    </div>
+  <a href="javascript:void(0)" class="add-to-cart-slideout__close" onclick="hideAddToCartSlideout()">&times;</a>
+  <div class="add-to-cart-slideout__title">
+      <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
+  </div>
+  <div id="add-to-cart-slideout__product-info">
+      <img id="add-to-cart-slideout__product-image" style="float: left; padding-right: 0.25rem; width: 50px" />
+      <div id="add-to-cart-slideout__product-name"></div>
+      <div id="add-to-cart-slideout__product-description"></div>
+  </div>
+  <hr style="clear: both" />
+  <div id="add-to-cart-slideout__delivery-input">
+      <div id="add-to-cart-slideout__delivery-zip-code">
+          <label for="add-to-cart-slideout__delivery-zip-code">Enter Zip Code:</label>
+          <input id="add-to-cart-slideout__delivery-zip-code__input" />
+      </div>
+      <button class="add-to-cart-slideout-info__button" onclick="checkDeliveryShippingAvailability()">Check Delivery/Shipping Availability</button>
+  </div>
+  <div id="add-to-cart-slideout__buttons">
+      <div id="add-to-cart-slideout__subtotal"></div>
+      <a href="/cart">Go To Cart</a>
+      <a onclick="hideAddToCartSlideout()">Continue Shopping</a>
   </div>
 </div>

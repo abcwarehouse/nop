@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
@@ -27,6 +28,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         ) {
             services.AddScoped<IBackendStockService, BackendStockService>();
             services.AddScoped<IAttributeUtilities, AttributeUtilities>();
+            services.AddScoped<IDeliveryService, DeliveryService>();
             services.AddScoped<FrontEndService>();
             services.AddScoped<IAbcPromoService, AbcPromoService>();
             services.AddScoped<IBaseService, BaseService>();

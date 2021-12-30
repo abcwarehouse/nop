@@ -6,5 +6,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Models
         public string ProductDescription { get; init; }
         public string ProductPictureUrl { get; init; }
         public bool IsAbcDeliveryItem { get; init; }
+        public string Subtotal { get; init; }
     }
 }

@@ -274,7 +274,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             addToCartSlideoutInfo.ProductName,
                             addToCartSlideoutInfo.ProductDescription,
                             addToCartSlideoutInfo.ProductPictureUrl,
-                            addToCartSlideoutInfo.IsAbcDeliveryItem
+                            addToCartSlideoutInfo.IsAbcDeliveryItem,
+                            addToCartSlideoutInfo.Subtotal
                         });
                     }
             }
