@@ -47,17 +47,10 @@
     font-size: 0.75rem;
 }
 
-#add-to-cart-slideout__delivery-input__zip-code {
-    display: flex;
-    justify-content: space-between;
-    margin: 1rem 0;
-    align-items: center;
-}
-
 #add-to-cart-slideout__delivery-zip-code {
     display: flex;
     justify-content: space-between;
-    margin: 1rem 0;
+    margin: 1rem 0 0.5rem 0;
     align-items: center;
 }
 
@@ -72,6 +65,12 @@
     bottom: 1rem;
 }
 
+#add-to-cart-slideout__subtotal {
+    text-align: right;
+    color: #bb1b1b;
+    font-size: 1.25rem;
+}
+
 #add-to-cart-slideout__buttons a {
     width: 100%;
     background-color: white;
@@ -83,7 +82,7 @@
     text-align: center;
 }
 
-.add-to-cart-slideout-info__button {
+.add-to-cart-slideout-btn {
     font-size: 0.75rem;
     background-color: white;
     border: 2px solid #e1e1e1;
@@ -91,6 +90,11 @@
     text-align: center;
     padding: 0.5rem;
     float: right;
+}
+
+.add-to-cart-slideout-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
 }
 
 /* copied over from Pavilion theme to allow consistency */
