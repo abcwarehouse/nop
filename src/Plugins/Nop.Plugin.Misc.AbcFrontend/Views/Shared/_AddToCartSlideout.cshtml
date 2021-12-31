@@ -11,6 +11,9 @@
 
 <div id="add-to-cart-slideout-overlay"></div>
 <div id="add-to-cart-slideout">
+  <a href="javascript:void(0)" id="add-to-cart-slideout__back" onclick="back()">
+      <i class="fas fa-arrow-left"></i>
+  </a>
   <a href="javascript:void(0)" class="add-to-cart-slideout__close" onclick="hideAddToCartSlideout()">&times;</a>
   <div class="add-to-cart-slideout__title">
       <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
@@ -33,12 +36,15 @@
             Check Delivery/Shipping Availability
       </button>
   </div>
+  <div id="add-to-cart-slideout__delivery-not-available">
+      Home Delivery Shipping is not available for the given zip code.
+  </div>
   <div id="add-to-cart-slideout__delivery-options">
       <h3>Delivery/Pickup Options</h3>
       <input type="radio" id="pick-up-in-store" name="delivery-option" value="PickUpInStore">
       <label for="pick-up-in-store">Pickup In-Store or Curbside</label><br>
       <input type="radio" id="home-delivery" name="delivery-option" value="HomeDelivery" checked>
-      <label for="home-delivery">Home Delivery ($14.75, FREE with Mail-In Rebate)</label><br>
+      <label for="home-delivery">Home Delivery ($14.75, FREE with Mail-In Rebate)</label>
   </div>
   <div id="add-to-cart-slideout__buttons">
       <div id="add-to-cart-slideout__subtotal">Subtotal: <span id="add-to-cart-slideout__subtotal-value"></span></div>

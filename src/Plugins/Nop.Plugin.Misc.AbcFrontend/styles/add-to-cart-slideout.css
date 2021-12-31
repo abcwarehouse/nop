@@ -21,7 +21,14 @@
     transition: 0.5s;
 }
 
-/* Position and style the close button (top right corner) */
+#add-to-cart-slideout__back {
+    position: absolute;
+    top: 13px;
+    right: 280px;
+    font-size: 20px;
+    display: none;
+}
+
 #add-to-cart-slideout .add-to-cart-slideout__close {
     position: absolute;
     top: 0;
@@ -98,6 +105,15 @@
 }
 
 /* Delivery Options */
+#add-to-cart-slideout__delivery-not-available {
+    display: none;
+    color: #f74258;
+}
+
+#add-to-cart-slideout__delivery {
+    display: none;
+}
+
 #add-to-cart-slideout__delivery-options {
     display: none;
 }
