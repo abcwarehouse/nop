@@ -1,3 +1,9 @@
+// Currency formatter
+var formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+});
+
 // Globals
 const addToCartSlideoutOverlay = document.getElementById("add-to-cart-slideout-overlay");
 const addToCartSlideout = document.getElementById("add-to-cart-slideout");
@@ -30,7 +36,7 @@ function displayAddToCartSlideout(response) {
     document.getElementById("add-to-cart-slideout__product-description").innerText = response.ProductDescription;
     document.getElementById("add-to-cart-slideout__product-image").src = response.ProductPictureUrl;
     document.getElementById("add-to-cart-slideout__delivery-input").style.display = response.IsAbcDeliveryItem ? "block" : "none";
-    document.getElementById("add-to-cart-slideout__subtotal-value").innerText = response.Subtotal;
+    document.getElementById("add-to-cart-slideout__subtotal-value").innerText = formatter.format(response.Subtotal);
     
     showAddToCartSlideout();
 }
