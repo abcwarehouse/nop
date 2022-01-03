@@ -3,10 +3,10 @@
 *@
 
 @{
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/add-to-cart-slideout.css");
     Html.AddCssFileParts("https://use.fontawesome.com/releases/v5.3.1/css/all.css", "", true);
+    Html.AddCssFileParts("~/Plugins/Widgets.AddToCartSlideout/styles/add-to-cart-slideout.css");
 
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/add-to-cart-slideout.js");
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Widgets.AddToCartSlideout/scripts/add-to-cart-slideout.js");
 }
 
 <div id="add-to-cart-slideout-overlay"></div>
@@ -18,11 +18,7 @@
   <div class="add-to-cart-slideout__title">
       <i class="fas fa-check-circle" style="color: "></i> Item Added to Cart
   </div>
-  <div id="add-to-cart-slideout__product-info">
-      <img id="add-to-cart-slideout__product-image" style="float: left; padding-right: 0.25rem; width: 65px" />
-      <div id="add-to-cart-slideout__product-name"></div>
-      <div id="add-to-cart-slideout__product-description"></div>
-  </div>
+  @await Component.InvokeAsync("AddToCartSlideoutProductInfo")
   <hr style="clear: both; margin-bottom: 1rem" />
   <div id="add-to-cart-slideout__delivery-input">
       <div id="add-to-cart-slideout__delivery-zip-code">

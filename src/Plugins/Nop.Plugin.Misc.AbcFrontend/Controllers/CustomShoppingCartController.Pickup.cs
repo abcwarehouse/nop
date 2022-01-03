@@ -261,7 +261,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             : string.Empty;
 
                         // ABC: Custom code for add to cart slideout
-                        var addToCartSlideoutInfo = await _addToCartSlideoutService.GetAddToCartSlideoutInfoAsync(product);
+                        //var addToCartSlideoutInfo = await _addToCartSlideoutService.GetAddToCartSlideoutInfoAsync(product);
+
+                        var addToCartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutProductInfo", new {productId = product.Id} );
 
                         return Json(new
                         {
@@ -271,11 +273,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
                             // ABC: custom response values
-                            addToCartSlideoutInfo.ProductName,
-                            addToCartSlideoutInfo.ProductDescription,
-                            addToCartSlideoutInfo.ProductPictureUrl,
-                            addToCartSlideoutInfo.IsAbcDeliveryItem,
-                            addToCartSlideoutInfo.Subtotal
+                            addToCartSlideoutProductInfoHtml
                         });
                     }
             }

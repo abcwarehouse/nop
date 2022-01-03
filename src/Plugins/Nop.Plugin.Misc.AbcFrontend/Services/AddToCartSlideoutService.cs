@@ -33,12 +33,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
         public async Task<AddToCartSlideoutInfo> GetAddToCartSlideoutInfoAsync(Product product)
         {
-            var productName = product.Name;
-            var productPicture = (await _productService.GetProductPicturesByProductIdAsync(product.Id)).FirstOrDefault();
-            var pictureUrl = productPicture != null ?
-                await _pictureService.GetPictureUrlAsync(productPicture.PictureId) :
-                "";
-
             var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
             var productAttributes = await productAttributeMappings.SelectAwait(async pam => await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId))
                                                                   .ToListAsync();
