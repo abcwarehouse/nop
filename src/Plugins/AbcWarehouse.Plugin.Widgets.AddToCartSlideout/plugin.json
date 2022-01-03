@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widget",
+  "FriendlyName": "Add to Cart Slideout",
+  "SystemName": "Widgets.AddToCartSlideout",
+  "Version": "4.40.0",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "Dave Farinelli",
+  "DisplayOrder": 1,
+  "FileName": "AbcWarehouse.Plugin.Widgets.AddToCartSlideout.dll",
+  "Description": "Adds the ABC Warehouse Add To Cart Slideout"
+}
