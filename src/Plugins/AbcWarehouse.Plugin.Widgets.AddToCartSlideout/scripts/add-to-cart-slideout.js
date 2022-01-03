@@ -1,10 +1,6 @@
-// Currency formatter
-var formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD'
-});
-
 // Globals
+const addToCartSlideoutProductInfo = document.getElementById("add-to-cart-slideout__product-info");
+
 const addToCartSlideoutOverlay = document.getElementById("add-to-cart-slideout-overlay");
 const addToCartSlideout = document.getElementById("add-to-cart-slideout");
 const addToCartSlideoutBackButton = document.getElementById("add-to-cart-slideout__back");
@@ -33,7 +29,6 @@ function updateCheckDeliveryAvailabilityButton() {
 
 function displayAddToCartSlideout(response) {
     document.getElementById("add-to-cart-slideout__delivery-input").style.display = response.IsAbcDeliveryItem ? "block" : "none";
-    document.getElementById("add-to-cart-slideout__subtotal-value").innerText = formatter.format(response.Subtotal);
     
     showAddToCartSlideout();
 }

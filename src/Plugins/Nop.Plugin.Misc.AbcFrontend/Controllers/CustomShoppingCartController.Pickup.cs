@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
-    public partial class CustomShoppingCartController : BasePublicController
+    public partial class CustomShoppingCartController : ShoppingCartController
     {
         //add product to cart using AJAX
         //currently we use this method on the product details pages
@@ -140,48 +140,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //if the item to update is found, then we ignore the specified "shoppingCartTypeId" parameter
                 updatecartitem.ShoppingCartType;
 
-            await SaveItem(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
+            await SaveItemAsync(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
 
             //return result
             return await GetProductToCartDetails(addToCartWarnings, cartType, product);
-        }
-
-        // See if we can just inherit these from the base controller
-        protected async virtual Task SaveItem(ShoppingCartItem updatecartitem, List<string> addToCartWarnings, Product product,
-           ShoppingCartType cartType, string attributes, decimal customerEnteredPriceConverted, DateTime? rentalStartDate,
-           DateTime? rentalEndDate, int quantity)
-        {
-            if (updatecartitem == null)
-            {
-                //add to the cart
-                addToCartWarnings.AddRange(await _shoppingCartService.AddToCartAsync(await _workContext.GetCurrentCustomerAsync(),
-                    product, cartType, (await _storeContext.GetCurrentStoreAsync()).Id,
-                    attributes, customerEnteredPriceConverted,
-                    rentalStartDate, rentalEndDate, quantity, true));
-            }
-            else
-            {
-                var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), updatecartitem.ShoppingCartType, (await _storeContext.GetCurrentStoreAsync()).Id);
-
-                var otherCartItemWithSameParameters = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(
-                    cart, updatecartitem.ShoppingCartType, product, attributes, customerEnteredPriceConverted,
-                    rentalStartDate, rentalEndDate);
-                if (otherCartItemWithSameParameters != null &&
-                    otherCartItemWithSameParameters.Id == updatecartitem.Id)
-                {
-                    //ensure it's some other shopping cart item
-                    otherCartItemWithSameParameters = null;
-                }
-                //update existing item
-                addToCartWarnings.AddRange(await _shoppingCartService.UpdateShoppingCartItemAsync(await _workContext.GetCurrentCustomerAsync(),
-                    updatecartitem.Id, attributes, customerEnteredPriceConverted,
-                    rentalStartDate, rentalEndDate, quantity + (otherCartItemWithSameParameters?.Quantity ?? 0), true));
-                if (otherCartItemWithSameParameters != null && !addToCartWarnings.Any())
-                {
-                    //delete the same shopping cart item (the other one)
-                    await _shoppingCartService.DeleteShoppingCartItemAsync(otherCartItemWithSameParameters);
-                }
-            }
         }
 
         protected async virtual Task<IActionResult> GetProductToCartDetails(List<string> addToCartWarnings, ShoppingCartType cartType,
@@ -261,9 +223,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             : string.Empty;
 
                         // ABC: Custom code for add to cart slideout
-                        //var addToCartSlideoutInfo = await _addToCartSlideoutService.GetAddToCartSlideoutInfoAsync(product);
-
                         var addToCartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutProductInfo", new {productId = product.Id} );
+                        // going to have to get the actual subtotal amount
+                        var addToCartSlideoutSubtotalHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutSubtotal", new {price = product.Price} );
 
                         return Json(new
                         {
@@ -273,7 +235,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
                             // ABC: custom response values
-                            addToCartSlideoutProductInfoHtml
+                            addToCartSlideoutProductInfoHtml,
+                            addToCartSlideoutSubtotalHtml
                         });
                     }
             }

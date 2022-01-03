@@ -78,6 +78,9 @@ var AjaxCart = {
     },
 
     success_process: function (response) {
+        // ABC: custom
+        updateAddToCartSlideoutHtml(response);
+
         if (response.updatetopcartsectionhtml) {
             $(AjaxCart.topcartselector).html(response.updatetopcartsectionhtml);
         }
@@ -120,3 +123,12 @@ var AjaxCart = {
         alert(this.localized_data.AjaxCartFailure);
     }
 };
+function updateAddToCartSlideoutHtml(response) {
+    if (response.addToCartSlideoutProductInfoHtml) {
+        $('#add-to-cart-slideout__product-info').html(response.addToCartSlideoutProductInfoHtml);
+    }
+    if (response.addToCartSlideoutSubtotalHtml) {
+        $('#add-to-cart-slideout__subtotal').html(response.addToCartSlideoutSubtotalHtml);
+    }
+}
+

@@ -47,7 +47,7 @@ using Nop.Plugin.Misc.AbcFrontend.Services;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
-    public partial class CustomShoppingCartController : BasePublicController
+    public partial class CustomShoppingCartController : ShoppingCartController
     {
         private readonly CaptchaSettings _captchaSettings;
         private readonly CustomerSettings _customerSettings;
@@ -420,9 +420,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             : string.Empty;
 
                         // ABC: Custom code for add to cart slideout
-                        //var addToCartSlideoutInfo = await _addToCartSlideoutService.GetAddToCartSlideoutInfoAsync(product);
-
                         var addToCartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutProductInfo", new {productId = product.Id} );
+                        // going to have to get the actual subtotal amount
+                        var addToCartSlideoutSubtotalHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutSubtotal", new {price = product.Price} );
+
                         return Json(new
                         {
                             success = true,
@@ -430,7 +431,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
                             // ABC: custom response values
-                            addToCartSlideoutProductInfoHtml
+                            addToCartSlideoutProductInfoHtml,
+                            addToCartSlideoutSubtotalHtml
                         });
                     }
             }
@@ -520,7 +522,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //if the item to update is found, then we ignore the specified "shoppingCartTypeId" parameter
                 updatecartitem.ShoppingCartType;
 
-            await SaveItem(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
+            await SaveItemAsync(updatecartitem, addToCartWarnings, product, cartType, attributes, customerEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
 
             //return result
             return await GetProductToCartDetails(addToCartWarnings, cartType, product);
