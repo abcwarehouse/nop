@@ -40,9 +40,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
             return new AddToCartSlideoutInfo()
             {
-                ProductName = productName,
-                ProductDescription = await GetProductDescription(product),
-                ProductPictureUrl = pictureUrl,
                 IsAbcDeliveryItem = isAbcDeliveryItem,
                 Subtotal = product.Price
             };

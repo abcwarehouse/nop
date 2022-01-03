@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Nop.Core.Domain.Catalog;
+using Nop.Services.Catalog;
 using Nop.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
 {
