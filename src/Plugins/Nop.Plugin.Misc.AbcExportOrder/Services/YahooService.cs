@@ -14,7 +14,7 @@ using Nop.Services.Stores;
 using Nop.Services.Seo;
 using System.Xml.Linq;
 using Nop.Plugin.Misc.AbcFrontend.Services;
-using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;

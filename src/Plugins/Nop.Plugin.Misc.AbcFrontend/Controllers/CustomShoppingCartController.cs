@@ -138,6 +138,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         //add product to cart using AJAX
         //currently we use this method on catalog pages (category/manufacturer/etc)
+
+        // customized to check and add home delivery option by default
+        // if it exists on the product
         [HttpPost]
         [IgnoreAntiforgeryToken]
         public override async Task<IActionResult> AddProductToCart_Catalog(int productId, int shoppingCartTypeId,
@@ -202,33 +205,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
-            //-------------------------------------REMOVED NOPCOMMERCE CODE------------------------------------------
-
-            //if (product.ProductAttributeMappings.Any())
-            //{
-            //    //product has some attributes. let a customer see them
-            //    return Json(new
-            //    {
-            //        redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName() }),
-            //    });
-            //}
-
-            //-------------------------------------END REMOVED NOPCOMMERCE CODE------------------------------------------
-
-            //-------------------------------------BEGIN CUSTOM CODE-----------------------------------------------
-            // if the item is home delivered, add attribute to the item & continue
-            // if item is pickup in store, then don't add the attribute & continue
-            // if item has warranty attribute, then continue like nothing happened
-            // get home delivery information
-
-            // decrement this value as we check for various attributes
-            int numCustomerSelectionAttributes =
-                (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id)).Count();
-
             string attributes = "";
             ProductAttributeMapping hdProductAttribute = null;
-            ProductAttributeMapping pickupAttribute = null;
-            ProductAttributeMapping warrantyAttribute = null;
 
             var pams =  await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
 
@@ -241,12 +219,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     case "Home Delivery":
                         hdProductAttribute = pam;
                         break;
-                    case "Pickup":
-                        pickupAttribute = pam;
-                        break;
-                    case "Warranty":
-                        warrantyAttribute = pam;
-                        break;
                 }
             }
 
@@ -254,28 +226,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (hdProductAttribute != null)
             {
                 attributes = await _attributeUtilities.InsertHomeDeliveryAttributeAsync(product, attributes);
-
-                // don't count the attribute as one of the customer selection
-                numCustomerSelectionAttributes -= 1;
-            }
-
-            if (pickupAttribute != null)
-            {
-                numCustomerSelectionAttributes -= 1;
-            }
-            if (warrantyAttribute != null)
-            {
-                numCustomerSelectionAttributes -= 1;
-            }
-
-            // # of actual product attributes the user can select
-            if (numCustomerSelectionAttributes > 0)
-            {
-                //product has some attributes. let a customer see them
-                return Json(new
-                {
-                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) }),
-                });
             }
 
             //-------------------------------------END CUSTOM CODE------------------------------------------
@@ -381,8 +331,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                         // ABC: Custom code for add to cart slideout
                         var addToCartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutProductInfo", new {productId = product.Id} );
-                        // going to have to get the actual subtotal amount
                         var addToCartSlideoutSubtotalHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutSubtotal", new {price = product.Price} );
+                        var addToCartSlideoutProductAttributes = await RenderViewComponentToStringAsync("AddToCartSlideoutProductAttributes", new {product = product} );
 
                         return Json(new
                         {
@@ -392,6 +342,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             updateflyoutcartsectionhtml,
                             // ABC: custom response values
                             addToCartSlideoutProductInfoHtml,
+                            // this will be the delivery zip
+                            addToCartSlideoutProductAttributes,
                             addToCartSlideoutSubtotalHtml
                         });
                     }
