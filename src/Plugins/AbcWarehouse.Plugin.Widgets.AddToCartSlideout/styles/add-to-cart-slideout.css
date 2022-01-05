@@ -116,6 +116,10 @@
     display: none;
 }
 
+#add-to-cart-slideout__attributes .text-prompt {
+    font-size: 1.25rem;
+}
+
 /* copied over from Pavilion theme to allow consistency */
 .scrollYRemove {
     overflow: hidden !important;
