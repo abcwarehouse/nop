@@ -1,31 +1,33 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Factories;
 using Nop.Web.Framework.Components;
-using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
 {
     public class AddToCartSlideoutProductAttributesViewComponent : NopViewComponent
     {
         private readonly IAbcProductModelFactory _productModelFactory;
-        
+
         public AddToCartSlideoutProductAttributesViewComponent(
-            IAbcProductModelFactory productModelFactory
-        ) {
+            IAbcProductModelFactory productModelFactory)
+        {
             _productModelFactory = productModelFactory;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(Product product)
         {
+            var includedAttributeNames = new string[]
+            {
+                "Delivery/Pickup Options",
+                "Haul Away",
+            };
+
             var models = await _productModelFactory.PrepareProductAttributeModelsAsync(
                 product,
                 null,
-                new string[] {
-                    "Delivery/Pickup Options",
-                    "Haul Away"
-                }    
-            );
+                includedAttributeNames);
 
             return View("~/Plugins/Misc.AbcFrontend/Views/Product/_ProductAttributes.cshtml", models);
         }

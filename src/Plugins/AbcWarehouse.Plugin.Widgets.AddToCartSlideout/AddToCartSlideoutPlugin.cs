@@ -1,8 +1,8 @@
-﻿using Nop.Services.Cms;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using Nop.Web.Framework.Infrastructure;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout
 {

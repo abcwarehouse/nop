@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core.Domain.Catalog;
@@ -6,8 +8,6 @@ using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Media;
 using Nop.Web.Framework.Components;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
 {
@@ -17,13 +17,13 @@ namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
         private readonly IPictureService _pictureService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IProductService _productService;
-        
+
         public AddToCartSlideoutProductInfoViewComponent(
             IGenericAttributeService genericAttributeService,
             IPictureService pictureService,
             IProductAbcDescriptionService productAbcDescriptionService,
-            IProductService productService
-        ) {
+            IProductService productService)
+        {
             _genericAttributeService = genericAttributeService;
             _pictureService = pictureService;
             _productAbcDescriptionService = productAbcDescriptionService;
@@ -37,13 +37,13 @@ namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
             var productPicture = (await _productService.GetProductPicturesByProductIdAsync(product.Id)).FirstOrDefault();
             var pictureUrl = productPicture != null ?
                 await _pictureService.GetPictureUrlAsync(productPicture.PictureId) :
-                "";
+                string.Empty;
 
             var model = new ProductInfoModel()
             {
                 ImageUrl = pictureUrl,
                 Name = productName,
-                Description = await GetProductDescriptionAsync(product)
+                Description = await GetProductDescriptionAsync(product),
             };
 
             return View("~/Plugins/Widgets.AddToCartSlideout/Views/_ProductInfo.cshtml", model);
@@ -52,10 +52,13 @@ namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
         private async Task<string> GetProductDescriptionAsync(Product product)
         {
             var plpDescription = await _genericAttributeService.GetAttributeAsync<Product, string>(
-                product.Id, "PLPDescription"
-            );
+                product.Id, "PLPDescription");
 
-            if (plpDescription != null) { return plpDescription; }
+            if (plpDescription != null)
+            {
+                return plpDescription;
+            }
+
             var pad = await _productAbcDescriptionService.GetProductAbcDescriptionByProductIdAsync(product.Id);
             return pad != null ? pad.AbcDescription : product.ShortDescription;
         }

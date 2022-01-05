@@ -1,17 +1,17 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Services.Catalog;
 using Nop.Web.Framework.Components;
-using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
 {
     public class AddToCartSlideoutSubtotalViewComponent : NopViewComponent
     {
         private readonly IPriceFormatter _priceFormatter;
-        
+
         public AddToCartSlideoutSubtotalViewComponent(
-            IPriceFormatter priceFormatter
-        ) {
+            IPriceFormatter priceFormatter)
+        {
             _priceFormatter = priceFormatter;
         }
 
