@@ -10,7 +10,6 @@ const zipCodeInput = document.getElementById('add-to-cart-slideout__delivery-zip
 const checkButton = document.getElementById("add-to-cart-slideout__check-delivery-options");
 
 const deliveryNotAvailable = document.getElementById("add-to-cart-slideout__delivery-not-available");
-const deliveryOptions = document.getElementById("add-to-cart-slideout__delivery-options");
 
 
 // Set up enable/disable for zip code input/button
@@ -34,7 +33,6 @@ function displayAddToCartSlideout(response) {
 }
 
 function showAddToCartSlideout() {
-    deliveryOptions.style.display = "none";
     deliveryNotAvailable.style.display = "none";
     addToCartSlideoutBackButton.style.display = "none";
 
@@ -67,24 +65,24 @@ async function checkDeliveryShippingAvailabilityAsync() {
     }
 
     const responseJson = await response.json();
-    openDeliveryOptions(responseJson);
+    //openDeliveryOptions(responseJson);
     updateCheckDeliveryAvailabilityButton();
 }
 
-function openDeliveryOptions(response) {
-    document.getElementById("add-to-cart-slideout__delivery-input").style.display = "none";
+// function openDeliveryOptions(response) {
+//     document.getElementById("add-to-cart-slideout__delivery-input").style.display = "none";
     
-    deliveryNotAvailable.style.display = "none";
-    deliveryOptions.style.display = "none";
+//     deliveryNotAvailable.style.display = "none";
+//     deliveryOptions.style.display = "none";
 
-    if (response.isDeliveryAvailable) {
-        deliveryOptions.style.display = "block";
-    } else {
-        deliveryNotAvailable.style.display = "block";
-    }
+//     if (response.isDeliveryAvailable) {
+//         deliveryOptions.style.display = "block";
+//     } else {
+//         deliveryNotAvailable.style.display = "block";
+//     }
 
-    addToCartSlideoutBackButton.style.display = "block";
-}
+//     addToCartSlideoutBackButton.style.display = "block";
+// }
 
 function back() {
     deliveryNotAvailable.style.display = "none";

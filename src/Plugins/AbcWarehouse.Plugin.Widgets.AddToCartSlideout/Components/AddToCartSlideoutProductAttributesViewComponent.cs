@@ -27,7 +27,7 @@ namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
                 }    
             );
 
-            return View("~/Plugins/Misc.AbcFrontend/Views/_ProductAttributes.cshtml", models);
+            return View("~/Plugins/Misc.AbcFrontend/Views/Product/_ProductAttributes.cshtml", models);
         }
     }
 }

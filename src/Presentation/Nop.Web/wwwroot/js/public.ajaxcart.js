@@ -130,5 +130,8 @@ function updateAddToCartSlideoutHtml(response) {
     if (response.addToCartSlideoutSubtotalHtml) {
         $('#add-to-cart-slideout__subtotal').html(response.addToCartSlideoutSubtotalHtml);
     }
+    if (response.addToCartSlideoutProductAttributesHtml) {
+        $('#add-to-cart-slideout__attributes').html(response.addToCartSlideoutProductAttributesHtml);
+    }
 }
 
