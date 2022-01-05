@@ -49,38 +49,15 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
     public partial class CustomShoppingCartController : ShoppingCartController
     {
-        private readonly CaptchaSettings _captchaSettings;
-        private readonly CustomerSettings _customerSettings;
-        private readonly ICheckoutAttributeParser _checkoutAttributeParser;
-        private readonly ICheckoutAttributeService _checkoutAttributeService;
-        private readonly ICurrencyService _currencyService;
         private readonly ICustomerActivityService _customerActivityService;
-        private readonly ICustomerService _customerService;
-        private readonly IDiscountService _discountService;
-        private readonly IDownloadService _downloadService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly IGiftCardService _giftCardService;
         private readonly ILocalizationService _localizationService;
-        private readonly INopFileProvider _fileProvider;
-        private readonly INotificationService _notificationService;
-        private readonly IPermissionService _permissionService;
-        private readonly IPictureService _pictureService;
-        private readonly IPriceFormatter _priceFormatter;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IProductService _productService;
-        private readonly IShippingService _shippingService;
-        private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
         private readonly IShoppingCartService _shoppingCartService;
-        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
-        private readonly ITaxService _taxService;
         private readonly IUrlRecordService _urlRecordService;
-        private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
-        private readonly IWorkflowMessageService _workflowMessageService;
-        private readonly MediaSettings _mediaSettings;
-        private readonly OrderSettings _orderSettings;
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
         // custom
@@ -131,41 +108,26 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IRepository<CustomerShopMapping> customerShopMappingRepository,
             IBackendStockService backendStockService,
             IProductAbcDescriptionService productAbcDescriptionService
-        )
+        ) : base(captchaSettings, customerSettings, checkoutAttributeParser, checkoutAttributeService,
+            currencyService, customerActivityService, customerService, discountService,
+            downloadService, genericAttributeService, giftCardService, localizationService,
+            fileProvider, notificationService, permissionService, pictureService,
+            priceFormatter, productAttributeParser, productAttributeService, productService,
+            shippingService, shoppingCartModelFactory, shoppingCartService, staticCacheManager,
+            storeContext, taxService, urlRecordService, webHelper,
+            workContext, workflowMessageService, mediaSettings, orderSettings,
+            shoppingCartSettings, shippingSettings)
         {
-            _captchaSettings = captchaSettings;
-            _customerSettings = customerSettings;
-            _checkoutAttributeParser = checkoutAttributeParser;
-            _checkoutAttributeService = checkoutAttributeService;
-            _currencyService = currencyService;
             _customerActivityService = customerActivityService;
-            _customerService = customerService;
-            _discountService = discountService;
-            _downloadService = downloadService;
-            _genericAttributeService = genericAttributeService;
-            _giftCardService = giftCardService;
             _localizationService = localizationService;
-            _fileProvider = fileProvider;
-            _notificationService = notificationService;
-            _permissionService = permissionService;
-            _pictureService = pictureService;
-            _priceFormatter = priceFormatter;
             _productAttributeParser = productAttributeParser;
             _productAttributeService = productAttributeService;
             _productService = productService;
-            _shippingService = shippingService;
-            _shoppingCartModelFactory = shoppingCartModelFactory;
             _shoppingCartService = shoppingCartService;
-            _staticCacheManager = staticCacheManager;
-            _storeContext = storeContext;
-            _taxService = taxService;
-            _urlRecordService = urlRecordService;
-            _webHelper = webHelper;
-            _workContext = workContext;
-            _workflowMessageService = workflowMessageService;
-            _mediaSettings = mediaSettings;
-            _orderSettings = orderSettings;
             _shoppingCartSettings = shoppingCartSettings;
+            _storeContext = storeContext;
+            _urlRecordService = urlRecordService;
+            _workContext = workContext;
 
             _addToCartSlideoutService = addToCartSlideoutService;
             _attributeUtilities = attributeUtilities;
@@ -174,13 +136,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _productAbcDescriptionService = productAbcDescriptionService;
         }
 
-        #region Shopping cart
-
         //add product to cart using AJAX
         //currently we use this method on catalog pages (category/manufacturer/etc)
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public async Task<ActionResult> AddProductToCart_Catalog(int productId, int shoppingCartTypeId,
+        public override async Task<IActionResult> AddProductToCart_Catalog(int productId, int shoppingCartTypeId,
             int quantity, bool forceredirection = false)
         {
             var cartType = (ShoppingCartType)shoppingCartTypeId;
@@ -442,7 +402,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         //currently we use this method on the product details pages
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual async Task<IActionResult> AddProductToCart_Details(int productId, int shoppingCartTypeId, IFormCollection form)
+        public override async Task<IActionResult> AddProductToCart_Details(int productId, int shoppingCartTypeId, IFormCollection form)
         {
             var product = await _productService.GetProductByIdAsync(productId);
             if (product == null)
@@ -527,7 +487,5 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //return result
             return await GetProductToCartDetails(addToCartWarnings, cartType, product);
         }
-
-        #endregion
     }
 }
