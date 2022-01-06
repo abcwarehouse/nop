@@ -47,6 +47,7 @@ using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Services.Cms;
 using Nop.Plugin.Misc.AbcCore.Models;
 using Newtonsoft.Json;
+using Nop.Plugin.Misc.AbcFrontend.Models;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -657,16 +658,16 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             });
         }
 
-        private async Task<(string ProductInfoHtml, string Subtotal, bool HasDeliveryOptions)?> GetSlideoutInfoAsync(Product product)
+        private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(Product product)
         {
             var isSlideoutActive = await _widgetPluginManager.IsPluginActiveAsync("Widgets.CartSlideout");
             if (!isSlideoutActive) { return null; }
 
-            return (
-                await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new {productId = product.Id} ),
-                await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new {price = product.Price} ),
-                false // this needs to check product - maybe just get the attributes ready?
-            );
+            return new CartSlideoutInfo() {
+                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new {productId = product.Id} ),
+                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new {price = product.Price} ),
+                HasDeliveryOptions = false // this needs to check product - maybe just get the attributes ready?
+            };
         } 
     }
 }

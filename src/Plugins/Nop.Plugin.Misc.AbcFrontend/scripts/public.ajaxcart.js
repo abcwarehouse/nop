@@ -136,14 +136,14 @@ var AjaxCart = {
     }
 };
 function updateCartSlideoutHtml(response) {
-    if (response.CartSlideoutProductInfoHtml) {
-        $('#cart-slideout__product-info').html(response.CartSlideoutProductInfoHtml);
+    if (response.slideoutInfo.ProductInfoHtml) {
+        $('#cart-slideout__product-info').html(response.slideoutInfo.ProductInfoHtml);
     }
-    if (response.CartSlideoutSubtotalHtml) {
-        $('#cart-slideout__subtotal').html(response.CartSlideoutSubtotalHtml);
+    if (response.slideoutInfo.SubtotalHtml) {
+        $('#cart-slideout__subtotal').html(response.slideoutInfo.SubtotalHtml);
     }
-    if (response.CartSlideoutProductAttributesHtml) {
-        $('#cart-slideout__attributes').html(response.CartSlideoutProductAttributesHtml);
+    if (response.slideoutInfo.ProductAttributesHtml) {
+        $('#cart-slideout__attributes').html(response.slideoutInfo.ProductAttributesHtml);
     }
 }
 
