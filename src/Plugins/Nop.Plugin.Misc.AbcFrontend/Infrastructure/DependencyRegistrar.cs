@@ -21,7 +21,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
         ) {
             services.AddScoped<IWarrantyService, WarrantyService>();
             services.AddScoped<IShoppingCartService, CustomShoppingCartService>();
-            services.AddScoped<IAddToCartSlideoutService, AddToCartSlideoutService>();
+            services.AddScoped<ICartSlideoutService, CartSlideoutService>();
         }
 
         /// <summary>

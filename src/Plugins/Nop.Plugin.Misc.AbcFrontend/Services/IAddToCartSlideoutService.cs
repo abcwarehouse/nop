@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
-    public interface IAddToCartSlideoutService
+    public interface ICartSlideoutService
     {
-        Task<AddToCartSlideoutInfo> GetAddToCartSlideoutInfoAsync(Product product);
+        Task<CartSlideoutInfo> GetCartSlideoutInfoAsync(Product product);
     }
 }

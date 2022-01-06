@@ -79,7 +79,7 @@ var AjaxCart = {
 
     success_process: function (response) {
         // ABC: custom
-        updateAddToCartSlideoutHtml(response);
+        updateCartSlideoutHtml(response);
 
         if (response.updatetopcartsectionhtml) {
             $(AjaxCart.topcartselector).html(response.updatetopcartsectionhtml);
@@ -94,7 +94,7 @@ var AjaxCart = {
             //display notification
             if (response.success === true) {
                 // ABC: customized to use added to cart slideout
-                displayAddToCartSlideout(response);
+                displayCartSlideout(response);
             }
             else {
                 //error
@@ -123,15 +123,15 @@ var AjaxCart = {
         alert(this.localized_data.AjaxCartFailure);
     }
 };
-function updateAddToCartSlideoutHtml(response) {
-    if (response.addToCartSlideoutProductInfoHtml) {
-        $('#add-to-cart-slideout__product-info').html(response.addToCartSlideoutProductInfoHtml);
+function updateCartSlideoutHtml(response) {
+    if (response.CartSlideoutProductInfoHtml) {
+        $('#cart-slideout__product-info').html(response.CartSlideoutProductInfoHtml);
     }
-    if (response.addToCartSlideoutSubtotalHtml) {
-        $('#add-to-cart-slideout__subtotal').html(response.addToCartSlideoutSubtotalHtml);
+    if (response.CartSlideoutSubtotalHtml) {
+        $('#cart-slideout__subtotal').html(response.CartSlideoutSubtotalHtml);
     }
-    if (response.addToCartSlideoutProductAttributesHtml) {
-        $('#add-to-cart-slideout__attributes').html(response.addToCartSlideoutProductAttributesHtml);
+    if (response.CartSlideoutProductAttributesHtml) {
+        $('#cart-slideout__attributes').html(response.CartSlideoutProductAttributesHtml);
     }
 }
 

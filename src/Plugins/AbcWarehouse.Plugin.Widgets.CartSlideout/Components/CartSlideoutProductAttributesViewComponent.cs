@@ -4,13 +4,13 @@ using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Factories;
 using Nop.Web.Framework.Components;
 
-namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
+namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
-    public class AddToCartSlideoutProductAttributesViewComponent : NopViewComponent
+    public class CartSlideoutProductAttributesViewComponent : NopViewComponent
     {
         private readonly IAbcProductModelFactory _productModelFactory;
 
-        public AddToCartSlideoutProductAttributesViewComponent(
+        public CartSlideoutProductAttributesViewComponent(
             IAbcProductModelFactory productModelFactory)
         {
             _productModelFactory = productModelFactory;

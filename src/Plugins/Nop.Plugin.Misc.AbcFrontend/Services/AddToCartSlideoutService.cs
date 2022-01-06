@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Services
 {
-    public class AddToCartSlideoutService : IAddToCartSlideoutService
+    public class CartSlideoutService : ICartSlideoutService
     {
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IPictureService _pictureService;
@@ -17,7 +17,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         private readonly IProductAttributeService _productAttributeService;
         private readonly IProductService _productService;
 
-        public AddToCartSlideoutService(
+        public CartSlideoutService(
             IGenericAttributeService genericAttributeService,
             IPictureService pictureService,
             IProductAbcDescriptionService productAbcDescriptionService,
@@ -31,14 +31,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _productService = productService;
         }
 
-        public async Task<AddToCartSlideoutInfo> GetAddToCartSlideoutInfoAsync(Product product)
+        public async Task<CartSlideoutInfo> GetCartSlideoutInfoAsync(Product product)
         {
             var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
             var productAttributes = await productAttributeMappings.SelectAwait(async pam => await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId))
                                                                   .ToListAsync();
             var isAbcDeliveryItem = productAttributes.Any(pa => pa.Name == "Home Delivery");
 
-            return new AddToCartSlideoutInfo()
+            return new CartSlideoutInfo()
             {
                 IsAbcDeliveryItem = isAbcDeliveryItem,
                 Subtotal = product.Price

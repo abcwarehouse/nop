@@ -1,4 +1,4 @@
-namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Models
+namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Models
 {
     public class ProductInfoModel
     {

@@ -1,15 +1,15 @@
 // Globals
-const addToCartSlideoutProductInfo = document.getElementById("add-to-cart-slideout__product-info");
+const CartSlideoutProductInfo = document.getElementById("cart-slideout__product-info");
 
-const addToCartSlideoutOverlay = document.getElementById("add-to-cart-slideout-overlay");
-const addToCartSlideout = document.getElementById("add-to-cart-slideout");
-const addToCartSlideoutBackButton = document.getElementById("add-to-cart-slideout__back");
+const CartSlideoutOverlay = document.getElementById("cart-slideout-overlay");
+const CartSlideout = document.getElementById("cart-slideout");
+const CartSlideoutBackButton = document.getElementById("cart-slideout__back");
 
-const input = document.getElementById("add-to-cart-slideout__delivery-input");
-const zipCodeInput = document.getElementById('add-to-cart-slideout__delivery-zip-code-input');
-const checkButton = document.getElementById("add-to-cart-slideout__check-delivery-options");
+const input = document.getElementById("cart-slideout__delivery-input");
+const zipCodeInput = document.getElementById('cart-slideout__delivery-zip-code-input');
+const checkButton = document.getElementById("cart-slideout__check-delivery-options");
 
-const deliveryNotAvailable = document.getElementById("add-to-cart-slideout__delivery-not-available");
+const deliveryNotAvailable = document.getElementById("cart-slideout__delivery-not-available");
 
 
 // Set up enable/disable for zip code input/button
@@ -26,28 +26,28 @@ function updateCheckDeliveryAvailabilityButton() {
 }
 
 
-function displayAddToCartSlideout(response) {
-    document.getElementById("add-to-cart-slideout__delivery-input").style.display = response.IsAbcDeliveryItem ? "block" : "none";
+function displayCartSlideout(response) {
+    document.getElementById("cart-slideout__delivery-input").style.display = response.IsAbcDeliveryItem ? "block" : "none";
     
-    showAddToCartSlideout();
+    showCartSlideout();
 }
 
-function showAddToCartSlideout() {
+function showCartSlideout() {
     deliveryNotAvailable.style.display = "none";
-    addToCartSlideoutBackButton.style.display = "none";
+    CartSlideoutBackButton.style.display = "none";
 
-    addToCartSlideout.style.width = "320px";
-    addToCartSlideout.style.padding = "2.5rem 1rem 0 1rem";
-    addToCartSlideoutOverlay.style.display = "block";
+    CartSlideout.style.width = "320px";
+    CartSlideout.style.padding = "2.5rem 1rem 0 1rem";
+    CartSlideoutOverlay.style.display = "block";
     document.body.classList.add("scrollYRemove");
 
     updateCheckDeliveryAvailabilityButton();
 }
 
-function hideAddToCartSlideout() {
-    addToCartSlideout.style.width = "0";
-    addToCartSlideout.style.padding = "0";
-    addToCartSlideoutOverlay.style.display = "none";
+function hideCartSlideout() {
+    CartSlideout.style.width = "0";
+    CartSlideout.style.padding = "0";
+    CartSlideoutOverlay.style.display = "none";
     document.body.classList.remove("scrollYRemove");
 }
 
@@ -70,7 +70,7 @@ async function checkDeliveryShippingAvailabilityAsync() {
 }
 
 // function openDeliveryOptions(response) {
-//     document.getElementById("add-to-cart-slideout__delivery-input").style.display = "none";
+//     document.getElementById("cart-slideout__delivery-input").style.display = "none";
     
 //     deliveryNotAvailable.style.display = "none";
 //     deliveryOptions.style.display = "none";
@@ -81,13 +81,13 @@ async function checkDeliveryShippingAvailabilityAsync() {
 //         deliveryNotAvailable.style.display = "block";
 //     }
 
-//     addToCartSlideoutBackButton.style.display = "block";
+//     CartSlideoutBackButton.style.display = "block";
 // }
 
 function back() {
     deliveryNotAvailable.style.display = "none";
     deliveryOptions.style.display = "none";
-    addToCartSlideoutBackButton.style.display = "none";
+    CartSlideoutBackButton.style.display = "none";
 
     input.style.display = "block";
 }

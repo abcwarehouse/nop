@@ -71,7 +71,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EllaSoftware.Plugin.Misc.Cr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Tax.AbcTax", "Plugins\Nop.Plugin.Tax.AbcTax\Nop.Plugin.Tax.AbcTax.csproj", "{F8078397-1D3D-4BAA-A604-486782D70D09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.AddToCartSlideout", "Plugins\AbcWarehouse.Plugin.Widgets.AddToCartSlideout\AbcWarehouse.Plugin.Widgets.AddToCartSlideout.csproj", "{9CAC2278-05AA-44AB-8936-E6C970BD3C5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.CartSlideout", "Plugins\AbcWarehouse.Plugin.Widgets.CartSlideout\AbcWarehouse.Plugin.Widgets.CartSlideout.csproj", "{9CAC2278-05AA-44AB-8936-E6C970BD3C5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

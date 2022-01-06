@@ -4,15 +4,15 @@ using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using Nop.Web.Framework.Infrastructure;
 
-namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout
+namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
-    public class AddToCartSlideoutPlugin : BasePlugin, IWidgetPlugin
+    public class CartSlideoutPlugin : BasePlugin, IWidgetPlugin
     {
         public bool HideInWidgetList => false;
 
         public string GetWidgetViewComponentName(string widgetZone)
         {
-            return "AddToCartSlideout";
+            return "CartSlideout";
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()

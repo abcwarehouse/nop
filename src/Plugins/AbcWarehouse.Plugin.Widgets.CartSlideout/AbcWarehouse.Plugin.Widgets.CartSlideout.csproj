@@ -7,7 +7,7 @@
     <Authors>Dave Farinelli</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
     <RepositoryType>Git</RepositoryType>
-    <OutputPath>..\..\Presentation\Nop.Web\Plugins\Widgets.AddToCartSlideout</OutputPath>
+    <OutputPath>..\..\Presentation\Nop.Web\Plugins\Widgets.CartSlideout</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
     <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your project.
     You need to set this parameter to true if your plugin has a nuget package 
@@ -22,8 +22,8 @@
   <ItemGroup>
     <None Remove="logo.png" />
     <None Remove="plugin.json" />
-    <None Remove="scripts/add-to-cart-slideout.js" />
-    <None Remove="styles/add-to-cart-slideout.css" />
+    <None Remove="scripts/cart-slideout.js" />
+    <None Remove="styles/cart-slideout.css" />
     <None Remove="Views/_ProductInfo.cshtml" />
     <None Remove="Views/_Subtotal.cshtml" />
     <None Remove="Views/_ViewImports.cshtml" />
@@ -37,10 +37,10 @@
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="scripts/add-to-cart-slideout.js">
+    <Content Include="scripts/cart-slideout.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="styles/add-to-cart-slideout.css">
+    <Content Include="styles/cart-slideout.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views/_ProductInfo.cshtml">

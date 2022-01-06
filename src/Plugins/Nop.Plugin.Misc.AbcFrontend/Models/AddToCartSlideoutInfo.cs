@@ -1,6 +1,6 @@
 namespace Nop.Plugin.Misc.AbcFrontend.Models
 {
-    public record AddToCartSlideoutInfo
+    public record CartSlideoutInfo
     {
         public string ProductName { get; init; }
         public string ProductDescription { get; init; }

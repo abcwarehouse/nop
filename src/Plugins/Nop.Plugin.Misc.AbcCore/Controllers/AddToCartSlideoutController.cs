@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
-    public class AddToCartSlideoutController : BasePluginController
+    public class CartSlideoutController : BasePluginController
     {
         private readonly IDeliveryService _deliveryService;
         private readonly INopDataProvider _nopDataProvider;
 
-        public AddToCartSlideoutController(
+        public CartSlideoutController(
             IDeliveryService deliveryService,
             INopDataProvider nopDataProvider
         ) {

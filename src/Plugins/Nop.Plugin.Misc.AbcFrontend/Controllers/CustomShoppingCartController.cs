@@ -61,7 +61,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
         // custom
-        private readonly IAddToCartSlideoutService _addToCartSlideoutService;
+        private readonly ICartSlideoutService _CartSlideoutService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly IRepository<CustomerShopMapping> _customerShopMappingRepository;
         private readonly IBackendStockService _backendStockService;
@@ -103,7 +103,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             ShoppingCartSettings shoppingCartSettings,
             ShippingSettings shippingSettings,
             // custom
-            IAddToCartSlideoutService addToCartSlideoutService,
+            ICartSlideoutService CartSlideoutService,
             IAttributeUtilities attributeUtilities,
             IRepository<CustomerShopMapping> customerShopMappingRepository,
             IBackendStockService backendStockService,
@@ -129,7 +129,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _urlRecordService = urlRecordService;
             _workContext = workContext;
 
-            _addToCartSlideoutService = addToCartSlideoutService;
+            _CartSlideoutService = CartSlideoutService;
             _attributeUtilities = attributeUtilities;
             _customerShopMappingRepository = customerShopMappingRepository;
             _backendStockService = backendStockService;
@@ -329,10 +329,12 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             ? await RenderViewComponentToStringAsync("FlyoutShoppingCart")
                             : string.Empty;
 
+                        
+
                         // ABC: Custom code for add to cart slideout
-                        var addToCartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutProductInfo", new {productId = product.Id} );
-                        var addToCartSlideoutSubtotalHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutSubtotal", new {price = product.Price} );
-                        var addToCartSlideoutProductAttributesHtml = await RenderViewComponentToStringAsync("AddToCartSlideoutProductAttributes", new {product = product} );
+                        var CartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new {productId = product.Id} );
+                        var CartSlideoutSubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new {price = product.Price} );
+                        var CartSlideoutProductAttributesHtml = await RenderViewComponentToStringAsync("CartSlideoutProductAttributes", new {product = product} );
 
                         return Json(new
                         {
@@ -341,10 +343,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml,
                             // ABC: custom response values
-                            addToCartSlideoutProductInfoHtml,
+                            CartSlideoutProductInfoHtml,
                             // this will be the delivery zip
-                            addToCartSlideoutProductAttributesHtml,
-                            addToCartSlideoutSubtotalHtml
+                            CartSlideoutProductAttributesHtml,
+                            CartSlideoutSubtotalHtml
                         });
                     }
             }

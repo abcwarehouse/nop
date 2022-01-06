@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Services.Catalog;
 using Nop.Web.Framework.Components;
 
-namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
+namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
-    public class AddToCartSlideoutSubtotalViewComponent : NopViewComponent
+    public class CartSlideoutSubtotalViewComponent : NopViewComponent
     {
         private readonly IPriceFormatter _priceFormatter;
 
-        public AddToCartSlideoutSubtotalViewComponent(
+        public CartSlideoutSubtotalViewComponent(
             IPriceFormatter priceFormatter)
         {
             _priceFormatter = priceFormatter;
@@ -17,7 +17,7 @@ namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, decimal price)
         {
-            return View("~/Plugins/Widgets.AddToCartSlideout/Views/_Subtotal.cshtml", await _priceFormatter.FormatPriceAsync(price));
+            return View("~/Plugins/Widgets.CartSlideout/Views/_Subtotal.cshtml", await _priceFormatter.FormatPriceAsync(price));
         }
     }
 }

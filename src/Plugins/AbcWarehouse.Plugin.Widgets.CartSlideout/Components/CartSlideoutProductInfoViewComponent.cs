@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Models;
+using AbcWarehouse.Plugin.Widgets.CartSlideout.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Services;
@@ -9,16 +9,16 @@ using Nop.Services.Common;
 using Nop.Services.Media;
 using Nop.Web.Framework.Components;
 
-namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
+namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
-    public class AddToCartSlideoutProductInfoViewComponent : NopViewComponent
+    public class CartSlideoutProductInfoViewComponent : NopViewComponent
     {
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IPictureService _pictureService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IProductService _productService;
 
-        public AddToCartSlideoutProductInfoViewComponent(
+        public CartSlideoutProductInfoViewComponent(
             IGenericAttributeService genericAttributeService,
             IPictureService pictureService,
             IProductAbcDescriptionService productAbcDescriptionService,
@@ -46,7 +46,7 @@ namespace AbcWarehouse.Plugin.Widgets.AddToCartSlideout.Components
                 Description = await GetProductDescriptionAsync(product),
             };
 
-            return View("~/Plugins/Widgets.AddToCartSlideout/Views/_ProductInfo.cshtml", model);
+            return View("~/Plugins/Widgets.CartSlideout/Views/_ProductInfo.cshtml", model);
         }
 
         private async Task<string> GetProductDescriptionAsync(Product product)
