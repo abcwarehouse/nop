@@ -9,23 +9,6 @@
 @inject IDownloadService downloadService
 @inject CatalogSettings catalogSettings
 
-@*--------------------------START CUSTOM CODE----------------------------*@
-
-@if (Model.Count > 0)
-{
-    for (int i = Model.Count - 1; i >= 0; i --)
-    {
-        if (Model[i].Name == "Pickup" || Model[i].Name == "Warranty" || Model[i].Name == "Home Delivery" || Model[i].Name == "Pickup Message")
-        {
-            // remove the attribute
-            Model.RemoveAt(i);
-        }
-    }
-}
-
-
-@*--------------------------END CUSTOM CODE----------------------------*@
-
 @if (Model.Count > 0)
 {
     <div class="attributes">

@@ -3,10 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using Nop.Plugin.Misc.AbcCore.Data;
+using Nop.Plugin.Misc.AbcCore.Factories;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
+using Nop.Web.Factories;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
@@ -25,8 +29,20 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                ITypeFinder typeFinder,
                AppSettings appSettings
         ) {
+            services.AddScoped<IAbcMattressProductService, AbcMattressProductService>();
+            services.AddScoped<IAbcMattressModelService, AbcMattressModelService>();
+            services.AddScoped<IAbcMattressEntryService, AbcMattressEntryService>();
+            services.AddScoped<IAbcMattressPackageService, AbcMattressPackageService>();
+            services.AddScoped<IAbcMattressBaseService, AbcMattressBaseService>();
+            services.AddScoped<IAbcMattressGiftService, AbcMattressGiftService>();
+            services.AddScoped<IAbcMattressProtectorService, AbcMattressProtectorService>();
+            services.AddScoped<IAbcMattressFrameService, AbcMattressFrameService>();
+            services.AddScoped<IAbcMattressListingPriceService, AbcMattressListingPriceService>();
+            services.AddScoped<IAbcProductModelFactory, AbcProductModelFactory>();
+            services.AddScoped<IProductModelFactory, AbcProductModelFactory>();
             services.AddScoped<IBackendStockService, BackendStockService>();
             services.AddScoped<IAttributeUtilities, AttributeUtilities>();
+            services.AddScoped<IDeliveryService, DeliveryService>();
             services.AddScoped<FrontEndService>();
             services.AddScoped<IAbcPromoService, AbcPromoService>();
             services.AddScoped<IBaseService, BaseService>();

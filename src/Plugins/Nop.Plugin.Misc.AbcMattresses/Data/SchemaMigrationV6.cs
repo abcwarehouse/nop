@@ -1,7 +1,7 @@
 using FluentMigrator;
 using Nop.Core.Domain.Catalog;
 using Nop.Data.Migrations;
-using Nop.Plugin.Misc.AbcMattresses.Domain;
+using Nop.Plugin.Misc.AbcCore.Mattresses.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore.Data
 {

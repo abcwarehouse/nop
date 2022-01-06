@@ -12,7 +12,7 @@ using Nop.Web.Models.Catalog;
 using Nop.Web.Framework.Infrastructure;
 using Nop.Services.Common;
 using System.Linq;
-using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
 using System.Threading.Tasks;
 
 namespace Nop.Plugin.Widgets.AbcSynchronyPayments.Components

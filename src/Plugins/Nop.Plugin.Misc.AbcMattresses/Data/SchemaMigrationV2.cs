@@ -1,6 +1,6 @@
 using FluentMigrator;
 using Nop.Data.Migrations;
-using Nop.Plugin.Misc.AbcMattresses.Domain;
+using Nop.Plugin.Misc.AbcCore.Mattresses.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore.Data
 {

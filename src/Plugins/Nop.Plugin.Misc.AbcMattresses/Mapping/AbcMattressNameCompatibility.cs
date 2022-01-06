@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nop.Data.Mapping;
 using Nop.Plugin.Misc.AbcCore.Domain;
-using Nop.Plugin.Misc.AbcMattresses.Domain;
+using Nop.Plugin.Misc.AbcCore.Mattresses.Domain;
 
 namespace Nop.Plugin.Misc.AbcMattress.Mapping
 {

@@ -91,6 +91,7 @@
     <None Remove="scripts\mobileMenu.js" />
     <None Remove="scripts\mobileFilters.js" />
     <None Remove="scripts\mattress.js" />
+    <None Remove="scripts\public.ajaxcart.js" />
     <None Remove="scripts\public.estimateshipping.popup.js" />
   </ItemGroup>
 
@@ -324,6 +325,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="scripts\mattress.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scripts\public.ajaxcart.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="scripts\public.estimateshipping.popup.js">

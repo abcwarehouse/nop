@@ -7,7 +7,7 @@ using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Linq;
 using Nop.Data;
-using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
