@@ -17,7 +17,6 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportIsamSpecsTask _importIsamSpecsTask;
         private readonly ImportFeaturedProductsTask _importFeaturedProductsTask;
         private readonly ImportProductFlagsTask _importProductFlagsTask;
-        private readonly ImportSotPicturesTask _importSotPicturesTask;
         private readonly ImportLocalPicturesTask _importLocalPicturesTask;
         private readonly CleanDuplicateImagesTask _cleanDuplicateImagesTask;
         private readonly ClearCacheTask _clearCacheTask;
@@ -29,7 +28,6 @@ namespace Nop.Plugin.Misc.AbcSync
             ImportIsamSpecsTask importIsamSpecsTask,
             ImportFeaturedProductsTask importFeaturedProductsTask,
             ImportProductFlagsTask importProductFlagsTask,
-            ImportSotPicturesTask importSotPicturesTask,
             ImportLocalPicturesTask importLocalPicturesTask,
             CleanDuplicateImagesTask cleanDuplicateImagesTask,
             ClearCacheTask clearCacheTask)
@@ -41,7 +39,6 @@ namespace Nop.Plugin.Misc.AbcSync
             _importIsamSpecsTask = importIsamSpecsTask;
             _importFeaturedProductsTask = importFeaturedProductsTask;
             _importProductFlagsTask = importProductFlagsTask;
-            _importSotPicturesTask = importSotPicturesTask;
             _importLocalPicturesTask = importLocalPicturesTask;
             _cleanDuplicateImagesTask = cleanDuplicateImagesTask;
             _clearCacheTask = clearCacheTask;
@@ -55,7 +52,6 @@ namespace Nop.Plugin.Misc.AbcSync
             await _importIsamSpecsTask.ExecuteAsync();
             await _importFeaturedProductsTask.ExecuteAsync();
             await _importProductFlagsTask.ExecuteAsync();
-            await _importSotPicturesTask.ExecuteAsync();
             await _importLocalPicturesTask.ExecuteAsync();
             await _cleanDuplicateImagesTask.ExecuteAsync();
             await _clearCacheTask.ExecuteAsync();

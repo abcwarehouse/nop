@@ -55,7 +55,6 @@ namespace Nop.Plugin.Misc.AbcSync
         public const string SkipImportIsamSpecsTask = Base + "SkipImportIsamSpecsTask";
         public const string SkipImportFeaturedProductsTask = Base + "SkipImportFeaturedProductsTask";
         public const string SkipImportProductFlagsTask = Base + "SkipImportProductFlagsTask";
-        public const string SkipImportSotPicturesTask = Base + "SkipImportSotPicturesTask";
         public const string SkipImportLocalPicturesTask = Base + "SkipImportLocalPicturesTask";
         public const string SkipCleanDuplicateImagesTask = Base + "SkipCleanDuplicateImagesTask";
     }

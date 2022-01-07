@@ -31,7 +31,6 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<IImportIsamSpecs, ImportIsamSpecs>();
             services.AddScoped<IImportProductFlags, ImportProductFlags>();
             services.AddScoped<IDocumentImportService, DocumentImportService>();
-            services.AddScoped<IImportPictureService, ImportPictureService>();
 
             services.AddScoped<ISiteOnTimeProductService, SiteOnTimeProductService>();
             services.AddScoped<IPrFileDiscountService, PrFileDiscountService>();
@@ -67,7 +66,6 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<ImportIsamSpecsTask, ImportIsamSpecsTask>();
             services.AddScoped<ImportLocalPicturesTask, ImportLocalPicturesTask>();
             services.AddScoped<ImportProductFlagsTask, ImportProductFlagsTask>();
-            services.AddScoped<ImportSotPicturesTask, ImportSotPicturesTask>();
             services.AddScoped<ClearCacheTask, ClearCacheTask>();
 
             services.AddScoped<FillStagingAccessoriesTask, FillStagingAccessoriesTask>();

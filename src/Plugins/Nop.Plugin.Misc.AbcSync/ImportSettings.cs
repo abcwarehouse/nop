@@ -52,7 +52,6 @@ namespace Nop.Plugin.Misc.AbcSync
         public bool SkipImportIsamSpecsTask { get; private set; }
         public bool SkipImportFeaturedProductsTask { get; private set; }
         public bool SkipImportProductFlagsTask { get; private set; }
-        public bool SkipImportSotPicturesTask { get; private set; }
         public bool SkipImportLocalPicturesTask { get; private set; }
         public bool SkipCleanDuplicateImagesTask { get; private set; }
 
@@ -97,7 +96,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportIsamSpecsTask = model.SkipImportIsamSpecsTask,
                 SkipImportFeaturedProductsTask = model.SkipImportFeaturedProductsTask,
                 SkipImportProductFlagsTask = model.SkipImportProductFlagsTask,
-                SkipImportSotPicturesTask = model.SkipImportSotPicturesTask,
                 SkipImportLocalPicturesTask = model.SkipImportLocalPicturesTask,
                 SkipCleanDuplicateImagesTask = model.SkipCleanDuplicateImagesTask,
                 SkipSliExportTask = model.SkipSliExportTask
@@ -140,7 +138,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportIsamSpecsTask = SkipImportIsamSpecsTask,
                 SkipImportFeaturedProductsTask = SkipImportFeaturedProductsTask,
                 SkipImportProductFlagsTask = SkipImportProductFlagsTask,
-                SkipImportSotPicturesTask = SkipImportSotPicturesTask,
                 SkipImportLocalPicturesTask = SkipImportLocalPicturesTask,
                 SkipCleanDuplicateImagesTask = SkipCleanDuplicateImagesTask,
                 SkipSliExportTask = SkipSliExportTask

@@ -126,9 +126,6 @@ namespace Nop.Plugin.Misc.AbcSync.Models
         [NopResourceDisplayName(ImportPluginLocales.SkipImportProductFlagsTask)]
         public bool SkipImportProductFlagsTask { get; set; }
 
-        [NopResourceDisplayName(ImportPluginLocales.SkipImportSotPicturesTask)]
-        public bool SkipImportSotPicturesTask { get; set; }
-
         [NopResourceDisplayName(ImportPluginLocales.SkipImportLocalPicturesTask)]
         public bool SkipImportLocalPicturesTask { get; set; }
 
