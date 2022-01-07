@@ -27,6 +27,11 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             endpointRouteBuilder.MapControllerRoute("CustomProductEdit",
                             "Admin/Product/Edit",
                             new { controller = "CustomProduct", action = "Edit", area = "Admin" });
+
+            // Add to Cart Slideout
+            endpointRouteBuilder.MapControllerRoute("CartSlideout_GetDeliveryOptions",
+                            "AddToCart/GetDeliveryOptions",
+                            new { controller = "CartSlideout", action = "GetDeliveryOptions"});
         }
     }
 }

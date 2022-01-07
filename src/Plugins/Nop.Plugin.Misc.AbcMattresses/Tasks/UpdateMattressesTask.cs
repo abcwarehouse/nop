@@ -1,6 +1,6 @@
 using Nop.Services.Logging;
 using Nop.Services.Tasks;
-using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
 using System.Linq;

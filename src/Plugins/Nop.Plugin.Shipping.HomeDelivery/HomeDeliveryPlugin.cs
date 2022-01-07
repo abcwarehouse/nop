@@ -15,6 +15,7 @@ using LinqToDB.Data;
 using LinqToDB;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Services.Common;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using System.Threading.Tasks;
 using Nop.Plugin.Shipping.Fedex;
@@ -26,6 +27,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
     /// </summary>
     public class HomeDeliveryPlugin : BasePlugin, IShippingRateComputationMethod
     {
+        private readonly IDeliveryService _deliveryService;
         private readonly IShippingRateComputationMethod _baseShippingComputation;
         private readonly IRepository<ProductHomeDelivery> _productHomeDeliveryRepo;
         private readonly IProductAttributeParser _productAttributeParser;
@@ -34,6 +36,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
         private readonly IProductAttributeService _productAttributeService;
 
         public HomeDeliveryPlugin(
+            IDeliveryService deliveryService,
             IRepository<ProductHomeDelivery> productHomeDeliveryRepo,
             IProductAttributeParser productAttributeParser,
             INopDataProvider nopContext,
@@ -41,6 +44,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             IProductAttributeService productAttributeService
         )
         {
+            _deliveryService = deliveryService;
             _baseShippingComputation = EngineContext.Current.Resolve<FedexComputationMethod>();
             _productHomeDeliveryRepo = productHomeDeliveryRepo;
             _productAttributeParser = productAttributeParser;
@@ -169,11 +173,9 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             int zipNum;
             if (int.TryParse(firstFive, out zipNum))
             {
-                var returnCode = new DataParameter { Name = "ReturnCode", DataType = DataType.Int32, Direction = ParameterDirection.Output };
-                var parameters = new DataParameter[] { returnCode, new DataParameter { Name = "zip", DataType = DataType.Int32, Value = zipNum } };
-                await _nopContext.ExecuteNonQueryAsync("EXEC @ReturnCode = ZipIsHomeDelivery @zip", dataParameters: parameters);
+                var isZipEligible = await _deliveryService.CheckZipcodeAsync(zipNum);
 
-                if (returnCode.Value.Equals(1))
+                if (isZipEligible)
                     return true;
                 else
                     response.AddError("Home Delivery Shipping is not available for the given zip code.");

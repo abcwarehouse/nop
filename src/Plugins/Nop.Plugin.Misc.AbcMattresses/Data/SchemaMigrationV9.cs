@@ -1,6 +1,6 @@
 using FluentMigrator;
 using Nop.Data.Migrations;
-using Nop.Plugin.Misc.AbcMattresses.Domain;
+using Nop.Plugin.Misc.AbcCore.Mattresses.Domain;
 using FluentMigrator.Builders.Create.Table;
 using Nop.Data.Mapping.Builders;
 using Nop.Data.Extensions;

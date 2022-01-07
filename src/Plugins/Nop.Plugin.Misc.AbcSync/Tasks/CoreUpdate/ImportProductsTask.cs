@@ -7,7 +7,7 @@ using Nop.Plugin.Misc.AbcCore;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcCore.Services;
-using Nop.Plugin.Misc.AbcMattresses.Services;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcSync.Data;
 using Nop.Plugin.Misc.AbcSync.Domain.Staging;
 using Nop.Plugin.Misc.AbcSync.Extensions;
