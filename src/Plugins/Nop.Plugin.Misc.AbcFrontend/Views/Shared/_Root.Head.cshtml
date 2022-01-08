@@ -89,10 +89,6 @@
     string equalPaymentModalTextColor = isHawthorne ?
         "gray" :
         await HtmlHelpers.GetPavilionPrimaryColorAsync();
-
-    @* ABC: Custom CSS *@
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/custom_front_product.css");
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/pavilion-styles.css");
 }
 <!DOCTYPE html>
 <html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(await this.ShouldUseRtlThemeAsync() ? Html.Raw(" dir=\"rtl\"") : null) @Html.NopPageCssClasses()>

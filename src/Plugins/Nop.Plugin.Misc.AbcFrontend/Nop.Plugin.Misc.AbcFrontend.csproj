@@ -35,7 +35,6 @@
     <None Remove="Views\Home\Index.cshtml" />
     <None Remove="Views\Product\_AddToCart.cshtml" />
     <None Remove="Views\Product\_ProductAttributes.cshtml" />
-    <None Remove="Views\Product\_ProductPrice.cshtml" />
     <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
@@ -45,19 +44,6 @@
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />
     <None Remove="Views\Order\Details.cshtml" />
-    <None Remove="styles\checkout-warranty-selection.css" />
-    <None Remove="styles\custom_front_product.css" />
-    <None Remove="styles\mobile-header.css" />
-    <None Remove="styles\mobile-categories.css" />
-    <None Remove="styles\pavilion-styles.css" />
-    <None Remove="styles\pavilion-styles-haw.css" />
-    <None Remove="styles\product-box.css" />
-    <None Remove="styles\product-details-template.css" />
-    <None Remove="styles\product-listings.css" />
-    <None Remove="styles\product-price.css" />
-    <None Remove="styles\store.css" />
-    <None Remove="styles\rebates-promos.css" />
-    <None Remove="styles\tooltip.css" />
     <None Remove="Images\abc\BestDeal.jpg" />
     <None Remove="Images\abc\CallUs.jpg" />
     <None Remove="Images\abc\InStore.jpg" />
@@ -184,48 +170,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Topic\TopicDetails.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\checkout-warranty-selection.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\custom_front_product.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\mobile-header.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\mobile-categories.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\pavilion-styles.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\pavilion-styles-haw.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\product-box.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\product-details-template.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\product-listings.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\product-price.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\store.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\store-locator.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\rebates-promos.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="styles\tooltip.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\abc\BestDeal.jpg">

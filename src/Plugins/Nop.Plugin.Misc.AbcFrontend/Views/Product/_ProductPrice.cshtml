@@ -20,7 +20,6 @@
 
 @{
     Html.AddCssFileParts("https://use.fontawesome.com/releases/v5.3.1/css/all.css", "", true);
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/tooltip.css");
 
     var itemNumber = "";
 
@@ -37,7 +36,7 @@
         }
     }
 
-    Html.AddCssFileParts("~/Plugins/Misc.AbcFrontend/styles/product-price.css");
+
     string savedStr = "";
     // calculate price difference
     if (!String.IsNullOrWhiteSpace(Model.OldPrice))

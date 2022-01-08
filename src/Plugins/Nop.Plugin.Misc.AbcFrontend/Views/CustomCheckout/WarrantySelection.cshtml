@@ -18,8 +18,6 @@
     Html.AppendPageCssClassParts("html-shipping-method-page");
 }
 
-<link href="@Url.Content("~/Plugins/Misc.AbcFrontend/styles/checkout-warranty-selection.css")" rel="stylesheet" type="text/css" />
-
 <div class="page checkout-page shipping-method-page">
     @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Warranty })
     <div class="page-title">
