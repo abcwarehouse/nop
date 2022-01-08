@@ -1,0 +1,109 @@
+﻿@model CheckoutProgressModel
+@{
+    const string currentStepClass = " current-step";
+
+    @*Shopping Cart Step Class*@
+    var isShoppingCartCurrentStep = Model.CheckoutProgressStep == CheckoutProgressStep.Cart;
+    var shoppingCartClass = string.Empty;
+    if (isShoppingCartCurrentStep)
+    {
+        shoppingCartClass = currentStepClass;
+    }
+
+    @*Adress Step Class*@
+    var isAddressCurrentStep = Model.CheckoutProgressStep == CheckoutProgressStep.Address;
+    var isAddressActiveStep = Model.CheckoutProgressStep == CheckoutProgressStep.Address ||
+                              Model.CheckoutProgressStep == CheckoutProgressStep.Shipping ||
+                              Model.CheckoutProgressStep == CheckoutProgressStep.Payment ||
+                              Model.CheckoutProgressStep == CheckoutProgressStep.Confirm ||
+                              Model.CheckoutProgressStep == CheckoutProgressStep.Complete;
+
+    var addressClass = isAddressActiveStep ? "active-step" : "inactive-step";
+    if (isAddressCurrentStep)
+    {
+        addressClass += currentStepClass;
+    }
+
+    @*Shipping Step Class*@
+    var isShippingCurrentStep = Model.CheckoutProgressStep == CheckoutProgressStep.Shipping;
+    var isShippingActiveStep = Model.CheckoutProgressStep == CheckoutProgressStep.Shipping ||
+                               Model.CheckoutProgressStep == CheckoutProgressStep.Payment ||
+                               Model.CheckoutProgressStep == CheckoutProgressStep.Confirm ||
+                               Model.CheckoutProgressStep == CheckoutProgressStep.Complete;
+
+    var shippingClass = isShippingActiveStep ? "active-step" : "inactive-step";
+    if (isShippingCurrentStep)
+    {
+        shippingClass += currentStepClass;
+    }
+
+    @*Payment Step Class*@
+    var isPaymentCurrentStep = Model.CheckoutProgressStep == CheckoutProgressStep.Payment;
+    var isPaymentActiveStep = Model.CheckoutProgressStep == CheckoutProgressStep.Payment ||
+                         Model.CheckoutProgressStep == CheckoutProgressStep.Confirm ||
+                         Model.CheckoutProgressStep == CheckoutProgressStep.Complete;
+
+    var paymentClass = isPaymentActiveStep ? "active-step" : "inactive-step";
+    if (isPaymentCurrentStep)
+    {
+        paymentClass += currentStepClass;
+    }
+
+    @*Confirm Step Class*@
+    var isConfirmCurrentStep = Model.CheckoutProgressStep == CheckoutProgressStep.Confirm;
+    var isConfirmActiveStep = Model.CheckoutProgressStep == CheckoutProgressStep.Confirm ||
+                       Model.CheckoutProgressStep == CheckoutProgressStep.Complete;
+
+    var confirmClass = isConfirmActiveStep ? "active-step" : "inactive-step";
+    if (isConfirmCurrentStep)
+    {
+        confirmClass += currentStepClass;
+    }
+
+    @*Complete Step Class*@
+    var isCompleteActiveStep = Model.CheckoutProgressStep == CheckoutProgressStep.Complete;
+
+    var completeClass = isCompleteActiveStep ? "active-step" : "inactive-step";
+    if (isCompleteActiveStep)
+    {
+        completeClass += currentStepClass;
+    }
+}
+
+
+<div class="order-progress">
+    <ul>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutProgressBefore })
+        <li class="cart-step active-step @shoppingCartClass">
+            <a @(Model.CheckoutProgressStep != CheckoutProgressStep.Complete ? @Html.Raw($" href=\"{Url.RouteUrl("ShoppingCart")}\"") : null)>
+                <span>@T("Checkout.Progress.Cart")</span>
+            </a>
+        </li>
+        <li class="address-step @addressClass">
+            <a @(Model.CheckoutProgressStep != CheckoutProgressStep.Cart && Model.CheckoutProgressStep != CheckoutProgressStep.Complete ? @Html.Raw($" href=\"{Url.RouteUrl("CheckoutBillingAddress")}\"") : null)>
+                <span>@T("Checkout.Progress.Address")</span>
+            </a>
+        </li>
+        <li class="shipping-step @shippingClass">
+            <a @(Model.CheckoutProgressStep != CheckoutProgressStep.Cart && Model.CheckoutProgressStep != CheckoutProgressStep.Address && Model.CheckoutProgressStep != CheckoutProgressStep.Complete ? @Html.Raw($" href=\"{Url.RouteUrl("CheckoutShippingMethod")}\"") : null)>
+                <span>@T("Checkout.Progress.Shipping")</span>
+            </a>
+        </li>
+        <li class="payment-step @paymentClass">
+            <a @(Model.CheckoutProgressStep != CheckoutProgressStep.Cart && Model.CheckoutProgressStep != CheckoutProgressStep.Address && Model.CheckoutProgressStep != CheckoutProgressStep.Shipping && Model.CheckoutProgressStep != CheckoutProgressStep.Complete ? @Html.Raw($" href=\"{Url.RouteUrl("CheckoutPaymentMethod")}\"") : null)>
+                <span>@T("Checkout.Progress.Payment")</span>
+            </a>
+        </li>
+        <li class="confirm-step @confirmClass">
+            <a @(Model.CheckoutProgressStep != CheckoutProgressStep.Cart && Model.CheckoutProgressStep != CheckoutProgressStep.Address && Model.CheckoutProgressStep != CheckoutProgressStep.Shipping && Model.CheckoutProgressStep != CheckoutProgressStep.Payment && Model.CheckoutProgressStep != CheckoutProgressStep.Complete ? @Html.Raw($" href=\"{Url.RouteUrl("CheckoutConfirm")}\"") : null)>
+                <span>@T("Checkout.Progress.Confirm")</span>
+            </a>
+        </li>
+        <li class="complete-step @completeClass">
+            <a>
+                <span>@T("Checkout.Progress.Complete")</span>
+            </a>
+        </li>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutProgressAfter })
+    </ul>
+</div>

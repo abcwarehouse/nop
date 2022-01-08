@@ -1,0 +1,45 @@
+﻿@model SocialModel
+
+@using Nop.Core
+@using Nop.Services.Configuration
+
+@inject IStoreContext storeContext
+@inject ISettingService settingService
+
+@{
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var instagramUrl = await settingService.GetSettingByKeyAsync("pacificthemesettings.instagramurl", String.Empty, storeId, true);
+    var pinterestUrl = await settingService.GetSettingByKeyAsync("pacificthemesettings.pinteresturl", String.Empty, storeId, true);
+    var vimeoUrl = await settingService.GetSettingByKeyAsync("pacificthemesettings.vimeourl", String.Empty, storeId, true);
+}
+
+<ul class="social-sharing">
+    @if (!string.IsNullOrEmpty(Model.FacebookLink))
+    {
+        <li><a target="_blank" class="facebook" href="@Model.FacebookLink" rel="noopener noreferrer"></a></li>
+    }
+    @if (!string.IsNullOrEmpty(Model.TwitterLink))
+    {
+        <li><a target="_blank" class="twitter" href="@Model.TwitterLink" rel="noopener noreferrer"></a></li>
+    }
+    @if (!String.IsNullOrEmpty(pinterestUrl))
+    {
+        <li><a target="_blank" class="pinterest" href="@pinterestUrl" rel="noopener noreferrer"></a></li>
+    }
+    @if (!String.IsNullOrEmpty(vimeoUrl))
+    {
+        <li><a target="_blank" class="vimeo" href="@vimeoUrl" rel="noopener noreferrer"></a></li>
+    }
+    @if (!string.IsNullOrEmpty(Model.YoutubeLink))
+    {
+        <li><a target="_blank" class="youtube" href="@Model.YoutubeLink" rel="noopener noreferrer"></a></li>
+    }
+    @if (!String.IsNullOrEmpty(instagramUrl))
+    {
+        <li><a target="_blank" class="instagram" href="@instagramUrl" rel="noopener noreferrer"></a></li>
+    }
+    @if (Model.NewsEnabled)
+    {
+        <li><a target="_blank" class="rss" href="@Url.RouteUrl("NewsRSS", new {languageId = Model.WorkingLanguageId})"></a></li>
+    }
+</ul>

@@ -1,0 +1,40 @@
+﻿@using Nop.Core
+
+@inject IWorkContext workContext
+
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    Html.AppendCssFileParts("~/Plugins/SevenSpikes.Core/Styles/perfect-scrollbar.min.css");
+    Html.AppendCssFileParts("~/Plugins/SevenSpikes.Core/Styles/slick-slider-1.6.0.css");
+
+    if (supportRtl)
+    {
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/1800.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/1500.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/1260.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/768.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/480.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/mobile.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/footable.rtl.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/styles.rtl.css");
+    }
+    else
+    {
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/1800.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/1500.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/1260.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/768.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/480.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/mobile.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/footable.css");
+        Html.AppendCssFileParts("~/Themes/Pacific/Content/css/styles.css");
+    }
+
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/perfect-scrollbar.min.js");
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/slick-slider-1.6.0.min.js");
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.theme.min.js");
+
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Themes/Pacific/Content/scripts/pacific.js");
+}

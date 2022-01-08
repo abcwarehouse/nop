@@ -1,0 +1,160 @@
+﻿@model ProductDetailsModel
+@using Nop.Core
+@using Nop.Services.Configuration
+
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+
+@{
+    Html.AddScriptParts(ResourceLocation.Footer, "~/lib_npm/magnific-popup/jquery.magnific-popup.min.js");
+    Html.AddCssFileParts("~/lib_npm/magnific-popup/magnific-popup.css");
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
+    var productPageLayout = await settingService.GetSettingByKeyAsync("pacificthemesettings.productpagelayout", "one", storeId, true);
+    var isProductPageLayoutOne = string.Compare(productPageLayout, "one", StringComparison.InvariantCultureIgnoreCase) == 0;
+	var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+}
+
+<div class="gallery">
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
+    @if (isProductPageLayoutOne)
+    {
+        <div class="picture">
+
+        	@if (Model.DefaultPictureZoomEnabled && Model.PictureModels.Count == 1)
+            {
+                <a href="@Model.DefaultPictureModel.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-lightbox-anchor-@Model.Id" class="product-image-holder">
+                    <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-@Model.Id" />
+                </a>
+	            <script asp-location="Footer">
+	                $(document).ready(function() {
+	                    $('#main-product-img-lightbox-anchor-@Model.Id').magnificPopup({ type: 'image' });
+	                });
+	            </script>
+            }
+            else
+            {
+                <div class="product-image-holder">
+                    <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-@Model.Id" />
+                </div>
+            }
+        </div>
+		@if (Model.PictureModels.Count > 1 && Model.DefaultPictureZoomEnabled)
+	    {
+	        <div class="picture-thumbs">
+	            @foreach (var picture in Model.PictureModels)
+	            {
+	                <a class="thumb-item" href="@picture.FullSizeImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+	                    <img src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+	                </a>
+	            }
+	        </div>
+	        <script asp-location="Footer">
+	            $(document).ready(function() {
+	                $('.picture-thumbs').magnificPopup(
+	                    {
+	                        type: 'image',
+	                        delegate: 'a',
+	                        removalDelay: 300,
+	                        gallery: {
+	                            enabled: true,
+	                            navigateByImgClick: true,
+	                            preload: [0, 1],
+	                            tPrev: '@T("Media.MagnificPopup.Previous")',
+	                            tNext: '@T("Media.MagnificPopup.Next")',
+	                            tCounter: '@T("Media.MagnificPopup.Counter")'
+	                        },
+	                        tClose: '@T("Media.MagnificPopup.Close")',
+	                        tLoading: '@T("Media.MagnificPopup.Loading")'
+	                    });
+	            });
+	        </script>
+	        <script asp-location="Footer">
+	            $(document).ready(function() {
+	                $('.thumb-item > img').on('click',
+	                    function() {
+	                        $('#main-product-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
+	                        $('#main-product-img-@Model.Id').attr('title', $(this).attr('title'));
+	                        $('#main-product-img-@Model.Id').attr('alt', $(this).attr('alt'));
+	                        $('#main-product-img-lightbox-anchor-@Model.Id').attr('href', $(this).attr('data-fullsize'));
+	                        $('#main-product-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
+	                    });
+	            });
+	        </script>
+	    }
+	    else
+	    {
+	        if (Model.PictureModels.Count > 1)
+	        {
+	            <div class="picture-thumbs">
+	                @foreach (var picture in Model.PictureModels)
+	                {
+	                    <div class="thumb-item">
+	                        <img src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+	                    </div>
+	                }
+	            </div>
+	            <script asp-location="Footer">
+	                $(document).ready(function() {
+	                    $('.thumb-item img').on('click',
+	                        function() {
+	                            $('#main-product-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
+	                            $('#main-product-img-@Model.Id').attr('title', $(this).attr('title'));
+	                            $('#main-product-img-@Model.Id').attr('alt', $(this).attr('alt'));
+	                            $('#main-product-img-lightbox-anchor-@Model.Id')
+	                                .attr('href', $(this).attr('data-fullsize'));
+	                            $('#main-product-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
+	                        });
+	                });
+	            </script>
+	        }
+		}
+    }
+    else
+    {
+        <div class="picture all-pictures">
+            @if (Model.DefaultPictureZoomEnabled)
+            {
+                var pictureNumber = 1;
+
+                @foreach (var picture in Model.PictureModels)
+                {
+                    <a href="@picture.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" id="img-lightbox-anchor-@pictureNumber"  class="product-image-holder">
+                        <img alt="@Model.DefaultPictureModel.AlternateText" src="@picture.FullSizeImageUrl" data-defaultsize="@picture.ImageUrl" title="@Model.DefaultPictureModel.Title" itemprop="image" id="product-img-@pictureNumber" />
+                        <script asp-location="Footer">
+                            $(document).ready(function () {
+                                $('#img-lightbox-anchor-@pictureNumber').magnificPopup(
+                                    {
+                                        type: 'image',
+                                        removalDelay: 300,
+                                        gallery: {
+                                            enabled: true,
+                                            tPrev: '@T("Media.MagnificPopup.Previous")',
+                                            tNext: '@T("Media.MagnificPopup.Next")',
+                                            tCounter: '@T("Media.MagnificPopup.Counter")'
+                                        },
+                                        tClose: '@T("Media.MagnificPopup.Close")',
+                                        tLoading: '@T("Media.MagnificPopup.Loading")'
+                                    });
+                            });
+                        </script>
+                    </a>
+                    pictureNumber++;
+                }
+            }
+            else
+            {
+                @foreach (var picture in Model.PictureModels)
+                {
+                    <div class="product-image-holder">
+                        <img alt="@Model.DefaultPictureModel.AlternateText" src="@picture.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" itemprop="image" />
+                    </div>
+                }
+            }
+        </div>
+		<input type="hidden" id='pacificIsRtl' value="@supportRtl.ToString().ToLower()" />
+    }
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
+</div>

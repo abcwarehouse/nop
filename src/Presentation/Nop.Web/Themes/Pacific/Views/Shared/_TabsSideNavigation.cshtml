@@ -1,0 +1,98 @@
+﻿@{
+    /*category navigation*/
+    var categoryNavigation = await Component.InvokeAsync("CategoryNavigation", new { currentCategoryId = ViewBag.CurrentCategoryId, currentProductId = ViewBag.CurrentProductId });
+
+    /* manufacturer navigation*/
+    var manufacturerNavigation = await Component.InvokeAsync("ManufacturerNavigation", new { currentManufacturerId = ViewBag.CurrentManufacturerId });
+
+    /* recently viewed products block*/
+    var recentlyViewedProductsBlock = await Component.InvokeAsync("RecentlyViewedProductsBlock", new { productThumbPictureSize = 75 });
+
+    /* popular tags block*/
+    var popularProductTags = await Component.InvokeAsync("PopularProductTags");
+
+    /* polls block*/
+    var pollBlock = await Component.InvokeAsync("PollBlock", new { systemKeyword = "LeftColumnPoll" });
+
+    /* vendor navigation*/
+    var vendorNavigation = await Component.InvokeAsync("VendorNavigation");
+}
+
+<div class="side-navigation-tabs">
+    <ul class="side-navigation-tabs-header">
+        @if (!string.IsNullOrEmpty(await categoryNavigation.RenderHtmlContentAsync()))
+        {
+            <li>
+                <a class="blocks-tab-header category-navigation" href="#CategoryNavigationList">
+                    <strong>@T("Categories")</strong>
+                </a>
+            </li>
+        }
+        @if (!string.IsNullOrEmpty(await manufacturerNavigation.RenderHtmlContentAsync()))
+        {
+            <li>
+                <a class="blocks-tab-header manufacturer-navigation" href="#ManufacturerNavigationList">
+                    <strong>@T("Manufacturers")</strong>
+                </a>
+            </li>
+        }
+        @if (!string.IsNullOrEmpty(await recentlyViewedProductsBlock.RenderHtmlContentAsync()))
+        {
+            <li>
+                <a class="blocks-tab-header recently-viewed-product" href="#RecentlyViewedProductsList">
+                    <strong>@T("Products.RecentlyViewedProducts")</strong>
+                </a>
+            </li>
+        }
+        @if (!string.IsNullOrEmpty(await popularProductTags.RenderHtmlContentAsync()))
+        {
+            <li>
+                <a class="blocks-tab-header popular-tags" href="#PopularTagsList">
+                    <strong>@T("Products.Tags.Popular")</strong>
+                </a>
+            </li>
+        }
+        @if (!string.IsNullOrEmpty(await pollBlock.RenderHtmlContentAsync()))
+        {
+            <li>
+                <a class="blocks-tab-header poll-list" href="#PollList">
+                    <strong>@T("Polls.Title")</strong>
+                </a>
+            </li>
+        }
+        @if (!string.IsNullOrEmpty(await vendorNavigation.RenderHtmlContentAsync()))
+        {
+            <li>
+                <a class="blocks-tab-header vendor-navigation" href="#VendorNavigationList">
+                    <strong>@T("Vendors")</strong>
+                </a>
+            </li>
+        }
+    </ul>
+    <div class="side-navigation-tabs-body">
+        @if (!string.IsNullOrEmpty(await categoryNavigation.RenderHtmlContentAsync()))
+        {
+            @categoryNavigation
+        }
+        @if (!string.IsNullOrEmpty(await manufacturerNavigation.RenderHtmlContentAsync()))
+        {
+            @manufacturerNavigation
+        }
+        @if (!string.IsNullOrEmpty(await recentlyViewedProductsBlock.RenderHtmlContentAsync()))
+        {
+            @recentlyViewedProductsBlock
+        }
+        @if (!string.IsNullOrEmpty(await popularProductTags.RenderHtmlContentAsync()))
+        {
+            @popularProductTags
+        }
+        @if (!string.IsNullOrEmpty(await pollBlock.RenderHtmlContentAsync()))
+        {
+            <div class="poll-list-wrapper"></div>
+        }
+        @if (!string.IsNullOrEmpty(await vendorNavigation.RenderHtmlContentAsync()))
+        {
+            @vendorNavigation
+        }
+    </div>
+</div>

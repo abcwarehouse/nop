@@ -1,0 +1,147 @@
+@using Nop.Core
+@using Nop.Services.Configuration
+
+@inject IStoreContext storeContext
+@inject ISettingService settingService
+
+@{
+    Layout = "_Root";
+}
+@{
+    //current category ID
+    var currentCategoryId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("catalog", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("category", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentCategoryId = Convert.ToInt32(Url.ActionContext.RouteData.Values["categoryId"].ToString());
+    }
+
+    //current manufacturer ID
+    var currentManufacturerId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("catalog", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("manufacturer", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentManufacturerId = Convert.ToInt32(Url.ActionContext.RouteData.Values["manufacturerId"].ToString());
+    }
+
+    //current product ID
+    var currentProductId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("product", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("productdetails", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentProductId = Convert.ToInt32(Url.ActionContext.RouteData.Values["productId"].ToString());
+    }
+
+    var currentStoreId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
+    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
+    var isCatalogController = controllerName.Equals("catalog", StringComparison.InvariantCultureIgnoreCase);
+
+    var isCategoryPage = isCatalogController && actionName.Equals("category", StringComparison.InvariantCultureIgnoreCase);
+    var isCategoryPageOneColumn = await settingService.GetSettingByKeyAsync("pacificthemesettings.iscategorypageonecolumn", false, currentStoreId, true);
+
+    var categoryPageColumnsClass = string.Empty;
+
+    if (isCategoryPage)
+    {
+        categoryPageColumnsClass = "category-page-two-columns"; // default
+    }
+    if (isCategoryPage && isCategoryPageOneColumn)
+    {
+        categoryPageColumnsClass = "category-page-one-column";
+    }
+
+    ViewBag.CurrentCategoryId = currentCategoryId;
+    ViewBag.CurrentProductId = currentProductId;
+    ViewBag.CurrentManufacturerId = currentManufacturerId;
+
+    var isAccountPage = (controllerName.Equals("customer", StringComparison.InvariantCultureIgnoreCase) && (
+            actionName.Equals("info", StringComparison.InvariantCultureIgnoreCase) ||
+            actionName.Equals("addresses", StringComparison.InvariantCultureIgnoreCase) ||
+            actionName.Equals("addressadd", StringComparison.InvariantCultureIgnoreCase) ||
+            actionName.Equals("addressedit", StringComparison.InvariantCultureIgnoreCase) ||
+            actionName.Equals("downloadableproducts", StringComparison.InvariantCultureIgnoreCase) ||
+            actionName.Equals("changepassword", StringComparison.InvariantCultureIgnoreCase) ||
+            actionName.Equals("avatar", StringComparison.InvariantCultureIgnoreCase))) ||
+            actionName.Equals("customerproductreviews", StringComparison.InvariantCultureIgnoreCase) ||
+            controllerName.Equals("helpdesk", StringComparison.InvariantCultureIgnoreCase) ||
+            controllerName.Equals("vendor", StringComparison.InvariantCultureIgnoreCase) &&
+                            actionName.Equals("info", StringComparison.InvariantCultureIgnoreCase) ||
+            (controllerName.Equals("backinstocksubscription", StringComparison.InvariantCultureIgnoreCase) &&
+                            actionName.Equals("customersubscriptions", StringComparison.InvariantCultureIgnoreCase)) ||
+            (controllerName.Equals("order", StringComparison.InvariantCultureIgnoreCase) &&
+                            actionName.Equals("customerorders", StringComparison.InvariantCultureIgnoreCase)) ||
+            (controllerName.Equals("order", StringComparison.InvariantCultureIgnoreCase) &&
+                            actionName.Equals("customerrewardpoints", StringComparison.InvariantCultureIgnoreCase)) ||
+            (controllerName.Equals("boards", StringComparison.InvariantCultureIgnoreCase) &&
+                            actionName.Equals("customerforumsubscriptions", StringComparison.InvariantCultureIgnoreCase)) ||
+            (controllerName.Equals("returnrequest", StringComparison.InvariantCultureIgnoreCase) &&
+                            actionName.Equals("customerreturnrequests", StringComparison.InvariantCultureIgnoreCase));
+
+    var catalogModel = ViewBag.CatalogModel as dynamic;
+}
+
+@if (isCategoryPage && isCategoryPageOneColumn)
+{
+    <div class="center-1 @categoryPageColumnsClass">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+        @RenderBody()
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+    </div>
+    <div class="one-column-blocks-wrapper">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+        @await Html.PartialAsync("_DefaultSideNavigation")
+        @await Html.PartialAsync("_TabsSideNavigation")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
+    </div>
+}
+else
+{
+    if (!isAccountPage)
+    {
+        <div class="center-2 @categoryPageColumnsClass">
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+            @RenderBody()
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+        </div>
+        <div class="side-2">
+            @if (IsSectionDefined("left"))
+            {
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+                @await RenderSectionAsync("left")
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
+            }
+            else
+            {
+                @await Html.PartialAsync("_DefaultSideNavigation", catalogModel, null)
+            }
+        </div>
+    }
+    else
+    {
+        <div class="side-2">
+            @if (IsSectionDefined("left"))
+            {
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+                @await RenderSectionAsync("left")
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
+            }
+            else
+            {
+
+                @await Html.PartialAsync("_DefaultSideNavigation", catalogModel, null)
+            }
+        </div>
+        <div class="center-2">
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+            @RenderBody()
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+        </div>
+    }
+}
+@* TODO Pacific4.4 *@
+@* Default filters section is currently ignored until we figure out how to render it inside partial view (_DefaultSideNavigation.cshtml) *@
+@if (IsSectionDefined("CatalogFilters"))
+{
+    IgnoreSection("CatalogFilters");
+}

@@ -1,0 +1,224 @@
+﻿
+@media all and (min-width: 480px) {
+	
+/* GLOBAL STYLES */
+
+.side-2:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+/* GLOBAL FORMS */
+/* NOTIFICATIONS & POPUPS */
+
+.eu-cookie-bar-notification {
+    width: 450px;
+    max-width: 95%;
+    margin-left: -225px;
+}
+
+/* HEADER */
+/* HEADER MENU */
+/* FOOTER */
+/* LEFT/RIGHT COLUMN */
+
+.block .tags {
+    margin: 0 -5px;
+}
+.block .tags li,
+.product-tags-all-page li {
+	margin: 0 5px;
+}
+.block .poll-options li,
+.block .poll-results li {
+	display: block;
+}
+
+/* CATEGORY PAGE & GRIDS */
+
+.product-grid  .item-box,
+.product-list  .item-box{
+    width: calc(33.333% - 6.66px);
+}
+.product-grid .item-box:nth-child(2n+1),
+.product-list .item-box:nth-child(2n+1){
+    clear: none;
+    margin-left: 10px;
+}
+
+.item-box .price {
+    font-size: 16px;
+}
+.item-box .old-price {
+    font-size: 14px;
+}
+
+/* PRODUCT PAGE */
+
+.gallery .picture {
+    border: none;
+    padding: 10px;
+}
+.gallery .picture a,
+.product-image-holder {
+    border: 1px solid #eee;
+}
+.gallery .picture-thumbs {
+    margin: 0 10px;
+}
+
+/* REVIEW PAGE */
+/* WISHLIST & COMPARE LIST */
+/* TOPICS */
+
+.enter-password-form #password {
+	width: 300px;
+}
+.enter-password-form .button-1 {
+	min-width: 100px;
+}
+
+/* CONTACT PAGE & EMAILaFRIEND */
+/* REGISTRATION, LOGIN, MY ACCOUNT */
+/* SHOPPING CART & CHECKOUT */
+
+.order-progress ul {
+    display: block;
+    position: relative;
+    max-width: 420px;
+    margin: auto;
+    font-size: 0;
+}
+.order-progress ul:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    right: 10px;
+    z-index: 1;
+    height: 4px;
+    margin: -2px 0 0;
+    background-color: #e6e6e6;
+}
+.order-progress ul li {
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+    width: 50px;
+    margin: 0 10px;
+    background-color: transparent;
+}
+.order-progress a {
+    border: none;
+    background-color: #e6e6e6;
+}
+
+.common-buttons button {
+    margin: 0 10px 3px;
+}
+
+.cart-collaterals .hint,
+.cart-collaterals .shipping-results {
+    text-align: center;
+}
+
+/* SEARCH PAGE & SITEMAP */
+/* BLOG & NEWS */
+
+.news-list-homepage .news-item {
+    text-align: left;
+}
+.news-list-homepage .news-date {
+    float: left;
+    margin-left: -4px;
+}
+.news-list-homepage .news-title {
+    margin: 0 0 0 76px;
+}
+.news-list-homepage .buttons {
+    text-align: left;
+}
+
+.blog-page .post, 
+.news-list-page .news-item  {
+    text-align: left;
+}
+.blog-page .post-date, 
+.news-list-page .news-date {
+    float: left;
+}
+.post-title, 
+.news-list-page .news-title {
+    margin: 0 0 0 80px;
+}
+
+.blog-posts .buttons {
+    overflow: hidden;
+}
+.blog-posts .buttons .read-more {
+    float: left;
+}
+.blog-posts .buttons .read-comments {
+    display: block;
+    position: relative;
+    bottom: -2px;
+    float: right;
+}
+
+}
+
+/*RESPONSIVE GRIDS*/
+
+@media all and (min-width: 480px) and (max-width: 767px) {
+
+    .product-grid .item-box:nth-child(3n+1),
+    .product-list .item-box:nth-child(3n+1) {
+        clear: both;
+        margin-left: 0;
+    }
+
+    .compare-products-page .remove-button {
+        padding: 5px;
+    }
+    .compare-products-page .remove-button span {
+        display: block;
+        width: 30px;
+        height: 30px;
+        margin: auto;
+        padding: 0;
+        font-size: 0;
+    }
+    .compare-products-page .remove-button span:before {
+        left: 0; right: 0;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .order-details-page .products .data-table tr {
+        float: left;
+        width: calc(50% - 10px);
+        margin: 0 0 20px 20px;
+    }
+    .order-details-page .products .data-table tr:nth-child(2n+1) {
+        clear: both;
+        margin-left: 0;
+    }
+}
+
+@media all and (min-width: 480px) and (max-width: 1260px) {
+
+    .header-menu,
+    .menu-body .sublist-wrap {
+        width: 355px !important;
+        -webkit-transform: translate(-355px);
+        -ms-transform: translate(-355px);
+        transform: translate(-355px);
+    }
+    .header-flyout-cart {
+        width: 355px;
+        -webkit-transform: translate(355px);
+        -ms-transform: translate(355px);
+        transform: translate(355px);
+    }
+}

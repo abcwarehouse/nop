@@ -1,0 +1,84 @@
+﻿@model HeaderLinksModel
+@using Nop.Core
+@using Nop.Core.Domain.Customers
+@using Nop.Services.Configuration
+
+@inject Nop.Core.IWebHelper webHelper
+@inject IStoreContext storeContext
+@inject ISettingService settingService
+
+@{
+    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    bool compareProductsEnabled = await settingService.GetSettingByKeyAsync("catalogsettings.compareproductsenabled", true, storeId, true);
+
+    int privatMessageUnred = 0;
+    Int32.TryParse(Model.UnreadPrivateMessages, out privatMessageUnred);
+}
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderLinksBefore })
+@if (Model.IsAuthenticated)
+{
+    <div class="hedar-links-item">
+        <a href="@Url.RouteUrl("CustomerInfo")" class="ico-account">@T("Account.MyAccount")@*@Model.CustomerName*@</a>
+    </div>
+    @if (Model.AllowPrivateMessages)
+    {
+        <div class="hedar-links-item">
+            <a href="@Url.RouteUrl("PrivateMessages", new { tab = "" })" class="ico-inbox">
+                <span class="inbox-label">@T("PrivateMessages.Inbox")</span>
+                @if(privatMessageUnred > 0){
+                    <span class="inbox-unread">@privatMessageUnred</span>
+                }
+            </a>
+        </div>
+    }
+    <div class="hedar-links-item">
+        <a href="@Url.RouteUrl("Logout")" class="ico-logout">@T("Account.Logout")</a>
+    </div>
+}
+else
+{
+	var returnUrl = Context.Request.Query.TryGetValue("returnUrl", out var url) && !StringValues.IsNullOrEmpty(url) 
+        ? url.ToString()
+        : webHelper.GetRawUrl(Context.Request);
+
+    @if (Model.RegistrationType != UserRegistrationType.Disabled)
+    {
+        <div class="hedar-links-item">
+            <a href="@Url.RouteUrl("Register", new { returnUrl })" class="ico-register">@T("Account.Register")</a>
+        </div>
+    }
+    <div class="hedar-links-item">
+        <a href="@Url.RouteUrl("Login", new { returnUrl })" class="ico-login">@T("Account.Login")</a>
+    </div>
+}
+@if (Model.WishlistEnabled)
+{
+    <div class="hedar-links-item">
+        <a href="@Url.RouteUrl("Wishlist")" class="ico-wishlist">
+            <span class="wishlist-label">@T("Wishlist")</span>
+            @if (Model.WishlistItems > 0)
+            {
+                <span class="wishlist-qty">@T("SevenSpikes.Themes.Pacific.Wishlist.HeaderQuantity", Model.WishlistItems)</span>
+            }
+
+        </a>
+    </div>
+}
+@if (compareProductsEnabled)
+{
+    <div class="hedar-links-item">
+        <a href="@Url.RouteUrl("CompareProducts")" class="ico-compare">@T("Products.Compare.List")</a>
+    </div>
+}
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderLinksAfter })
+@if (Model.AllowPrivateMessages && !string.IsNullOrEmpty(Model.AlertMessage))
+{
+    //new private message notification
+    <script asp-location="Footer">
+        $(document).ready(function () {
+            displayPopupNotification('@Html.Raw(JavaScriptEncoder.Default.Encode(Model.AlertMessage))', 'success', false);
+        });
+    </script>
+}

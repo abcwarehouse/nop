@@ -1,0 +1,30 @@
+﻿@model ProductDetailsModel
+@if (!string.IsNullOrWhiteSpace(Model.StockAvailability) || Model.DisplayBackInStockSubscription)
+{
+    var inStockClass = "in-stock";
+    if (Model.DisplayBackInStockSubscription)
+    {
+        inStockClass = "out-of-stock";
+    }
+    <div class="availability @inStockClass">
+        @if (!string.IsNullOrWhiteSpace(Model.StockAvailability))
+        {
+            <label class="label">@T("Products.Availability"):</label>
+            <div class="stock">
+                <div class="stock-block">
+                    <span class="value" id="stock-availability-value-@Model.Id">@Model.StockAvailability</span>
+                    @await Html.PartialAsync("_BackInStockSubscription", Model)
+                </div>
+            </div>
+        }
+        else if (Model.DisplayBackInStockSubscription)
+        {
+            <div class="stock">
+                <div class="stock-block">
+                    @await Html.PartialAsync("_BackInStockSubscription", Model)
+                </div>
+            </div>
+
+        }
+    </div>
+}

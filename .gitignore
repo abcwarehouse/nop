@@ -200,7 +200,6 @@ src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/*
 src/packages/*
 
 # ABC specific
-
 src/Presentation/Nop.Web/Resources
 src/Presentation/Nop.Web/wwwroot/product_images
 src/Presentation/Nop.Web/wwwroot/promo_banners/*
@@ -219,10 +218,10 @@ src/Presentation/Nop.Web/ImageReport.xlsx
 src/Presentation/Nop.Web/wwwroot/ImageReport.xlsx
 src/Presentation/Nop.Web/wwwroot/css/Slick/anywhereSlidersCustomCss-7-1.css
 src/Presentation/Nop.Web/wwwroot/css/Slick/anywhereSlidersCustomCss-3-1.css
-src/Presentation/Nop.Web/Themes/Pavilion/Content/css/theme.custom-3.css
-src/Presentation/Nop.Web/Themes/Pavilion/Content/css/theme.custom-7.css
 src/Presentation/Nop.Web/NopCommerceSliExport.xml
 src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
+src/Presentation/Nop.Web/Themes/**/Content/css/theme.custom*.css
+
 
 ## Saved plugins
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Core/

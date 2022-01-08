@@ -1,0 +1,77 @@
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Core.Domain.Seo
+
+@inject SeoSettings seoSettings
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    if (!string.IsNullOrEmpty(seoSettings.HomepageTitle))
+    {
+        Html.AddTitleParts(seoSettings.HomepageTitle);
+    }
+
+    //meta
+    if (!string.IsNullOrEmpty(seoSettings.HomepageDescription))
+    {
+        Html.AddMetaDescriptionParts(seoSettings.HomepageDescription);
+    }
+
+    //page class
+    Html.AppendPageCssClassParts("html-home-page");
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
+    var homePageCategoryBoxLayout = await settingService.GetSettingByKeyAsync("pacificthemesettings.homepagecategoryboxlayout", "layout-1", storeId, true);
+    var homePageCategoryBoxLayoutClass = "category-boxes-" + homePageCategoryBoxLayout;
+
+    var homePageWelcomeText = await Component.InvokeAsync("TopicBlock", new { systemName = "HomePageText" });
+    var homePageWelcomeTextImageId = await settingService.GetSettingByKeyAsync("pacificthemesettings.homepagetextbackgroundimageid", storeId, 0);
+    var homePageWelcomeTextImageClass = string.Empty;
+    if (homePageWelcomeTextImageId != 0)
+    {
+        homePageWelcomeTextImageClass = "with-image-background";
+    }
+
+    var homePageNumberOfFeaturedProductsPerRow = await settingService.GetSettingByKeyAsync("pacificthemesettings.homepagenumberoffeaturedproducts", "six", storeId, true);
+    var homePageNumberOfFeaturedProductsPerRowClass = "items-" + homePageNumberOfFeaturedProductsPerRow;
+}
+<div class="page home-page @homePageNumberOfFeaturedProductsPerRowClass">
+    <div class="page-body">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
+        <div class="home-page-categories-wrapper @homePageCategoryBoxLayoutClass">
+            <div class="home-page-slider">
+                @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_main_slider" })
+            </div>
+        	@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
+            @await Component.InvokeAsync("HomepageCategories")
+        </div>
+        @if(!String.IsNullOrEmpty(await homePageWelcomeText.RenderHtmlContentAsync()))
+        {
+            <div class="home-page-welcome-message @homePageWelcomeTextImageClass">
+                @homePageWelcomeText
+            </div>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeProducts })
+        @await Component.InvokeAsync("HomepageProducts")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeBestSellers })
+        @{
+            var bestSellers = await Component.InvokeAsync("HomepageBestSellers");
+        }
+        @if (!String.IsNullOrEmpty(await bestSellers.RenderHtmlContentAsync()))
+        {
+            <div class="bestsellers-wrapper">
+                @await Component.InvokeAsync("HomepageBestSellers")
+            </div>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeNews })
+        @await Component.InvokeAsync("HomepageNews")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforePoll })
+        @await Component.InvokeAsync("HomepagePolls")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBottom })
+    </div>
+</div>

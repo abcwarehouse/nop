@@ -1,0 +1,150 @@
+﻿@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@using Nop.Services.Configuration
+
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+@inject ISettingService settingService
+@inject CatalogSettings catalogSettings
+@inject IViewComponentSelector viewComponentSelector
+
+@model ProductOverviewModel
+
+@{
+    //prepare "Add to cart" AJAX link
+    var addtocartlink = "";
+    var shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart;
+    var quantity = 1;
+    if (Model.ProductPrice.ForceRedirectionAfterAddingToCart)
+    {
+        addtocartlink = Url.RouteUrl("AddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = shoppingCartTypeId, quantity = quantity, forceredirection = Model.ProductPrice.ForceRedirectionAfterAddingToCart });
+    }
+    else
+    {
+        addtocartlink = Url.RouteUrl("AddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = shoppingCartTypeId, quantity = quantity });
+    }
+
+    var addtowishlistlink = Url.RouteUrl("AddProductToCart-Catalog", new { productId = Model.Id, shoppingCartTypeId = (int)ShoppingCartType.Wishlist, quantity = quantity });
+    var addtocomparelink = Url.RouteUrl("AddProductToCompare", new { productId = Model.Id });
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
+    var hoverVariant = await settingService.GetSettingByKeyAsync("pacificthemesettings.itemboxhover", "one", storeId, true);
+    var hoverVariantClass = "hover-variant-" + hoverVariant;
+}
+
+<div class="product-item @hoverVariantClass" data-productid="@Model.Id">
+    <div class="picture">
+        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+            @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+            {
+                @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                {
+                    ("src", Model.DefaultPictureModel.ImageUrl),
+                    ("alt", Model.DefaultPictureModel.AlternateText),
+                    ("title", Model.DefaultPictureModel.Title)
+                })
+            }
+            else
+            {
+                <img class="picture-img" alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
+            }
+        </a>
+    </div>
+    <div class="details">
+        <div class="details-top">
+            <h2 class="product-title">
+                <a href="@Url.RouteUrl("Product", new {SeName = Model.SeName})">@Model.Name</a>
+            </h2>
+            @if (Model.ReviewOverviewModel.AllowCustomerReviews)
+            {
+                var ratingPercent = 0;
+                if (Model.ReviewOverviewModel.TotalReviews != 0)
+                {
+                    ratingPercent = ((Model.ReviewOverviewModel.RatingSum * 100) / Model.ReviewOverviewModel.TotalReviews) / 5;
+                }
+                <div class="product-rating-box" title="@string.Format(T("Reviews.TotalReviews").Text, Model.ReviewOverviewModel.TotalReviews)">
+                    <div class="rating">
+                        <div style="width: @(ratingPercent)%">
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (catalogSettings.ShowSkuOnCatalogPages && !string.IsNullOrEmpty(Model.Sku))
+        {
+            <div class="sku">
+                @Model.Sku
+            </div>
+        }
+
+        <div class="description">
+            @Html.Raw(Model.ShortDescription)
+        </div>
+
+        <div class="prices">
+            @{
+                var isPriceDiscounted = "only-price";
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OldPrice))
+                {
+                    isPriceDiscounted = "actual-price";
+                }
+            }
+            <span class="price @isPriceDiscounted">@Model.ProductPrice.Price</span>
+            @if (!string.IsNullOrEmpty(Model.ProductPrice.OldPrice))
+            {
+                <span class="price old-price">@Model.ProductPrice.OldPrice</span>
+            }
+            @if (Model.ProductPrice.DisplayTaxShippingInfo)
+            {
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                //of course, you can modify appropriate locales to include VAT info there
+                <span class="tax-shipping-info">
+                    @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                </span>
+            }
+            @if (!string.IsNullOrEmpty(Model.ProductPrice.BasePricePAngV))
+            {
+                <div class="base-price-pangv">
+                    @Model.ProductPrice.BasePricePAngV
+                </div>
+            }
+        </div>
+        <div class="add-info">
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductBoxAddinfoBefore, additionalData = Model })
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductBoxAddinfoMiddle, additionalData = Model })
+            <div class="buttons">
+                @*<button type="button" class="button-1 product-box-detail-button" onclick="setLocation('@Url.RouteUrl("Product", new { SeName = Model.SeName })')">@T("Products.Details")</button>*@
+                @if (!Model.ProductPrice.DisableBuyButton)
+                {
+                    var addToCartText = T("ShoppingCart.AddToCart").Text;
+                    if (Model.ProductPrice.IsRental)
+                    {
+                        addToCartText = T("ShoppingCart.Rent").Text;
+                    }
+                    if (Model.ProductPrice.AvailableForPreOrder)
+                    {
+                        addToCartText = T("ShoppingCart.PreOrder").Text;
+                    }
+                    <button type="button" class="button-2 product-box-add-to-cart-button" onclick="AjaxCart.addproducttocart_catalog('@addtocartlink');return false;">@(addToCartText)</button>
+                }
+                @if (!Model.ProductPrice.DisableWishlistButton)
+                {
+                    <button type="button" class="button-2 add-to-wishlist-button" title="@T("ShoppingCart.AddToWishlist")" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;">@T("ShoppingCart.AddToWishlist")</button>
+                }
+                @if (!Model.ProductPrice.DisableAddToCompareListButton)
+                {
+                    <button type="button" class="button-2 add-to-compare-list-button" title="@T("ShoppingCart.AddToCompareList")" onclick="AjaxCart.addproducttocomparelist('@addtocomparelink');return false;">@T("ShoppingCart.AddToCompareList")</button>
+                }
+            </div>
+            <a class="item-box-overlay" href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+                <span class="item-box-overlay-tint"></span>
+            </a>
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductBoxAddinfoAfter, additionalData = Model })
+        </div>
+        <div class="attribute-squares-wrapper"></div>
+    </div>
+</div>

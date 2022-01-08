@@ -1,0 +1,20 @@
+﻿@model PopularProductTagsModel
+@if (Model.Tags.Count > 0)
+{
+    <div id="PopularTagsList" class="listbox">
+        <div class="tags">
+            <ul>
+                @foreach (var item in Model.Tags)
+                {
+                	<li><a href="@Url.RouteUrl("ProductsByTag", new { item.SeName })" style="font-size:@(Model.GetFontSize(item))%;">@item.Name</a></li>
+                }
+            </ul>
+        </div>
+        @if (Model.TotalTags > Model.Tags.Count)
+        {
+            <div class="view-all">
+                <a href="@Url.RouteUrl("ProductTagsAll")">@T("Products.Tags.Popular.ViewAll")</a>
+            </div>
+        }
+    </div>
+}
