@@ -29,6 +29,14 @@
     // Only needed for _ProductPrice
     Html.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/tooltip.css");
 
+    // ProductTemplate.Simple.cshtml
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/abc/mattress.js");
+
+    // CategoryTemplate, Promo Listing (to become just category template)
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/abc/mobileFilters.js");
+
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/abc/mobileMenu.js");
+
     @* ABC: base functionality is below *@
     var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
 

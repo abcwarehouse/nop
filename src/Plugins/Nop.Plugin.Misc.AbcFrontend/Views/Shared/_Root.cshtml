@@ -28,9 +28,6 @@
         customer,
         ShoppingCartType.ShoppingCart
     )).Count();
-
-    @* ABC: add mobile menu capabilities *@
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/mobileMenu.js");
 }
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })

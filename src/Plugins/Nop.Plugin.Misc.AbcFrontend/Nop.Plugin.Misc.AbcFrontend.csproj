@@ -74,11 +74,6 @@
     <None Remove="Images\mobile-sprite.png" />
     <None Remove="Images\SaleAdButton.png" />
     <None Remove="Images\search-button.png" />
-    <None Remove="scripts\mobileMenu.js" />
-    <None Remove="scripts\mobileFilters.js" />
-    <None Remove="scripts\mattress.js" />
-    <None Remove="scripts\public.ajaxcart.js" />
-    <None Remove="scripts\public.estimateshipping.popup.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -260,21 +255,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\search-button.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts\mobileMenu.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts\mobileFilters.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts\mattress.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts\public.ajaxcart.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts\public.estimateshipping.popup.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
