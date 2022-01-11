@@ -1,15 +1,218 @@
-﻿@model ShoppingCartModel
+@* ABC: needs customizations still *@
+
+@model ShoppingCartModel
 
 @using Nop.Core
 @using Nop.Core.Domain.Orders
 @using Nop.Core.Domain.Tax
+@* ABC: custom *@
+@using Microsoft.AspNetCore.Mvc.ViewComponents
+@using Nop.Core.Domain.Catalog
+@using Nop.Data
+@using Nop.Plugin.Misc.AbcCore
+@using Nop.Plugin.Misc.AbcCore.Domain
+@using Nop.Plugin.Misc.AbcCore.Extensions
+@using Nop.Plugin.Misc.AbcCore.Services
+@using Nop.Services.Catalog
+@using Nop.Services.Common
+@using Nop.Web.Extensions
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Web.Models.ShoppingCart
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
 
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
 @inject OrderSettings orderSettings
 @inject IViewComponentSelector viewComponentSelector
+@* ABC: custom *@
+@inject FrontEndService frontEndService
+@inject IGenericAttributeService genericAttributeService
+@inject IProductService productService
+@inject IRepository<Product> productRepository
+@inject IRepository<ProductAbcDescription> productAbcDescriptionRepository
+@inject IStoreContext storeContext
+
+
+@* ABC: custom *@
+@{
+    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
+    string changeDeliveryMethodButtonColor = isHawthorne ?
+                                                await HtmlHelpers.GetPavilionPrimaryColorAsync() :
+                                                await HtmlHelpers.GetPavilionAccentColorAsync();
+
+    bool hasOutOfStockItemsInCart = Model.Items.FirstOrDefault(i => i.Warnings.Contains("Out of stock")) != null ||
+                                    Model.Items.FirstOrDefault(i => i.Warnings.Contains("Please remove item from cart to continue.")) != null;
+
+    Html.AddCssFileParts("~/Plugins/AbcWarehouse.HomeDeliveryStatusWidget/Content/loading.css");
+}
+<style>
+   .spinner > div {
+    	background-color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
+    }
+
+    .product-mini-description {
+        font-size: 9pt;
+        display: block;
+        font-style: italic;
+        margin-bottom: 7px;
+    }
+    .change-delivery-method {
+    	outline: 1px solid transparent;
+        padding: 5px 10px;
+    	border: none;
+    	color: white;
+    	font-weight: bold;
+    	background: #@changeDeliveryMethodButtonColor;
+    }
+
+    .change-delivery-method:hover {
+    	outline-color: #@changeDeliveryMethodButtonColor;
+    }
+
+    .delivery-method-error {
+        display: none;
+        color: red;
+    }
+
+    .attributes {
+        display: inline-block;
+    }
+
+    .edit-item {
+        display: inline-block;
+        margin-left: 12px;
+    }
+
+    .edit-item.edit-item a {
+        color: blue;
+    }
+    .attributes.attributes.attributes {
+        margin: 0px;
+        margin-bottom: 7px;
+    }
+
+	.prices-bottom-message-mobile {
+		color: #4f4f4f;
+		margin-top: 0.5rem;
+		font-size: 0.65rem;
+		font-style: italic;
+	}
+
+	.message-error {
+		font-weight: bold;
+	}
+
+	.shopping-cart-page .message-error-mobile {
+		margin-bottom: 0;
+	}
+
+	button#checkout:disabled {
+		background-color: #f2f2f2;
+		color: #d9d9d9;
+		cursor: not-allowed;
+	}
+
+	button#checkout:disabled:hover {
+		outline-color: transparent;
+	}
+
+	.checkout-disabled-message {
+		font-weight: bold;
+		color: red;
+		margin: 1rem 3rem;
+	}
+
+	button.remove-link {
+	    font-weight: normal;
+		text-decoration: underline;
+		font-size: 0.7rem;
+		display: block;
+		color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
+		background-color: transparent;
+		border: 0;
+		margin: 1rem auto 0 auto;
+	}
+
+	@@media (min-width: 523px) {
+		.prices-bottom-message-mobile,
+		.shopping-cart-page .message-error-mobile {
+			display: none;
+		}
+	}
+
+	@@media (min-width: 811px) {
+		td.product {
+			width: 100%
+		}
+
+		button.remove-link {
+			margin: 1rem 0 0 0;
+		}
+	}
+</style>
+<script>
+    $(document).on('click', '.change-delivery-method', function () {
+            $('.change-delivery-method').attr('disabled', 'disabled');
+            $('.spinner').show();
+            $.ajax({
+                cache: false,
+                url: '/SwapDeliveryMethod/Change',
+                data: { 'shoppingCartItemId': $(this).val() },
+                type: 'post',
+                success: success,
+                error: error
+            });
+            return false;
+        });
+
+		$(document).on('click', '.remove-link', function () {
+            $('.remove-link').attr('disabled', 'disabled');
+            $('.spinner').show();
+            $.ajax({
+                cache: false,
+                url: '/ShoppingCart/RemoveItem',
+                data: { 'shoppingCartItemId': $(this).val() },
+                type: 'post',
+                success: success,
+                error: error
+            });
+            return false;
+        });
+
+        function success(data) {
+            $('.spinner').hide();
+            if (data.RedirectUrl) {
+                location.href = data.RedirectUrl;
+            }
+            else if (data.ErrorMessage) {
+                $(data.ErrorMessageRecipient).show();
+                $(data.ErrorMessageRecipient).empty();
+                $(data.ErrorMessageRecipient).append(data.ErrorMessage);
+                $('.change-delivery-method').removeAttr('disabled');
+                return false;
+            }
+            else {
+                location.href = "/cart";
+            }
+        }
+
+        function error() {
+            $('.spinner').hide();
+            $('.change-delivery-method').removeAttr('disabled');
+            alert('error');
+        }
+</script>
 
 <div class="order-summary-content">
+    <!-- ABC: custom -->
+    <div class="spinner hidden-loading">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+    </div>
+    
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
     @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
     @if (Model.Items.Count > 0)
@@ -99,6 +302,39 @@
                         @{var counter = 0;}
                         @foreach (var item in Model.Items)
                         {
+                            // ABC: custom
+                            var miniDesc = "";
+                            var pad = productAbcDescriptionRepository.Table.Where(p => p.Product_Id == item.ProductId).FirstOrDefault();
+                            var product = await productService.GetProductByIdAsync(item.ProductId);
+                            var plpDescription = await genericAttributeService.GetAttributeAsync<string>(
+                                product, "PLPDescription");
+                            if (!string.IsNullOrWhiteSpace(plpDescription))
+                            {
+                                miniDesc = plpDescription;
+                            }
+                            else if (pad != null)
+                            {
+                                miniDesc = pad.AbcDescription;
+                            }
+                            else
+                            {
+                                miniDesc = productRepository.Table.Where(p => p.Id == item.ProductId).FirstOrDefault().ShortDescription;
+                            }
+
+                            ProductFlag productFlag = frontEndService.GetProductFlag(item.ProductId);
+                            string stockMessage = "";
+                            string attributeInfo = item.AttributeInfo;
+                            bool isOnlineOnly = productFlag != null && productFlag.PriceBucketImageUrl != null && productFlag.PriceBucketImageUrl.Contains("Online");
+
+                            if (productFlag != null)
+                            {
+                                stockMessage = productFlag.StockMessage;
+                            }
+                            else if (!frontEndService.ProductIsAbc(item.ProductId))
+                            {
+                                stockMessage = "Normally ships in 2-3 weeks.";
+                            }
+
                             counter++;
                             <tr class="cart-item-row">
                                 <td>
@@ -146,12 +382,24 @@
                                 }
                                 <td class="product">
                                     <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                    <div class="product-mini-description">@Html.Raw(miniDesc)</div>
+                                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.OrderSummaryAfterProductMiniDescription, additionalData = item.ProductId })
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
                                             @Html.Raw(item.AttributeInfo)
                                         </div>
                                     }
+                                    <!-- ABC: custom -->
+                                    @if (!string.IsNullOrEmpty(stockMessage))
+                                    {
+                                        <div class="prices-bottom-message">@stockMessage</div>
+                                    }
+                                    @if (stockMessage == "Normally ships in 2-3 weeks.")
+                                    {
+                                        <div style="font-size: 80%">Hold your place in line by purchasing now.  Deliveries are first come, first served.  There is potential for longer wait times due to manufacturer delays.</div>
+                                    }
+                                    <!-- ABC: end custom -->
                                     @if (!string.IsNullOrEmpty(item.RecurringInfo))
                                     {
                                         <div class="recurring-info">
@@ -168,9 +416,29 @@
                                     {
                                         var editCartItemUrl = Url.RouteUrl("Product", new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
                                         editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
-                                        <div class="edit-item">
+                                        @* <div class="edit-item">
                                             <a href="@editCartItemUrl">@T("Common.Edit")</a>
-                                        </div>
+                                        </div> *@
+
+                                        // ABC: custom - I'm not sure if we're even using this
+                                        if (!isOnlineOnly)
+                                        {
+                                            if (await product.IsPickupAsync())
+                                            {
+                                                bool isPickup = item.AttributeInfo.Contains("Pickup");
+                                                string buttonMsg = isPickup ? "Change to Delivery" : "Change to Pickup in Store";
+                                                if (isPickup)
+                                                {
+                                                    <div class="edit-item">
+                                                        <a href="@editCartItemUrl">Change store</a>
+                                                    </div>
+                                                }
+                                                <div class="change">
+                                                    <button class="change-delivery-method" value="@item.Id">@buttonMsg</button>
+                                                    <span id="change_method_error_@item.Id" class="delivery-method-error"></span>
+                                                </div>
+                                            }
+                                        }
                                     }
                                     @if (item.Warnings.Count > 0)
                                     {
@@ -222,6 +490,24 @@
                                         <div class="discount">
                                             @T("ShoppingCart.ItemYouSave", item.Discount)
                                         </div>
+                                        // ABC: custom
+                                        @if (!string.IsNullOrEmpty(stockMessage))
+                                        {
+                                            <div class="prices-bottom-message prices-bottom-message-mobile">@stockMessage</div>
+                                        }
+                                        @if (item.Warnings.Count > 0)
+                                        {
+                                            <div class="message-error message-error-mobile">
+                                                <ul>
+                                                    @foreach (var warning in item.Warnings)
+                                                    {
+                                                        <li>@warning</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        <button value="@item.Id" class="remove-link">Remove</button>
+                                        // ABC: end custom
                                         if (item.MaximumDiscountedQty.HasValue)
                                         {
                                             <div class="discount-additional-info">
@@ -415,3 +701,32 @@
     }
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
 </div>
+
+@* ABC: expands products on mobile... can we move this and remove the need for
+    the custom Cart.cshtml? *@
+<script>
+    $(document).ready(function() {
+        const isMobile = window.innerWidth <= 1000;
+        const hasCartItems = document.getElementsByClassName("cart-item-row");
+        if (!isMobile || !hasCartItems) {
+            return;
+        }
+
+        var i = 1;
+        function expandCartItems() {
+            setTimeout(function() {
+                for (button of document.getElementsByClassName("footable-toggle")) {
+                    button.click();
+                    i = 20;
+                }
+                i++;
+                // will attempt for 10 seconds
+                if (i < 10) {
+                    expandCartItems();
+                }
+            }, 1000)
+        }
+
+        expandCartItems();
+    });
+</script>

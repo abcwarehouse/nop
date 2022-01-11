@@ -1,8 +1,16 @@
 ﻿@using Nop.Core
 @using Nop.Services.Configuration
+@using Nop.Web.Framework.Infrastructure
+@* ABC: for shopping cart item count *@
+@using Nop.Services.Orders
+@using Nop.Core.Domain.Orders
 
 @inject IStoreContext storeContext
 @inject ISettingService settingService
+@* ABC: for shopping cart item count *@
+@inject IWorkContext workContext
+@inject IShoppingCartService shoppingCartService
+
 @{
     Layout = "_Root.Head";
 
@@ -13,6 +21,13 @@
     var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     bool isLogoStickyOnMobileDevice = await settingService.GetSettingByKeyAsync("pavilionthemesettings.islogostickyonmobiledevice", false, storeId, true);
     string stickyLogoClass = isLogoStickyOnMobileDevice ? "mobile-sticky-logo" : string.Empty;
+
+    @* ABC: for shopping cart item count *@
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var shoppingCartItemCount = (await shoppingCartService.GetShoppingCartAsync(
+        customer,
+        ShoppingCartType.ShoppingCart
+    )).Count();
 }
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })
@@ -21,6 +36,51 @@
 @await Html.PartialAsync("_OldInternetExplorerWarning")
 
 <div class="master-wrapper-page @stickyLogoClass">
+    @* ABC: customizing mobile nav. *@
+    <div class="responsive-nav-wrapper-parent">
+        <div class="responsive-nav-wrapper">
+            <div id="mobile-header-logo">
+                @await Component.InvokeAsync("Logo")
+            </div>
+            <div class="phone"><a href="/contact-us">800-981-3866</a></div>
+            <div class="personal-button" id="header-links-opener">
+                <span>@T("SevenSpikes.Themes.Common.Personal")</span>
+            </div>
+            <div class="shopping-cart-link">
+                <a href="/cart">
+                    <span>@T("ShoppingCart")</span>
+                    @if (@shoppingCartItemCount > 0)
+                    {
+                        <div class="mobile-cart-qty">@shoppingCartItemCount</div>
+                    }
+                </a>
+            </div>
+        </div>
+    </div>
+    @* ABC: adds search bar to mobile *@
+    <div class="mobile-header-content-row">
+        <div class="mobile-menu" onClick="toggleMobileMenu()">
+            <span>Menu</span>
+        </div>
+        <script type="text/javascript">
+            function ajaxsearchsubmit(form) {
+                var search = encodeURIComponent(form.w.value);
+                document.activeElement.blur();
+                window.location = "https://appliances.abcwarehouse.com/search?w=" + search;
+                return false;
+            }
+        </script>
+
+        <form action="//appliances.abcwarehouse.com/search" id="mobile-small-search-box-form" method="get" novalidate="novalidate" onsubmit="return ajaxsearchsubmit(this);" _lpchecked="1">
+            <label for="sli_search_1" id="search_label">
+                <span style="display: none">Search:</span>
+                <input type="text" class="search-box-text valid" id="sli_search_1" autocomplete="off" name="w" data-provide="rac" placeholder="What can we help you find?" aria-label="Search" aria-labelledby="search_label">
+            </label>
+            <input type="hidden" style="display:none;" id="mobile_sli_search_2" name="AbcClearanceStore" value="False">
+            <input type="submit" class="mobile-search-button" value="Search">
+        </form>
+    </div>
+
     @await Html.PartialAsync("_Header")
     <script asp-location="Footer">
         var localized_data = {
@@ -29,28 +89,7 @@
         AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
     </script>
     <div class="overlayOffCanvas"></div>
-    <div class="responsive-nav-wrapper-parent">
-        <div class="responsive-nav-wrapper">
-            <div class="menu-title">
-                <span>@T("SevenSpikes.Themes.Common.MenuTitle")</span>
-            </div>
-            <div class="shopping-cart-link">
-                <span>@T("ShoppingCart")</span>
-            </div>
-            <div class="filters-button">
-                <span>@T("SevenSpikes.Themes.Common.Filters")</span>
-            </div>
-            <div class="personal-button" id="header-links-opener">
-                <span>@T("SevenSpikes.Themes.Common.Personal")</span>
-            </div>
-            <div class="preferences-button" id="header-selectors-opener">
-                <span>@T("SevenSpikes.Themes.Pavilion.Header.Preferences")</span>
-            </div>
-            <div class="search-wrap">
-                <span>@T("Search")</span>
-            </div>
-        </div>
-    </div>
+    
     <div class="master-wrapper-content">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
 		@await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })

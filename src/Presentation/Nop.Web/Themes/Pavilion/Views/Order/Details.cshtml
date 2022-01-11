@@ -1,4 +1,12 @@
-﻿@model OrderDetailsModel
+﻿@*
+    removes custom ABC values from display
+*@
+
+@using Nop.Web.Models.Order
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Web.Extensions
+
+@model OrderDetailsModel
 @{
     if (!Model.PrintMode)
     {
@@ -12,6 +20,10 @@
     Html.AddTitleParts(T("PageTitle.OrderDetails").Text);
     //page class
     Html.AppendPageCssClassParts("html-order-details-page");
+
+    // custom: remove CC_REFNO and AuthCode custom values
+    Model.CustomValues.Remove("CC_REFNO");
+    Model.CustomValues.Remove("AuthCode");
 }
 @if (Model.PrintMode)
 {
@@ -181,7 +193,7 @@
                         @*Complete payment (for redirection payment methods)*@
                     <li class="repost">
                         <form asp-route="OrderDetails" method="post">
-                            <button type="submit" name="repost-payment" class="button-2 re-order-button">@T("Order.RetryPayment")</button>
+                            <input type="submit" name="repost-payment" value="@T("Order.RetryPayment")" class="button-2 re-order-button"/>
                             <p class="hint">
                                 <em>@T("Order.RetryPayment.Hint")</em>
                             </p>
@@ -396,10 +408,10 @@
                                 <col width="1" />
                             }
                             <col />
-                            @if (Model.ShowVendorName)
+							@if (Model.ShowVendorName)
                             {
 								<col />
-                            }
+							}  
                             <col width="1" />
                             <col width="1" />
                             <col width="1" />
@@ -417,7 +429,7 @@
                                 }
                                 <th class="name">
                                     @T("Order.Product(s).Name")
-                                </th>
+                                </th>   
                                 @if (Model.ShowVendorName)
                                 {
                                     <th class="vendor" data-hide="w410, w480, w580, w768">
@@ -529,11 +541,11 @@
                     <div class="actions">
                         @if (Model.IsReOrderAllowed)
                         {
-                            <button type="button" class="button-1 re-order-button" onclick="setLocation('@Url.RouteUrl("ReOrder", new { orderId = Model.Id })')">@T("Order.Reorder")</button>
+                            <input type="button" value="@T("Order.Reorder")" class="button-1 re-order-button" onclick="setLocation('@Url.RouteUrl("ReOrder", new { orderId = Model.Id })    ')" />
                         }
                         @if (Model.IsReturnRequestAllowed)
                         {
-                            <button type="button" class="button-2 return-items-button" onclick="setLocation('@Url.RouteUrl("ReturnRequest", new { orderId = Model.Id })')">@T("Order.ReturnItems")</button>
+                            <input type="button" value="@T("Order.ReturnItems")" class="button-2 return-items-button" onclick="setLocation('@Url.RouteUrl("ReturnRequest", new { orderId = Model.Id })    ')" />
                         }
                     </div>
                 }
@@ -588,14 +600,14 @@
                             {
                                 foreach (var taxRate in Model.TaxRates)
                                 {
-                                    <tr>
-                                        <td class="cart-total-left">
-                                            <label>@string.Format(T("Order.TaxRateLine").Text, taxRate.Rate):</label>
-                                        </td>
-                                        <td class="cart-total-right">
-                                            <span>@taxRate.Value</span>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@string.Format(T("Order.TaxRateLine").Text, taxRate.Rate):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span>@taxRate.Value</span>
+                                    </td>
+                                </tr>
                                 }
                             }
                             @if (Model.DisplayTax)
@@ -624,14 +636,14 @@
                             {
                                 foreach (var gc in Model.GiftCards)
                                 {
-                                    <tr>
-                                        <td class="cart-total-left">
-                                            <label>@string.Format(T("Order.GiftCardInfo").Text, gc.CouponCode):</label>
-                                        </td>
-                                        <td class="cart-total-right">
-                                            <span>@gc.Amount</span>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@string.Format(T("Order.GiftCardInfo").Text, gc.CouponCode):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span>@gc.Amount</span>
+                                    </td>
+                                </tr>
                                 }
                             }
                             @if (Model.RedeemedRewardPoints > 0)

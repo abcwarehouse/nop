@@ -1,5 +1,7 @@
 ﻿@model ProductDetailsModel.AddToCartModel
 @using Nop.Core.Domain.Orders
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Web.Models.Catalog
 @if (Model.UpdatedShoppingCartItemId > 0)
 {
     <input asp-for="UpdatedShoppingCartItemId" type="hidden" />
@@ -84,7 +86,7 @@
                             addToCartText = T("ShoppingCart.PreOrder").Text;
                         }
                     }
-                    <button type="button" id="add-to-cart-button-@Model.ProductId" class="button-1 add-to-cart-button" data-productid="@Model.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;">@addToCartText</button>
+                    <input type="button" id="add-to-cart-button-@Model.ProductId" class="button-1 add-to-cart-button" value="@addToCartText" data-productid="@Model.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;" />
                 }
             </div>
             if (!string.IsNullOrEmpty(Model.PreOrderAvailabilityStartDateTimeUserTime))
@@ -93,8 +95,8 @@
                     <label>@T("ShoppingCart.PreOrderAvailability"):</label>
                     <span>@Html.Raw(Model.PreOrderAvailabilityStartDateTimeUserTime)</span>
                 </div>
+                }
             }
-        }
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model })
     </div>
 }

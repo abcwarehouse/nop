@@ -1,6 +1,12 @@
-﻿@using Nop.Core
+@* ABC: custom *@
+
+@using Nop.Core
 @using Nop.Core.Domain.Tax
 @using Nop.Services.Configuration
+@using Nop.Web.Models.Common
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Web.Extensions
 
 @inject IStoreContext storeContext
 @inject ISettingService settingService
@@ -14,6 +20,29 @@
     var removeDesignedBy = await settingService.GetSettingByKeyAsync("pavilionthemesettings.removedesignedby", false, storeId, true);
 }
 
+@* custom styles *@
+<style>
+    .list .phone {
+        font-weight: bold;
+    }
+
+    .footer .title.title {
+        margin: 0 0 0px;
+    }
+
+    @@media (min-width: 1001px) {
+        .footer-block {
+            width: 30%;
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 5%;
+        }
+
+        .footer-block-last {
+            margin-right: 0;
+        }
+    }
+</style>
 <div class="footer">
     <div class="footer-upper">
         <div class="center">
@@ -23,14 +52,40 @@
     </div>
     <div class="footer-middle">
         <div class="center">
+            @* custom *@
+            <div class="widget-min">
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.FooterBelow480px })
+            </div>
+            <div class="widget-480">
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.FooterMin480px })
+            </div>
+            <div class="widget-768">
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.FooterMin768px })
+            </div>
+            <div class="widget-1000">
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.FooterAbove1000px })
+            </div>
+            @* custom end *@
             <div class="footer-block">
                 <div class="title">
                     <strong>@T("Footer.Information")</strong>
                 </div>
                 <ul class="list">
+                    @* custom *@
                     @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn1).ToList())
                     {
                         <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                    }
+
+                    @* more custom *@
+                    @{
+                        string giftCardUrl = Nop.Plugin.Misc.AbcCore.HtmlHelpers.GetGiftCardUrl();
+                        string brandUrl = "/manufacturer/all";
+                    }
+                    @if (!Model.StoreName.Contains("Clearance"))
+                    {
+                        <li><a href="@brandUrl">Shop by Brand</a></li>
+                        <li><a href="@giftCardUrl">Gift Card</a></li>
                     }
                 </ul>
             </div>
@@ -43,14 +98,15 @@
                     {
                         <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
                     }
+                    <li><a href="http://abccontractsales.com/">Contract Sales</a></li>
                 </ul>
             </div>
-            <div class="footer-block">
+            <div class="footer-block footer-block-last">
                 <div class="title">
                     <strong>@T("Footer.MyAccount")</strong>
                 </div>
                 <ul class="list">
-					@if (Model.DisplayCustomerInfoFooterItem)
+                    @if (Model.DisplayCustomerInfoFooterItem)
 	                {
 	                    <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
 	                }
@@ -65,8 +121,9 @@
                     @if (Model.ShoppingCartEnabled && Model.DisplayShoppingCartFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("ShoppingCart")">@T("ShoppingCart")</a></li>
+                        <li><a href="https://www.mysynchrony.com/mysynchrony/merchants/cmp-index.html?market=electronics&store=abcwarehouse">Manage Credit Card</a></li>
                     }
-                	@if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
+                    @if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("Wishlist")">@T("Wishlist")</a></li>
                     }
@@ -84,16 +141,7 @@
                     }
                 </ul>
             </div>
-            <div class="footer-block quick-contact">
-                <div class="title">
-                    <strong>@T("SevenSpikes.Themes.Pavilion.Footer.ContactUs")</strong>
-                </div>
-                <ul class="list">
-                    <li class="address"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Address")</span></li>
-                    <li class="email"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span></li>
-                    <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
-                </ul>
-            </div>
+            @* removed the quick-contact section *@
         </div>
     </div>
     <div class="footer-lower">
@@ -103,6 +151,8 @@
                 <li class="method2"></li>
                 <li class="method3"></li>
                 <li class="method4"></li>
+                <li class="method5"></li>
+                <li class="method6"></li>
             </ul>
             <div class="footer-disclaimer">
                 @T("Content.CopyrightNotice", DateTime.Now.Year, Model.StoreName)
@@ -110,7 +160,7 @@
             @if (!removeCopyright)
             {
                 <div class="footer-powered-by">
-                    Powered by <a href="@(OfficialSite.Main)">nopCommerce</a>
+                    Powered by <a href="https://www.nopcommerce.com/">nopCommerce</a>
                     @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
                         Please find more info here https://www.nopcommerce.com/nopcommerce-copyright-removal-key*@
                 </div>

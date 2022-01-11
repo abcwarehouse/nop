@@ -18,32 +18,12 @@
   <ItemGroup>
     <None Remove="logo.png" />
     <None Remove="plugin.json" />
-    <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
-    <None Remove="Views\Shared\Components\HomepageCategories\Default.cshtml" />
-    <None Remove="Views\Catalog\_CatalogFilters.cshtml" />
-    <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
-    <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
-    <None Remove="Views\Catalog\ManufacturerAll.cshtml" />
-    <None Remove="Views\Catalog\ManufacturerTemplate.ProductsInGridOrLines.cshtml" />
-    <None Remove="Views\Shared\Components\SearchBox\Default.cshtml" />
-    <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
-    <None Remove="Views\Shared\Components\CheckoutProgress\Default.cshtml" />
-    <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
-    <None Remove="Views\CustomCheckout\Warranty.cshtml" />
-    <None Remove="Views\CustomCheckout\WarrantySelection.cshtml" />
-    <None Remove="Views\CustomCheckout\PaymentMethod.cshtml" />
-    <None Remove="Views\Home\Index.cshtml" />
-    <None Remove="Views\Product\_AddToCart.cshtml" />
-    <None Remove="Views\Product\_ProductAttributes.cshtml" />
-    <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
-    <None Remove="Views\Shared\_ProductBox.cshtml" />
-    <None Remove="Views\Shared\_Root.cshtml" />
-    <None Remove="Views\Shared\_Root.Head.cshtml" />
-    <None Remove="Views\Shared\_EstimateShippingPopUp.cshtml" />
-    <None Remove="Views\Order\Details.cshtml" />
+    <None Remove="Views\CustomCheckout\Warranty.cshtml" />
+    <None Remove="Views\CustomCheckout\WarrantySelection.cshtml" />
+    <None Remove="Views\CustomCheckout\PaymentMethod.cshtml" />
     <None Remove="Images\abc\BestDeal.jpg" />
     <None Remove="Images\abc\CallUs.jpg" />
     <None Remove="Images\abc\InStore.jpg" />
@@ -83,64 +63,7 @@
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\Components\HomepageCategories\Default.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Catalog\_CatalogFilters.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Catalog\_CatalogSelectors.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Catalog\_ProductsInGridOrLines.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Catalog\ManufacturerAll.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Catalog\ManufacturerTemplate.ProductsInGridOrLines.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\Components\SearchBox\Default.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\Components\Footer\Default.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\Components\CheckoutProgress\Default.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\Components\OrderSummary\Default.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\CustomCheckout\Warranty.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\CustomCheckout\WarrantySelection.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Order\Details.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\CustomCheckout\PaymentMethod.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Home\Index.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Product\_AddToCart.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Product\_ProductAttributes.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Product\_ProductPrice.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Product\ProductTemplate.Simple.cshtml">
+    <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml">
@@ -149,22 +72,13 @@
     <Content Include="Views\Components\ProductTabs\ProductTabs.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml">
+    <Content Include="Views\CustomCheckout\Warranty.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Shared\_ProductBox.cshtml">
+    <Content Include="Views\CustomCheckout\WarrantySelection.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Shared\_Root.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\_Root.Head.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Shared\_EstimateShippingPopUp.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Topic\TopicDetails.cshtml">
+    <Content Include="Views\CustomCheckout\PaymentMethod.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\abc\BestDeal.jpg">

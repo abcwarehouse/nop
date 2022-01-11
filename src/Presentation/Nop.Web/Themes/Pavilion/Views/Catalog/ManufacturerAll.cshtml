@@ -1,4 +1,9 @@
-﻿@model IList<ManufacturerModel>
+﻿@* custom styles added *@
+
+@model IList<ManufacturerModel>
+
+@using Nop.Web.Models.Catalog
+@using Microsoft.AspNetCore.Mvc.ViewComponents
 
 @inject IViewComponentSelector viewComponentSelector
 
@@ -9,7 +14,36 @@
     Html.AddTitleParts(T("PageTitle.Manufacturers").Text);
     //page class
     Html.AppendPageCssClassParts("html-manufacturer-list-page");
+
+    //custom
+    var orderedList = Model.OrderBy(it => it.SeName);
 }
+@* custom style *@
+<style>
+.manufacturer-item > .picture, .manufacturer-details {
+  display: none;
+}
+.manufacturer-item.manufacturer-item.manufacturer-item {
+  width: 100%;
+  border: none;
+  display: block;
+}
+
+.title.title.title {
+  width: 100%;
+  width: 100%;
+  margin: auto;
+  display: block;
+  text-align: center;
+}
+.item-box.item-box.item-box{
+  display: block;
+  margin-bottom: 3.5rem;
+}
+.title.title.title > a {
+  padding: 8px;
+}
+</style>
 <div class="page manufacturer-list-page">
     <div class="page-title">
         <h1>@T("Manufacturers.List")</h1>
@@ -17,7 +51,7 @@
     <div class="page-body">
         <div class="manufacturer-grid">
             <div class="item-grid">
-                @foreach (var item in Model)
+                @foreach (var item in orderedList)
                 {
                     <div class="item-box">
                         <div class="manufacturer-item">
@@ -27,7 +61,7 @@
                                 </a>
                             </h2>
                             <div class="picture">
-                                <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
+                                <a href="@Url.RouteUrl("Manufacturer", new {SeName = item.SeName})" title="@item.PictureModel.Title">
                                     @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                                     {
                                         @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
