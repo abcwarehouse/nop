@@ -109,8 +109,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 return;
             }
 
-            
-
             var stagingDb = _importSettings.GetStagingDbConnection();
 
             var ExistingSkuToId = _productRepository.Table.Select(p => new { p.Sku, p.Id }).ToDictionary(p => p.Sku, p => p.Id);
@@ -191,9 +189,24 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     product = _productRepository.Table.Where(prod => prod.Id == nopId).First();
                 }
 
-                if (product != null && product.Deleted)
+                if (product != null)
                 {
-                    continue;
+                    if (product.Deleted)
+                    {
+                        continue;
+                    }
+                    
+                    // If this product exists and if from SOT, we need to disable
+                    // adding to cart and mark "Call for Pricing"
+                    // This is needed until we move away from SOT as a whole.
+                    if (stagingProduct.ISAMItemNo == null)
+                    {
+                        product.DisableBuyButton = true;
+                        product.CallForPrice = true;
+
+                        await _productService.UpdateProductAsync(product);
+                        continue;
+                    }
                 }
 
                 var newProduct = product == null;
