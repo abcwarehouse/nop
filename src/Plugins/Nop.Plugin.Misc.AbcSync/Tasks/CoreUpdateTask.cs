@@ -28,6 +28,7 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportWarrantiesTask _importWarrantiesTask;
         private readonly UnmapNonstockClearanceTask _unmapNonstockClearanceTask;
         private readonly MapCategoryStoresTask _mapCategoryStoresTask;
+        private readonly ImportIsamSpecsTask _importIsamSpecsTask;
 
         public CoreUpdateTask(
             ISettingService settingService,
@@ -42,7 +43,8 @@ namespace Nop.Plugin.Misc.AbcSync
             ImportRelatedProductsTask importRelatedProductsTask,
             ImportWarrantiesTask importWarrantiesTask,
             UnmapNonstockClearanceTask unmapNonstockClearanceTask,
-            MapCategoryStoresTask mapCategoryStoresTask)
+            MapCategoryStoresTask mapCategoryStoresTask,
+            ImportIsamSpecsTask importIsamSpecsTask)
         {
             _settingService = settingService;
             _logger = logger;
@@ -58,12 +60,11 @@ namespace Nop.Plugin.Misc.AbcSync
             _importWarrantiesTask = importWarrantiesTask;
             _unmapNonstockClearanceTask = unmapNonstockClearanceTask;
             _mapCategoryStoresTask = mapCategoryStoresTask;
+            _importIsamSpecsTask = importIsamSpecsTask;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            
-
             try
             {
                 await _logger.InformationAsync(this.GetType().Name + " Closing Store");
@@ -79,6 +80,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 await _importWarrantiesTask.ExecuteAsync();
                 await _unmapNonstockClearanceTask.ExecuteAsync();
                 await _mapCategoryStoresTask.ExecuteAsync();
+                await _importIsamSpecsTask.ExecuteAsync();
 
                 ImportTaskExtensions.CreateIndexes();
                 await _logger.InformationAsync(this.GetType().Name + " Opening Store");

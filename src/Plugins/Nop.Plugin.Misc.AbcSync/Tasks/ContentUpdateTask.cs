@@ -14,7 +14,6 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportSettings _importSettings;
 
         private readonly ImportDocumentsTask _importDocumentsTask;
-        private readonly ImportIsamSpecsTask _importIsamSpecsTask;
         private readonly ImportFeaturedProductsTask _importFeaturedProductsTask;
         private readonly ImportProductFlagsTask _importProductFlagsTask;
         private readonly ImportLocalPicturesTask _importLocalPicturesTask;
@@ -25,7 +24,6 @@ namespace Nop.Plugin.Misc.AbcSync
             ILogger logger,
             ImportSettings importSettings,
             ImportDocumentsTask importDocumentsTask,
-            ImportIsamSpecsTask importIsamSpecsTask,
             ImportFeaturedProductsTask importFeaturedProductsTask,
             ImportProductFlagsTask importProductFlagsTask,
             ImportLocalPicturesTask importLocalPicturesTask,
@@ -36,7 +34,6 @@ namespace Nop.Plugin.Misc.AbcSync
             _importSettings = importSettings;
 
             _importDocumentsTask = importDocumentsTask;
-            _importIsamSpecsTask = importIsamSpecsTask;
             _importFeaturedProductsTask = importFeaturedProductsTask;
             _importProductFlagsTask = importProductFlagsTask;
             _importLocalPicturesTask = importLocalPicturesTask;
@@ -46,10 +43,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            
-
             await _importDocumentsTask.ExecuteAsync();
-            await _importIsamSpecsTask.ExecuteAsync();
             await _importFeaturedProductsTask.ExecuteAsync();
             await _importProductFlagsTask.ExecuteAsync();
             await _importLocalPicturesTask.ExecuteAsync();
