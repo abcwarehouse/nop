@@ -43,7 +43,7 @@ namespace Nop.Plugin.Misc.AbcSync
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            await _importDocumentsTask.ExecuteAsync();
+            //await _importDocumentsTask.ExecuteAsync();
             await _importFeaturedProductsTask.ExecuteAsync();
             await _importProductFlagsTask.ExecuteAsync();
             await _importLocalPicturesTask.ExecuteAsync();
