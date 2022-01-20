@@ -52,7 +52,7 @@ namespace Nop.Plugin.Misc.AbcSync
         public const string SkipImportPromosTask = Base + "SkipImportPromosTask";
         public const string SkipGenerateRebatePromoPageTask = Base + "SkipGenerateRebatePromoPageTask";
         public const string SkipImportDocumentsTask = Base + "SkipImportDocumentsTask";
-        public const string SkipImportIsamSpecsTask = Base + "SkipImportIsamSpecsTask";
+        public const string SkipImportColorsTask = Base + "SkipImportColorsTask";
         public const string SkipImportFeaturedProductsTask = Base + "SkipImportFeaturedProductsTask";
         public const string SkipImportProductFlagsTask = Base + "SkipImportProductFlagsTask";
         public const string SkipImportLocalPicturesTask = Base + "SkipImportLocalPicturesTask";

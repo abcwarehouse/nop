@@ -1,68 +1,61 @@
 ﻿using Nop.Core.Domain.Catalog;
-using Nop.Services.Catalog;
 using Nop.Services.Logging;
-using System.Linq;
-using System.Collections.Generic;
-using System;
-using Nop.Data;
-using Nop.Plugin.Misc.AbcSync.Services.Staging;
-using Nop.Plugin.Misc.AbcCore.Services;
-using System.Threading.Tasks;
-using Nop.Core;
+using Nop.Services.Tasks;
+using Nop.Services.Catalog;
 using Nop.Plugin.Misc.AbcCore;
-using Nop.Plugin.Misc.AbcSync.Data;
+using Nop.Plugin.Misc.AbcCore.Extensions;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Plugin.Misc.AbcSync.Services.Staging;
+using Nop.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Nop.Plugin.Misc.AbcSync
 {
-    public class ImportIsamSpecs : BaseAbcWarehouseService, IImportIsamSpecs
+    public class ImportColorsTask : IScheduleTask
     {
-        private readonly IProductService _productService;
-        private readonly ILogger _logger;
-        private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IImportUtilities _importUtilities;
+        private readonly IIsamProductService _isamProductService;
+        private readonly ILogger _logger;
+        private readonly IProductDataProductService _productDataProductService;
         private readonly IRepository<SpecificationAttribute> _specificationAttributeRepository;
         private readonly IRepository<SpecificationAttributeOption> _specificationAttributeOptionRepository;
-        private readonly IRepository<ProductSpecificationAttribute> _productSpecificationAttributeRepository;
+        private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly ImportSettings _importSettings;
-        private readonly INopDataProvider _nopDbContext;
-        private readonly IProductDataProductService _productDataProductService;
-        private readonly IIsamProductService _isamProductService;
-        private readonly StagingDb _stagingDb;
 
         private readonly Dictionary<string, int> _attrDict = new Dictionary<string, int>();
         private readonly Dictionary<Tuple<int, string>, int> _attrOptionDict = new Dictionary<Tuple<int, string>, int>();
 
-        public ImportIsamSpecs(
-            IProductService productService,
-            ILogger logger,
-            ISpecificationAttributeService specificationAttributeService,
+        public ImportColorsTask(
             IImportUtilities importUtilities,
+            IIsamProductService isamProductService,
+            ILogger logger,
+            IProductDataProductService productDataProductService,
             IRepository<SpecificationAttribute> specificationAttributeRepository,
             IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository,
-            IRepository<ProductSpecificationAttribute> productSpecificationAttributeRepository,
-            ImportSettings importSettings,
-            INopDataProvider nopDbContext,
-            IProductDataProductService productDataProductService,
-            IIsamProductService isamProductService,
-            StagingDb stagingDb
+            ISpecificationAttributeService specificationAttributeService,
+            ImportSettings importSettings
         )
         {
-            _productService = productService;
-            _logger = logger;
-            _specificationAttributeService = specificationAttributeService;
             _importUtilities = importUtilities;
+            _isamProductService = isamProductService;
+            _logger = logger;
+            _productDataProductService = productDataProductService;
             _specificationAttributeRepository = specificationAttributeRepository;
             _specificationAttributeOptionRepository = specificationAttributeOptionRepository;
-            _productSpecificationAttributeRepository = productSpecificationAttributeRepository;
+            _specificationAttributeService = specificationAttributeService;
             _importSettings = importSettings;
-            _nopDbContext = nopDbContext;
-            _productDataProductService = productDataProductService;
-            _isamProductService = isamProductService;
-            _stagingDb = stagingDb;
         }
 
-        public async Task ImportColorAsync()
+        public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            if (_importSettings.SkipImportColorsTask)
+            {
+                this.Skipped();
+                return;
+            }
+
             var colorSpecificationName = "Color";
 
             //creating color as a specification. if one exists we delete and remake it to clear old options and mappings
@@ -121,20 +114,6 @@ namespace Nop.Plugin.Misc.AbcSync
             await prodAttrOptionManager.FlushAsync();
         }
 
-        /// <summary>
-        /// Import site on time filters as filterable specification attributes
-        /// </summary>
-        public async Task ImportSiteOnTimeSpecsAsync()
-        {
-            await _nopDbContext.ExecuteNonQueryAsync("EXECUTE ImportSiteOnTimeFilters;");
-        }
-
-
-        /// <summary>
-        /// gets the id of the specification attribute associated with the given name. the specification attribute must exist. ignores name case
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         private int GetSpecAttrId(string name)
         {
             int id;
@@ -146,7 +125,7 @@ namespace Nop.Plugin.Misc.AbcSync
             return id;
         }
 
-        private async Task<int> GetSpecAttrOptionIdAsync( string attributeName,string attributeOptionName)
+        private async System.Threading.Tasks.Task<int> GetSpecAttrOptionIdAsync( string attributeName,string attributeOptionName)
         {
             var specAttrId = GetSpecAttrId(attributeName);
             Tuple<int, string> idOptionName = new Tuple<int, string>(specAttrId, attributeOptionName);
@@ -155,16 +134,15 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 try
                 {
-                    id = _specificationAttributeOptionRepository.Table.Where(sao => (sao.Name.ToUpper() == attributeOptionName.ToUpper() && sao.SpecificationAttributeId == specAttrId)).First().Id;
+                    id = _specificationAttributeOptionRepository.Table.Where(sao => (sao.Name.ToUpper().Trim() == attributeOptionName.ToUpper().Trim() && sao.SpecificationAttributeId == specAttrId)).First().Id;
                     _attrOptionDict[idOptionName] = id;
                 }
                 catch
                 {
-                    await _logger.ErrorAsync($"Could not find id for attributeName {attributeName} and attributeOptionName {attributeOptionName} for specAttrId {specAttrId}");
+                    await _logger.ErrorAsync($"Could not find id for attributeName '{attributeName}' and attributeOptionName '{attributeOptionName}' for specAttrId {specAttrId}");
                 }
             }
             return id;
         }
-
     }
 }

@@ -125,7 +125,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     [ImportPluginLocales.SkipSliExportTask] = "SliExportTask",
 
                     [ImportPluginLocales.SkipImportDocumentsTask] = "ImportDocumentsTask",
-                    [ImportPluginLocales.SkipImportIsamSpecsTask] = "ImportIsamSpecsTask",
+                    [ImportPluginLocales.SkipImportColorsTask] = "ImportColorsTask",
                     [ImportPluginLocales.SkipImportFeaturedProductsTask] = "ImportFeaturedProductsTask",
                     [ImportPluginLocales.SkipImportProductFlagsTask] = "ImportProductFlagsTask",
                     [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask"

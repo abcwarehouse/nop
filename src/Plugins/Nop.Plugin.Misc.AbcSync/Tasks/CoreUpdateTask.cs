@@ -28,7 +28,7 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportWarrantiesTask _importWarrantiesTask;
         private readonly UnmapNonstockClearanceTask _unmapNonstockClearanceTask;
         private readonly MapCategoryStoresTask _mapCategoryStoresTask;
-        private readonly ImportIsamSpecsTask _importIsamSpecsTask;
+        private readonly ImportColorsTask _importColorsTask;
 
         public CoreUpdateTask(
             ISettingService settingService,
@@ -44,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcSync
             ImportWarrantiesTask importWarrantiesTask,
             UnmapNonstockClearanceTask unmapNonstockClearanceTask,
             MapCategoryStoresTask mapCategoryStoresTask,
-            ImportIsamSpecsTask importIsamSpecsTask)
+            ImportColorsTask importColorsTask)
         {
             _settingService = settingService;
             _logger = logger;
@@ -60,7 +60,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importWarrantiesTask = importWarrantiesTask;
             _unmapNonstockClearanceTask = unmapNonstockClearanceTask;
             _mapCategoryStoresTask = mapCategoryStoresTask;
-            _importIsamSpecsTask = importIsamSpecsTask;
+            _importColorsTask = importColorsTask;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -80,7 +80,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 await _importWarrantiesTask.ExecuteAsync();
                 await _unmapNonstockClearanceTask.ExecuteAsync();
                 await _mapCategoryStoresTask.ExecuteAsync();
-                await _importIsamSpecsTask.ExecuteAsync();
+                await _importColorsTask.ExecuteAsync();
 
                 ImportTaskExtensions.CreateIndexes();
                 await _logger.InformationAsync(this.GetType().Name + " Opening Store");
@@ -91,8 +91,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 await _logger.ErrorAsync("Error when running CoreUpdate, store is likely closed.");
                 throw;
             }
-
-            
         }
     }
 }

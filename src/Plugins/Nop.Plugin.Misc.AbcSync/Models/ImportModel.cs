@@ -117,8 +117,8 @@ namespace Nop.Plugin.Misc.AbcSync.Models
         [NopResourceDisplayName(ImportPluginLocales.SkipImportDocumentsTask)]
         public bool SkipImportDocumentsTask { get; set; }
 
-        [NopResourceDisplayName(ImportPluginLocales.SkipImportIsamSpecsTask)]
-        public bool SkipImportIsamSpecsTask { get; set; }
+        [NopResourceDisplayName(ImportPluginLocales.SkipImportColorsTask)]
+        public bool SkipImportColorsTask { get; set; }
 
         [NopResourceDisplayName(ImportPluginLocales.SkipImportFeaturedProductsTask)]
         public bool SkipImportFeaturedProductsTask { get; set; }
