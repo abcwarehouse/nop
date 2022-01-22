@@ -16,12 +16,6 @@ namespace Nop.Plugin.Misc.AbcSync
     {
         public string ArchiveTaskCCEmails { get; private set; }
         public string CatalogUpdateFailureCCEmails { get; private set; }
-        public string MainStoreWebTestSubscriptionId { get; private set; }
-        public string MainStoreWebTestResourceGroup { get; private set; }
-        public string MainStoreWebTestName { get; private set; }
-        public string ClearanceStoreWebTestSubscriptionId { get; private set; }
-        public string ClearanceStoreWebTestResourceGroup { get; private set; }
-        public string ClearanceStoreWebTestName { get; private set; }
         public string StagingDbConnectionString { get; private set; }
         public bool ImportABCStores { get; private set; }
         public bool ImportHawthorneStores { get; private set; }
@@ -65,12 +59,6 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 ArchiveTaskCCEmails = model.ArchiveTaskCCEmails,
                 CatalogUpdateFailureCCEmails = model.CatalogUpdateFailureCCEmails,
-                MainStoreWebTestSubscriptionId = model.MainStoreWebTestSubscriptionId,
-                MainStoreWebTestResourceGroup = model.MainStoreWebTestResourceGroup,
-                MainStoreWebTestName = model.MainStoreWebTestName,
-                ClearanceStoreWebTestSubscriptionId = model.ClearanceStoreWebTestSubscriptionId,
-                ClearanceStoreWebTestResourceGroup = model.ClearanceStoreWebTestResourceGroup,
-                ClearanceStoreWebTestName = model.ClearanceStoreWebTestName,
                 StagingDbConnectionString = model.StagingDbConnectionString,
                 ImportABCStores = model.ImportABCStores,
                 ImportHawthorneStores = model.ImportHawthorneStores,
@@ -108,12 +96,6 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 ArchiveTaskCCEmails = ArchiveTaskCCEmails,
                 CatalogUpdateFailureCCEmails = CatalogUpdateFailureCCEmails,
-                MainStoreWebTestSubscriptionId = MainStoreWebTestSubscriptionId,
-                MainStoreWebTestResourceGroup = MainStoreWebTestResourceGroup,
-                MainStoreWebTestName = MainStoreWebTestName,
-                ClearanceStoreWebTestSubscriptionId = ClearanceStoreWebTestSubscriptionId,
-                ClearanceStoreWebTestResourceGroup = ClearanceStoreWebTestResourceGroup,
-                ClearanceStoreWebTestName = ClearanceStoreWebTestName,
                 StagingDbConnectionString = StagingDbConnectionString,
                 ImportABCStores = ImportABCStores,
                 ImportHawthorneStores = ImportHawthorneStores,
@@ -150,15 +132,6 @@ namespace Nop.Plugin.Misc.AbcSync
             {
                 LastPictureUpdate = DateTime.MinValue
             };
-        }
-
-        public bool AreUptimeTestsActive
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(MainStoreWebTestSubscriptionId) && !string.IsNullOrWhiteSpace(MainStoreWebTestSubscriptionId) && !string.IsNullOrWhiteSpace(MainStoreWebTestSubscriptionId) &&
-                       !string.IsNullOrWhiteSpace(ClearanceStoreWebTestSubscriptionId) && !string.IsNullOrWhiteSpace(ClearanceStoreWebTestResourceGroup) && !string.IsNullOrWhiteSpace(ClearanceStoreWebTestName);
-            }
         }
 
         public string GetSiteOnTimeXmlPath()

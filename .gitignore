@@ -24,8 +24,7 @@ x64/
 [Oo]ut/
 
 # Visual Studio Code files
-# I think we should keep these?
-# .vscode/
+.vscode/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -170,7 +169,7 @@ glob:*.user
 *.patch
 *.hg
 src/Presentation/Nop.Web/.config/*
-src/Presentation/Nop.Web/App_Data/browscap.crawlersonly.xml
+src/Presentation/Nop.Web/App_Data/browscap.xml
 src/Presentation/Nop.Web/App_Data/installedPlugins.json
 src/Presentation/Nop.Web/App_Data/plugins.json
 src/Presentation/Nop.Web/App_Data/dataSettings.json
@@ -184,6 +183,8 @@ src/Presentation/Nop.Web/Plugins/*
 !src/Presentation/Nop.Web/Plugins/bin
 src/Presentation/Nop.Web/Plugins/bin/*
 !src/Presentation/Nop.Web/Plugins/bin/placeholder.txt
+src/Presentation/Nop.Web/wwwroot/.well-known/*
+!src/Presentation/Nop.Web/wwwroot/.well-known/Index.htm
 src/Presentation/Nop.Web/wwwroot/bundles/*
 !src/Presentation/Nop.Web/wwwroot/bundles/Index.htm
 src/Presentation/Nop.Web/wwwroot/db_backups/*.bak
@@ -194,10 +195,12 @@ src/Presentation/Nop.Web/wwwroot/images/uploaded/*
 !src/Presentation/Nop.Web/wwwroot/images/uploaded/placeholder.txt
 src/Presentation/Nop.Web/wwwroot/files/exportimport/*
 !src/Presentation/Nop.Web/wwwroot/files/exportimport/Index.htm
-src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/*
-!src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/en/*
-!src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/main.zip
+# Remove this since these files aren't coming through?
+# src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/*
+# !src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/en/*
+# !src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/main.zip
 src/packages/*
+src/Tests/Nop.Tests/Connections.resx
 
 # ABC specific
 src/Presentation/Nop.Web/Resources
@@ -212,16 +215,11 @@ src/Presentation/Nop.Web/wwwroot/product_specs/
 src/Presentation/Nop.Web/wwwroot/promotion_forms/
 src/Presentation/Nop.Web/wwwroot/rebate_images/
 src/Presentation/Nop.Web/wwwroot/css/Slick/
-src/Presentation/Nop.Web/wwwroot\css\Slick\anywhereSlidersCustomCss-3-1.css
-src/Presentation/Nop.Web/wwwroot\css\Slick\anywhereSlidersCustomCss-7-1.css
 src/Presentation/Nop.Web/ImageReport.xlsx
 src/Presentation/Nop.Web/wwwroot/ImageReport.xlsx
-src/Presentation/Nop.Web/wwwroot/css/Slick/anywhereSlidersCustomCss-7-1.css
-src/Presentation/Nop.Web/wwwroot/css/Slick/anywhereSlidersCustomCss-3-1.css
 src/Presentation/Nop.Web/NopCommerceSliExport.xml
 src/Presentation/Nop.Web/wwwroot/ContentAdmin/*
 src/Presentation/Nop.Web/Themes/**/Content/css/theme.custom*.css
-
 
 ## Saved plugins
 !src/Presentation/Nop.Web/Plugins/SevenSpikes.Core/
@@ -243,6 +241,3 @@ src/Presentation/Nop.Web/Themes/**/Content/css/theme.custom*.css
 !src/Presentation/Nop.Web/Plugins/Widgets.Flixmedia/
 !src/Presentation/Nop.Web/Plugins/Widgets.GoogleAnalytics/
 !src/Presentation/Nop.Web/Plugins/Widgets.PowerReviews/
-
-## Playwright testing
-tests/node_modules
