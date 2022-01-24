@@ -1,0 +1,85 @@
+﻿@model PacificThemeSettingsModel
+
+@{
+    Layout = AdminViewLocations.AdminLayoutViewPath;
+
+    Html.AppendCssFileParts("~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Styles/adminstyles.css");
+    Html.AppendCssFileParts("~/Plugins/SevenSpikes.Theme.Pacific/Areas/Admin/Content/Styles/admin.css");
+
+    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Scripts/custom.presets.min.js");
+    Html.AddScriptParts("~/Plugins/SevenSpikes.Theme.Pacific/Areas/Admin/Content/Scripts/admin.min.js");
+
+    Html.SetActiveMenuItemSystemName("SevenSpikes.Themes.Admin.SettingsSubmenu.Pacific");
+}
+
+<form method="post">
+    <nop-antiforgery-token />
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#@Html.IdFor(model => model.LogoImageId_OverrideForStore)").change(logoOverrideChanged);
+            $("#@Html.IdFor(model => model.Preset_OverrideForStore)").change(colorPreset);
+
+            $('.store-scope-configuration .checkbox input').change(function () {
+                logoOverrideChanged();
+                colorPreset();
+            });
+
+            logoOverrideChanged();
+            colorPreset();
+
+            var customerPresetObj = new CustomPreset('.theme-color .radionButton:last label', '.theme-color .radionButton label');
+            customerPresetObj.setPresetsBackgroundColor();
+            customerPresetObj.addKendoColorPickerToTheLastRadioButton();
+
+        });
+
+        function logoOverrideChanged() {
+            if ($('#@Html.IdFor(model => model.LogoImageId_OverrideForStore)').length == 0) {
+                return;
+            }
+
+            if ($('#@Html.IdFor(model => model.LogoImageId_OverrideForStore)').is(':checked') == true) {
+                $("#logo-image .upload-image-overlay").remove();
+            } else {
+                $('#logo-image').append("<div class=\"upload-image-overlay\"></div>");
+            }
+        }
+
+        function colorPreset() {
+            if ($('#@Html.IdFor(model => model.Preset_OverrideForStore)').length == 0) {
+                return;
+            }
+
+            if ($('#@Html.IdFor(model => model.Preset_OverrideForStore)').is(':checked') == true) {
+                $(".theme-color .adminData .upload-image-overlay").remove();
+            } else {
+                $('.theme-color .adminData').append("<div class=\"upload-image-overlay\"></div>");
+            }
+        }
+    </script>
+
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("SevenSpikes.Themes.Pacific.Admin.Settings.ThemeSettings")
+        </h1>
+        <div class="float-right">
+            @await Html.PartialAsync(AdminViewLocations.AdminResetDefaultSettingsViewPath, Plugin.FolderName)
+            <button type="submit" name="save" class="btn bg-blue">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="form-horizontal">
+            @await Component.InvokeAsync("StoreScopeConfiguration")
+
+            <nop-tabs id="pacific-settings-edit" data-logoImageId="#@Html.IdFor(model => model.LogoImageId_OverrideForStore)" data-presetfieldId="#@Html.IdFor(model => model.Preset_OverrideForStore)">
+                <nop-tab asp-name="tab-info" asp-title="@T("SevenSpikes.Themes.Pcific.Admin.TabTitle.GeneralSettings")" asp-default="true">@await Html.PartialAsync("_Settings.General", Model)</nop-tab>
+                <nop-tab asp-name="tab-additional" asp-title="@T("SevenSpikes.Themes.Pacific.Admin.TabTitle.AdditionalSettings")">@await Html.PartialAsync("_Settings.Additional", Model)</nop-tab>               
+            </nop-tabs>
+        </div>
+    </section>
+</form>

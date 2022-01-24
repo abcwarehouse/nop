@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Settings>
+  <Setting Name="pacificthemesettings.preset">
+    <Value>c09e6c</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.defaultpreset">
+    <Value>c09e6c</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.defaultproductimageproportion">
+    <Value>100</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.defaultcategoryimageproportion">
+    <Value>100</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.productimageproportion">
+    <Value>100</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.categoryimageproportion">
+    <Value>100</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.removedesignedby">
+    <Value>false</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.removecopyright">
+    <Value>false</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.homepagecategoryboxlayout">
+    <Value>layout-1</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.homepagenumberoffeaturedproducts">
+    <Value>six</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.itemboxhover">
+    <Value>one</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.iscategorypageonecolumn">
+    <Value>false</Value>
+  </Setting>
+  <Setting Name="pacificthemesettings.productpagelayout">
+    <Value>one</Value>
+  </Setting>
+
+  <Setting Name="mediasettings.autocompletesearchthumbpicturesize">
+    <Value>50</Value>
+  </Setting>
+  <Setting Name="mediasettings.minicartthumbpicturesize">
+    <Value>105</Value>
+  </Setting>
+  <Setting Name="mediasettings.productthumbpicturesize">
+    <Value>440</Value>
+  </Setting>
+  <Setting Name="mediasettings.productdetailspicturesize">
+    <Value>625</Value>
+  </Setting>
+  <Setting Name="mediasettings.minicartthumbpicturesize">
+    <Value>115</Value>
+  </Setting>
+  <Setting Name="mediasettings.cartthumbpicturesize">
+    <Value>200</Value>
+  </Setting>
+  <Setting Name="mediasettings.manufacturerthumbpicturesize">
+    <Value>345</Value>
+  </Setting>
+  <Setting Name="mediasettings.categorythumbpicturesize">
+    <Value>450</Value>
+  </Setting>
+  <Setting Name="mediasettings.avatarpicturesize">
+    <Value>270</Value>
+  </Setting>
+  <Setting Name="mediasettings.productthumbpicturesizeonproductdetailspage">
+    <Value>150</Value>
+  </Setting>
+  <Setting Name="mediasettings.associatedproductpicturesize">
+    <Value>300</Value>
+  </Setting>
+  <Setting Name="mediasettings.maximumimagesize">
+    <Value>1920</Value>
+  </Setting>
+
+  <Setting Name="sevenspikescommonsettings.lazyloadimages">
+    <Value>True</Value>
+  </Setting>
+
+  <Setting Name="NopAjaxCartSettings.ProductBoxAddToCartButtonSelector">
+    <Value>.product-box-add-to-cart-button</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.ProductPageAddToCartButtonSelector">
+    <Value>.add-to-cart-button</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.AddToWishlistButtonSelector">
+    <Value>.add-to-wishlist-button</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.ShoppingCartMenuLinkSelector">
+    <Value>.cart-qty-number-mobile, .cart-qty-number-desktop strong</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.WishlistMenuLinkSelector">
+    <Value>.wishlist-qty</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.FlyoutCartPanelSelector">
+    <Value>.flyout-cart-wrapper</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.ProductAddedToCartImageSize">
+    <Value>350</Value>
+  </Setting>
+  <Setting Name="NopAjaxCartSettings.MiniProductDetailsViewImageSize">
+    <Value>350</Value>
+  </Setting>
+
+  <Setting Name="NopAjaxFiltersSettings.WidgetZone">
+    <Value>left_side_column_top</Value>
+  </Setting>
+  <Setting Name="NopAjaxFiltersSettings.ShowNumberOfReturnedProductsSelector">
+    <Value>.product-selectors</Value>
+  </Setting>
+  <Setting Name="NopAjaxFiltersSettings.ElementToScrollAfterFiltrationSelector">
+    <Value>.number-of-returned-products</Value>
+  </Setting>
+
+  <Setting Name="CloudZoomSettings.ResponsiveBreakpointsForThumbnailsCarousel-Pacific">
+    <Value>[{"breakpoint":1000,"settings":{"slidesToShow":4,"slidesToScroll":1,"arrows":false,"dots":true}},{"breakpoint":480,"settings":{"slidesToShow":3,"slidesToScroll":1,"arrows":false,"dots":true}}]</Value>
+  </Setting>
+  <Setting Name="CloudZoomSettings.NumberOfPictureThumbnailsInCarousel-Pacific">
+    <Value>4</Value>
+  </Setting>
+  <Setting Name=" CloudZoomSettings.NumberOfScrollablePictureThumbnailsInCarousel-Pacific">
+    <Value>1</Value>
+  </Setting>
+  
+  <Setting Name="JCarouselGeneralSettings.ResponsiveBreakpointsForSlickSlider-Pacific">
+    <Value>[{"breakpoint":1220,"settings":{"slidesToShow":4}},{"breakpoint":747,"settings":{"slidesToShow":3}},{"breakpoint":460,"settings":{"slidesToShow":2}}]</Value>
+  </Setting>
+  <Setting Name="JCarouselGeneralSettings.ResponsiveBreakpointsCategorySlider-Pacific">
+    <Value>[{"breakpoint":1220,"settings":{"slidesToShow":4}},{"breakpoint":747,"settings":{"slidesToShow":2}}]</Value>
+  </Setting>
+
+  <Setting Name="InstantSearchSettings.HighlightFirstFoundElementToBeSelected">
+    <Value>False</Value>
+  </Setting>
+  
+  <Setting Name="QuickViewSettings.ProductItemSelectorChild">
+    <Value>.buttons</Value>
+  </Setting>
+  <Setting Name="QuickViewSettings.ProductDetailsPictureSize">
+    <Value>350</Value>
+  </Setting>
+  
+  <Setting Name="RichBlogSettings.BlogListImageWidgetZone">
+    <Value>bloglist_page_before_post_title</Value>
+  </Setting>
+  
+  <Setting Name="smartproductcollectionssettings.categorythumbimagesize">
+	  <Value>435</Value>
+  </Setting>
+  <Setting Name="smartproductcollectionssettings.productthumbimagesize">
+	  <Value>125</Value>
+  </Setting>
+  
+  <!-- realonepagecheckoutsettings.shoppingcartmenulinkselector / span.cart-qty -->
+</Settings>

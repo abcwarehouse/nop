@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SupportedWidgetZones>
+  <WidgetZone>pacific_theme_logo</WidgetZone>
+  <WidgetZone>pacific_itembox_subcategories</WidgetZone>
+  <WidgetZone>pacific_color_squares</WidgetZone>
+  <WidgetZone>head_html_tag_after_css_files_pacific</WidgetZone>
+</SupportedWidgetZones>
