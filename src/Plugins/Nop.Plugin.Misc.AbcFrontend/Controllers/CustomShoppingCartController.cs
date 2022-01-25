@@ -615,11 +615,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             });
                         }
 
-                        // ABC: Custom code for add to cart slideout
-                        var CartSlideoutProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new {productId = product.Id} );
-                        // going to have to get the actual subtotal amount
-                        var CartSlideoutSubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new {price = product.Price} );
-
                         return await SlideoutJson(product);
                     }
             }
