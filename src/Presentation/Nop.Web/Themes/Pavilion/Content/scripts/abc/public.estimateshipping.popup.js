@@ -120,10 +120,10 @@ function createEstimateShippingPopUp(settings) {
 
       $('.shipping-options-body', $(this.settings.contentEl)).empty();
 
-      if (response.success) {
+      if (response.Success) {
         var activeOption;
 
-        var options = response.result.ShippingOptions;
+        var options = response.ShippingOptions;
 
         // ABC: no options? show warning and stop
         if (!options || options.length <= 0) {
@@ -170,7 +170,7 @@ function createEstimateShippingPopUp(settings) {
         this.params.displayErrors = true;
         this.clearErrorMessage();
         this.clearShippingOptions();
-        this.showErrorMessage(response.errors);
+        this.showErrorMessage(response.Errors);
       }
 
       if (this.settings.handlers.success)
