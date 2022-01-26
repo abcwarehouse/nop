@@ -234,30 +234,32 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
-            // ABC: add the home delivery attribute if it's applicable
-            // TODO
-
             //creating XML for "read-only checkboxes" attributes
-            var attXml = await productAttributes.AggregateAwaitAsync(string.Empty, async (attributesXml, attribute) =>
-            {
-                var attributeValues = await _productAttributeService.GetProductAttributeValuesAsync(attribute.Id);
-                foreach (var selectedAttributeId in attributeValues
-                    .Where(v => v.IsPreSelected)
-                    .Select(v => v.Id)
-                    .ToList())
-                {
-                    attributesXml = _productAttributeParser.AddProductAttribute(attributesXml,
-                        attribute, selectedAttributeId.ToString());
-                }
+            // ABC: allowing this to add the appropriate home delivery attribute
+            //      might make sense to use productAttributeParser.AddProductAttribute
 
-                return attributesXml;
-            });
+            // var attXml = await productAttributes.AggregateAwaitAsync(string.Empty, async (attributesXml, attribute) =>
+            // {
+            //     var attributeValues = await _productAttributeService.GetProductAttributeValuesAsync(attribute.Id);
+            //     foreach (var selectedAttributeId in attributeValues
+            //         .Where(v => v.IsPreSelected)
+            //         .Select(v => v.Id)
+            //         .ToList())
+            //     {
+            //         attributesXml = _productAttributeParser.AddProductAttribute(attributesXml,
+            //             attribute, selectedAttributeId.ToString());
+            //     }
+
+            //     return attributesXml;
+            // });
+
+            var attXml = await GetProductAttributeXmlAsync(product);
 
             //get standard warnings without attribute validations
             //first, try to find existing shopping cart item
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), cartType, (await _storeContext.GetCurrentStoreAsync()).Id);
             // ABC: should look for appropriate attributes
-            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(cart, cartType, product);
+            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(cart, cartType, product, attXml);
             //if we already have the same product in the cart, then use the total quantity to validate
             var quantityToValidate = shoppingCartItem != null ? shoppingCartItem.Quantity + quantity : quantity;
             var addToCartWarnings = await _shoppingCartService
@@ -679,6 +681,39 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { price = product.Price } ),
                 DeliveryOptionsHtml = await RenderViewComponentToStringAsync("CartSlideoutProductAttributes", new { product = product })
             };
-        } 
+        }
+
+        // Will get the appropriate default product attributes for the product
+        private async Task<string> GetProductAttributeXmlAsync(Product product)
+        {
+            var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+            var deliveryOptionsProductAttributeMapping = (await productAttributeMappings.WhereAwait(
+                async pam => (await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId)).Name == "Delivery/Pickup Options"
+            ).ToListAsync()).FirstOrDefault();
+            var legacyHomeDeliveryProductAttributeMapping = (await productAttributeMappings.WhereAwait(
+                async pam => (await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId)).Name == "Home Delivery"
+            ).ToListAsync()).FirstOrDefault();
+            
+            if (deliveryOptionsProductAttributeMapping != null)
+            {
+                var homeDeliveryProductAttributeValue =
+                    (await _productAttributeService.GetProductAttributeValuesAsync(deliveryOptionsProductAttributeMapping.Id)).Where(
+                        pav => pav.Name.Contains("Home Delivery") && !pav.Name.Contains("Installation")
+                    ).FirstOrDefault();
+                
+                return homeDeliveryProductAttributeValue != null ?
+                    _productAttributeParser.AddProductAttribute(
+                        string.Empty,
+                        deliveryOptionsProductAttributeMapping,
+                        homeDeliveryProductAttributeValue.Id.ToString()) : 
+                    string.Empty;
+            }
+            if (legacyHomeDeliveryProductAttributeMapping != null)
+            {
+                return await _attributeUtilities.InsertHomeDeliveryAttributeAsync(product, string.Empty);
+            }
+
+            return string.Empty;
+        }
     }
 }
