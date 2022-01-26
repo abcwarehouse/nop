@@ -209,38 +209,55 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
-            string attributes = "";
-            ProductAttributeMapping hdProductAttribute = null;
+            //allow a product to be added to the cart when all attributes are with "read-only checkboxes" type
+            var productAttributes = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+            // ABC: remove the attributes that can be added via the Cart Slideout
+            var cartSlideoutAddableProductAttributes = new string[] {
+                "Delivery/Pickup Options",
+                "Haul Away",
+                // these are temporary, and will be removed once data is syncing correctly
+                "Home Delivery",
+                "Pickup",
+                "Warranty"
+            };
+            productAttributes = await productAttributes.WhereAwait(
+                async pam => !cartSlideoutAddableProductAttributes.Contains(
+                    (await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId)).Name) 
+            ).ToListAsync();
 
-            var pams =  await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
-
-            foreach (var pam in pams)
+            if (productAttributes.Any(pam => pam.AttributeControlType != AttributeControlType.ReadonlyCheckboxes))
             {
-                var pa = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
-
-                switch (pa.Name)
+                //product has some attributes. let a customer see them
+                return Json(new
                 {
-                    case "Home Delivery":
-                        hdProductAttribute = pam;
-                        break;
-                }
+                    redirect = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) })
+                });
             }
 
-            // home delivery is default, so if it is home delivered, add the attribute no matter what
-            if (hdProductAttribute != null)
+            // ABC: add the home delivery attribute if it's applicable
+            // TODO
+
+            //creating XML for "read-only checkboxes" attributes
+            var attXml = await productAttributes.AggregateAwaitAsync(string.Empty, async (attributesXml, attribute) =>
             {
-                attributes = await _attributeUtilities.InsertHomeDeliveryAttributeAsync(product, attributes);
-            }
+                var attributeValues = await _productAttributeService.GetProductAttributeValuesAsync(attribute.Id);
+                foreach (var selectedAttributeId in attributeValues
+                    .Where(v => v.IsPreSelected)
+                    .Select(v => v.Id)
+                    .ToList())
+                {
+                    attributesXml = _productAttributeParser.AddProductAttribute(attributesXml,
+                        attribute, selectedAttributeId.ToString());
+                }
 
-            //-------------------------------------END CUSTOM CODE------------------------------------------
+                return attributesXml;
+            });
 
             //get standard warnings without attribute validations
             //first, try to find existing shopping cart item
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), cartType, (await _storeContext.GetCurrentStoreAsync()).Id);
-
-            //-----------------------------MODIFIED THIS LINE to add "attributes-----------------------------
-            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(cart, cartType, product, attributes);
-
+            // ABC: should look for appropriate attributes
+            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(cart, cartType, product);
             //if we already have the same product in the cart, then use the total quantity to validate
             var quantityToValidate = shoppingCartItem != null ? shoppingCartItem.Quantity + quantity : quantity;
             var addToCartWarnings = await _shoppingCartService
@@ -258,14 +275,13 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
-            // ---------------------------------MODIFIED THIS LINE TO ADD ATTRIBUTES------------------------------
             //now let's try adding product to the cart (now including product attribute validation, etc)
             addToCartWarnings = await _shoppingCartService.AddToCartAsync(customer: await _workContext.GetCurrentCustomerAsync(),
                 product: product,
                 shoppingCartType: cartType,
                 storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
-                quantity: quantity,
-                attributesXml: attributes);
+                attributesXml: attXml,
+                quantity: quantity);
             if (addToCartWarnings.Any())
             {
                 //cannot be added to the cart
@@ -659,9 +675,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             if (!isSlideoutActive) { return null; }
 
             return new CartSlideoutInfo() {
-                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new {productId = product.Id} ),
-                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new {price = product.Price} ),
-                HasDeliveryOptions = false // this needs to check product - maybe just get the attributes ready?
+                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = product.Id } ),
+                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { price = product.Price } ),
+                DeliveryOptionsHtml = await RenderViewComponentToStringAsync("CartSlideoutProductAttributes", new { product = product })
             };
         } 
     }
