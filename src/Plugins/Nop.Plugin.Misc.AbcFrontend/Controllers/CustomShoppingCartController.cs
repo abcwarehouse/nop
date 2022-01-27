@@ -341,7 +341,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             });
                         }     
 
-                        return await SlideoutJson(product);
+                        return await SlideoutJson(product, attXml);
                     }
             }
         }
@@ -633,12 +633,12 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             });
                         }
 
-                        return await SlideoutJson(product);
+                        return await SlideoutJson(product, string.Empty);
                     }
             }
         }
 
-        private async Task<IActionResult> SlideoutJson(Product product)
+        private async Task<IActionResult> SlideoutJson(Product product, string attXml)
         {
             //display notification message and update appropriate blocks
             var shoppingCarts = await _shoppingCartService.GetShoppingCartAsync(
@@ -654,8 +654,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 ? await RenderViewComponentToStringAsync("FlyoutShoppingCart")
                 : string.Empty;
 
+            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(
+                shoppingCarts,
+                ShoppingCartType.ShoppingCart,
+                product,
+                attXml
+            );
             
-            var slideoutInfo = await GetSlideoutInfoAsync(product);
+            var slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem);
 
             return Json(new
             {
@@ -671,15 +677,18 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             });
         }
 
-        private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(Product product)
+        private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(Product product, ShoppingCartItem shoppingCartItem)
         {
             var isSlideoutActive = await _widgetPluginManager.IsPluginActiveAsync("Widgets.CartSlideout");
             if (!isSlideoutActive) { return null; }
 
+            var unitPrice = await _shoppingCartService.GetUnitPriceAsync(shoppingCartItem, false);
+
             return new CartSlideoutInfo() {
                 ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = product.Id } ),
-                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { price = product.Price } ),
-                DeliveryOptionsHtml = await RenderViewComponentToStringAsync("CartSlideoutProductAttributes", new { product = product })
+                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { price = unitPrice.unitPrice } ),
+                DeliveryOptionsHtml = await RenderViewComponentToStringAsync("CartSlideoutProductAttributes", new { product = product }),
+                ShoppingCartItemId = shoppingCartItem.Id
             };
         }
 

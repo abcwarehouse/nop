@@ -42,5 +42,31 @@ function updateCartSlideoutHtml(response) {
     }
     if (response.slideoutInfo.DeliveryOptionsHtml) {
         $('.cart-slideout__delivery-options').html(response.slideoutInfo.DeliveryOptionsHtml);
+
+        var options = document.querySelectorAll('.cart-slideout__delivery-options [name^=product_attribute_]');
+        for (option in options) {
+            options[option].onclick = function() {
+                const [attributeId] = this.name.split('_').slice(-1);
+                const payload = {
+                    shoppingCartItemId: response.slideoutInfo.ShoppingCartItemId,
+                    productAttributeId: attributeId,
+                    productAttributeValueId: this.value,
+                    isChecked: this.checked
+                };
+                fetch('/CartSlideout/UpdateShoppingCartItem', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                    })
+                    .then(response => {
+                        console.log(response)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+        }
     }
 }
