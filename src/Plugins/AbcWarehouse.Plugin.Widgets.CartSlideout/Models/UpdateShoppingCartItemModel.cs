@@ -4,7 +4,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Models
     {
         public int ShoppingCartItemId { get; set; }
 
-        public int ProductAttributeId { get; set; }
+        public int ProductAttributeMappingId { get; set; }
 
         public int ProductAttributeValueId { get; set; }
 
@@ -13,7 +13,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Models
         public bool IsValid()
         {
             return ShoppingCartItemId != 0 &&
-                   ProductAttributeId != 0 &&
+                   ProductAttributeMappingId != 0 &&
                    ProductAttributeValueId != 0 &&
                    IsChecked != null;
         }

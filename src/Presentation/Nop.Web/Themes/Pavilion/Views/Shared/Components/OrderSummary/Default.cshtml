@@ -36,9 +36,6 @@
 @* ABC: custom *@
 @{
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
-    string changeDeliveryMethodButtonColor = isHawthorne ?
-                                                await HtmlHelpers.GetPavilionPrimaryColorAsync() :
-                                                await HtmlHelpers.GetPavilionAccentColorAsync();
 
     bool hasOutOfStockItemsInCart = Model.Items.FirstOrDefault(i => i.Warnings.Contains("Out of stock")) != null ||
                                     Model.Items.FirstOrDefault(i => i.Warnings.Contains("Please remove item from cart to continue.")) != null;
@@ -55,18 +52,6 @@
         display: block;
         font-style: italic;
         margin-bottom: 7px;
-    }
-    .change-delivery-method {
-    	outline: 1px solid transparent;
-        padding: 5px 10px;
-    	border: none;
-    	color: white;
-    	font-weight: bold;
-    	background: #@changeDeliveryMethodButtonColor;
-    }
-
-    .change-delivery-method:hover {
-    	outline-color: #@changeDeliveryMethodButtonColor;
     }
 
     .delivery-method-error {
@@ -150,58 +135,6 @@
 		}
 	}
 </style>
-<script>
-    $(document).on('click', '.change-delivery-method', function () {
-            $('.change-delivery-method').attr('disabled', 'disabled');
-            $('.spinner').show();
-            $.ajax({
-                cache: false,
-                url: '/SwapDeliveryMethod/Change',
-                data: { 'shoppingCartItemId': $(this).val() },
-                type: 'post',
-                success: success,
-                error: error
-            });
-            return false;
-        });
-
-		$(document).on('click', '.remove-link', function () {
-            $('.remove-link').attr('disabled', 'disabled');
-            $('.spinner').show();
-            $.ajax({
-                cache: false,
-                url: '/ShoppingCart/RemoveItem',
-                data: { 'shoppingCartItemId': $(this).val() },
-                type: 'post',
-                success: success,
-                error: error
-            });
-            return false;
-        });
-
-        function success(data) {
-            $('.spinner').hide();
-            if (data.RedirectUrl) {
-                location.href = data.RedirectUrl;
-            }
-            else if (data.ErrorMessage) {
-                $(data.ErrorMessageRecipient).show();
-                $(data.ErrorMessageRecipient).empty();
-                $(data.ErrorMessageRecipient).append(data.ErrorMessage);
-                $('.change-delivery-method').removeAttr('disabled');
-                return false;
-            }
-            else {
-                location.href = "/cart";
-            }
-        }
-
-        function error() {
-            $('.spinner').hide();
-            $('.change-delivery-method').removeAttr('disabled');
-            alert('error');
-        }
-</script>
 
 <div class="order-summary-content">
     <!-- ABC: custom -->
@@ -324,7 +257,6 @@
                             ProductFlag productFlag = frontEndService.GetProductFlag(item.ProductId);
                             string stockMessage = "";
                             string attributeInfo = item.AttributeInfo;
-                            bool isOnlineOnly = productFlag != null && productFlag.PriceBucketImageUrl != null && productFlag.PriceBucketImageUrl.Contains("Online");
 
                             if (productFlag != null)
                             {
@@ -414,31 +346,12 @@
                                     }
                                     @if (Model.IsEditable && item.AllowItemEditing)
                                     {
+                                        @* this will end up bringing back the slideout
                                         var editCartItemUrl = Url.RouteUrl("Product", new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
                                         editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
-                                        @* <div class="edit-item">
+                                        <div class="edit-item">
                                             <a href="@editCartItemUrl">@T("Common.Edit")</a>
                                         </div> *@
-
-                                        // ABC: custom - I'm not sure if we're even using this
-                                        if (!isOnlineOnly)
-                                        {
-                                            if (await product.IsPickupAsync())
-                                            {
-                                                bool isPickup = item.AttributeInfo.Contains("Pickup");
-                                                string buttonMsg = isPickup ? "Change to Delivery" : "Change to Pickup in Store";
-                                                if (isPickup)
-                                                {
-                                                    <div class="edit-item">
-                                                        <a href="@editCartItemUrl">Change store</a>
-                                                    </div>
-                                                }
-                                                <div class="change">
-                                                    <button class="change-delivery-method" value="@item.Id">@buttonMsg</button>
-                                                    <span id="change_method_error_@item.Id" class="delivery-method-error"></span>
-                                                </div>
-                                            }
-                                        }
                                     }
                                     @if (item.Warnings.Count > 0)
                                     {

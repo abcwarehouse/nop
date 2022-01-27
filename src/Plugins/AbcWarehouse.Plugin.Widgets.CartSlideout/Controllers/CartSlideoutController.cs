@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Widgets.CartSlideout.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
+using Nop.Core.Domain.Catalog;
 using Nop.Services.Catalog;
 using Nop.Services.Orders;
 using Nop.Web.Framework.Controllers;
@@ -11,13 +12,19 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
 {
     public class CartSlideoutController : BaseController
     {
+        private readonly IProductAttributeParser _productAttributeParser;
+        private readonly IProductAttributeService _productAttributeService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWorkContext _workContext;
 
         public CartSlideoutController(
+            IProductAttributeParser productAttributeParser,
+            IProductAttributeService productAttributeService,
             IShoppingCartService shoppingCartService,
             IWorkContext workContext)
         {
+            _productAttributeParser = productAttributeParser;
+            _productAttributeService = productAttributeService;
             _shoppingCartService = shoppingCartService;
             _workContext = workContext;
         }
@@ -42,8 +49,16 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             }
 
             // Manipulate the attributes
-            // TODO
-            // This will use ProductAttributeParser.AddProductAttribute in some way
+            var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(
+                model.ProductAttributeMappingId);
+            shoppingCartItem.AttributesXml = model.IsChecked.Value ?
+                await AddProductAttributeAsync(
+                    productAttributeMapping,
+                    shoppingCartItem.AttributesXml,
+                    model.ProductAttributeValueId) :
+                _productAttributeParser.RemoveProductAttribute(
+                    shoppingCartItem.AttributesXml,
+                    productAttributeMapping);
 
             // Update the item
             await _shoppingCartService.UpdateShoppingCartItemAsync(
@@ -55,15 +70,32 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                     shoppingCartItem.RentalEndDateUtc,
                     shoppingCartItem.Quantity);
 
-            // Get the unit price to pass back as a response
-            // Should consider putting this in the Subtotal
-            // ViewComponent
-            var unitPrice = await _shoppingCartService.GetUnitPriceAsync(shoppingCartItem, false);
-
             return Json(new
             {
-                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { price = unitPrice.unitPrice }),
+                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { sci = shoppingCartItem }),
             });
+        }
+
+        // Need to remove the existing mapped value if Delivery/Pickup
+        // I think this will be the same with warranties and maybe pickup in store?
+        private async Task<string> AddProductAttributeAsync(
+            ProductAttributeMapping pam,
+            string attributesXml,
+            int productAttributeValueId)
+        {
+            var result = attributesXml;
+            var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
+            if (productAttribute.Name == "Delivery/Pickup Options")
+            {
+                result = _productAttributeParser.RemoveProductAttribute(
+                    result,
+                    pam);
+            }
+
+            return _productAttributeParser.AddProductAttribute(
+                    result,
+                    pam,
+                    productAttributeValueId.ToString());
         }
     }
 }

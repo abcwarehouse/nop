@@ -682,11 +682,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var isSlideoutActive = await _widgetPluginManager.IsPluginActiveAsync("Widgets.CartSlideout");
             if (!isSlideoutActive) { return null; }
 
-            var unitPrice = await _shoppingCartService.GetUnitPriceAsync(shoppingCartItem, false);
-
             return new CartSlideoutInfo() {
                 ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = product.Id } ),
-                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { price = unitPrice.unitPrice } ),
+                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { sci = shoppingCartItem } ),
                 DeliveryOptionsHtml = await RenderViewComponentToStringAsync("CartSlideoutProductAttributes", new { product = product }),
                 ShoppingCartItemId = shoppingCartItem.Id
             };

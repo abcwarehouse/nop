@@ -87,68 +87,15 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Components
 
             // clearance store specific
             var storeUrl = (await _storeContext.GetCurrentStoreAsync()).Url;
-            if (storeUrl.Contains("clearance"))
+            if (storeUrl.Contains("clearance") && widgetZone == PICKUP_INFO_WIDGET_ZONE)
             {
-                if (widgetZone == PICKUP_INFO_WIDGET_ZONE)
-                {
-                    return View(
+                return View(
                         "~/Plugins/Widgets.AbcPickupInStore/Views/ClearanceStoreStockContainer.cshtml",
                         productId
                     );
-                }
-                else
-                {
-                    return Content("");
-                }
             }
-            // normal abc store
-            else
-            {
-                Product product = await _productService.GetProductByIdAsync(productId);
-                if (productId > 0)
-                {
-                    // if the buy button is disabled, do not show any UI about
-                    // products
-                    if (product.DisableBuyButton || !product.Published)
-                    {
-                        return Content("");
-                    }
-                }
 
-                PickStoreModel model = await _pickStoreModelFactory.InitializePickStoreModelAsync();
-                model.ProductId = productId;
-
-                if (string.IsNullOrWhiteSpace(model.GoogleMapsAPIKey))
-                {
-                    await _logger.WarningAsync(
-                        "Google Maps API Key not included in Store Locator " +
-                        "settings, will have issues with ABC Pickup in Store");
-                }
-
-                // if item is pickup in store, then display the UI for pickup
-                // in store
-                var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
-                var pamsWithPickup = await pams.WhereAwait(
-                    async pam => (await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId)).Name == "Pickup"
-                ).ToListAsync();
-                if (pamsWithPickup.Any())
-                {
-                    string url = "";
-                    if (widgetZone == PICKUP_INFO_WIDGET_ZONE)
-                    {
-                        url = "~/Plugins/Widgets.AbcPickupInStore/Views/PickupInStoreContainer.cshtml";
-                    }
-                    else if (widgetZone == DELIVERY_SELECTION_WIDGET_ZONE)
-                    {
-                        url = "~/Plugins/Widgets.AbcPickupInStore/Views/SelectDeliveryMethod.cshtml";
-                    }
-                    return View(url, model);
-                }
-                else
-                {
-                    return Content("");
-                }
-            }
+            return Content("");
         }
     }
 }
