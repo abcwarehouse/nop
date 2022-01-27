@@ -138,7 +138,8 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 "Home Delivery",
                 "Warranty",
                 "Delivery/Pickup Options",
-                "Pickup"
+                "Pickup",
+                "Haul Away"
             }.Contains(m.Name)).ToList();
         }
 
