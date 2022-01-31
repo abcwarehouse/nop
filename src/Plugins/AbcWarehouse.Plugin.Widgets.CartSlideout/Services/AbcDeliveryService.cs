@@ -30,7 +30,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Services
             {
                 return await _abcDeliveryItemRepository.Table.SingleAsync(adi => adi.Item_Number == itemNumber);
             }
-            catch (AggregateException)
+            catch (Exception)
             {
                 await _logger.ErrorAsync($"Cannot find single AbcDeliveryItem with ItemNumber {itemNumber}");
                 throw;
