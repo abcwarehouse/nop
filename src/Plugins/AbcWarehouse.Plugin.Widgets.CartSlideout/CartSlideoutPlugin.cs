@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Tasks;
+using Nop.Services.Catalog;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using Nop.Services.Tasks;
@@ -13,11 +16,14 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         private readonly string _taskType =
             $"{typeof(UpdateDeliveryOptionsTask).FullName}, {typeof(CartSlideoutPlugin).Namespace}";
 
+        private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
 
         public CartSlideoutPlugin(
+            IProductAttributeService productAttributeService,
             IScheduleTaskService scheduleTaskService)
         {
+            _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
         }
 
@@ -37,11 +43,15 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         {
             await RemoveTaskAsync();
             await AddTaskAsync();
+
+            await RemoveProductAttributes();
+            await AddProductAttributes();
         }
 
         public override async System.Threading.Tasks.Task UninstallAsync()
         {
             await RemoveTaskAsync();
+            await RemoveProductAttributes();
         }
 
         private async System.Threading.Tasks.Task AddTaskAsync()
@@ -65,6 +75,25 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             {
                 await _scheduleTaskService.DeleteTaskAsync(task);
             }
+        }
+
+        private async System.Threading.Tasks.Task RemoveProductAttributes()
+        {
+            var attributes = (await _productAttributeService.GetAllProductAttributesAsync()).Where(pa => pa.Name == CartSlideoutConsts.DeliveryPickupOptions);
+
+            foreach (var attribute in attributes)
+            {
+                await _productAttributeService.DeleteProductAttributeAsync(attribute);
+            }
+        }
+
+        private async System.Threading.Tasks.Task AddProductAttributes()
+        {
+            var pa = new ProductAttribute()
+            {
+                Name = CartSlideoutConsts.DeliveryPickupOptions,
+            };
+            await _productAttributeService.InsertProductAttributeAsync(pa);
         }
     }
 }

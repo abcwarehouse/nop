@@ -85,7 +85,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
         {
             var result = attributesXml;
             var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
-            if (productAttribute.Name == "Delivery/Pickup Options")
+            if (productAttribute.Name == CartSlideoutConsts.DeliveryPickupOptions)
             {
                 result = _productAttributeParser.RemoveProductAttribute(
                     result,

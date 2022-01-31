@@ -20,7 +20,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
         {
             var includedAttributeNames = new string[]
             {
-                "Delivery/Pickup Options",
+                CartSlideoutConsts.DeliveryPickupOptions,
                 "Haul Away",
             };
 

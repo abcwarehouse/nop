@@ -108,7 +108,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                     Cost = itemNumber,
                     PriceAdjustment = item.Price,
                     IsPreSelected = displayName.Contains("Home Delivery ("),
-                    DisplayOrder = displayOrder
+                    DisplayOrder = displayOrder,
                 };
 
                 await _productAttributeService.InsertProductAttributeValueAsync(pav);
