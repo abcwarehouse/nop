@@ -29,7 +29,8 @@
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [5000, 5001],
+	// Edited to allow for connecting to SQL externally
+	"forwardPorts": [1433],
 
 	// [Optional] To reuse of your local HTTPS dev cert:
 	//
