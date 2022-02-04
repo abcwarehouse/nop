@@ -48,7 +48,7 @@ namespace Nop.Plugin.Misc.AbcSync
         private async System.Threading.Tasks.Task UpdateProductMetaTagsAsync(Product product)
         {
             var description = await GetProductDescriptionAsync(product);
-            if (description == null) { continue; }
+            if (description == null) { return; }
             // clean up
             var escapeIndex = description.IndexOf("\r\n");
             if (escapeIndex > -1)
