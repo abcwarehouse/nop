@@ -128,7 +128,8 @@ namespace Nop.Plugin.Misc.AbcSync
                     [ImportPluginLocales.SkipImportColorsTask] = "ImportColorsTask",
                     [ImportPluginLocales.SkipImportFeaturedProductsTask] = "ImportFeaturedProductsTask",
                     [ImportPluginLocales.SkipImportProductFlagsTask] = "ImportProductFlagsTask",
-                    [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask"
+                    [ImportPluginLocales.SkipImportLocalPicturesTask] = "ImportLocalPicturesTask",
+                    [ImportPluginLocales.SkipUpdateMetaTagsTask] = "UpdateMetaTagsTask"
                 }
             );
         }
