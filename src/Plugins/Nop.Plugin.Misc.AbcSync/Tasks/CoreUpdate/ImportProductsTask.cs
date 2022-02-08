@@ -486,16 +486,13 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             // marking products that do not exist in the staging database as deleted
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
             var stagingDbName = stagingDb.Database;
-            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
-                " AND Product.Id NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
-                "";
             var deleteCommand = $@"
                 update[{nopDbName}].dbo.Product set Published = 0, Deleted = 1
                 from [{nopDbName}].[dbo].[Product] 
                 left join[{stagingDbName}].[dbo].[ProductSource] as ps on ([{nopDbName}].[dbo].[Product].[Sku] = ps.IsamSku
                                                                    OR[{nopDbName}].[dbo].[Product].[Sku] = ps.SiteOnTimeSku)
                 where ps.IsamSku is null AND ps.SiteOnTimeSku is null
-                {mattressItemAddition}
+                AND Product.Id NOT IN (SELECT ProductId FROM [AbcMattressModel])
             ";
 
             await _nopDbContext.ExecuteNonQueryAsync(deleteCommand, 60);
@@ -626,9 +623,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         {
             var stagingDbName = _importSettings.GetStagingDbConnection().Database;
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
-            var mattressItemAddition = _importSettings.SkipOldMattressesImport ?
-                " AND EntityId NOT IN (SELECT ProductId FROM [AbcMattressModel])" :
-                "";
             var command = $@"
                 DROP TABLE IF EXISTS #tmp_products
                 DROP TABLE IF EXISTS #tmp_mappings
@@ -636,7 +630,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 -- Clear all current product mappings
                 DELETE FROM {nopDbName}.dbo.StoreMapping
                 WHERE EntityName = 'Product'
-                {mattressItemAddition}
+                AND EntityId NOT IN (SELECT ProductId FROM [AbcMattressModel])
 
                 -- Gets a full list of ABC and SOT items from staging DB
                 SELECT DISTINCT
@@ -752,11 +746,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
             }
 
-            if (_importSettings.SkipOldMattressesImport)
-            {
-                var mattressItemNos = _abcMattressProductService.GetMattressItemNos();
-                stagingProducts = stagingProducts.Where(sp => !mattressItemNos.Contains(sp.ISAMItemNo)).ToList();
-            }
+            // Exclude mattress product items
+            var mattressItemNos = _abcMattressProductService.GetMattressItemNos();
+            stagingProducts = stagingProducts.Where(sp => !mattressItemNos.Contains(sp.ISAMItemNo)).ToList();
 
             return stagingProducts;
         }
