@@ -18,7 +18,6 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly IImportUtilities _importUtilities;
         private readonly IIsamProductService _isamProductService;
         private readonly ILogger _logger;
-        private readonly IProductDataProductService _productDataProductService;
         private readonly IRepository<SpecificationAttribute> _specificationAttributeRepository;
         private readonly IRepository<SpecificationAttributeOption> _specificationAttributeOptionRepository;
         private readonly ISpecificationAttributeService _specificationAttributeService;
@@ -31,7 +30,6 @@ namespace Nop.Plugin.Misc.AbcSync
             IImportUtilities importUtilities,
             IIsamProductService isamProductService,
             ILogger logger,
-            IProductDataProductService productDataProductService,
             IRepository<SpecificationAttribute> specificationAttributeRepository,
             IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository,
             ISpecificationAttributeService specificationAttributeService,
@@ -41,7 +39,6 @@ namespace Nop.Plugin.Misc.AbcSync
             _importUtilities = importUtilities;
             _isamProductService = isamProductService;
             _logger = logger;
-            _productDataProductService = productDataProductService;
             _specificationAttributeRepository = specificationAttributeRepository;
             _specificationAttributeOptionRepository = specificationAttributeOptionRepository;
             _specificationAttributeService = specificationAttributeService;
@@ -70,12 +67,10 @@ namespace Nop.Plugin.Misc.AbcSync
 
             var attrOptionManager = new EntityManager<SpecificationAttributeOption>();
             //a join to get a union of color options from both sources
-            var sotColorValues = _productDataProductService.GetProductDataProducts().Where(sp=>sp.StandardColor != null).Select(sp => sp.StandardColor.Trim().ToUpperInvariant()).Distinct().ToList();
             var isamColorValues = _isamProductService.GetIsamProducts().Where(ip => ip.Color != null).Select(ip => ip.Color.Trim().ToUpperInvariant()).Distinct().ToList();
-            var colorValues = sotColorValues.Union(isamColorValues);
             var colorSpecAttrId = GetSpecAttrId(colorSpecificationName);
             //creating all color options that will be mapped to products. all old options have already been cleared
-            foreach (var value in colorValues)
+            foreach (var value in isamColorValues)
             {
                 var newAttrOption = new SpecificationAttributeOption { Name = value, SpecificationAttributeId = colorSpecAttrId };
                 await attrOptionManager.InsertAsync(newAttrOption);
@@ -84,11 +79,9 @@ namespace Nop.Plugin.Misc.AbcSync
 
             var prodAttrOptionManager = new EntityManager<ProductSpecificationAttribute>();
             //getting sku and sot/isam color options for all products with color. strange syntax is a left join
-            var sotSkusColors = _productDataProductService.GetProductDataProducts().Where(sp => sp.StandardColor != null).Select(sp => new { Sku = sp.SKU, Color = sp.StandardColor });
             var isamSkusColors = _isamProductService.GetIsamProducts().Where(ip => ip.Color != null).Select(ip => new { ip.Sku, ip.Color });
-            var skusColors = sotSkusColors.Union(isamSkusColors).Where(s => !string.IsNullOrWhiteSpace(s.Color));
             //mapping created options to their product
-            foreach (var skuColors in skusColors)
+            foreach (var skuColors in isamSkusColors)
             {
                 var sku = skuColors.Sku;
                 var colorOptionName = skuColors.Color;
