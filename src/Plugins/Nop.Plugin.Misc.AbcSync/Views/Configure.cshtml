@@ -7,316 +7,314 @@
 }
 
 <form asp-controller="AbcSync" asp-action="Configure" method="post">
-    <section class="content">
-		<div class="container-fluid">			
-			<div class="card card-default">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        General Settings
-                    </h3>
-                </div>
-				<div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="ArchiveTaskCCEmails" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="ArchiveTaskCCEmails" />
-                            <span asp-validation-for="ArchiveTaskCCEmails"></span>
-                        </div>
+    <div class="cards-group">
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">
+                    General Settings
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ArchiveTaskCCEmails" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="CatalogUpdateFailureCCEmails" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="CatalogUpdateFailureCCEmails" />
-                            <span asp-validation-for="CatalogUpdateFailureCCEmails"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="ArchiveTaskCCEmails" />
+                        <span asp-validation-for="ArchiveTaskCCEmails"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="CatalogUpdateFailureCCEmails" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="CatalogUpdateFailureCCEmails" />
+                        <span asp-validation-for="CatalogUpdateFailureCCEmails"></span>
                     </div>
                 </div>
             </div>
-            <div class="card card-default">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Skip FillStaging Jobs
-                    </h3>
+        </div>
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Skip FillStaging Jobs
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingProductsTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingProductsTask" />
+                        <span asp-validation-for="SkipFillStagingProductsTask"></span>
+                    </div>
                 </div>
-				<div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingProductsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingProductsTask" />
-                            <span asp-validation-for="SkipFillStagingProductsTask"></span>
-                        </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingPricingTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingPricingTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingPricingTask" />
-                            <span asp-validation-for="SkipFillStagingPricingTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingPricingTask" />
+                        <span asp-validation-for="SkipFillStagingPricingTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingAccessoriesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingAccessoriesTask" />
-                            <span asp-validation-for="SkipFillStagingAccessoriesTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingAccessoriesTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingBrandsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingBrandsTask" />
-                            <span asp-validation-for="SkipFillStagingBrandsTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingAccessoriesTask" />
+                        <span asp-validation-for="SkipFillStagingAccessoriesTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingProductCategoryMappingsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingProductCategoryMappingsTask" />
-                            <span asp-validation-for="SkipFillStagingProductCategoryMappingsTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingBrandsTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingScandownEndDatesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingScandownEndDatesTask" />
-                            <span asp-validation-for="SkipFillStagingScandownEndDatesTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingBrandsTask" />
+                        <span asp-validation-for="SkipFillStagingBrandsTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipFillStagingWarrantiesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipFillStagingWarrantiesTask" />
-                            <span asp-validation-for="SkipFillStagingWarrantiesTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingProductCategoryMappingsTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingProductCategoryMappingsTask" />
+                        <span asp-validation-for="SkipFillStagingProductCategoryMappingsTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingScandownEndDatesTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingScandownEndDatesTask" />
+                        <span asp-validation-for="SkipFillStagingScandownEndDatesTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipFillStagingWarrantiesTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipFillStagingWarrantiesTask" />
+                        <span asp-validation-for="SkipFillStagingWarrantiesTask"></span>
                     </div>
                 </div>
             </div>
-            <div class="card card-default">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Skip CoreUpdate Jobs
-                    </h3>
+        </div>
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Skip CoreUpdate Jobs
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportProductsTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportProductsTask" />
+                        <span asp-validation-for="SkipImportProductsTask"></span>
+                    </div>
                 </div>
-				<div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportProductsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportProductsTask" />
-                            <span asp-validation-for="SkipImportProductsTask"></span>
-                        </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipMapCategoriesTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipMapCategoriesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipMapCategoriesTask" />
-                            <span asp-validation-for="SkipMapCategoriesTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipMapCategoriesTask" />
+                        <span asp-validation-for="SkipMapCategoriesTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportProductCategoryMappingsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportProductCategoryMappingsTask" />
-                            <span asp-validation-for="SkipImportProductCategoryMappingsTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportProductCategoryMappingsTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipAddHomeDeliveryAttributesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipAddHomeDeliveryAttributesTask" />
-                            <span asp-validation-for="SkipAddHomeDeliveryAttributesTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportProductCategoryMappingsTask" />
+                        <span asp-validation-for="SkipImportProductCategoryMappingsTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportMarkdownsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportMarkdownsTask" />
-                            <span asp-validation-for="SkipImportMarkdownsTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipAddHomeDeliveryAttributesTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportRelatedProductsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportRelatedProductsTask" />
-                            <span asp-validation-for="SkipImportRelatedProductsTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipAddHomeDeliveryAttributesTask" />
+                        <span asp-validation-for="SkipAddHomeDeliveryAttributesTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportWarrantiesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportWarrantiesTask" />
-                            <span asp-validation-for="SkipImportWarrantiesTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportMarkdownsTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipUnmapNonstockClearanceTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipUnmapNonstockClearanceTask" />
-                            <span asp-validation-for="SkipUnmapNonstockClearanceTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportMarkdownsTask" />
+                        <span asp-validation-for="SkipImportMarkdownsTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipMapCategoryStoresTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipMapCategoryStoresTask" />
-                            <span asp-validation-for="SkipMapCategoryStoresTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportRelatedProductsTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportColorsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportColorsTask" />
-                            <span asp-validation-for="SkipImportColorsTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportRelatedProductsTask" />
+                        <span asp-validation-for="SkipImportRelatedProductsTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportWarrantiesTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportWarrantiesTask" />
+                        <span asp-validation-for="SkipImportWarrantiesTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipUnmapNonstockClearanceTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipUnmapNonstockClearanceTask" />
+                        <span asp-validation-for="SkipUnmapNonstockClearanceTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipMapCategoryStoresTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipMapCategoryStoresTask" />
+                        <span asp-validation-for="SkipMapCategoryStoresTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportColorsTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportColorsTask" />
+                        <span asp-validation-for="SkipImportColorsTask"></span>
                     </div>
                 </div>
             </div>
-            <div class="card card-default">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Skip COntentUpdate Jobs
-                    </h3>
+        </div>
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Skip ContentUpdate Jobs
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportDocumentsTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportDocumentsTask" />
+                        <span asp-validation-for="SkipImportDocumentsTask"></span>
+                    </div>
                 </div>
-				<div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportDocumentsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportDocumentsTask" />
-                            <span asp-validation-for="SkipImportDocumentsTask"></span>
-                        </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportFeaturedProductsTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportFeaturedProductsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportFeaturedProductsTask" />
-                            <span asp-validation-for="SkipImportFeaturedProductsTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportFeaturedProductsTask" />
+                        <span asp-validation-for="SkipImportFeaturedProductsTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportProductFlagsTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportProductFlagsTask" />
-                            <span asp-validation-for="SkipImportProductFlagsTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportProductFlagsTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipImportLocalPicturesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipImportLocalPicturesTask" />
-                            <span asp-validation-for="SkipImportLocalPicturesTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportProductFlagsTask" />
+                        <span asp-validation-for="SkipImportProductFlagsTask"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipCleanDuplicateImagesTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipCleanDuplicateImagesTask" />
-                            <span asp-validation-for="SkipCleanDuplicateImagesTask"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipImportLocalPicturesTask" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipSliExportTask" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipSliExportTask" />
-                            <span asp-validation-for="SkipSliExportTask"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipImportLocalPicturesTask" />
+                        <span asp-validation-for="SkipImportLocalPicturesTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipCleanDuplicateImagesTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipCleanDuplicateImagesTask" />
+                        <span asp-validation-for="SkipCleanDuplicateImagesTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipSliExportTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipSliExportTask" />
+                        <span asp-validation-for="SkipSliExportTask"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SkipUpdateMetaTagsTask" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SkipUpdateMetaTagsTask" />
+                        <span asp-validation-for="SkipUpdateMetaTagsTask"></span>
                     </div>
                 </div>
             </div>
-            <div class="card card-default">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Sync Process Settings
-                    </h3>
+        </div>
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Sync Process Settings
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="StagingDbConnectionString" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="StagingDbConnectionString" />
+                        <span asp-validation-for="StagingDbConnectionString"></span>
+                    </div>
                 </div>
-				<div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="StagingDbConnectionString" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="StagingDbConnectionString" />
-                            <span asp-validation-for="StagingDbConnectionString"></span>
-                        </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ImportABCStores" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="ImportABCStores" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="ImportABCStores" />
-                            <span asp-validation-for="ImportABCStores"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="ImportABCStores" />
+                        <span asp-validation-for="ImportABCStores"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="ImportHawthorneStores" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="ImportHawthorneStores" />
-                            <span asp-validation-for="ImportHawthorneStores"></span>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ImportHawthorneStores" />
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-3">
-                            <nop-label asp-for="SkipOldMattressesImport" />
-                        </div>
-                        <div class="col-md-9">
-                            <nop-editor asp-for="SkipOldMattressesImport" />
-                            <span asp-validation-for="SkipOldMattressesImport"></span>
-                        </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="ImportHawthorneStores" />
+                        <span asp-validation-for="ImportHawthorneStores"></span>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-9 col-md-offset-3">
-                            <input type="submit" name="save" class="btn bg-blue" value="@T("Admin.Common.Save")" />
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
                     </div>
                 </div>
             </div>

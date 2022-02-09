@@ -18,6 +18,7 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly ImportProductFlagsTask _importProductFlagsTask;
         private readonly ImportLocalPicturesTask _importLocalPicturesTask;
         private readonly CleanDuplicateImagesTask _cleanDuplicateImagesTask;
+        private readonly UpdateMetaTagsTask _updateMetaTagsTask;
         private readonly ClearCacheTask _clearCacheTask;
 
         public ContentUpdateTask(
@@ -28,6 +29,7 @@ namespace Nop.Plugin.Misc.AbcSync
             ImportProductFlagsTask importProductFlagsTask,
             ImportLocalPicturesTask importLocalPicturesTask,
             CleanDuplicateImagesTask cleanDuplicateImagesTask,
+            UpdateMetaTagsTask updateMetaTagsTask,
             ClearCacheTask clearCacheTask)
         {
             _logger = logger;
@@ -38,6 +40,7 @@ namespace Nop.Plugin.Misc.AbcSync
             _importProductFlagsTask = importProductFlagsTask;
             _importLocalPicturesTask = importLocalPicturesTask;
             _cleanDuplicateImagesTask = cleanDuplicateImagesTask;
+            _updateMetaTagsTask = updateMetaTagsTask;
             _clearCacheTask = clearCacheTask;
         }
 
@@ -48,6 +51,7 @@ namespace Nop.Plugin.Misc.AbcSync
             await _importProductFlagsTask.ExecuteAsync();
             await _importLocalPicturesTask.ExecuteAsync();
             await _cleanDuplicateImagesTask.ExecuteAsync();
+            await _updateMetaTagsTask.ExecuteAsync();
             await _clearCacheTask.ExecuteAsync();
 
             if (!_importSettings.SkipSliExportTask)

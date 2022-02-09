@@ -48,6 +48,7 @@ namespace Nop.Plugin.Misc.AbcSync
         public bool SkipImportProductFlagsTask { get; private set; }
         public bool SkipImportLocalPicturesTask { get; private set; }
         public bool SkipCleanDuplicateImagesTask { get; private set; }
+        public bool SkipUpdateMetaTagsTask { get; private set; }
 
 
         // Internal settings
@@ -86,7 +87,8 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportProductFlagsTask = model.SkipImportProductFlagsTask,
                 SkipImportLocalPicturesTask = model.SkipImportLocalPicturesTask,
                 SkipCleanDuplicateImagesTask = model.SkipCleanDuplicateImagesTask,
-                SkipSliExportTask = model.SkipSliExportTask
+                SkipSliExportTask = model.SkipSliExportTask,
+                SkipUpdateMetaTagsTask = model.SkipUpdateMetaTagsTask
             };
         }
 
@@ -122,7 +124,8 @@ namespace Nop.Plugin.Misc.AbcSync
                 SkipImportProductFlagsTask = SkipImportProductFlagsTask,
                 SkipImportLocalPicturesTask = SkipImportLocalPicturesTask,
                 SkipCleanDuplicateImagesTask = SkipCleanDuplicateImagesTask,
-                SkipSliExportTask = SkipSliExportTask
+                SkipSliExportTask = SkipSliExportTask,
+                SkipUpdateMetaTagsTask = SkipUpdateMetaTagsTask
             };
         }
 

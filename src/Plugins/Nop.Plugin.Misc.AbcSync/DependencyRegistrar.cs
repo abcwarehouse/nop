@@ -66,6 +66,7 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<ImportLocalPicturesTask, ImportLocalPicturesTask>();
             services.AddScoped<ImportProductFlagsTask, ImportProductFlagsTask>();
             services.AddScoped<ClearCacheTask, ClearCacheTask>();
+            services.AddScoped<UpdateMetaTagsTask, UpdateMetaTagsTask>();
 
             services.AddScoped<FillStagingAccessoriesTask, FillStagingAccessoriesTask>();
             services.AddScoped<FillStagingBrandsTask, FillStagingBrandsTask>();

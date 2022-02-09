@@ -134,5 +134,8 @@ namespace Nop.Plugin.Misc.AbcSync.Models
 
         [NopResourceDisplayName(ImportPluginLocales.SkipSliExportTask)]
         public bool SkipSliExportTask { get; set; }
+
+        [NopResourceDisplayName(ImportPluginLocales.SkipUpdateMetaTagsTask)]
+        public bool SkipUpdateMetaTagsTask { get; set; }
     }
 }
