@@ -7,7 +7,7 @@ using Nop.Services.Tasks;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
-    public class UpdateDeliveryOptionsTask : IScheduleTask
+    public partial class UpdateDeliveryOptionsTask : IScheduleTask
     {
         private readonly IAbcDeliveryService _abcDeliveryService;
         private readonly ICategoryService _categoryService;
@@ -15,6 +15,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         private readonly IProductAttributeService _productAttributeService;
 
         private int _deliveryPickupOptionsProductAttributeId;
+        private int _haulAwayDeliveryProductAttributeId;
+        private int _haulAwayDeliveryInstallProductAttributeId;
 
         public UpdateDeliveryOptionsTask(
             IAbcDeliveryService abcDeliveryService,
@@ -30,64 +32,18 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
-            _deliveryPickupOptionsProductAttributeId =
-                (await _productAttributeService.GetAllProductAttributesAsync())
-                .Where(p => p.Name == "Delivery/Pickup Options")
-                .Select(p => p.Id)
-                .Single();
+            await InitializeAsync();
 
             var abcDeliveryMaps = await _abcDeliveryService.GetAbcDeliveryMapsAsync();
-
             foreach (var abcDeliveryMap in abcDeliveryMaps)
             {
                 var productIds = (await _categoryService.GetProductCategoriesByCategoryIdAsync(abcDeliveryMap.CategoryId)).Select(pc => pc.ProductId);
                 foreach (var productId in productIds)
                 {
-                    var pam = await AddDeliveryOptionsAttributeAsync(productId);
-                    await AddDeliveryOptionsValuesAsync(pam.Id, abcDeliveryMap);
+                    await AddDeliveryOptionsAsync(productId, abcDeliveryMap);
+                    await AddHaulAwayAsync(productId, abcDeliveryMap);
                 }
             }
-        }
-
-        private async System.Threading.Tasks.Task<ProductAttributeMapping> AddDeliveryOptionsAttributeAsync(int productId)
-        {
-            var pam = (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId))
-                                                             .SingleOrDefault(pam => pam.ProductAttributeId == _deliveryPickupOptionsProductAttributeId);
-            if (pam == null)
-            {
-                pam = new ProductAttributeMapping()
-                {
-                    ProductId = productId,
-                    ProductAttributeId = _deliveryPickupOptionsProductAttributeId,
-                    AttributeControlType = AttributeControlType.RadioList,
-                };
-                await _productAttributeService.InsertProductAttributeMappingAsync(pam);
-            }
-
-            return pam;
-        }
-
-        private async System.Threading.Tasks.Task AddDeliveryOptionsValuesAsync(
-            int pamId,
-            AbcDeliveryMap map)
-        {
-            var values = await _productAttributeService.GetProductAttributeValuesAsync(pamId);
-
-            var deliveryOnlyPav = values.Where(pav => pav.Name.Contains("Home Delivery (")).SingleOrDefault();
-            await AddValueAsync(
-                pamId,
-                deliveryOnlyPav,
-                map.DeliveryOnly,
-                "Home Delivery ({0}, FREE With Mail-In Rebate)",
-                0);
-
-            var deliveryInstallationPav = values.Where(pav => pav.Name.Contains("Home Delivery and Installation (")).SingleOrDefault();
-            await AddValueAsync(
-                pamId,
-                deliveryInstallationPav,
-                map.DeliveryInstall,
-                "Home Delivery and Installation ({0})",
-                10);
         }
 
         private async System.Threading.Tasks.Task AddValueAsync(
@@ -113,6 +69,26 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 
                 await _productAttributeService.InsertProductAttributeValueAsync(pav);
             }
+        }
+
+        private async System.Threading.Tasks.Task InitializeAsync()
+        {
+            var productAttributes = await _productAttributeService.GetAllProductAttributesAsync();
+
+            _deliveryPickupOptionsProductAttributeId = productAttributes
+                .Where(p => p.Name == CartSlideoutConsts.DeliveryPickupOptions)
+                .Select(p => p.Id)
+                .Single();
+
+            _haulAwayDeliveryProductAttributeId = productAttributes
+                .Where(p => p.Name == CartSlideoutConsts.HaulAwayDelivery)
+                .Select(p => p.Id)
+                .Single();
+
+            _haulAwayDeliveryInstallProductAttributeId = productAttributes
+                .Where(p => p.Name == CartSlideoutConsts.HaulAwayDeliveryInstall)
+                .Select(p => p.Id)
+                .Single();
         }
     }
 }

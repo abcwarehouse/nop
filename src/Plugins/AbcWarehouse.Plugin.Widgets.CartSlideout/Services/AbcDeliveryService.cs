@@ -37,9 +37,13 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Services
             }
         }
 
+        // Will only return options with mapped delivery options
         public async Task<IList<AbcDeliveryMap>> GetAbcDeliveryMapsAsync()
         {
-            return await _abcDeliveryMapRepository.Table.ToListAsync();
+            return await (await _abcDeliveryMapRepository.Table
+                .ToListAsync())
+                .Where(adm => adm.HasDeliveryOptions())
+                .ToListAsync();
         }
     }
 }

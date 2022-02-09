@@ -79,7 +79,10 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 
         private async System.Threading.Tasks.Task RemoveProductAttributes()
         {
-            var attributes = (await _productAttributeService.GetAllProductAttributesAsync()).Where(pa => pa.Name == CartSlideoutConsts.DeliveryPickupOptions);
+            var attributes = (await _productAttributeService.GetAllProductAttributesAsync()).Where(pa =>
+                pa.Name == CartSlideoutConsts.DeliveryPickupOptions ||
+                pa.Name == CartSlideoutConsts.HaulAwayDelivery ||
+                pa.Name == CartSlideoutConsts.HaulAwayDeliveryInstall);
 
             foreach (var attribute in attributes)
             {
@@ -89,11 +92,17 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 
         private async System.Threading.Tasks.Task AddProductAttributes()
         {
-            var pa = new ProductAttribute()
+            var pas = new ProductAttribute[]
             {
-                Name = CartSlideoutConsts.DeliveryPickupOptions,
+                new ProductAttribute() { Name = CartSlideoutConsts.DeliveryPickupOptions },
+                new ProductAttribute() { Name = CartSlideoutConsts.HaulAwayDelivery },
+                new ProductAttribute() { Name = CartSlideoutConsts.HaulAwayDeliveryInstall },
             };
-            await _productAttributeService.InsertProductAttributeAsync(pa);
+
+            foreach (var pa in pas)
+            {
+                await _productAttributeService.InsertProductAttributeAsync(pa);
+            }
         }
     }
 }

@@ -22,11 +22,6 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
             return StartDate <= DateTime.Now && DateTime.Now <= EndDate.AddDays(1);
         }
 
-        public bool IsUpcoming()
-        {
-            return StartDate > DateTime.Now;
-        }
-
         public bool IsExpired()
         {
             return DateTime.Now > EndDate.AddDays(1);

@@ -214,7 +214,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             // ABC: remove the attributes that can be added via the Cart Slideout
             var cartSlideoutAddableProductAttributes = new string[] {
                 "Delivery/Pickup Options",
-                "Haul Away",
+                "Haul Away (Delivery)",
+                "Haul Away (Delivery/Install)",
                 // these are temporary, and will be removed once data is syncing correctly
                 "Home Delivery",
                 "Pickup",

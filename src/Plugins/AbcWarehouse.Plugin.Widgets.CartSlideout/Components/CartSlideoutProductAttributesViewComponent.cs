@@ -21,7 +21,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
             var includedAttributeNames = new string[]
             {
                 CartSlideoutConsts.DeliveryPickupOptions,
-                "Haul Away",
+                CartSlideoutConsts.HaulAwayDelivery,
+                CartSlideoutConsts.HaulAwayDeliveryInstall,
             };
 
             var models = await _productModelFactory.PrepareProductAttributeModelsAsync(

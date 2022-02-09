@@ -15,5 +15,13 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Domain
         public int DeliveryHaulway { get; set; }
 
         public int DeliveryHaulwayInstall { get; set; }
+
+        public bool HasDeliveryOptions()
+        {
+            return DeliveryOnly != 0 ||
+                       DeliveryInstall != 0 ||
+                       DeliveryHaulway != 0 ||
+                       DeliveryHaulwayInstall != 0;
+        }
     }
 }
