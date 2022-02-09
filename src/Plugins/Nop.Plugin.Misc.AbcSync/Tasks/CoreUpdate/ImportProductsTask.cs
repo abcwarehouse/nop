@@ -191,20 +191,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                 if (product != null)
                 {
-                    if (product.Deleted)
+                    // SOT products are being left alone completely to allow for manual intervention.
+                    if (product.Deleted || stagingProduct.ISAMItemNo == null)
                     {
-                        continue;
-                    }
-                    
-                    // If this product exists and if from SOT, we need to disable
-                    // adding to cart and mark "Call for Pricing"
-                    // This is needed until we move away from SOT as a whole.
-                    if (stagingProduct.ISAMItemNo == null)
-                    {
-                        product.DisableBuyButton = true;
-                        product.CallForPrice = true;
-
-                        await _productService.UpdateProductAsync(product);
                         continue;
                     }
                 }
