@@ -78,7 +78,6 @@ namespace Nop.Plugin.Misc.AbcSync
             await attrOptionManager.FlushAsync();
 
             var prodAttrOptionManager = new EntityManager<ProductSpecificationAttribute>();
-            //getting sku and sot/isam color options for all products with color. strange syntax is a left join
             var isamSkusColors = _isamProductService.GetIsamProducts().Where(ip => ip.Color != null).Select(ip => new { ip.Sku, ip.Color });
             //mapping created options to their product
             foreach (var skuColors in isamSkusColors)

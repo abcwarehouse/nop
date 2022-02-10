@@ -134,11 +134,6 @@ namespace Nop.Plugin.Misc.AbcSync
             };
         }
 
-        public string GetSiteOnTimeXmlPath()
-        {
-            return GetPath("SiteOnTime.xml", "SiteOnTime Xml Path");
-        }
-
         public DirectoryInfo GetPromoPdfDirectory()
         {
             return GetDirectory("promotion_forms/", "Promo PDF directory");

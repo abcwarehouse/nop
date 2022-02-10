@@ -226,7 +226,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
                 product.OldPrice = stagingProduct.BasePrice.Value > stagingProduct.DisplayPrice.Value ? stagingProduct.BasePrice.Value : stagingProduct.DisplayPrice.Value;
 
-                if (!(product.Price != 0 && stagingProduct.SiteOnTimeSku != null && stagingProduct.BasePrice == 0))
+                if (!(product.Price != 0 && stagingProduct.BasePrice == 0))
                 {
                     //apply discount to display price as needed
                     if (skuToPrDiscount.ContainsKey(stagingProduct.Sku))
@@ -478,9 +478,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             var deleteCommand = $@"
                 update[{nopDbName}].dbo.Product set Published = 0, Deleted = 1
                 from [{nopDbName}].[dbo].[Product] 
-                left join[{stagingDbName}].[dbo].[ProductSource] as ps on ([{nopDbName}].[dbo].[Product].[Sku] = ps.IsamSku
-                                                                   OR[{nopDbName}].[dbo].[Product].[Sku] = ps.SiteOnTimeSku)
-                where ps.IsamSku is null AND ps.SiteOnTimeSku is null
+                left join[{stagingDbName}].[dbo].[ProductSource] as ps on ([{nopDbName}].[dbo].[Product].[Sku] = ps.IsamSku)
+                where ps.IsamSku is null
                 AND Product.Id NOT IN (SELECT ProductId FROM [AbcMattressModel])
             ";
 
@@ -521,8 +520,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     INSERT INTO ProductAbcDescriptions (Product_Id, AbcDescription, AbcItemNumber, UsesPairPricing)
                     SELECT p.Id, sp.ShortDescription, sp.ItemNumber, sp.UsePairPricing FROM Product p join {stagingDb.Database}.dbo.Product sp on p.Sku = sp.Sku;"
                 );
-
-            await _nopDbContext.ExecuteNonQueryAsync("EXECUTE [dbo].[SanitizeSOTShortDescriptions];");
 
             // handle Bronto descriptions
             await _nopDbContext.ExecuteNonQueryAsync(
@@ -621,51 +618,40 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 WHERE EntityName = 'Product'
                 AND EntityId NOT IN (SELECT ProductId FROM [AbcMattressModel])
 
-                -- Gets a full list of ABC and SOT items from staging DB
+                -- Gets a full list of ABC items from staging DB
                 SELECT DISTINCT
-	                ISNULL(p.Id, SotP.Id) as Id,
-	                ISNULL(p.Name,SotP.Name)as Name,
-	                CAST(CASE
-		                WHEN SotP.ShortDescription is not null
-			                THEN SotP.ShortDescription
-		                ELSE p.ShortDescription
-	                END AS NVARCHAR(MAX)) as ShortDescription,
-	                CAST(CASE
-		                WHEN SotP.FullDescription is not null
-			                THEN SotP.FullDescription
-		                ELSE NULL
-	                END AS NVARCHAR(MAX)) as FullDescription,
-	                ISNULL(p.OnAbcSite,SotP.OnAbcSite) as OnAbcSite,
-	                ISNULL(p.OnHawthorneSite,SotP.OnHawthorneSite) as OnHawthorneSite,
-	                ISNULL(p.OnAbcClearanceSite,SotP.OnAbcClearanceSite) as OnAbcClearanceSite,
-	                ISNULL(p.OnHawthorneClearanceSite,SotP.OnHawthorneClearanceSite) as OnHawthorneClearanceSite,
-	                ISNULL(p.Sku,SotP.Sku) as Sku,
-	                ISNULL(p.ManufacturerNumber,SotP.ManufacturerNumber) as ManufacturerNumber,
-	                ISNULL(m.Name, SotP.Manufacturer) as Manufacturer,
-	                ISNULL(p.DisableBuying,SotP.DisableBuying) as DisableBuying,
-	                ISNULL(p.[Weight],SotP.[Weight]) as [Weight],
-	                ISNULL(p.[Length],SotP.[Length]) as [Length],
-	                ISNULL(p.Width,SotP.Width) as Width,
-	                ISNULL(p.Height,SotP.Height) as Height,
-	                ISNULL(p.AllowInStorePickup,SotP.AllowInStorePickup) as AllowInStorePickup,
-	                ISNULL(p.IsNew,SotP.IsNew) as IsNew,
-	                ISNULL(p.NewExpectedDate,SotP.NewExpectedDate) as NewExpectedDate,
-	                ISNULL(p.LimitedStockDate,SotP.LimitedStockDate) as LimitedStockDate,
-	                ISNULL(p.BasePrice,SotP.BasePrice) as BasePrice,
-                    ISNULL(p.DisplayPrice,SotP.DisplayPrice) as [DisplayPrice],
-                    ISNULL(p.CartPrice,SotP.CartPrice) as [CartPrice],
-                    ISNULL(p.UsePairPricing,SotP.UsePairPricing) as [UsePairPricing],
-                    ISNULL(p.PriceBucketCode,SotP.PriceBucketCode) as [PriceBucketCode],
-	                ISNULL(p.CanUseUps, 0) as [CanUseUps], -- All SOT products are in Home Delivery
+	                p.Id,
+	                p.Name,
+	                p.ShortDescription,
+	                p.OnAbcSite,
+	                p.OnHawthorneSite,
+	                p.OnAbcClearanceSite,
+	                p.OnHawthorneClearanceSite,
+	                p.Sku,
+	                p.ManufacturerNumber,
+	                m.Name as Manufacturer,
+	                p.DisableBuying,
+	                p.[Weight],
+	                p.[Length],
+	                p.Width,
+	                p.Height,
+	                p.AllowInStorePickup,
+	                p.IsNew,
+	                p.NewExpectedDate,
+	                p.LimitedStockDate,
+	                p.BasePrice,
+                    p.DisplayPrice,
+                    p.CartPrice,
+                    p.UsePairPricing,
+                    p.PriceBucketCode,
+	                p.CanUseUps,
 	                p.ItemNumber as [ISAMItemNo],
-	                SotP.Sku as [SiteOnTimeSku],
-	                ISNULL(SotP.Upc,p.Upc) as [Upc],
-	                p.FactTag as [FactTag]
+	                p.Upc,
+	                p.FactTag
 	                INTO #tmp_products
 	                FROM {stagingDbName}.dbo.[Product] as p
 	                LEFT OUTER JOIN {stagingDbName}.dbo.ProductManufacturerMapping ON Sku = ItemSku
 	                LEFT OUTER JOIN {stagingDbName}.dbo.Manufacturer as m ON ProductManufacturerMapping.BrandCode = m.BrandCode
-	                FULL OUTER JOIN {stagingDbName}.[dbo].[SiteOnTimeProduct] as SotP ON p.Sku = SotP.Sku
 
                 -- Find the NOPCommerce store IDs
                 DECLARE @abcStoreId INT

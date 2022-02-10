@@ -31,7 +31,6 @@ namespace Nop.Plugin.Misc.AbcSync
             services.AddScoped<IImportProductFlags, ImportProductFlags>();
             services.AddScoped<IDocumentImportService, DocumentImportService>();
 
-            services.AddScoped<ISiteOnTimeProductService, SiteOnTimeProductService>();
             services.AddScoped<IPrFileDiscountService, PrFileDiscountService>();
             services.AddScoped<IPromoService, PromoService>();
             services.AddScoped<IRebateService, RebateService>();

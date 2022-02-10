@@ -59,8 +59,6 @@ namespace Nop.Plugin.Misc.AbcSync.Domain.Staging
 
         public string ISAMItemNo { get; set; }
 
-        public string SiteOnTimeSku { get; set; }
-
         public string Upc { get; set; }
 
         public string FactTag { get; set; }
