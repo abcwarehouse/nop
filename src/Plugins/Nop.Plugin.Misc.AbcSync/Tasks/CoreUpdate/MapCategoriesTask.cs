@@ -46,8 +46,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 return;
             }
 
-            
-
             string mappingFile = _importSettings.GetCategoryMappingFile();
             using (var xlPackage = new ExcelPackage(new FileInfo(mappingFile)))
             {
@@ -55,10 +53,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 var isamWorksheet = xlPackage.Workbook.Worksheets[0];
                 if (isamWorksheet == null)
                     throw new NopException("No ISAM worksheet");
-
-                var sotWorksheet = xlPackage.Workbook.Worksheets[1];
-                if (sotWorksheet == null)
-                    throw new NopException("No Site on Time Worksheet");
 
                 _stagingDb.ExecuteNonQuery("ClearCategoryMapping");
 
@@ -103,56 +97,7 @@ namespace Nop.Plugin.Misc.AbcSync
                     _stagingDb.ExecuteNonQuery($"INSERT INTO [dbo].[ISAMCategory_NopCategory] ([ISAM_Id], [Nop_Id]) VALUES ({isamId}, {nopId})");
                     ++iRow;
                 }
-
-                iRow = 2;
-                while (sotWorksheet.Cells[iRow, 1].Value != null && !string.IsNullOrEmpty(sotWorksheet.Cells[iRow, 1].Value.ToString()))
-                {
-                    var sotId = Convert.ToInt32(sotWorksheet.Cells[iRow, 1].Value);
-
-                    int nopId = 0;
-                    //use id if one is given
-                    if (sotWorksheet.Cells[iRow, 5].Value != null && !string.IsNullOrEmpty(sotWorksheet.Cells[iRow, 5].Value.ToString()))
-                    {
-                        try
-                        {
-                            nopId = Convert.ToInt32(sotWorksheet.Cells[iRow, 5].Value);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new NopException($"Unable to convert cell {iRow},5 to an integer in {sotWorksheet.Name}", ex);
-                        }
-                    }
-                    else
-                    {
-                        //else use the id of the category matching the given name (if it is given and one exists)
-                        var nopName = Convert.ToString(sotWorksheet.Cells[iRow, 6].Value);
-                        if (!string.IsNullOrEmpty(nopName))
-                        {
-                            var category = (await _categoryService.GetAllCategoriesAsync(categoryName: nopName, showHidden: true))
-                                .Where(c => c.Name.ToLower().Trim() == nopName.ToLower().Trim())
-                                .FirstOrDefault();
-                            if (category != null)
-                            {
-                                if (category.Deleted)
-                                {
-                                    await _logger.WarningAsync($"Site on time category with id {sotId} has been mapped to a deleted category (name = {nopName}, id = {nopId})");
-                                }
-                                nopId = category.Id;
-                            }
-                            else
-                            {
-                                await _logger.WarningAsync($"No NopCommerce category exists with name \"{nopName}\", unable to map Site on Time category with id = {sotId}");
-                            }
-                        }
-
-                    }
-
-                    _stagingDb.ExecuteNonQuery($"INSERT INTO [dbo].[SoTCategory_NopCategory] ([SoT_Id], [Nop_Id]) VALUES ({sotId}, {nopId})");
-                    ++iRow;
-                }
             }
-
-            
         }
     }
 }

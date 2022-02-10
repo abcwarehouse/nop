@@ -33,8 +33,6 @@ namespace Nop.Plugin.Misc.AbcSync
         private readonly IRepository<ProductEnergyGuide> _energyGuideRepository;
         private readonly IRepository<ProductDocuments> _prodDocRepository;
         private readonly INopDataProvider _nopDbContext;
-        private readonly IProductDataProductService _productDataProductService;
-        private readonly IProductDataProductDownloadService _productDataProductDownloadService;
         private readonly IIsamProductService _isamProductService;
 
         public DocumentImportService(ImportSettings importSettings,
@@ -50,8 +48,6 @@ namespace Nop.Plugin.Misc.AbcSync
             IRepository<ProductEnergyGuide> energyGuideRepository,
             IRepository<ProductDocuments> prodDocRepository,
             INopDataProvider nopDbContext,
-            IProductDataProductService productDataProductService,
-            IProductDataProductDownloadService productDataProductDownloadService,
             IIsamProductService isamProductService
         )
         {
@@ -68,8 +64,6 @@ namespace Nop.Plugin.Misc.AbcSync
             _energyGuideRepository = energyGuideRepository;
             _prodDocRepository = prodDocRepository;
             _nopDbContext = nopDbContext;
-            _productDataProductService = productDataProductService;
-            _productDataProductDownloadService = productDataProductDownloadService;
             _isamProductService = isamProductService;
         }
 
@@ -91,64 +85,9 @@ namespace Nop.Plugin.Misc.AbcSync
             var productDocumentsManager = new EntityManager<ProductDocuments>();
             var energyGuideManager = new EntityManager<ProductEnergyGuide>();
 
-            //add all site on time documents first
-            foreach (var sotProduct in _productDataProductService.GetProductDataProducts())
-            {
-                var product = _importUtilities.GetExistingProductBySku(sotProduct.SKU);
-                if (product == null)
-                    continue;
-
-                //do not add a new tab if one exists
-                if (idsWithDocuments.Contains(product.Id))
-                {
-                    continue;
-                }
-                var description = "";
-
-                //populate tab. Skipping some downloads, such as extra pictures
-                foreach (var download in _productDataProductDownloadService.GetProductDataProductDownloadsByProductDataProductId(sotProduct.id))
-                {
-                    switch (download.AST_Role_Txt)
-                    {
-                        case "OwnersManual":
-                            description += GetTabLinkItem(download.AST_URL_Txt, "Owners Manual");
-                            break;
-                        case "InstallationGuide":
-                            description += GetTabLinkItem(download.AST_URL_Txt, "Installation Guide");
-                            break;
-                        case "EnergyGuide":
-                            description += GetTabLinkItem(download.AST_URL_Txt, "Energy Guide");
-                            await energyGuideManager.InsertAsync(new ProductEnergyGuide { ProductId = product.Id, EnergyGuideUrl = download.AST_URL_Txt });
-                            idsWithEguides.Add(product.Id);
-                            break;
-                        case "SpecPage":
-                            description += GetTabLinkItem(download.AST_URL_Txt, "Specification Page");
-                            idsWithSpecs.Add(product.Id);
-                            break;
-                        case "WarrantyInformation":
-                            description += GetTabLinkItem(download.AST_URL_Txt, "Warranty Information");
-                            break;
-                        case "DimensionsGuide":
-                            description += GetTabLinkItem(download.AST_URL_Txt, "Dimensions Guide");
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                //if there were downloads to populate the tab, add a new tab and mappings
-                if (!string.IsNullOrEmpty(description))
-                {
-                    await productDocumentsManager.InsertAsync(new ProductDocuments { ProductId = product.Id, Documents = description });
-                    idsWithDocuments.Add(product.Id);
-                }
-
-            }
-
             await energyGuideManager.FlushAsync();
             await productDocumentsManager.FlushAsync();
 
-            //add ISAM products next
             foreach (var isamProduct in _isamProductService.GetIsamProducts())
             {
                 var product = _importUtilities.GetExistingProductBySku(isamProduct.Sku);
@@ -159,7 +98,6 @@ namespace Nop.Plugin.Misc.AbcSync
                 {
                     continue;
                 }
-
 
                 var description = "";
                 var eguidePath = _importSettings.GetEnergyGuidePdfPath() + $"/{isamProduct.ItemNumber.Trim()}_eguide.pdf";
