@@ -11,14 +11,36 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
     {
         private async System.Threading.Tasks.Task AddHaulAwayAsync(
             int productId,
-            AbcDeliveryMap map)
+            AbcDeliveryMap map,
+            int deliveryOptionsPamId,
+            int? deliveryPavId,
+            int? deliveryInstallPavId)
         {
-            var haulAwayDeliveryPam = await AddHaulAwayAttributeAsync(productId, _haulAwayDeliveryProductAttributeId);
-            var haulAwayDeliveryInstallPam = await AddHaulAwayAttributeAsync(productId, _haulAwayDeliveryInstallProductAttributeId);
+            var haulAwayDeliveryPam = await AddHaulAwayAttributeAsync(
+                productId,
+                _haulAwayDeliveryProductAttributeId,
+                deliveryOptionsPamId,
+                deliveryPavId);
+
+            // add value
+
+            var haulAwayDeliveryInstallPam = await AddHaulAwayAttributeAsync(
+                productId,
+                _haulAwayDeliveryInstallProductAttributeId,
+                deliveryOptionsPamId,
+                deliveryInstallPavId);
+
+            // add value
         }
 
-        private async System.Threading.Tasks.Task<ProductAttributeMapping> AddHaulAwayAttributeAsync(int productId, int productAttributeId)
+        private async System.Threading.Tasks.Task<ProductAttributeMapping> AddHaulAwayAttributeAsync(
+            int productId,
+            int productAttributeId,
+            int deliveryOptionsPamId,
+            int? pavId)
         {
+            if (pavId == null) { return null; }
+
             var pam = (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId))
                                                     .SingleOrDefault(pam => pam.ProductAttributeId == productAttributeId);
             if (pam == null)
@@ -28,6 +50,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                     ProductId = productId,
                     ProductAttributeId = productAttributeId,
                     AttributeControlType = AttributeControlType.Checkboxes,
+                    TextPrompt = "Haul Away",
+                    ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{deliveryOptionsPamId}\"><ProductAttributeValue><Value>{pavId}</Value></ProductAttributeValue></ProductAttribute></Attributes>",
                 };
                 await _productAttributeService.InsertProductAttributeMappingAsync(pam);
             }

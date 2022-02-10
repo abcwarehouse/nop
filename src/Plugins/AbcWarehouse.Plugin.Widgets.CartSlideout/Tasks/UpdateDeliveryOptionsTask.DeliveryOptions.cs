@@ -9,7 +9,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
     public partial class UpdateDeliveryOptionsTask : IScheduleTask
     {
-        private async System.Threading.Tasks.Task AddDeliveryOptionsAsync(
+        private async System.Threading.Tasks.Task<(int pamId, int? deliveryPavId, int? deliveryInstallPavId)> AddDeliveryOptionsAsync(
             int productId,
             AbcDeliveryMap map)
         {
@@ -17,20 +17,24 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             var values = await _productAttributeService.GetProductAttributeValuesAsync(pam.Id);
 
             var deliveryOnlyPav = values.Where(pav => pav.Name.Contains("Home Delivery (")).SingleOrDefault();
-            await AddValueAsync(
+            deliveryOnlyPav = await AddValueAsync(
                 pam.Id,
                 deliveryOnlyPav,
                 map.DeliveryOnly,
                 "Home Delivery ({0}, FREE With Mail-In Rebate)",
-                0);
+                0,
+                true);
 
             var deliveryInstallationPav = values.Where(pav => pav.Name.Contains("Home Delivery and Installation (")).SingleOrDefault();
-            await AddValueAsync(
+            deliveryInstallationPav = await AddValueAsync(
                 pam.Id,
                 deliveryInstallationPav,
                 map.DeliveryInstall,
                 "Home Delivery and Installation ({0})",
-                10);
+                10,
+                deliveryOnlyPav == null);
+
+            return (pam.Id, deliveryOnlyPav?.Id, deliveryInstallationPav?.Id);
         }
 
         private async System.Threading.Tasks.Task<ProductAttributeMapping> AddDeliveryOptionsAttributeAsync(int productId)

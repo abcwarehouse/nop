@@ -40,18 +40,24 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                 var productIds = (await _categoryService.GetProductCategoriesByCategoryIdAsync(abcDeliveryMap.CategoryId)).Select(pc => pc.ProductId);
                 foreach (var productId in productIds)
                 {
-                    await AddDeliveryOptionsAsync(productId, abcDeliveryMap);
-                    await AddHaulAwayAsync(productId, abcDeliveryMap);
+                    (int deliveryOptionsPamId, int? deliveryPavId, int? deliveryInstallPavId) = await AddDeliveryOptionsAsync(productId, abcDeliveryMap);
+                    await AddHaulAwayAsync(
+                        productId,
+                        abcDeliveryMap,
+                        deliveryOptionsPamId,
+                        deliveryPavId,
+                        deliveryInstallPavId);
                 }
             }
         }
 
-        private async System.Threading.Tasks.Task AddValueAsync(
+        private async System.Threading.Tasks.Task<ProductAttributeValue> AddValueAsync(
             int pamId,
             ProductAttributeValue pav,
             int itemNumber,
             string displayName,
-            int displayOrder)
+            int displayOrder,
+            bool isPreSelected)
         {
             if (pav == null && itemNumber != 0)
             {
@@ -63,12 +69,14 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                     Name = string.Format(displayName, priceDisplay),
                     Cost = itemNumber,
                     PriceAdjustment = item.Price,
-                    IsPreSelected = displayName.Contains("Home Delivery ("),
+                    IsPreSelected = isPreSelected,
                     DisplayOrder = displayOrder,
                 };
 
                 await _productAttributeService.InsertProductAttributeValueAsync(pav);
             }
+
+            return pav;
         }
 
         private async System.Threading.Tasks.Task InitializeAsync()

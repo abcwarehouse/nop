@@ -704,17 +704,32 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             
             if (deliveryOptionsProductAttributeMapping != null)
             {
-                var homeDeliveryProductAttributeValue =
-                    (await _productAttributeService.GetProductAttributeValuesAsync(deliveryOptionsProductAttributeMapping.Id)).Where(
+                var deliveryPavs = await _productAttributeService.GetProductAttributeValuesAsync(deliveryOptionsProductAttributeMapping.Id);
+
+                var homeDeliveryProductAttributeValue = deliveryPavs.Where(
                         pav => pav.Name.Contains("Home Delivery") && !pav.Name.Contains("Installation")
                     ).FirstOrDefault();
-                
-                return homeDeliveryProductAttributeValue != null ?
-                    _productAttributeParser.AddProductAttribute(
+                if (homeDeliveryProductAttributeValue != null)
+                {
+                    return _productAttributeParser.AddProductAttribute(
                         attXml,
                         deliveryOptionsProductAttributeMapping,
-                        homeDeliveryProductAttributeValue.Id.ToString()) : 
-                    attXml;
+                        homeDeliveryProductAttributeValue.Id.ToString());
+                }
+                
+                // If no home delivery option, check if delivery/install option is available
+                var deliveryInstallProductAttributeValue = deliveryPavs.Where(
+                        pav => pav.Name.Contains("Installation")
+                    ).FirstOrDefault();
+                if (deliveryInstallProductAttributeValue != null)
+                {
+                    return _productAttributeParser.AddProductAttribute(
+                        attXml,
+                        deliveryOptionsProductAttributeMapping,
+                        deliveryInstallProductAttributeValue.Id.ToString());
+                }
+
+                return attXml;
             }
             if (legacyHomeDeliveryProductAttributeMapping != null)
             {

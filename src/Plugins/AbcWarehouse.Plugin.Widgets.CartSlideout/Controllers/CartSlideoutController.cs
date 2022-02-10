@@ -70,9 +70,26 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                     shoppingCartItem.RentalEndDateUtc,
                     shoppingCartItem.Quantity);
 
+            // conditional attributes
+            // var enabledAttributeMappingIds = new List<int>();
+            // var disabledAttributeMappingIds = new List<int>();
+            // var attributes = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+            // foreach (var attribute in attributes)
+            // {
+            //     var conditionMet = await _productAttributeParser.IsConditionMetAsync(attribute, attributeXml);
+            //     if (conditionMet.HasValue)
+            //     {
+            //         if (conditionMet.Value)
+            //             enabledAttributeMappingIds.Add(attribute.Id);
+            //         else
+            //             disabledAttributeMappingIds.Add(attribute.Id);
+            //     }
+            // }
+
             return Json(new
             {
                 SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { sci = shoppingCartItem }),
+                // Need to determine this based on what is selected
             });
         }
 
