@@ -40,13 +40,20 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                 var productIds = (await _categoryService.GetProductCategoriesByCategoryIdAsync(abcDeliveryMap.CategoryId)).Select(pc => pc.ProductId);
                 foreach (var productId in productIds)
                 {
-                    (int deliveryOptionsPamId, int? deliveryPavId, int? deliveryInstallPavId) = await AddDeliveryOptionsAsync(productId, abcDeliveryMap);
+                    (int deliveryOptionsPamId,
+                     int? deliveryPavId,
+                     int? deliveryInstallPavId,
+                     decimal? deliveryPriceAdjustment,
+                     decimal? deliveryInstallPriceAdjustment) = await AddDeliveryOptionsAsync(productId, abcDeliveryMap);
                     await AddHaulAwayAsync(
                         productId,
                         abcDeliveryMap,
                         deliveryOptionsPamId,
+                        // should just pass the Pav itself
                         deliveryPavId,
-                        deliveryInstallPavId);
+                        deliveryInstallPavId,
+                        deliveryPriceAdjustment.HasValue ? deliveryPriceAdjustment.Value : 0M,
+                        deliveryInstallPriceAdjustment.HasValue ? deliveryInstallPriceAdjustment.Value : 0M);
                 }
             }
         }
@@ -57,18 +64,20 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             int itemNumber,
             string displayName,
             int displayOrder,
-            bool isPreSelected)
+            bool isPreSelected,
+            decimal priceAdjustment = 0)
         {
             if (pav == null && itemNumber != 0)
             {
                 var item = await _abcDeliveryService.GetAbcDeliveryItemByItemNumberAsync(itemNumber);
-                var priceDisplay = await _priceFormatter.FormatPriceAsync(item.Price);
+                var price = item.Price - priceAdjustment;
+                var priceDisplay = await _priceFormatter.FormatPriceAsync(price);
                 pav = new ProductAttributeValue()
                 {
                     ProductAttributeMappingId = pamId,
                     Name = string.Format(displayName, priceDisplay),
                     Cost = itemNumber,
-                    PriceAdjustment = item.Price,
+                    PriceAdjustment = price,
                     IsPreSelected = isPreSelected,
                     DisplayOrder = displayOrder,
                 };

@@ -9,7 +9,11 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
     public partial class UpdateDeliveryOptionsTask : IScheduleTask
     {
-        private async System.Threading.Tasks.Task<(int pamId, int? deliveryPavId, int? deliveryInstallPavId)> AddDeliveryOptionsAsync(
+        private async System.Threading.Tasks.Task<(int pamId,
+                                                   int? deliveryPavId,
+                                                   int? deliveryInstallPavId,
+                                                   decimal? deliveryPriceAdjustment,
+                                                   decimal? deliveryInstallPriceAdjustment)> AddDeliveryOptionsAsync(
             int productId,
             AbcDeliveryMap map)
         {
@@ -34,7 +38,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                 10,
                 deliveryOnlyPav == null);
 
-            return (pam.Id, deliveryOnlyPav?.Id, deliveryInstallationPav?.Id);
+            return (pam.Id, deliveryOnlyPav?.Id, deliveryInstallationPav?.Id, deliveryOnlyPav?.PriceAdjustment, deliveryInstallationPav?.PriceAdjustment);
         }
 
         private async System.Threading.Tasks.Task<ProductAttributeMapping> AddDeliveryOptionsAttributeAsync(int productId)

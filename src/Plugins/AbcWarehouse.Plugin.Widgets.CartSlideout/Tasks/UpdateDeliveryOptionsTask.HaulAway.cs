@@ -14,32 +14,45 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             AbcDeliveryMap map,
             int deliveryOptionsPamId,
             int? deliveryPavId,
-            int? deliveryInstallPavId)
+            int? deliveryInstallPavId,
+            decimal deliveryPriceAdjustment,
+            decimal deliveryInstallPriceAdjustment)
         {
-            var haulAwayDeliveryPam = await AddHaulAwayAttributeAsync(
-                productId,
-                _haulAwayDeliveryProductAttributeId,
-                deliveryOptionsPamId,
-                deliveryPavId);
+            // Haulaway (Delivery)
+            if (deliveryPavId.HasValue)
+            {
+                await AddHaulAwayAttributeAsync(
+                    productId,
+                    _haulAwayDeliveryProductAttributeId,
+                    deliveryOptionsPamId,
+                    deliveryPavId.Value,
+                    map.DeliveryHaulway,
+                    deliveryPriceAdjustment);
+            }
 
-            // add value
-
-            var haulAwayDeliveryInstallPam = await AddHaulAwayAttributeAsync(
-                productId,
-                _haulAwayDeliveryInstallProductAttributeId,
-                deliveryOptionsPamId,
-                deliveryInstallPavId);
-
-            // add value
+            // Haulaway (Delivery/Install)
+            if (deliveryInstallPavId.HasValue)
+            {
+                await AddHaulAwayAttributeAsync(
+                    productId,
+                    _haulAwayDeliveryInstallProductAttributeId,
+                    deliveryOptionsPamId,
+                    deliveryInstallPavId.Value,
+                    map.DeliveryHaulwayInstall,
+                    deliveryInstallPriceAdjustment);
+            }
         }
 
-        private async System.Threading.Tasks.Task<ProductAttributeMapping> AddHaulAwayAttributeAsync(
+        private async System.Threading.Tasks.Task<ProductAttributeMapping> AddHaulAwayAttributeMappingAsync(
             int productId,
             int productAttributeId,
             int deliveryOptionsPamId,
             int? pavId)
         {
-            if (pavId == null) { return null; }
+            if (pavId == null)
+            {
+                return null;
+            }
 
             var pam = (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId))
                                                     .SingleOrDefault(pam => pam.ProductAttributeId == productAttributeId);
@@ -57,6 +70,35 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             }
 
             return pam;
+        }
+
+        private async System.Threading.Tasks.Task AddHaulAwayAttributeAsync(
+            int productId,
+            int productAttributeId,
+            int deliveryOptionsPamId,
+            int deliveryOptionsPavId,
+            int abcDeliveryMapItemNumber,
+            decimal priceAdjustment)
+        {
+            var pam = await AddHaulAwayAttributeMappingAsync(
+                productId,
+                _haulAwayDeliveryProductAttributeId,
+                deliveryOptionsPamId,
+                deliveryOptionsPavId);
+            if (pam == null)
+            {
+                return;
+            }
+
+            var pav = (await _productAttributeService.GetProductAttributeValuesAsync(pam.Id)).FirstOrDefault();
+            await AddValueAsync(
+                pam.Id,
+                pav,
+                abcDeliveryMapItemNumber,
+                "Remove Old Appliance ({0})",
+                0,
+                false,
+                priceAdjustment);
         }
     }
 }

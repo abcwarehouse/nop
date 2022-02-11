@@ -107,6 +107,9 @@
 .cart-slideout__delivery-options .attributes {
     margin: 0;
 }
+.cart-slideout__delivery-options dt {
+    float: none;
+}
 
 /* copied over from Pavilion theme to allow consistency in both desktop and mobile */
 .scrollYRemove {
