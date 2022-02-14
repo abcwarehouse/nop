@@ -49,7 +49,6 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                         productId,
                         abcDeliveryMap,
                         deliveryOptionsPamId,
-                        // should just pass the Pav itself
                         deliveryPavId,
                         deliveryInstallPavId,
                         deliveryPriceAdjustment.HasValue ? deliveryPriceAdjustment.Value : 0M,
@@ -71,7 +70,9 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             {
                 var item = await _abcDeliveryService.GetAbcDeliveryItemByItemNumberAsync(itemNumber);
                 var price = item.Price - priceAdjustment;
-                var priceDisplay = await _priceFormatter.FormatPriceAsync(price);
+                var priceDisplay = price == 0 ?
+                    "FREE" :
+                    await _priceFormatter.FormatPriceAsync(price);
                 pav = new ProductAttributeValue()
                 {
                     ProductAttributeMappingId = pamId,
