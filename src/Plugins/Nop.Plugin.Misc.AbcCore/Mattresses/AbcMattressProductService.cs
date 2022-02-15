@@ -96,9 +96,9 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
                 throw new NopException("Unable to find 'Comfort' specification attribute.");
             }
 
-            var option = (await _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttributeAsync(comfortSpecAttr.Id))
-                                                         .Where(so => so.Name == model.Comfort)
-                                                         .FirstOrDefault();
+            var options = await _specificationAttributeService.GetSpecificationAttributeOptionsBySpecificationAttributeAsync(comfortSpecAttr.Id);
+            var option = options.Where(so => so.Name == model.Comfort)
+                                .FirstOrDefault();
             if (option == null)
             {
                 throw new NopException($"Unable to find '{model.Comfort}' " +
@@ -106,29 +106,31 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
                 "specification attribute.");
             }
 
-            var comfortProductSpecAttr = (await _specificationAttributeService.GetProductSpecificationAttributesAsync(product.Id))
-                                                                       .Where(psa => psa.AttributeTypeId == comfortSpecAttr.Id)
+            var productSpecificationAttributes = await _specificationAttributeService.GetProductSpecificationAttributesAsync(product.Id);
+            var comfortProductSpecAttr = productSpecificationAttributes.Where(psa => psa.SpecificationAttributeOptionId == option.Id)
                                                                        .FirstOrDefault();
-            if (comfortProductSpecAttr == null)
+            // Found the existing product spec. attribute - just skip processing
+            if (comfortProductSpecAttr != null) { return; }
+
+            // delete any currently existing Comfort specs
+            var optionIds = options.Select(o => o.Id);
+            var existingComfortProductSpecAttributes = productSpecificationAttributes.Where(psa => optionIds.Contains(psa.SpecificationAttributeOptionId));
+            foreach (var psa in existingComfortProductSpecAttributes)
             {
-                var productSpecAttr = new ProductSpecificationAttribute()
-                {
-                    ProductId = product.Id,
-                    AttributeType = SpecificationAttributeType.Option,
-                    SpecificationAttributeOptionId = option.Id,
-                    AllowFiltering = true
-                };
-                await _specificationAttributeService.InsertProductSpecificationAttributeAsync(
-                    productSpecAttr
-                );
+                await _specificationAttributeService.DeleteProductSpecificationAttributeAsync(psa);
             }
-            else
+
+            // Add new product spec attribute
+            var productSpecAttr = new ProductSpecificationAttribute()
             {
-                comfortProductSpecAttr.SpecificationAttributeOptionId = option.Id;
-                await _specificationAttributeService.UpdateProductSpecificationAttributeAsync(
-                    comfortProductSpecAttr
-                );
-            }
+                ProductId = product.Id,
+                AttributeType = SpecificationAttributeType.Option,
+                SpecificationAttributeOptionId = option.Id,
+                AllowFiltering = true
+            };
+            await _specificationAttributeService.InsertProductSpecificationAttributeAsync(
+                productSpecAttr
+            );
         }
 
         public List<string> GetMattressItemNos()
