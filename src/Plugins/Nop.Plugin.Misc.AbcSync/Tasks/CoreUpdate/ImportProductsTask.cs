@@ -315,15 +315,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     ExistingSkuToId[product.Sku] = product.Id;
                     await _urlRecordService.SaveSlugAsync(product, await _urlRecordService.ValidateSeNameAsync(product, "", product.Name, true), 0);
 
-                    if (stagingProduct.AllowInStorePickup)
-                    {
-                        await _importUtilities.InsertProductAttributeMappingAsync(
-                            product.Id,
-                            pickupAttribute.Id,
-                            productAttributeMappingManager
-                        );
-                    }
-
                     if (!stagingProduct.CanUseUps)
                     {
                         await _importUtilities.InsertProductAttributeMappingAsync(
@@ -353,27 +344,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                             0
                         );
                     }
-
-                    if (!productsWithPickupAttribute.Contains(product.Id) && stagingProduct.AllowInStorePickup)
-                    {
-                        // a mapping to the pickup attribute does not exist and is needed, add one
-                        await _importUtilities.InsertProductAttributeMappingAsync(
-                            product.Id,
-                            pickupAttribute.Id,
-                            productAttributeMappingManager
-                        );
-                    }
-                    else if (productsWithPickupAttribute.Contains(product.Id) && !stagingProduct.AllowInStorePickup)
-                    {
-                        // a mapping to the pickup attribute exists and is not needed, remove it
-                        ProductAttributeMapping pickupAttributeMapping =
-                            (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
-                        .Where(pam => pam.ProductAttributeId == pickupAttribute.Id)
-                        .Select(pam => pam).FirstOrDefault();
-                        // updated to not allow pick up in store anymore
-                        await _productAttributeService.DeleteProductAttributeMappingAsync(pickupAttributeMapping);
-                    }
-
 
                     if (!productsWithHomeDeliveryAttribute.Contains(product.Id) && !stagingProduct.CanUseUps)
                     {

@@ -7,6 +7,7 @@ using Nop.Core.Domain.Catalog;
 using Nop.Services.Catalog;
 using Nop.Services.Orders;
 using Nop.Web.Framework.Controllers;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
 {
@@ -102,7 +103,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
         {
             var result = attributesXml;
             var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
-            if (productAttribute.Name == CartSlideoutConsts.DeliveryPickupOptions)
+            if (productAttribute.Name == AbcDeliveryConsts.DeliveryPickupOptions)
             {
                 result = _productAttributeParser.RemoveProductAttribute(
                     result,

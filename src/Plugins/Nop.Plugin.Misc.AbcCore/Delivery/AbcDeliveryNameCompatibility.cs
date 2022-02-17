@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using AbcWarehouse.Plugin.Widgets.CartSlideout.Domain;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Data.Mapping;
 
-namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Mapping
+namespace Nop.Plugin.Misc.AbcCore.Delivery
 {
-    public partial class CartSlideoutNameCompatibility : INameCompatibility
+    public partial class AbcDeliveryNameCompatibility : INameCompatibility
     {
         public Dictionary<Type, string> TableNames => new Dictionary<Type, string> { };
 

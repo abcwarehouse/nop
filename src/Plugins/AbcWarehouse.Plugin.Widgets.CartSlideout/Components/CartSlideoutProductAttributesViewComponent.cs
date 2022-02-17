@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Factories;
 using Nop.Web.Framework.Components;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
@@ -20,9 +21,9 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
         {
             var includedAttributeNames = new string[]
             {
-                CartSlideoutConsts.DeliveryPickupOptions,
-                CartSlideoutConsts.HaulAwayDelivery,
-                CartSlideoutConsts.HaulAwayDeliveryInstall,
+                AbcDeliveryConsts.DeliveryPickupOptions,
+                AbcDeliveryConsts.HaulAwayDelivery,
+                AbcDeliveryConsts.HaulAwayDeliveryInstall,
             };
 
             var models = await _productModelFactory.PrepareProductAttributeModelsAsync(

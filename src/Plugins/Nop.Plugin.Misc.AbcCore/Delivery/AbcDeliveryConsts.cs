@@ -1,6 +1,6 @@
-namespace AbcWarehouse.Plugin.Widgets.CartSlideout
+namespace Nop.Plugin.Misc.AbcCore.Delivery
 {
-    public static class CartSlideoutConsts
+    public static class AbcDeliveryConsts
     {
         public const string DeliveryPickupOptions = "Delivery/Pickup Options";
         public const string HaulAwayDelivery = "Haul Away (Delivery)";

@@ -19,6 +19,8 @@ using Nop.Services.Media;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Core.Infrastructure;
 using Nop.Services.Logging;
+using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Services.Catalog;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
@@ -31,6 +33,7 @@ namespace Nop.Plugin.Misc.AbcCore
         private readonly INopFileProvider _nopFileProvider;
         private readonly IPictureService _pictureService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
+        private readonly IProductAttributeService _productAttributeService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public CorePlugin(
@@ -40,6 +43,7 @@ namespace Nop.Plugin.Misc.AbcCore
             INopDataProvider nopDataProvider,
             INopFileProvider nopFileProvider,
             IPictureService pictureService,
+            IProductAttributeService productAttributeService,
             IProductAbcDescriptionService productAbcDescriptionService,
             IWebHostEnvironment webHostEnvironment
         )
@@ -50,6 +54,7 @@ namespace Nop.Plugin.Misc.AbcCore
             _nopDataProvider = nopDataProvider;
             _nopFileProvider = nopFileProvider;
             _pictureService = pictureService;
+            _productAttributeService = productAttributeService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _webHostEnvironment = webHostEnvironment;
         }
@@ -103,6 +108,7 @@ namespace Nop.Plugin.Misc.AbcCore
         {
             await _localizationService.DeleteLocaleResourcesAsync(CoreLocales.Base);
             await DeleteStoredProcs();
+            await RemoveProductAttributesAsync();
 
             await base.UninstallAsync();
         }
@@ -111,6 +117,9 @@ namespace Nop.Plugin.Misc.AbcCore
         {
             await InstallStoredProcs();
             await UpdateLocales();
+
+            await RemoveProductAttributesAsync();
+            await AddProductAttributesAsync();
         }
 
         private async Task DeleteStoredProcs()
@@ -144,6 +153,34 @@ namespace Nop.Plugin.Misc.AbcCore
                     [CoreLocales.PLPDescriptionHint] = "Description displayed for PLP (Product Box)."
                 }
             );
+        }
+
+        private async System.Threading.Tasks.Task RemoveProductAttributesAsync()
+        {
+            var attributes = (await _productAttributeService.GetAllProductAttributesAsync()).Where(pa =>
+                pa.Name == AbcDeliveryConsts.DeliveryPickupOptions ||
+                pa.Name == AbcDeliveryConsts.HaulAwayDelivery ||
+                pa.Name == AbcDeliveryConsts.HaulAwayDeliveryInstall);
+
+            foreach (var attribute in attributes)
+            {
+                await _productAttributeService.DeleteProductAttributeAsync(attribute);
+            }
+        }
+
+        private async System.Threading.Tasks.Task AddProductAttributesAsync()
+        {
+            var pas = new ProductAttribute[]
+            {
+                new ProductAttribute() { Name = AbcDeliveryConsts.DeliveryPickupOptions },
+                new ProductAttribute() { Name = AbcDeliveryConsts.HaulAwayDelivery },
+                new ProductAttribute() { Name = AbcDeliveryConsts.HaulAwayDeliveryInstall },
+            };
+
+            foreach (var pa in pas)
+            {
+                await _productAttributeService.InsertProductAttributeAsync(pa);
+            }
         }
 
         public Task ManageSiteMapAsync(SiteMapNode rootNode)

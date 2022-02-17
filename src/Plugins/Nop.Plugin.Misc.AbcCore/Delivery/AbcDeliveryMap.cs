@@ -2,7 +2,7 @@
 
 using Nop.Core;
 
-namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Domain
+namespace Nop.Plugin.Misc.AbcCore.Delivery
 {
     public class AbcDeliveryMap : BaseEntity
     {
