@@ -6,8 +6,8 @@ using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Services.Catalog;
 using Nop.Services.Orders;
-using Nop.Web.Framework.Controllers;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Web.Framework.Controllers;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
 {
@@ -89,8 +89,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
 
             return Json(new
             {
-                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { sci = shoppingCartItem }),
-                // Need to determine this based on what is selected
+                SubtotalHtml = await RenderViewComponentToStringAsync("CartSlideoutSubtotal", new { sci = shoppingCartItem })
             });
         }
 

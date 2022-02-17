@@ -29,7 +29,7 @@ using Nop.Plugin.Misc.AbcCore.Data;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
-    public class ImportProductsTask : IScheduleTask
+    public partial class ImportProductsTask : IScheduleTask
     {
         private readonly ImportSettings _importSettings;
         private readonly IRepository<Product> _productRepository;
@@ -53,6 +53,24 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly FrontEndService _frontendService;
 
         private readonly StagingDb _stagingDb;
+
+        private EntityManager<ProductCartPrice> _productCartPriceManager;
+        private EntityManager<ProductHomeDelivery> _homeDeliveryManager = new EntityManager<ProductHomeDelivery>();
+        private EntityManager<ProductRequiresLogin> _requiresLoginManager = new EntityManager<ProductRequiresLogin>();
+        private EntityManager<ProductAttributeMapping> _productAttributeMappingManager = 
+            new EntityManager<ProductAttributeMapping>(EngineContext.Current.Resolve<IRepository<ProductAttributeMapping>>());
+
+        private ProductAttribute _homeDeliveryAttribute;
+        private HashSet<int> _productIdsWithHomeDeliveryAttribute;
+        private HashSet<int> _productIdsWithPlaceholderDescriptions;
+        private Dictionary<string, int> _existingSkuToId;
+        private Dictionary<string, decimal> _skuToPrDiscount;
+        private int _everythingTaxCategoryId;
+
+        private Store _abcWarehouseStore;
+        private Store _abcClearanceStore;
+        private Store _hawthorneStore;
+        private Store _hawthorneClearanceStore;
 
         public ImportProductsTask(
             ImportSettings importSettings,
@@ -101,6 +119,45 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _frontendService = frontendService;
         }
 
+        private async System.Threading.Tasks.Task InitializeAsync()
+        {
+            _homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
+            _productIdsWithHomeDeliveryAttribute = new HashSet<int>(_productAttributeMappingRepository.Table
+                .Where(pam => pam.ProductAttributeId == _homeDeliveryAttribute.Id).Select(pam => pam.ProductId).Distinct().ToArray());
+
+            _existingSkuToId = _productRepository.Table.Select(p => new { p.Sku, p.Id }).ToDictionary(p => p.Sku, p => p.Id);
+
+            _productCartPriceManager = new EntityManager<ProductCartPrice>(_productCartPriceRepository);
+
+            Store[] storeList = (await _storeService.GetAllStoresAsync()).ToArray();
+            _abcWarehouseStore
+                = storeList.Where(s => s.Name == "ABC Warehouse")
+                .Select(s => s).FirstOrDefault();
+            _abcClearanceStore
+                = storeList.Where(s => s.Name == "ABC Clearance")
+                .Select(s => s).FirstOrDefault();
+            _hawthorneStore
+                = storeList.Where(s => s.Name == "Hawthorne Online Store")
+                .Select(s => s).FirstOrDefault();
+            _hawthorneClearanceStore
+                = storeList.Where(s => s.Name == "Hawthorne Clearance")
+                .Select(s => s).FirstOrDefault();
+
+            var validDiscounts = _prFileDiscountService.GetPrFileDiscounts();
+            if (_abcWarehouseStore != null)
+            {
+                _skuToPrDiscount = validDiscounts.Where(prd => prd.IsAbcDiscount).OrderBy(prd => prd.ProductSku).ToDictionary(prd => prd.ProductSku, prd => prd.DiscountAmount);
+            }
+            else if (_hawthorneStore != null)
+            {
+                _skuToPrDiscount = validDiscounts.Where(prd => prd.IsHawthorneDiscount).OrderBy(prd => prd.ProductSku).ToDictionary(prd => prd.ProductSku, prd => prd.DiscountAmount);
+            }
+
+            _productIdsWithPlaceholderDescriptions = new HashSet<int>(_productRepository.Table.Where(p => p.FullDescription.Contains("placeholder-features")).Select(p => p.Id).ToArray());
+        
+            _everythingTaxCategoryId = _taxCategoryRepository.Table.Where(tc => tc.Name == "Everything").Select(tc => tc.Id).FirstOrDefault();
+        }
+
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
             if (_importSettings.SkipImportProductsTask)
@@ -108,12 +165,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 this.Skipped();
                 return;
             }
+            await InitializeAsync();
 
             var stagingDb = _importSettings.GetStagingDbConnection();
-
-            var ExistingSkuToId = _productRepository.Table.Select(p => new { p.Sku, p.Id }).ToDictionary(p => p.Sku, p => p.Id);
-
-            int everythingTaxCategoryId = _taxCategoryRepository.Table.Where(tc => tc.Name == "Everything").Select(tc => tc.Id).FirstOrDefault();
 
             //remove all product cart price mappings and home delivery mappings
             await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductCartPrice");
@@ -125,11 +179,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             ProductAttribute homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
             PredefinedProductAttributeValue homeDeliveryAttributeValue = await _importUtilities.GetHomeDeliveryAttributeValueAsync();
             ProductAttribute pickupAttribute = await _importUtilities.GetPickupAttributeAsync();
-            var productAttributeMappingManager = new EntityManager<ProductAttributeMapping>(EngineContext.Current.Resolve<IRepository<ProductAttributeMapping>>());
-            var productCartPriceManager = new EntityManager<ProductCartPrice>(_productCartPriceRepository);
-            var homeDeliveryManager = new EntityManager<ProductHomeDelivery>();
-            var requiresLoginManager = new EntityManager<ProductRequiresLogin>();
-
 
             // set all manufacturers to limit to store
             string manufacturerUpdateQuery
@@ -155,292 +204,20 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 = storeList.Where(s => s.Name == "Hawthorne Clearance")
                 .Select(s => s).FirstOrDefault();
 
-            //creating discounts are associated to either site
-            var skuToPrDiscount = new Dictionary<string, decimal>();
-            var validDiscounts = _prFileDiscountService.GetPrFileDiscounts();
-            if (abcWarehouseStore != null)
-            {
-                skuToPrDiscount = validDiscounts.Where(prd => prd.IsAbcDiscount).OrderBy(prd => prd.ProductSku).ToDictionary(prd => prd.ProductSku, prd => prd.DiscountAmount);
-            }
-            else if (hawthorneStore != null)
-            {
-                skuToPrDiscount = validDiscounts.Where(prd => prd.IsHawthorneDiscount).OrderBy(prd => prd.ProductSku).ToDictionary(prd => prd.ProductSku, prd => prd.DiscountAmount);
-            }
-
-            // preloading information for later lookups
-            var productsWithPlaceholderDescriptions = new HashSet<int>(_productRepository.Table.Where(p => p.FullDescription.Contains("placeholder-features")).Select(p => p.Id).ToArray());
-
             var productsWithPickupAttribute = new HashSet<int>(_productAttributeMappingRepository.Table
                 .Where(pam => pam.ProductAttributeId == pickupAttribute.Id).Select(pam => pam.ProductId).Distinct().ToArray());
 
-            var productsWithHomeDeliveryAttribute = new HashSet<int>(_productAttributeMappingRepository.Table
-                .Where(pam => pam.ProductAttributeId == homeDeliveryAttribute.Id).Select(pam => pam.ProductId).Distinct().ToArray());
-
             foreach (var stagingProduct in stagingProducts)
             {
-                if (string.IsNullOrEmpty(stagingProduct.Sku))
-                    continue;
-
-                Product product = null;
-                Product productSnapshot = null;
-                if (ExistingSkuToId.ContainsKey(stagingProduct.Sku))
-                {
-                    var nopId = ExistingSkuToId[stagingProduct.Sku];
-                    product = _productRepository.Table.Where(prod => prod.Id == nopId).First();
-                }
-
-                if (product != null)
-                {
-                    // SOT products are being left alone completely to allow for manual intervention.
-                    if (product.Deleted || stagingProduct.ISAMItemNo == null)
-                    {
-                        continue;
-                    }
-                }
-
-                var newProduct = product == null;
-                var hasPlaceholderFullDescription = false;
-                if (newProduct)
-                {
-                    product = CreateNewProduct();
-                    product.TaxCategoryId = everythingTaxCategoryId;
-                    newProduct = true;
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(product.FullDescription))
-                        hasPlaceholderFullDescription = productsWithPlaceholderDescriptions.Contains(product.Id);
-
-                    productSnapshot = _importUtilities.CoreClone(product);
-                }
-                product.DisableBuyButton = DetermineDisableBuyBasedOnNOPStock(product, stagingProduct);
-                product.Height = (stagingProduct.Height <= 0) ? 1 : stagingProduct.Height;
-                product.Length = (stagingProduct.Length <= 0) ? 1 : stagingProduct.Length;
-                product.ManufacturerPartNumber = stagingProduct.ManufacturerNumber;
-
-                var hasNewName = product.Name != stagingProduct.Name;
-                if (hasNewName)
-                {
-                    product.Name = stagingProduct.Name;
-                }
-
-                product.OldPrice = stagingProduct.BasePrice.Value > stagingProduct.DisplayPrice.Value ? stagingProduct.BasePrice.Value : stagingProduct.DisplayPrice.Value;
-
-                if (!(product.Price != 0 && stagingProduct.BasePrice == 0))
-                {
-                    //apply discount to display price as needed
-                    if (skuToPrDiscount.ContainsKey(stagingProduct.Sku))
-                    {
-                        product.Price = stagingProduct.DisplayPrice.Value - skuToPrDiscount[stagingProduct.Sku];
-                    }
-                    else
-                    {
-                        product.Price = stagingProduct.DisplayPrice.Value;
-                    }
-                }
-
-
-                //descriptions are only overwritten if there is new content to write
-                if (!string.IsNullOrEmpty(stagingProduct.ShortDescription) && (hasPlaceholderFullDescription || newProduct || string.IsNullOrEmpty(product.ShortDescription)))
-                {
-                    var decodedShortDescription = WebUtility.HtmlDecode(stagingProduct.ShortDescription);
-                    product.ShortDescription = string.IsNullOrEmpty(decodedShortDescription) ? null : decodedShortDescription;
-                }
-
-                if (!string.IsNullOrEmpty(stagingProduct.FullDescription) && (hasPlaceholderFullDescription || newProduct || string.IsNullOrEmpty(product.FullDescription)))
-                {
-                    var decodedFullDescription = WebUtility.HtmlDecode(stagingProduct.FullDescription);
-                    product.FullDescription = string.IsNullOrEmpty(decodedFullDescription) ? null : decodedFullDescription;
-                }
-
-                product.Sku = stagingProduct.Sku;
-                product.UpdatedOnUtc = DateTime.UtcNow;
-                product.Weight = (stagingProduct.Weight <= 0) ? 1 : stagingProduct.Weight;
-                product.Width = (stagingProduct.Width <= 0) ? 1 : stagingProduct.Width;
-
-                //publish the product based on stores
-                product.LimitedToStores = true;
-                product.Published = false;
-
-                List<int> storeIds = new List<int>();
-
-                // check for each different store & publish state
-                if (stagingProduct.OnAbcSite
-                    && abcWarehouseStore != null)
-                {
-                    product.Published = true;
-                    storeIds.Add(abcWarehouseStore.Id);
-                }
-
-                if (stagingProduct.OnAbcClearanceSite
-                    && abcClearanceStore != null)
-                {
-                    product.Published = true;
-                    storeIds.Add(abcClearanceStore.Id);
-                }
-
-                if (stagingProduct.OnHawthorneSite
-                    && hawthorneStore != null)
-                {
-                    product.Published = true;
-                    storeIds.Add(hawthorneStore.Id);
-                }
-
-                if (stagingProduct.OnHawthorneClearanceSite.HasValue
-                    && stagingProduct.OnHawthorneClearanceSite.Value
-                    && hawthorneClearanceStore != null)
-                {
-                    product.Published = true;
-                    storeIds.Add(hawthorneClearanceStore.Id);
-                }
-
-                product.IsShipEnabled = true;
-
-                if (product.Price <= 0 && !await product.IsCallOnlyAsync())
-                {
-                    product.Published = false;
-                }
-
-                if (await product.IsCallOnlyAsync())
-                {
-                    product.CallForPrice = true;
-                    product.DisableBuyButton = true;
-                }
-
-                //update or insert as needed
-                if (newProduct)
-                {
-                    //have to insert directly to repo to get back the id
-                    await _productRepository.InsertAsync(product);
-                    ExistingSkuToId[product.Sku] = product.Id;
-                    await _urlRecordService.SaveSlugAsync(product, await _urlRecordService.ValidateSeNameAsync(product, "", product.Name, true), 0);
-
-                    if (!stagingProduct.CanUseUps)
-                    {
-                        await _importUtilities.InsertProductAttributeMappingAsync(
-                            product.Id,
-                            homeDeliveryAttribute.Id,
-                            productAttributeMappingManager
-                        );
-                    }
-                }
-                else
-                {
-                    //only update if the product has been changed
-                    if (!_importUtilities.CoreEquals(productSnapshot, product))
-                    {
-                        product.Deleted = false;
-                        await _productService.UpdateProductAsync(product);
-                    }
-
-                    // straight sql update
-                    //update url record if name has changed
-                    if (hasNewName)
-                    {
-                        var slug = await _urlRecordService.ValidateSeNameAsync(product, "", product.Name, true);
-                        await _urlRecordService.SaveSlugAsync<Product>(
-                            product,
-                            slug,
-                            0
-                        );
-                    }
-
-                    if (!productsWithHomeDeliveryAttribute.Contains(product.Id) && !stagingProduct.CanUseUps)
-                    {
-                        await _importUtilities.InsertProductAttributeMappingAsync(
-                            product.Id,
-                            homeDeliveryAttribute.Id,
-                            productAttributeMappingManager
-                        );
-                    }
-                    else if (productsWithHomeDeliveryAttribute.Contains(product.Id) && stagingProduct.CanUseUps)
-                    {
-                        ProductAttributeMapping homeDeliveryAttributeMapping =
-                            (await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
-                        .Where(pam => pam.ProductAttributeId == homeDeliveryAttribute.Id)
-                        .Select(pam => pam).FirstOrDefault();
-                        // updated to not allow home delivery anymore
-                        await _productAttributeService.DeleteProductAttributeMappingAsync(homeDeliveryAttributeMapping);
-                    }
-                }
-
-                //add manufacturer and mappings as needed
-                if (stagingProduct.Manufacturer != null)
-                {
-                    var manufacturers = await _manufacturerService.GetManufacturersByNameAsync(stagingProduct.Manufacturer);
-                    var manufacturer = manufacturers.FirstOrDefault() ?? await CreateManufacturerAsync(stagingProduct.Manufacturer);
-                    if (manufacturer != null)
-                    {
-                        var productManufacturers = _productManufacturerRepository.Table
-                            .Where(pm => pm.ManufacturerId == manufacturer.Id && pm.ProductId == product.Id);
-                        if (!productManufacturers.Any())
-                        {
-                            await _manufacturerService.InsertProductManufacturerAsync(
-                                new ProductManufacturer { ProductId = product.Id, ManufacturerId = manufacturer.Id }
-                            );
-                        }
-                    }
-                }
-
-                //add to cart price table if needed
-                Staging.PriceBucketCode priceBucketCode = (Staging.PriceBucketCode)stagingProduct.PriceBucketCode;
-
-                if (priceBucketCode == Staging.PriceBucketCode.AddToCartForCurrentPricing ||
-                    priceBucketCode == Staging.PriceBucketCode.AddToCartForCurrentPricingRequireLogin)
-                {
-                    await productCartPriceManager.InsertAsync(new ProductCartPrice { Product_Id = product.Id, CartPrice = stagingProduct.CartPrice.Value });
-                    if (priceBucketCode == Staging.PriceBucketCode.AddToCartForCurrentPricingRequireLogin)
-                    {
-                        await requiresLoginManager.InsertAsync(new ProductRequiresLogin { Product_Id = product.Id });
-                    }
-                }
-
-                //add to home delivery table if needed
-                if (!stagingProduct.CanUseUps)
-                {
-                    await homeDeliveryManager.InsertAsync(new ProductHomeDelivery { Product_Id = product.Id });
-                }
-
-                // After collecting all the store IDs to which this product relates,
-                // distinct it and run over each of them to set the store mappings.
-                storeIds = storeIds.Distinct().ToList();
-                foreach (var storeId in storeIds)
-                {
-                    // For any manufacturer for the product, set it's mapping.
-                    // Should put this into a service (override the capability that pulls by store)
-                    var productManufacturers = _productManufacturerRepository.Table.Where(pm => pm.ProductId == product.Id);
-                    foreach (var prodManMappings in productManufacturers)
-                    {
-                        var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(prodManMappings.ManufacturerId);
-
-                        // If the manufacturer is already mapped to this store, skip it.
-                        if ((await _storeMappingService
-                            .GetStoresIdsWithAccessAsync(manufacturer))
-                            .Contains(storeId))
-                        {
-                            continue;
-                        }
-                        await _storeMappingService.InsertStoreMappingAsync(
-                            manufacturer, storeId);
-                    }
-                }
-
-                await UpdateAddToCartInfoAsync(priceBucketCode, product, stagingProduct);
-                await SetFullDescriptionIfEmptyAsync(stagingProduct, product);
-
-                if (!string.IsNullOrWhiteSpace(stagingProduct.Upc))
-                {
-                    product.Gtin = stagingProduct.Upc;
-                    await _productService.UpdateProductAsync(product);
-                }
+                await ProcessStagingProductAsync(stagingProduct);
             }
 
             await ImportProductStoreMappingsAsync();
 
-            await productAttributeMappingManager.FlushAsync();
-            await productCartPriceManager.FlushAsync();
-            await homeDeliveryManager.FlushAsync();
-            await requiresLoginManager.FlushAsync();
+            await _productAttributeMappingManager.FlushAsync();
+            await _productCartPriceManager.FlushAsync();
+            await _homeDeliveryManager.FlushAsync();
+            await _requiresLoginManager.FlushAsync();
 
             // marking products that do not exist in the staging database as deleted
             var nopDbName = DataSettingsManager.LoadSettings().ConnectionString.GetDatabaseName();
