@@ -12,28 +12,11 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
     public partial class ImportProductsTask : IScheduleTask
     {
-        private async System.Threading.Tasks.Task ProcessStagingProductAsync(StagingProduct stagingProduct)
-        {
-            if (string.IsNullOrEmpty(stagingProduct.Sku))
-                return;
-
-            Product product = null;
+        private async System.Threading.Tasks.Task ProcessStagingProductAsync(
+            StagingProduct stagingProduct,
+            Product product
+        ) {
             Product productSnapshot = null;
-            if (_existingSkuToId.ContainsKey(stagingProduct.Sku))
-            {
-                var nopId = _existingSkuToId[stagingProduct.Sku];
-                product = _productRepository.Table.Where(prod => prod.Id == nopId).First();
-            }
-
-            if (product != null)
-            {
-                // SOT products are being left alone completely to allow for manual intervention.
-                if (product.Deleted || stagingProduct.ISAMItemNo == null)
-                {
-                    return;
-                }
-            }
-
             var newProduct = product == null;
             var hasPlaceholderFullDescription = false;
             if (newProduct)

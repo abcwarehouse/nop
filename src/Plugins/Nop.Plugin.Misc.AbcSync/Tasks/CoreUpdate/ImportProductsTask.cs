@@ -26,12 +26,15 @@ using System.Net;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using Nop.Plugin.Misc.AbcCore.Data;
+using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Plugin.Misc.AbcCore.Nop;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 {
     public partial class ImportProductsTask : IScheduleTask
     {
         private readonly ImportSettings _importSettings;
+        private readonly IAbcDeliveryService _abcDeliveryService;
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<TaxCategory> _taxCategoryRepository;
         private readonly ICustomNopDataProvider _nopDbContext;
@@ -41,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly IRepository<ProductAttributeMapping> _productAttributeMappingRepository;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IProductService _productService;
-        private readonly IProductAttributeService _productAttributeService;
+        private readonly IAbcProductAttributeService _productAttributeService;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IRepository<Manufacturer> _manufacturerRepository;
@@ -61,6 +64,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             new EntityManager<ProductAttributeMapping>(EngineContext.Current.Resolve<IRepository<ProductAttributeMapping>>());
 
         private ProductAttribute _homeDeliveryAttribute;
+        private ProductAttribute _pickupAttribute;
+        private ProductAttribute _deliveryPickupOptionsProductAttribute;
         private HashSet<int> _productIdsWithHomeDeliveryAttribute;
         private HashSet<int> _productIdsWithPlaceholderDescriptions;
         private Dictionary<string, int> _existingSkuToId;
@@ -74,6 +79,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
 
         public ImportProductsTask(
             ImportSettings importSettings,
+            IAbcDeliveryService abcDeliveryService,
             IRepository<Product> productRepository,
             IRepository<TaxCategory> taxCategoryRepository,
             ICustomNopDataProvider nopDbContext,
@@ -83,7 +89,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             IRepository<ProductAttributeMapping> productAttributeMappingRepository,
             IUrlRecordService urlRecordService,
             IProductService productService,
-            IProductAttributeService productAttributeService,
+            IAbcProductAttributeService productAttributeService,
             IStoreMappingService storeMappingService,
             IGenericAttributeService genericAttributeService,
             IRepository<Manufacturer> manufacturerRepository,
@@ -96,6 +102,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             FrontEndService frontendService
         )
         {
+            _abcDeliveryService = abcDeliveryService;
             _importSettings = importSettings;
             _productRepository = productRepository;
             _taxCategoryRepository = taxCategoryRepository;
@@ -122,6 +129,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private async System.Threading.Tasks.Task InitializeAsync()
         {
             _homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
+            _pickupAttribute = await _importUtilities.GetPickupAttributeAsync();
             _productIdsWithHomeDeliveryAttribute = new HashSet<int>(_productAttributeMappingRepository.Table
                 .Where(pam => pam.ProductAttributeId == _homeDeliveryAttribute.Id).Select(pam => pam.ProductId).Distinct().ToArray());
 
@@ -156,6 +164,13 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _productIdsWithPlaceholderDescriptions = new HashSet<int>(_productRepository.Table.Where(p => p.FullDescription.Contains("placeholder-features")).Select(p => p.Id).ToArray());
         
             _everythingTaxCategoryId = _taxCategoryRepository.Table.Where(tc => tc.Name == "Everything").Select(tc => tc.Id).FirstOrDefault();
+
+            // Delivery Options
+            _deliveryPickupOptionsProductAttribute = new ProductAttribute()
+            {
+                Name = "Delivery/Pickup Options 2"
+            };
+            await _productAttributeService.SaveProductAttributeAsync(_deliveryPickupOptionsProductAttribute);
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -165,7 +180,14 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 this.Skipped();
                 return;
             }
+
             await InitializeAsync();
+
+            var skipStagingProductUpdate = _importSettings.SkipStagingProductUpdate;
+            if (skipStagingProductUpdate)
+            {
+                await _logger.WarningAsync("Skipping staging product update.");
+            }
 
             var stagingDb = _importSettings.GetStagingDbConnection();
 
@@ -175,10 +197,6 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             await _nopDbContext.ExecuteNonQueryAsync($"DELETE FROM ProductRequiresLogin");
 
             var stagingProducts = await GetCleanedStagingProductsAsync();
-
-            ProductAttribute homeDeliveryAttribute = await _importUtilities.GetHomeDeliveryAttributeAsync();
-            PredefinedProductAttributeValue homeDeliveryAttributeValue = await _importUtilities.GetHomeDeliveryAttributeValueAsync();
-            ProductAttribute pickupAttribute = await _importUtilities.GetPickupAttributeAsync();
 
             // set all manufacturers to limit to store
             string manufacturerUpdateQuery
@@ -190,26 +208,32 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             await _nopDbContext.ExecuteNonQueryAsync(manufacturerUpdateQuery);
             await _nopDbContext.ExecuteNonQueryAsync(manufacturerStoreMappingDeleteQuery);
 
-            Store[] storeList = (await _storeService.GetAllStoresAsync()).ToArray();
-            Store abcWarehouseStore
-                = storeList.Where(s => s.Name == "ABC Warehouse")
-                .Select(s => s).FirstOrDefault();
-            Store abcClearanceStore
-                = storeList.Where(s => s.Name == "ABC Clearance")
-                .Select(s => s).FirstOrDefault();
-            Store hawthorneStore
-                = storeList.Where(s => s.Name == "Hawthorne Online Store")
-                .Select(s => s).FirstOrDefault();
-            Store hawthorneClearanceStore
-                = storeList.Where(s => s.Name == "Hawthorne Clearance")
-                .Select(s => s).FirstOrDefault();
-
             var productsWithPickupAttribute = new HashSet<int>(_productAttributeMappingRepository.Table
-                .Where(pam => pam.ProductAttributeId == pickupAttribute.Id).Select(pam => pam.ProductId).Distinct().ToArray());
+                .Where(pam => pam.ProductAttributeId == _pickupAttribute.Id).Select(pam => pam.ProductId).Distinct().ToArray());
 
             foreach (var stagingProduct in stagingProducts)
             {
-                await ProcessStagingProductAsync(stagingProduct);
+                if (string.IsNullOrEmpty(stagingProduct.Sku))
+                    continue;
+
+                Product product = null;
+                if (_existingSkuToId.ContainsKey(stagingProduct.Sku))
+                {
+                    var nopId = _existingSkuToId[stagingProduct.Sku];
+                    product = await _productService.GetProductByIdAsync(nopId);
+                }
+
+                if (product != null && product.Deleted) { continue; }
+
+                if (!skipStagingProductUpdate)
+                {
+                    await ProcessStagingProductAsync(stagingProduct, product);
+                }
+
+                await _abcDeliveryService.UpdateProductDeliveryOptionsAsync(
+                    product,
+                    stagingProduct.AllowInStorePickup
+                );
             }
 
             await ImportProductStoreMappingsAsync();
@@ -471,6 +495,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             // Exclude mattress product items
             var mattressItemNos = _abcMattressProductService.GetMattressItemNos();
             stagingProducts = stagingProducts.Where(sp => !mattressItemNos.Contains(sp.ISAMItemNo)).ToList();
+
+            // Exclude items with no ISAM
+            stagingProducts = stagingProducts.Where(sp => sp.ISAMItemNo != null).ToList();
 
             return stagingProducts;
         }

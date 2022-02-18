@@ -1,4 +1,4 @@
-﻿using Nop.Web.Framework;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -45,8 +45,10 @@ namespace Nop.Plugin.Misc.AbcSync.Models
         [NopResourceDisplayName(ImportPluginLocales.ImportHawthorneStores)]
         public bool ImportHawthorneStores { get; set; }
 
-        [NopResourceDisplayName(ImportPluginLocales.SkipOldMattressesImport)]
-        public bool SkipOldMattressesImport { get; set; }
+
+        [NopResourceDisplayName(ImportPluginLocales.SkipStagingProductUpdate)]
+        public bool SkipStagingProductUpdate { get; set; }
+
 
         [NopResourceDisplayName(ImportPluginLocales.SkipFillStagingProductsTask)]
         public bool SkipFillStagingProductsTask { get; set; }

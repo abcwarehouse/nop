@@ -1,4 +1,4 @@
-﻿using Nop.Core;
+using Nop.Core;
 using Nop.Core.Domain.Tasks;
 using Nop.Data;
 using Nop.Services.Common;
@@ -102,8 +102,6 @@ namespace Nop.Plugin.Misc.AbcSync
             await _localizationService.AddLocaleResourceAsync(
                 new Dictionary<string, string>
                 {
-                    [ImportPluginLocales.SkipOldMattressesImport] = "Skip Import of Old Mattresses",
-
                     [ImportPluginLocales.SkipFillStagingAccessoriesTask] = "FillStagingAccessoriesTask",
                     [ImportPluginLocales.SkipFillStagingBrandsTask] = "FillStagingBrandsTask",
                     [ImportPluginLocales.SkipFillStagingPricingTask] = "FillStagingPricingTask",
@@ -111,6 +109,8 @@ namespace Nop.Plugin.Misc.AbcSync
                     [ImportPluginLocales.SkipFillStagingRebatesTask] = "FillStagingRebatesTask",
                     [ImportPluginLocales.SkipFillStagingScandownEndDatesTask] = "FillStagingScandownEndDatesTask",
                     [ImportPluginLocales.SkipFillStagingWarrantiesTask] = "FillStagingWarrantiesTask",
+
+                    [ImportPluginLocales.SkipStagingProductUpdate] = "Skip Staging Product Update",
 
                     [ImportPluginLocales.SkipImportProductsTask] = "ImportProductsTask",
                     [ImportPluginLocales.SkipMapCategoriesTask] = "MapCategoriesTask",

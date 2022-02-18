@@ -80,11 +80,14 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
         // May not need to be made public
         public async Task<AbcDeliveryMap> GetAbcDeliveryMapByCategoryIdAsync(int categoryId)
         {
-            return await _abcDeliveryMapRepository.Table
-                .FirstOrDefaultAsync(adm => adm.CategoryId == categoryId && adm.HasDeliveryOptions());
+            var adm = await _abcDeliveryMapRepository.Table.FirstOrDefaultAsync(adm => adm.CategoryId == categoryId);
+
+            return adm != null && adm.HasDeliveryOptions() ? adm : null;
         }
 
-        public async Task UpdateProductDeliveryOptionsAsync(Product product)
+        public async Task UpdateProductDeliveryOptionsAsync(
+            Product product,
+            bool allowInStorePickup)
         {
             var categoryId = (await _categoryService.GetProductCategoriesByProductIdAsync(product.Id))
                 .Select(pc => pc.CategoryId).FirstOrDefault();
@@ -98,7 +101,10 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
              int? deliveryPavId,
              int? deliveryInstallPavId,
              decimal? deliveryPriceAdjustment,
-             decimal? deliveryInstallPriceAdjustment) = await AddDeliveryOptionsAsync(product.Id, abcDeliveryMap);
+             decimal? deliveryInstallPriceAdjustment) = await AddDeliveryOptionsAsync(
+                 product.Id,
+                 abcDeliveryMap,
+                 allowInStorePickup);
 
              await AddHaulAwayAsync(
                 product.Id,
@@ -208,7 +214,8 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
                                                    decimal? deliveryPriceAdjustment,
                                                    decimal? deliveryInstallPriceAdjustment)> AddDeliveryOptionsAsync(
             int productId,
-            AbcDeliveryMap map)
+            AbcDeliveryMap map,
+            bool allowInStorePickup)
         {
             var pam = await AddDeliveryOptionsAttributeAsync(productId);
             var values = await _productAttributeService.GetProductAttributeValuesAsync(pam.Id);
@@ -219,7 +226,7 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
                 deliveryOnlyPav,
                 map.DeliveryOnly,
                 "Home Delivery ({0}, FREE With Mail-In Rebate)",
-                0,
+                10,
                 true);
 
             var deliveryInstallationPav = values.Where(pav => pav.Name.Contains("Home Delivery and Installation (")).SingleOrDefault();
@@ -228,8 +235,23 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
                 deliveryInstallationPav,
                 map.DeliveryInstall,
                 "Home Delivery and Installation ({0})",
-                10,
+                20,
                 deliveryOnlyPav == null);
+
+            if (allowInStorePickup)
+            {
+                var pickupPav = values.Where(pav => pav.Name.Contains("Pickup In-Store")).SingleOrDefault();
+                if (pickupPav == null)
+                {
+                    var newPickupPav = new ProductAttributeValue()
+                    {
+                        ProductAttributeMappingId = pam.Id,
+                        Name = "Pickup In-Store Or Curbside (FREE)",
+                        DisplayOrder = 0,
+                    };
+                    await _productAttributeService.InsertProductAttributeValueAsync(newPickupPav);
+                }
+            }
 
             return (pam.Id, deliveryOnlyPav?.Id, deliveryInstallationPav?.Id, deliveryOnlyPav?.PriceAdjustment, deliveryInstallationPav?.PriceAdjustment);
         }

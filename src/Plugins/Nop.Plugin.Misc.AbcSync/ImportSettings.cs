@@ -20,6 +20,7 @@ namespace Nop.Plugin.Misc.AbcSync
         public bool ImportABCStores { get; private set; }
         public bool ImportHawthorneStores { get; private set; }
 
+        public bool SkipStagingProductUpdate { get; private set; }
 
         // Sync Steps Skips
         public bool SkipFillStagingProductsTask { get; private set; }
@@ -62,6 +63,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 StagingDbConnectionString = model.StagingDbConnectionString,
                 ImportABCStores = model.ImportABCStores,
                 ImportHawthorneStores = model.ImportHawthorneStores,
+                SkipStagingProductUpdate = model.SkipStagingProductUpdate,
                 LastPictureUpdate = LastPictureUpdate,
                 SkipFillStagingAccessoriesTask = model.SkipFillStagingAccessoriesTask,
                 SkipFillStagingBrandsTask = model.SkipFillStagingBrandsTask,
@@ -99,6 +101,7 @@ namespace Nop.Plugin.Misc.AbcSync
                 StagingDbConnectionString = StagingDbConnectionString,
                 ImportABCStores = ImportABCStores,
                 ImportHawthorneStores = ImportHawthorneStores,
+                SkipStagingProductUpdate = SkipStagingProductUpdate,
                 SkipFillStagingAccessoriesTask = SkipFillStagingAccessoriesTask,
                 SkipFillStagingBrandsTask = SkipFillStagingBrandsTask,
                 SkipFillStagingPricingTask = SkipFillStagingPricingTask,
