@@ -10,10 +10,5 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
         Task<AbcDeliveryItem> GetAbcDeliveryItemByItemNumberAsync(int itemNumber);
 
         Task<AbcDeliveryMap> GetAbcDeliveryMapByCategoryIdAsync(int categoryId);
-
-        Task UpdateProductDeliveryOptionsAsync(
-            Product product,
-            bool AllowInStorePickup
-        );
     }
 }

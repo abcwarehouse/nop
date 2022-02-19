@@ -54,6 +54,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
         private readonly IAbcMattressProductService _abcMattressProductService;
         private readonly FrontEndService _frontendService;
+        private readonly ICategoryService _categoryService;
 
         private readonly StagingDb _stagingDb;
 
@@ -66,6 +67,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         private ProductAttribute _homeDeliveryAttribute;
         private ProductAttribute _pickupAttribute;
         private ProductAttribute _deliveryPickupOptionsProductAttribute;
+        private ProductAttribute _haulAwayDeliveryProductAttribute;
+        private ProductAttribute _haulAwayDeliveryInstallProductAttribute;
         private HashSet<int> _productIdsWithHomeDeliveryAttribute;
         private HashSet<int> _productIdsWithPlaceholderDescriptions;
         private Dictionary<string, int> _existingSkuToId;
@@ -99,7 +102,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             IPrFileDiscountService prFileDiscountService,
             IRepository<ProductManufacturer> productManufacturerRepository,
             IAbcMattressProductService abcMattressProductService,
-            FrontEndService frontendService
+            FrontEndService frontendService,
+            ICategoryService categoryService
         )
         {
             _abcDeliveryService = abcDeliveryService;
@@ -124,6 +128,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
             _productManufacturerRepository = productManufacturerRepository;
             _abcMattressProductService = abcMattressProductService;
             _frontendService = frontendService;
+            _categoryService = categoryService;
         }
 
         private async System.Threading.Tasks.Task InitializeAsync()
@@ -165,12 +170,7 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
         
             _everythingTaxCategoryId = _taxCategoryRepository.Table.Where(tc => tc.Name == "Everything").Select(tc => tc.Id).FirstOrDefault();
 
-            // Delivery Options
-            _deliveryPickupOptionsProductAttribute = new ProductAttribute()
-            {
-                Name = "Delivery/Pickup Options 2"
-            };
-            await _productAttributeService.SaveProductAttributeAsync(_deliveryPickupOptionsProductAttribute);
+            await InitializeDeliveryOptionsProductAttributesAsync();
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -230,10 +230,12 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                     await ProcessStagingProductAsync(stagingProduct, product);
                 }
 
-                await _abcDeliveryService.UpdateProductDeliveryOptionsAsync(
-                    product,
-                    stagingProduct.AllowInStorePickup
-                );
+                // await _abcDeliveryService.UpdateProductDeliveryOptionsAsync(
+                //     product,
+                //     stagingProduct.AllowInStorePickup
+                // );
+
+                var deliveryPams = await UpdateDeliveryProductAttributeMappingsAsync(product.Id);
             }
 
             await ImportProductStoreMappingsAsync();
