@@ -48,6 +48,7 @@ using Nop.Services.Cms;
 using Nop.Plugin.Misc.AbcCore.Models;
 using Newtonsoft.Json;
 using Nop.Plugin.Misc.AbcFrontend.Models;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -213,9 +214,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var productAttributes = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
             // ABC: remove the attributes that can be added via the Cart Slideout
             var cartSlideoutAddableProductAttributes = new string[] {
-                "Delivery/Pickup Options",
-                "Haul Away (Delivery)",
-                "Haul Away (Delivery/Install)",
+                AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
+                AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
+                AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
                 // these are temporary, and will be removed once data is syncing correctly
                 "Home Delivery",
                 "Pickup",

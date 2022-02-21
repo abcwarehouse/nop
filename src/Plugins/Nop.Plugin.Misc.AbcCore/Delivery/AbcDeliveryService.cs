@@ -42,17 +42,17 @@ namespace Nop.Plugin.Misc.AbcCore.Delivery
             var productAttributes = await _productAttributeService.GetAllProductAttributesAsync();
 
             int _deliveryPickupOptionsProductAttributeId = productAttributes
-                .Where(p => p.Name == AbcDeliveryConsts.DeliveryPickupOptions)
+                .Where(p => p.Name == AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName)
                 .Select(p => p.Id)
                 .Single();
 
             int _haulAwayDeliveryProductAttributeId = productAttributes
-                .Where(p => p.Name == AbcDeliveryConsts.HaulAwayDelivery)
+                .Where(p => p.Name == AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName)
                 .Select(p => p.Id)
                 .Single();
 
             int _haulAwayDeliveryInstallProductAttributeId = productAttributes
-                .Where(p => p.Name == AbcDeliveryConsts.HaulAwayDeliveryInstall)
+                .Where(p => p.Name == AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName)
                 .Select(p => p.Id)
                 .Single();
 

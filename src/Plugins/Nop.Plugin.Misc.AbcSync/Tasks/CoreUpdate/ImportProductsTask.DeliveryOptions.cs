@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Domain.Catalog;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Services.Tasks;
 
 namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
@@ -9,9 +10,9 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
     {
         private async System.Threading.Tasks.Task InitializeDeliveryOptionsProductAttributesAsync()
         {
-            _deliveryPickupOptionsProductAttribute = await SaveProductAttributeAsync("Delivery/Pickup Options");
-            _haulAwayDeliveryProductAttribute = await SaveProductAttributeAsync("Haulaway (Delivery)");
-            _haulAwayDeliveryInstallProductAttribute = await SaveProductAttributeAsync("Haulaway (Delivery/Install)");
+            _deliveryPickupOptionsProductAttribute = await SaveProductAttributeAsync(AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
+            _haulAwayDeliveryProductAttribute = await SaveProductAttributeAsync(AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName);
+            _haulAwayDeliveryInstallProductAttribute = await SaveProductAttributeAsync(AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName);
         }
 
         private async System.Threading.Tasks.Task<ProductAttribute> SaveProductAttributeAsync(string name)
@@ -43,8 +44,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                 }
 
                 var deliveryOptionsPam = (await _productAttributeService.SaveProductAttributeMappingsAsync(productId, pams, new string[]{
-                    "Haul Away (Delivery)",
-                    "Haul Away (Delivery/Install)"
+                    AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
+                    AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName
                 })).SingleOrDefault();
 
                 if (abcDeliveryMap.DeliveryHaulway != 0)
@@ -54,7 +55,8 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                         ProductId = productId,
                         ProductAttributeId = _haulAwayDeliveryProductAttribute.Id,
                         AttributeControlType = AttributeControlType.Checkboxes,
-                        DisplayOrder = 10
+                        DisplayOrder = 10,
+                        TextPrompt = AbcDeliveryConsts.HaulAwayTextPrompt
                         // Needs condition - need ID from delivery options
                     });
                 }
@@ -65,14 +67,19 @@ namespace Nop.Plugin.Misc.AbcSync.Tasks.CoreUpdate
                         ProductId = productId,
                         ProductAttributeId = _haulAwayDeliveryInstallProductAttribute.Id,
                         AttributeControlType = AttributeControlType.Checkboxes,
-                        DisplayOrder = 20
+                        DisplayOrder = 20,
+                        TextPrompt = AbcDeliveryConsts.HaulAwayTextPrompt
                         // Needs condition - need ID from delivery options
                     });
                 }
+
+                // Need to remove the "Delivery Options" pam so no duplicate below.
+                pams.RemoveAll(pam => pam.Id == deliveryOptionsPam?.Id);
             }
 
+            // Need to save now without Delivery Options
             await _productAttributeService.SaveProductAttributeMappingsAsync(productId, pams, new string[]{
-                "Delivery/Pickup Options"
+                AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName
             });
 
             return pams;

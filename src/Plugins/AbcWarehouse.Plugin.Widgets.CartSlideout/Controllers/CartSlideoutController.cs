@@ -102,7 +102,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
         {
             var result = attributesXml;
             var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
-            if (productAttribute.Name == AbcDeliveryConsts.DeliveryPickupOptions)
+            if (productAttribute.Name == AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName)
             {
                 result = _productAttributeParser.RemoveProductAttribute(
                     result,

@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
+using Nop.Plugin.Misc.AbcCore.Delivery;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
@@ -139,8 +140,8 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 "Warranty",
                 "Delivery/Pickup Options",
                 "Pickup",
-                "Haul Away (Delivery)",
-                "Haul Away (Delivery/Install)"
+                AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
+                AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName
             }.Contains(m.Name)).ToList();
         }
 

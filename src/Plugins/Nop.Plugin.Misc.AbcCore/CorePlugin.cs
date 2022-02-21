@@ -158,9 +158,9 @@ namespace Nop.Plugin.Misc.AbcCore
         private async System.Threading.Tasks.Task RemoveProductAttributesAsync()
         {
             var attributes = (await _productAttributeService.GetAllProductAttributesAsync()).Where(pa =>
-                pa.Name == AbcDeliveryConsts.DeliveryPickupOptions ||
-                pa.Name == AbcDeliveryConsts.HaulAwayDelivery ||
-                pa.Name == AbcDeliveryConsts.HaulAwayDeliveryInstall);
+                pa.Name == AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName ||
+                pa.Name == AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName ||
+                pa.Name == AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName);
 
             foreach (var attribute in attributes)
             {
@@ -172,9 +172,9 @@ namespace Nop.Plugin.Misc.AbcCore
         {
             var pas = new ProductAttribute[]
             {
-                new ProductAttribute() { Name = AbcDeliveryConsts.DeliveryPickupOptions },
-                new ProductAttribute() { Name = AbcDeliveryConsts.HaulAwayDelivery },
-                new ProductAttribute() { Name = AbcDeliveryConsts.HaulAwayDeliveryInstall },
+                new ProductAttribute() { Name = AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName },
+                new ProductAttribute() { Name = AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName },
+                new ProductAttribute() { Name = AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName },
             };
 
             foreach (var pa in pas)
