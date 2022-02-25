@@ -3,7 +3,7 @@
 */
 
 .header-logo a img {
-    background-color: transparent;
+    background-color: transparent !important;
 }
 
 /******************************************************************************/
