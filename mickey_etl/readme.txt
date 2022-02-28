@@ -19,4 +19,5 @@ To perform the Mickey Shorr ETL:
     Professional Installation
 5. Create MegaMenu Custom and Categories menus
     a. Categories - set as list
-6. Clear cache
+6. Update Store Locator code
+7. Clear cache

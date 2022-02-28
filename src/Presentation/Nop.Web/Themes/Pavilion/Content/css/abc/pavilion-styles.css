@@ -2,6 +2,17 @@
     Overwrites styles.css for the Pavilion theme.
 */
 
+/* Merges My Account (logged in user) into main column */
+.header-upper {
+    height: 0;
+}
+.header-links-wrapper {
+    position: absolute;
+    top: 16px;
+    right: 0;
+    z-index: 10;
+}
+
 .header-logo a img {
     background-color: transparent !important;
 }
