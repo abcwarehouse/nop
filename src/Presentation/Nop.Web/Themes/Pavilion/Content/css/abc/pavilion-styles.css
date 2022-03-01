@@ -12,6 +12,11 @@
     right: 0;
     z-index: 10;
 }
+#flyout-cart {
+    width: auto;
+    float: right;
+    margin-right: 115px;
+}
 
 .header-logo a img {
     background-color: transparent !important;
