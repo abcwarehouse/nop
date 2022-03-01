@@ -6,6 +6,9 @@
 .header-upper {
     height: 0;
 }
+.header-upper .center {
+    position: relative;
+}
 .header-links-wrapper {
     position: absolute;
     top: 16px;
