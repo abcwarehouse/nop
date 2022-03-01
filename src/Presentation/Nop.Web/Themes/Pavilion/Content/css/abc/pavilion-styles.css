@@ -18,8 +18,19 @@
     margin-right: 115px;
 }
 
+/* Have logo match category width - other header logo fixes */
+.header-logo {
+    width: 250px;
+    padding: 0;
+}
 .header-logo a img {
     background-color: transparent !important;
+}
+@media (min-width: 1281px)
+{
+    .header-logo {
+        width: 290px;
+    }
 }
 
 /******************************************************************************/
