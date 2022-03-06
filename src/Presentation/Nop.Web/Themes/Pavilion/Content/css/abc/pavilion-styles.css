@@ -2,6 +2,12 @@
     Overwrites styles.css for the Pavilion theme.
 */
 
+/* Display home page category boxes */
+.home-page-category-grid {
+    display: block;
+    margin-top: 1rem;
+}
+
 /* Merges My Account (logged in user) into main column */
 .header-upper {
     height: 0;
