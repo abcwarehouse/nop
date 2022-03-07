@@ -239,6 +239,14 @@ namespace Nop.Plugin.Misc.AbcSliExport
                 return;
             }
 
+            // Skip if slug doesn't exist
+            string slug = await _urlRecordService.GetActiveSlugAsync(product.Id, "Product", 0);
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                return;
+            }
+
+
             // Now write the XML export elements.
             xml.WriteStartElement(_productTag);
 
@@ -253,7 +261,7 @@ namespace Nop.Plugin.Misc.AbcSliExport
 
             await ExportBrandAsync(xml, product);
             WriteElementHelper(xml, _nameTag, product.Name);
-            await ExportUrlAsync(xml, product, store);
+            ExportUrl(xml, product, store, slug);
             ExportItemNumberAndModelDesc(xml, product);
             WriteElementHelper(xml, _nopIdTag, product.Id.ToString());
             WriteElementHelper(xml, _skuTag, product.Sku);
@@ -453,12 +461,9 @@ namespace Nop.Plugin.Misc.AbcSliExport
         /// <param name="product">
         ///		This is product from which this exports data.
         /// </param>
-        private async Task ExportUrlAsync(XmlWriter xml, Product product, Store store)
+        private void ExportUrl(XmlWriter xml, Product product, Store store, string slug)
         {
-            string slug = await _urlRecordService.GetActiveSlugAsync(product.Id, "Product", 0);
             WriteElementHelper(xml, _productUrlTag, store.Url + slug);
-
-            return;
         }
 
         /// <summary>
