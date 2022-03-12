@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
 {
@@ -55,94 +56,87 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
             string password = Request.Query["password"];
             var loginResult = await _customerRegistrationService.ValidateCustomerAsync(email, password);
 
-            if (loginResult == CustomerLoginResults.Successful)
+            if (loginResult != CustomerLoginResults.Successful) { return Forbid(); }
+            
+            Customer apiCustomer = await _customerService.GetCustomerByEmailAsync(email);
+            if (apiCustomer == null)
             {
-                Customer apiCustomer = await _customerService.GetCustomerByEmailAsync(email);
-                if ((await _customerService.GetCustomerRoleByIdAsync(apiCustomer.Id)).SystemName == "Administrators")
+                throw new NopException($"Unable to find customer with email {email}");
+            }
+
+            var adminCustomerRole = (await _customerService.GetCustomerRolesAsync(apiCustomer)).FirstOrDefault(cr => cr.SystemName == "Administrators");
+            if (adminCustomerRole == null) { return Forbid(); }
+
+            string statusId = Request.Query["id"];
+            string statusType = Request.Query["statusType"];
+            string statusValueStr = Request.Query["statusValue"];
+
+            // update the chosen status
+            bool updateSuccess;
+            string failureMessage = "403: Bad Request, ";
+
+            int nopOrderId = -1;
+
+            // id is in format <nopid>
+            Int32.TryParse(statusId, out nopOrderId);
+
+            // convert input status value -> int
+            int statusValue = 0;
+            if (statusType.Trim().ToLower() != "tracking")
+            {
+                statusValue = Int32.Parse(statusValueStr);
+            }
+
+            Order order = await _orderService.GetOrderByIdAsync(nopOrderId);
+            if (order != null)
+            {
+                if (statusType.Trim().ToLower() == "order")
                 {
-                    string statusId = Request.Query["id"];
-                    string statusType = Request.Query["statusType"];
-                    string statusValueStr = Request.Query["statusValue"];
-
-                    // update the chosen status
-                    bool updateSuccess;
-                    string failureMessage = "403: Bad Request, ";
-
-                    int nopOrderId = -1;
-
-                    // id is in format <nopid>
-                    Int32.TryParse(statusId, out nopOrderId);
-
-                    // convert input status value -> int
-                    int statusValue = 0;
-                    if (statusType.Trim().ToLower() != "tracking")
-                    {
-                        statusValue = Int32.Parse(statusValueStr);
-                    }
-
-                    Order order = await _orderService.GetOrderByIdAsync(nopOrderId);
-                    if (order != null)
-                    {
-                        if (statusType.Trim().ToLower() == "order")
-                        {
-                            // update order
-                            updateSuccess = await UpdateOrderAsync(order, statusValue);
-
-                            // failure message only used if update fails
-                            // assign it every time in case of failure
-                            failureMessage += $"status value {statusValueStr} not defined";
-                        }
-                        else if (statusType.Trim().ToLower() == "shipping")
-                        {
-                            // update shipping
-                            updateSuccess = await UpdateShippingAsync(order, statusValue);
-                            failureMessage += $"status value {statusValueStr} not defined";
-                        }
-                        else if (statusType.Trim().ToLower() == "payment")
-                        {
-                            // update payment status
-                            updateSuccess = await UpdatePaymentAsync(order, statusValue);
-                            failureMessage += $"status value {statusValueStr} not defined";
-                        }
-                        else if (statusType.Trim().ToLower() == "tracking")
-                        {
-                            // update payment status 
-                            updateSuccess = await UpdateTrackingAsync(order, statusValueStr, Request.Query["itemSku"]);
-                            failureMessage += $"status value {statusValueStr} not defined";
-                        }
-                        else
-                        {
-                            updateSuccess = false;
-                            failureMessage += $"type {statusType} not defined";
-                        }
-                    }
-                    else
-                    {
-                        updateSuccess = false;
-                        failureMessage += statusId + " is not a valid order id in nopcommerce";
-                    }
-
-
-
-                    // choose what to return to the sender
-                    if (updateSuccess)
-                    {
-                        return Ok();
-                    }
-                    else
-                    {
-                        // if the update wasn't successful, throw 400 Bad Request
-                        return new BadRequestObjectResult(failureMessage);
-                    }
+                    // update order
+                    updateSuccess = await UpdateOrderAsync(order, statusValue);
+                     // failure message only used if update fails
+                    // assign it every time in case of failure
+                    failureMessage += $"status value {statusValueStr} not defined";
+                }
+                else if (statusType.Trim().ToLower() == "shipping")
+                {
+                    // update shipping
+                    updateSuccess = await UpdateShippingAsync(order, statusValue);
+                    failureMessage += $"status value {statusValueStr} not defined";
+                }
+                else if (statusType.Trim().ToLower() == "payment")
+                {
+                    // update payment status
+                    updateSuccess = await UpdatePaymentAsync(order, statusValue);
+                    failureMessage += $"status value {statusValueStr} not defined";
+                }
+                else if (statusType.Trim().ToLower() == "tracking")
+                {
+                    // update payment status 
+                    updateSuccess = await UpdateTrackingAsync(order, statusValueStr, Request.Query["itemSku"]);
+                    failureMessage += $"status value {statusValueStr} not defined";
                 }
                 else
                 {
-                    return Forbid();
+                    updateSuccess = false;
+                    failureMessage += $"type {statusType} not defined";
                 }
             }
             else
             {
-                return Forbid();
+                updateSuccess = false;
+                failureMessage += statusId + " is not a valid order id in nopcommerce";
+            }
+
+            // choose what to return to the sender
+            if (updateSuccess)
+            {
+                return Ok();
+            }
+            else
+            {
+                // if the update wasn't successful, throw 400 Bad Request
+                return new BadRequestObjectResult(failureMessage);
             }
         }
 
