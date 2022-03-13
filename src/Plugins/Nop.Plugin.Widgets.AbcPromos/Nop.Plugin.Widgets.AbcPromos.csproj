@@ -60,8 +60,6 @@
 		<ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
 		<ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
 		<ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
-		<!-- all this should be pulled to AbcCore as we move this away from StagingDB -->
-		<ProjectReference Include="..\Nop.Plugin.Misc.AbcSync\Nop.Plugin.Misc.AbcSync.csproj" />
 		<ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
 	</ItemGroup>
 	<!-- This target execute after "Build" target -->

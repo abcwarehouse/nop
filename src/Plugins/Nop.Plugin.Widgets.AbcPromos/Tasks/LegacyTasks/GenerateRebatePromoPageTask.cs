@@ -14,7 +14,6 @@ using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Core.Domain.Media;
 using Nop.Services.Media;
 using Nop.Services.Logging;
-using Nop.Plugin.Misc.AbcSync;
 using Nop.Plugin.Widgets.AbcPromos;
 using Task = System.Threading.Tasks.Task;
 
@@ -37,7 +36,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly ILogger _logger;
 
         private readonly MediaSettings _mediaSettings;
-        private readonly ImportSettings _importSettings;
         private readonly AbcPromosSettings _settings;
 
         public GenerateRebatePromoPageTask(
@@ -53,7 +51,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             IUrlRecordService urlRecordService,
             ILogger logger,
             MediaSettings mediaSettings,
-            ImportSettings importSettings,
             AbcPromosSettings settings
         )
         {
@@ -69,7 +66,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             _urlRecordService = urlRecordService;
             _logger = logger;
             _mediaSettings = mediaSettings;
-            _importSettings = importSettings;
             _settings = settings;
         }
 
