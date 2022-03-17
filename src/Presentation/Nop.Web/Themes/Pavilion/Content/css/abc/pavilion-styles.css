@@ -2,19 +2,6 @@
     Overwrites styles.css for the Pavilion theme.
 */
 
-/* moves admin header links when logged in */
-.admin-header-links {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background: #b3aea9;
-    z-index: 100;
-}
-
-.admin-header-links a:hover {
-    color: white;
-}
-
 /* Display home page category boxes */
 .home-page-category-grid {
     display: block;
@@ -176,6 +163,19 @@ body {
 }
 
 @media (min-width: 1001px) {
+    /* moves admin header links when logged in */
+    .admin-header-links {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background: #b3aea9;
+        z-index: 100;
+    }
+
+    .admin-header-links a:hover {
+        color: white;
+    }
+
     #account-credit-card {
         justify-content: flex-start;
     }
