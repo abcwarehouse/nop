@@ -17,7 +17,31 @@ To perform the Mickey Shorr ETL:
     We will Beat
     Special Financing
     Professional Installation
-5. Create MegaMenu Custom and Categories menus
+
+6. Set the correct parent categories
+
+Mobile Audio & Video
+    CD & Media Players
+        SiriusXM / Satellite
+    Mobile Video
+    Car Speakers & Subwoofers
+        Car Speakers
+        Car Subwoofers & Boxes
+    Car Amplifiers
+    Backup Cameras
+    Professional Installation
+
+Marine Audio
+    Marine Receivers
+    Marine Speakers & Subwoofers
+    Marine Amplifiers
+    
+Motorcycle Audio
+    Motorcycle Receivers
+    Motorcycle Speakers & Subwoofers
+    Motorcycle Amplifiers
+
+7. Create MegaMenu Custom and Categories menus
     a. Categories - set as list
-6. Update Store Locator code
-7. Clear cache
+8. Update Store Locator code
+9. Clear cache
