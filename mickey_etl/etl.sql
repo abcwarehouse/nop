@@ -435,3 +435,10 @@ WHERE c.Name IN ('Mobile Audio & Video', 'Car Starters & Alarms', 'Marine Audio'
 UPDATE NOPCommerce_Stage_440.dbo.Product
 SET ProductTemplateId = 1
 WHERE ProductTemplateId = 99
+
+------------------------------------------------------------------------------------------
+-- 6
+-- Adds stores
+
+INSERT INTO NOPCommerce_Stage_440.dbo.SS_SL_Shop (IsVisible, Name, Latitude, Longitude, ShortDescription, FullDescription, ShowOnHomePage,Tags, DisplayOrder, LimitedToStores)
+SELECT IsVisible, Name, Latitude, Longitude, ShortDescription, FullDescription, ShowOnHomePage,Tags, DisplayOrder, LimitedToStores FROM DB_4215_mickey2.dbo.SS_SL_Shop
