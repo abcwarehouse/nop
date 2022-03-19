@@ -43,5 +43,4 @@ Motorcycle Audio
 
 7. Create MegaMenu Custom and Categories menus
     a. Categories - set as list
-8. Update Store Locator code
-9. Clear cache
+8. Clear cache
